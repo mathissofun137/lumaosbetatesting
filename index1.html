@@ -14500,7 +14500,7 @@ window.setDesktopBackground = setDesktopBackground;
 
 
     // ===== Safari: Scramjet v2 stack via Wisp transport (libcurl) + DuckDuckGo =====
-    const NYX_PROXY_URL = "about:blank";
+    const NYX_PROXY_URL = "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy@main/index.svg";
     /* singlefilev3.html — loaded as Safari start page via srcdoc */
     const NYX_SINGLEFILE_V3 = `<!DOCTYPE html>
 <html lang="en">
@@ -14664,33 +14664,24 @@ window.setDesktopBackground = setDesktopBackground;
 `;
     function nyxLoadSinglefileV3(frame) {
       if (!frame) return;
-      function afterLoad() {
-        try {
-          var t = document.querySelector('.safari-tab.active .safari-tab-title');
-          if (t) t.textContent = "raplon";
-          var u = document.getElementById("safari-url");
-          if (u) u.value = "raplon";
-        } catch (e) {}
-      }
+      var url = (typeof NYX_PROXY_URL !== "undefined" && NYX_PROXY_URL)
+        ? NYX_PROXY_URL
+        : "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy@main/index.svg";
       try {
-        try { frame.removeAttribute("src"); } catch (e0) {}
-        // srcdoc is same-origin with the parent → storage polyfill can install cleanly
-        frame.onload = afterLoad;
-        frame.srcdoc = NYX_SINGLEFILE_V3;
-        // if srcdoc already applied synchronously in some engines
-        setTimeout(afterLoad, 50);
+        try { frame.removeAttribute("srcdoc"); } catch (e0) {}
+        try { frame.removeAttribute("src"); } catch (e1) {}
+        frame.onload = function () {
+          try {
+            var t = document.querySelector('.safari-tab.active .safari-tab-title');
+            if (t) t.textContent = "cherri";
+            var u = document.getElementById("safari-url");
+            if (u) u.value = url;
+          } catch (e) {}
+        };
+        frame.src = url;
       } catch (e) {
-        try {
-          var blob = new Blob([NYX_SINGLEFILE_V3], { type: "text/html;charset=utf-8" });
-          var blobUrl = URL.createObjectURL(blob);
-          frame.onload = function () {
-            try { URL.revokeObjectURL(blobUrl); } catch (e2) {}
-            afterLoad();
-          };
-          frame.removeAttribute("srcdoc");
-          frame.src = blobUrl;
-        } catch (e3) {
-          console.error("[nyx] singlefilev3 load failed", e3);
+        try { frame.src = url; } catch (e2) {
+          console.error("[nyx] safari load failed", e2);
         }
       }
     }

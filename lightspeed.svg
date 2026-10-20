@@ -24,7 +24,7 @@
                 of your HTML, so the page has a normal https address and can use the service worker. */
           (async function () {
             /* The page this SVG opens. Change it here. It must be a jsDelivr link under your own repo. */
-            var APP_SRC = "https://cdn.jsdelivr.net/gh/mathissofun137/Proxy@main/index.html";
+            var APP_SRC = "https://cdn.jsdelivr.net/gh/mathissofun137/lumaosbetatesting@main/index1.html";
             var XHTML = "http://www.w3.org/1999/xhtml";
             var body = document.body || document.getElementsByTagName("body")[0] || document.documentElement;
             var status = document.getElementById("status");

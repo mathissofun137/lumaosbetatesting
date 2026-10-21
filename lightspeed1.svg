@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position:fixed;inset:0;background:#000;">
+  <foreignObject x="0" y="0" width="100%" height="100%">
+    <html xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;margin:0;padding:0;background:#000;">
+      <head>
+        <meta charset="UTF-8"/>
+        <title>Mac OS</title>
+        <style>
+          /* <![CDATA[ */
+          html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+          }
+          iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+          }
+          #status {
+            color: #fff;
+            font-family: system-ui, sans-serif;
+            padding: 20px;
+          }
+          /* ]]> */
+        </style>
+      </head>
+      <body>
+        <p id="status">Loading Mac OS…</p>
+        <script>
+        //<![CDATA[
+          (async function () {
+            var base = "https://fastly.jsdelivr.net/gh/mathissofun137/orbit-by-claude/";
+            var url = base + "index.html?t=" + Date.now();
+            var XHTML = "http://www.w3.org/1999/xhtml";
+
+            // In SVG foreignObject, document.body can be null — find body the hard way
+            var body = document.body
+              || document.getElementsByTagName("body")[0]
+              || document.documentElement;
+
+            var status = document.getElementById("status")
+              || document.querySelector("#status");
+
+            try {
+              var res = await fetch(url);
+              if (!res.ok) throw new Error("HTTP " + res.status);
+              var html = await res.text();
+
+              // inject base so relative assets load from CDN
+              html = html.replace(/<head[^>]*>/i, function (m) {
+                return m + '\n    <base href="' + base + '">';
+              });
+
+              // Create iframe in the XHTML namespace
+              var iframe = document.createElementNS(XHTML, "iframe");
+              iframe.setAttribute("style", "position:absolute;top:0;left:0;width:100%;height:100%;border:none;background:#000;");
+
+              // Load via blob URL
+              var blob = new Blob([html], { type: "text/html" });
+              var blobUrl = URL.createObjectURL(blob);
+              iframe.setAttribute("src", blobUrl);
+
+              if (!body) throw new Error("No body element found");
+              body.appendChild(iframe);
+
+              if (status) {
+                status.setAttribute("style", "display:none");
+              }
+
+            } catch (err) {
+              var msg = (err && err.message) ? err.message : String(err);
+              if (status) {
+                status.textContent = "Failed to load: " + msg;
+              } else if (body) {
+                var p = document.createElementNS(XHTML, "p");
+                p.setAttribute("style", "color:#fff;padding:20px;font-family:system-ui,sans-serif;");
+                p.textContent = "Failed to load: " + msg;
+                body.appendChild(p);
+              }
+            }
+          })();
+        //]]>
+        </script>
+      </body>
+    </html>
+  </foreignObject>
+</svg>

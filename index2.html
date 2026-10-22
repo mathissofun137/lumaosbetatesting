@@ -366,6 +366,7 @@
       height: 100%;
       display: flex;
       align-items: flex-end;
+      justify-content: center;
       padding: 0.3rem;
       border-radius: 1.2rem;
       background-color: hsla(240, 24%, 100%, 0.18);
@@ -394,12 +395,12 @@
       pointer-events: none;
     }
     .dock-el .divider {
-      height: 100%;
-      width: 0.2px;
+      height: 55%;
+      width: 0.5px;
       background-color: hsla(240, 3%, 11%, 0.3);
-      margin: 0 4px;
+      margin: 0 4px 6px;
       flex-shrink: 0;
-      align-self: stretch;
+      align-self: flex-end;
     }
     .dock-el .dock-open-app-button {
       display: flex;
@@ -425,13 +426,15 @@
       line-height: 0;
     }
     .dock-el .dock-open-app-button img {
-      /* width driven only by JS — matches macos-web style:width in rem */
+      /* JS sets width for magnification; height follows for even centering */
       width: 3.6rem;
-      height: auto;
-      aspect-ratio: 1;
+      height: 3.6rem;
+      aspect-ratio: 1 / 1;
+      object-fit: contain;
+      object-position: center center;
       display: block;
       border-radius: 22%;
-      will-change: width;
+      will-change: width, height;
       pointer-events: none;
       -webkit-user-drag: none;
       margin: 0;
@@ -466,7 +469,7 @@
     .dock-el .dock-open-app-button .dot {
       height: 4px;
       width: 4px;
-      margin: 0;
+      margin: 2px 0 0;
       border-radius: 50%;
       background-color: hsl(240, 3%, 11%);
       opacity: 0;
@@ -483,6 +486,54 @@
     }
     .dock-el .dock-open-app-button.dock-bounce > span.dock-icon-wrap {
       animation: dock-bounce-up 0.4s ease-in-out;
+    }
+
+
+    
+    #safari-frames.safari-frames,
+    #safari-window #safari-frames {
+      position: relative !important;
+    }
+
+    /* Safari first-load proxy splash */
+    #safari-proxy-loading {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: rgba(28, 28, 30, 0.94);
+      color: #f5f5f7;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+      text-align: center;
+      padding: 24px;
+      pointer-events: all;
+    }
+    #safari-proxy-loading.is-visible { display: flex; }
+    #safari-proxy-loading .spl-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255,255,255,0.15);
+      border-top-color: #0a84ff;
+      border-radius: 50%;
+      animation: safari-proxy-spin 0.85s linear infinite;
+    }
+    @keyframes safari-proxy-spin { to { transform: rotate(360deg); } }
+    #safari-proxy-loading .spl-title {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+    #safari-proxy-loading .spl-sub {
+      font-size: 13px;
+      color: rgba(235,235,245,0.6);
+      margin: 0;
+      max-width: 280px;
+      line-height: 1.4;
     }
 
     /* ===== WINDOWS ===== */
@@ -3839,35 +3890,186 @@ html[data-theme] .window-header.steam-popup-header,
     .large { grid-column: span 2; }
     .r-radius { border-bottom-right-radius: 14px; }
 
-    /* Launchpad */
+    /* Launchpad — macOS style */
     .launchpad {
-      display: none; position: fixed; inset: 0; z-index: 15;
-      backdrop-filter: blur(30px); background: rgba(0,0,0,0.3);
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 48px 24px 40px;
+      box-sizing: border-box;
+      background: rgba(20, 20, 30, 0.28);
+      backdrop-filter: blur(40px) saturate(140%);
+      -webkit-backdrop-filter: blur(40px) saturate(140%);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
     }
-    .searchbox {
-      height: 100px; display: flex; justify-content: center; align-items: center;
+    .launchpad.is-open {
+      display: flex !important;
+      opacity: 1;
+      pointer-events: auto;
     }
-    .searchbox .searchContainer {
-      height: 32px; width: 240px; display: flex; align-items: center;
-      border: 1px solid rgba(255,255,255,0.35); border-radius: 6px; padding: 0 8px; gap: 6px;
+    .launchpad .searchbox {
+      height: auto;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 8px 0 28px;
+      flex-shrink: 0;
     }
-    .searchbox input {
-      flex: 1; background: transparent; color: white; font-size: 15px; text-align: center;
+    .launchpad .searchbox .searchContainer {
+      height: 30px;
+      width: min(280px, 70vw);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: rgba(255, 255, 255, 0.14);
+      box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.2);
     }
-    .Apps-container {
-      width: 90%; max-width: 900px; margin: 0 auto; display: grid;
-      grid-template-columns: repeat(4, 1fr); gap: 30px 20px;
+    .launchpad .searchbox .searchContainer svg {
+      width: 13px;
+      height: 13px;
+      opacity: 0.7;
+      flex-shrink: 0;
+      fill: #fff;
+    }
+    .launchpad .searchbox input,
+    .launchpad .searchbox input.searchbox {
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 400;
+      text-align: left;
+      font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .launchpad .searchbox input::placeholder {
+      color: rgba(255, 255, 255, 0.55);
+      text-align: left;
+    }
+    .launchpad .Apps-container {
+      width: min(920px, 92vw);
+      max-width: 920px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 28px 12px;
+      justify-items: center;
+      align-content: start;
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 8px 8px 24px;
+      scrollbar-width: none;
+    }
+    .launchpad .Apps-container::-webkit-scrollbar { display: none; }
+    @media (max-width: 900px) {
+      .launchpad .Apps-container { grid-template-columns: repeat(5, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .launchpad .Apps-container { grid-template-columns: repeat(4, 1fr); gap: 20px 8px; }
     }
     .launchpad .child-launchpad {
-      display: flex; flex-direction: column; align-items: center; cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      max-width: 100px;
+      cursor: default;
+      user-select: none;
+      -webkit-user-select: none;
+      background: transparent;
+      border: none;
+      padding: 0;
+      animation: lpIconIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    }
+    .launchpad .child-launchpad:nth-child(1) { animation-delay: 0.02s; }
+    .launchpad .child-launchpad:nth-child(2) { animation-delay: 0.04s; }
+    .launchpad .child-launchpad:nth-child(3) { animation-delay: 0.06s; }
+    .launchpad .child-launchpad:nth-child(4) { animation-delay: 0.08s; }
+    .launchpad .child-launchpad:nth-child(5) { animation-delay: 0.1s; }
+    .launchpad .child-launchpad:nth-child(6) { animation-delay: 0.12s; }
+    .launchpad .child-launchpad:nth-child(7) { animation-delay: 0.14s; }
+    .launchpad .child-launchpad:nth-child(n+8) { animation-delay: 0.16s; }
+    @keyframes lpIconIn {
+      from { opacity: 0; transform: scale(0.72); }
+      to { opacity: 1; transform: scale(1); }
     }
     .launchpad .child-launchpad img {
-      width: 80px; height: 80px; border-radius: 18px;
-      filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.35));
+      pointer-events: none;
+      transition: transform 0.12s ease;
+    }
+    .launchpad .child-launchpad:hover img {
+      transform: scale(1.06);
+    }
+    .launchpad .child-launchpad:active img {
+      transform: scale(0.94);
     }
     .launchpad .child-launchpad strong {
-      color: white; margin-top: 10px; font-size: 13px; text-align: center;
+      color: #fff;
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: center;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
+    .launchpad .child-launchpad.is-hidden {
+      display: none !important;
+    }
+    .launchpad .lp-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+      padding: 12px 0 4px;
+      flex-shrink: 0;
+    }
+    .launchpad .lp-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .launchpad .lp-dots span.active {
+      background: rgba(255, 255, 255, 0.95);
+    }
+    .launchpad .lp-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 15px;
+      padding: 48px 0;
+      display: none;
+    }
+    .launchpad .lp-empty.show { display: block; }
 
     /* Spotlight */
     .spotlight_serach {
@@ -8024,7 +8226,7 @@ html[data-theme] .window-header.steam-popup-header,
       -webkit-backdrop-filter: blur(16px) !important;
     }
 
-    /* ===== Liquid Glass menu bar dropdowns (File, Edit, View, Apple…) ===== */
+    /* ===== macOS menu bar dropdowns (Finder-style, matches real macOS) ===== */
     .navbar .leftLi > ul {
       position: absolute !important;
       left: 0;
@@ -8032,126 +8234,100 @@ html[data-theme] .window-header.steam-popup-header,
     }
     .navbar .leftLi > ul,
     .navbar li > ul {
-      padding: 7px !important;
-      border-radius: 16px !important;
-      background:
-        linear-gradient(160deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.07) 45%, rgba(255,255,255,0.14) 100%),
-        rgba(28, 28, 32, 0.38) !important;
-      backdrop-filter: blur(34px) saturate(200%) brightness(1.12) !important;
-      -webkit-backdrop-filter: blur(34px) saturate(200%) brightness(1.12) !important;
-      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      padding: 5px !important;
+      min-width: 220px !important;
+      border-radius: 8px !important;
+      background: rgba(40, 40, 42, 0.82) !important;
+      backdrop-filter: blur(40px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
       box-shadow:
-        0 18px 50px rgba(0, 0, 0, 0.42),
-        0 2px 10px rgba(0, 0, 0, 0.22),
-        inset 0 1px 0 rgba(255, 255, 255, 0.55),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.14),
-        inset 1px 0 0 rgba(255, 255, 255, 0.18),
-        inset -1px 0 0 rgba(255, 255, 255, 0.18) !important;
+        0 12px 40px rgba(0, 0, 0, 0.45),
+        0 0 0 0.5px rgba(0, 0, 0, 0.3) !important;
       overflow: hidden;
       isolation: isolate;
     }
-    /* specular sheen sliding across the glass */
-    .navbar .leftLi > ul::before {
-      content: "";
-      position: absolute;
-      inset: -40% -60%;
-      background: linear-gradient(105deg,
-        transparent 38%,
-        rgba(255,255,255,0.20) 47%,
-        rgba(255,255,255,0.38) 50%,
-        rgba(255,255,255,0.20) 53%,
-        transparent 62%);
-      transform: translateX(-60%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    /* soft refracted glow along the top edge */
+    .navbar .leftLi > ul::before,
     .navbar .leftLi > ul::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      height: 46%;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.16), transparent);
-      pointer-events: none;
-      z-index: 0;
+      display: none !important;
+      content: none !important;
     }
     .navbar .leftLi.open > ul,
     .navbar .leftLi:hover > ul,
     .navbar.menus-open .leftLi:hover > ul {
       display: flex;
-      animation: glassMenuIn 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: macMenuIn 0.12s ease-out;
     }
-    .navbar .leftLi.open > ul::before,
-    .navbar .leftLi:hover > ul::before,
-    .navbar.menus-open .leftLi:hover > ul::before {
-      animation: glassSheen 0.9s cubic-bezier(0.25, 0.6, 0.3, 1) 0.05s;
+    @keyframes macMenuIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-    @keyframes glassMenuIn {
-      from { opacity: 0; transform: translateY(-8px) scale(0.96); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes glassSheen {
-      from { transform: translateX(-60%); }
-      to   { transform: translateX(60%); }
+    /* Active menu title highlight like real macOS */
+    .navbar .leftLi.open,
+    .navbar.menus-open .leftLi:hover {
+      background: rgba(255, 255, 255, 0.14) !important;
     }
     .navbar .leftLi > ul > li,
     .navbar li > ul > li {
       position: relative;
       z-index: 1;
+      display: block;
+      width: 100%;
     }
     .navbar .leftLi > ul > li.menu-sep {
       height: 1px;
-      margin: 6px 10px !important;
-      background: linear-gradient(to right,
-        rgba(255,255,255,0.04),
-        rgba(255,255,255,0.30),
-        rgba(255,255,255,0.04)) !important;
+      margin: 5px 10px !important;
+      background: rgba(255, 255, 255, 0.12) !important;
+      pointer-events: none;
     }
     .navbar .leftLi > ul > li > button,
     .navbar li > ul > li > button {
       position: relative;
       z-index: 1;
-      color: rgba(255, 255, 255, 0.95) !important;
+      width: 100%;
+      text-align: left;
+      color: #f5f5f7 !important;
       font-size: 13px;
-      padding: 7px 13px;
-      border-radius: 10px !important;
+      font-weight: 400;
+      padding: 5px 12px;
+      border-radius: 5px !important;
       background: transparent !important;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-      transition: background 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+      text-shadow: none;
+      transition: none;
+      border: none;
+      cursor: default;
+      font-family: inherit;
     }
-    .navbar .leftLi > ul > li > button:hover,
-    .navbar li > ul > li > button:hover {
-      background: linear-gradient(160deg,
-        rgba(255,255,255,0.34),
-        rgba(255,255,255,0.13)) !important;
+    .navbar .leftLi > ul > li > button:hover:not(:disabled),
+    .navbar li > ul > li > button:hover:not(:disabled) {
+      background: #0a84ff !important;
       color: #fff !important;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.55),
-        inset 0 -1px 0 rgba(255,255,255,0.12),
-        0 3px 10px rgba(0,0,0,0.20);
-      transform: translateY(-0.5px);
+      box-shadow: none;
+      transform: none;
     }
-    .navbar .leftLi > ul > li > button:active,
-    .navbar li > ul > li > button:active {
-      transform: translateY(0.5px) scale(0.985);
-      background: linear-gradient(160deg,
-        rgba(255,255,255,0.42),
-        rgba(255,255,255,0.20)) !important;
+    .navbar .leftLi > ul > li > button:active:not(:disabled),
+    .navbar li > ul > li > button:active:not(:disabled) {
+      background: #0071e3 !important;
+      transform: none;
     }
-    /* glass highlight on the menu bar title itself while its menu is open */
+    .navbar .leftLi > ul > li > button:disabled,
+    .navbar li > ul > li > button:disabled,
+    .navbar .leftLi > ul > li > button[disabled] {
+      color: rgba(235, 235, 245, 0.3) !important;
+      background: transparent !important;
+      cursor: default;
+      pointer-events: none;
+    }
     .navbar .leftLi.menu-item.open,
     .navbar .leftLi.logo.open {
-      background: linear-gradient(160deg, rgba(255,255,255,0.28), rgba(255,255,255,0.10)) !important;
-      border-radius: 8px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.45);
+      background: rgba(255, 255, 255, 0.14) !important;
+      border-radius: 0;
+      box-shadow: none;
     }
     @media (prefers-reduced-motion: reduce) {
       .navbar .leftLi.open > ul,
       .navbar .leftLi:hover > ul,
       .navbar.menus-open .leftLi:hover > ul { animation: none; }
-      .navbar .leftLi > ul::before { animation: none !important; }
     }
 
     /* ===== macOS Sign-in / Lock Screen ===== */
@@ -9981,6 +10157,248 @@ html[data-theme] .window-header.steam-popup-header,
     }
 
   </style>
+  <style id="nyx-tahoe-ui">
+    /* ===== macOS 26 (Tahoe) menu bar: transparent, capsule hovers ===== */
+    html body .navbar {
+      height: 30px !important;
+      padding: 0 8px !important;
+      background: linear-gradient(180deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.06) 60%, rgba(0,0,0,0) 100%) !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      text-shadow: 0 0 6px rgba(0,0,0,0.28), 0 1px 1px rgba(0,0,0,0.25) !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", "Inter", system-ui, sans-serif !important;
+      align-items: center;
+    }
+    html body .navbar > ul { gap: 2px !important; }
+    html body .navbar .leftLi,
+    html body .navbar__right > li {
+      height: 24px !important;
+      padding: 0 10px !important;
+      border-radius: 8px !important;
+      transition: background .15s ease;
+      font-size: 13px;
+      letter-spacing: -0.005em;
+    }
+    html body .navbar .leftLi:hover,
+    html body .navbar .leftLi.open,
+    html body .navbar.menus-open .leftLi:hover,
+    html body .navbar__right > li:hover {
+      background: rgba(255,255,255,0.22) !important;
+      box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.35);
+    }
+    html body .navbar .leftLi.logo { padding: 0 9px !important; }
+    html body .navbar .leftLi.logo img { height: 15px !important; filter: drop-shadow(0 0 4px rgba(0,0,0,.3)); }
+    html body .navbar #menu-app-name p,
+    html body .navbar .leftLi.app_name p { font-weight: 700; letter-spacing: -0.01em; }
+    html body .navbar__right {
+      gap: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      height: 100% !important;
+    }
+    html body .navbar__right > li {
+      padding: 0 7px !important;
+      height: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 0 !important;
+      color: #f5f5f7 !important;
+      line-height: 1 !important;
+    }
+    html body .navbar__right > li:hover {
+      background: rgba(255,255,255,0.14) !important;
+      box-shadow: none !important;
+    }
+    html body .navbar__right .wifi svg,
+    html body .navbar__right .open_Search svg,
+    html body .navbar__right .cc-btn svg {
+      width: 15px !important;
+      height: 15px !important;
+      display: block;
+      color: inherit;
+      fill: currentColor;
+    }
+    html body .navbar__right .open_Search svg { fill: none !important; stroke: currentColor; }
+    html body .navbar__right .battery {
+      padding: 0 8px !important;
+      gap: 5px !important;
+      display: flex !important;
+      align-items: center !important;
+    }
+    html body .navbar__right .battery__text {
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      opacity: 1 !important;
+      margin: 0 !important;
+      letter-spacing: -0.01em;
+      color: #f5f5f7 !important;
+    }
+    html body .navbar__right .battery__container {
+      width: 22px !important;
+      height: 10px !important;
+      padding: 1px !important;
+      border-radius: 2.5px !important;
+      border: 1px solid rgba(255,255,255,0.55) !important;
+      background: transparent !important;
+      position: relative;
+      box-sizing: border-box;
+    }
+    html body .navbar__right .battery__container::after {
+      content: "" !important;
+      width: 2px !important;
+      height: 5px !important;
+      background: rgba(255,255,255,0.55) !important;
+      position: absolute !important;
+      top: 50% !important;
+      right: -3.5px !important;
+      transform: translateY(-50%) !important;
+      border-radius: 0 1px 1px 0 !important;
+    }
+    html body .navbar__right .battery__progress {
+      height: 100% !important;
+      background: #f5f5f7 !important;
+      border-radius: 1.5px !important;
+      min-width: 2px;
+    }
+    html body .navbar__right .battery.charging .battery__progress,
+    html body .navbar__right .battery[data-charging="1"] .battery__progress {
+      background: #30d158 !important;
+    }
+    html body .navbar__right .clock {
+      font-weight: 400 !important;
+      font-size: 13px !important;
+      padding: 0 10px !important;
+      letter-spacing: -0.01em;
+      color: #f5f5f7 !important;
+      white-space: nowrap;
+    }
+    /* Tahoe menus: larger radius, rounded item highlights */
+    html body .navbar .leftLi > ul { margin-top: 4px !important; border-radius: 18px !important; padding: 8px !important; min-width: 240px; }
+    html body .navbar .leftLi > ul > li > button { border-radius: 10px !important; padding: 6px 12px !important; }
+    html body .navbar .leftLi > ul > li.menu-sep { margin: 5px 10px !important; }
+
+    /* ===== App Store — dark Discover style (matches reference) ===== */
+    .window.appstore-window {
+      --as-bg:#1c1c1e; --as-text:#f5f5f7; --as-sub:#98989d; --as-side:#161618; --as-sel:rgba(255,255,255,.1);
+      --as-line:rgba(255,255,255,.08); --as-btn:#2c2c2e; --as-field:rgba(255,255,255,.08); --as-card:#2a2a2c; --as-blue:#0a84ff;
+      display:none; position:absolute; top:6%; left:12%; width:min(980px,94vw); height:min(640px,86vh);
+      flex-direction:row; overflow:hidden; z-index:70; padding:0 !important;
+      border-radius:14px !important; color:var(--as-text);
+      background:var(--as-bg) !important;
+      backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+      border:0.5px solid rgba(255,255,255,.12) !important;
+      box-shadow:0 28px 80px rgba(0,0,0,.55), 0 0 0 .5px rgba(0,0,0,.4) !important;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro","Inter",system-ui,sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+    .window.appstore-window.is-maximized { top:28px !important; left:0 !important; width:100vw !important; height:calc(100vh - 28px) !important; border-radius:0 !important; }
+    .as-sidebar {
+      width:200px; flex-shrink:0; background:var(--as-side);
+      display:flex; flex-direction:column; padding:0 10px 14px;
+      border-right:.5px solid var(--as-line);
+    }
+    .as-traffic { height:48px; display:flex; align-items:center; gap:8px; padding-left:6px; cursor:grab; flex-shrink:0; }
+    .as-traffic button { width:12px; height:12px; border-radius:50%; border:.5px solid rgba(0,0,0,.2); padding:0; cursor:pointer; }
+    .as-traffic .close-appstore { background:#ff5f57; } .as-traffic .min-appstore { background:#febc2e; } .as-traffic .full-appstore { background:#28c840; }
+    .as-search {
+      display:flex; align-items:center; gap:6px; height:28px; padding:0 10px;
+      border-radius:7px; background:var(--as-field); margin:0 0 12px;
+    }
+    .as-search svg { width:12px; height:12px; opacity:.45; flex-shrink:0; color:#98989d; }
+    .as-search input { flex:1; min-width:0; border:none; outline:none; background:transparent; color:var(--as-text); font:400 13px inherit; font-family:inherit; }
+    .as-search input::placeholder { color:var(--as-sub); }
+    .as-nav { display:flex; flex-direction:column; gap:1px; flex:1; }
+    .as-nav button {
+      display:flex; align-items:center; gap:8px; height:32px; padding:0 10px;
+      border-radius:7px; border:none; background:transparent; color:var(--as-text);
+      font:500 13px inherit; font-family:inherit; cursor:pointer; text-align:left;
+    }
+    .as-nav button .ic { width:18px; text-align:center; font-size:14px; opacity:.85; }
+    .as-nav button:hover { background:var(--as-sel); }
+    .as-nav button.active { background:var(--as-sel); }
+    .as-account { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; font-size:13px; font-weight:500; cursor:default; color:var(--as-sub); }
+    .as-account:hover { background:var(--as-sel); color:var(--as-text); }
+    .as-avatar { width:26px; height:26px; border-radius:50%; background:linear-gradient(145deg,#636366,#48484a); display:grid; place-items:center; color:#fff; font-size:13px; }
+    .as-content { flex:1; min-width:0; overflow-y:auto; padding:28px 32px 40px; background:var(--as-bg); }
+    .as-content h1 { font-size:28px; font-weight:700; letter-spacing:-.02em; margin:0 0 4px; color:#f5f5f7; }
+    .as-content .as-subhead { font-size:13px; color:var(--as-sub); margin:0 0 22px; font-weight:400; }
+    .as-sec-head { display:flex; align-items:baseline; justify-content:space-between; margin:28px 0 6px; padding-bottom:8px; border-bottom:.5px solid var(--as-line); }
+    .as-sec-head h2 { font-size:18px; font-weight:650; letter-spacing:-.01em; margin:0; }
+    .as-sec-head a { color:var(--as-blue); font-size:13px; cursor:pointer; }
+    .as-hero { display:none; }
+    .as-grid {
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      column-gap:28px;
+      row-gap:0;
+    }
+    .as-row {
+      display:flex; align-items:center; gap:14px;
+      padding:14px 0;
+      border-bottom:.5px solid var(--as-line);
+      min-width:0;
+    }
+    .as-row:last-child { border-bottom:none; }
+    .as-icon {
+      width:52px; height:52px; border-radius:12px; flex-shrink:0;
+      display:grid; place-items:center; background:var(--as-card);
+      box-shadow:0 0 0 .5px rgba(255,255,255,.08); overflow:hidden;
+    }
+    .as-icon img { width:100%; height:100%; object-fit:cover; }
+    .as-icon.code { background:linear-gradient(160deg,#2b9bff,#0b5fd6); }
+    .as-icon.code img { width:66%; height:66%; object-fit:contain; }
+    .as-meta { flex:1; min-width:0; }
+    .as-meta strong {
+      display:block; font-size:14px; font-weight:600; color:#f5f5f7;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:-.01em;
+    }
+    .as-meta span {
+      display:block; font-size:12px; color:var(--as-sub); margin-top:2px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.35;
+    }
+    .as-act { display:flex; flex-direction:column; align-items:center; gap:2px; flex-shrink:0; }
+    .as-act small { font-size:9px; color:var(--as-sub); }
+    .as-btn {
+      position:relative; min-width:64px; height:26px; padding:0 14px;
+      border-radius:999px; border:none; cursor:pointer;
+      font:650 12px inherit; font-family:inherit;
+      background:#2c2c2e; color:#0a84ff; letter-spacing:.01em;
+    }
+    .as-btn:hover { background:#3a3a3c; }
+    .as-btn.busy { min-width:26px; width:26px; padding:0; color:transparent; cursor:default; background:transparent; }
+    .as-btn.busy::before { content:""; position:absolute; inset:0; border-radius:50%; border:2px solid #3a3a3c; }
+    .as-btn.busy::after { content:""; position:absolute; inset:0; border-radius:50%; border:2px solid transparent; border-top-color:#0a84ff; animation:asspin .75s linear infinite; }
+    .as-cloud {
+      position:relative; width:28px; height:28px; border-radius:50%; border:none; background:transparent;
+      color:#0a84ff; cursor:pointer; display:grid; place-items:center; padding:0;
+    }
+    .as-cloud:hover { background:rgba(10,132,255,.12); }
+    .as-cloud svg { width:16px; height:16px; }
+    .as-cloud.busy { color:transparent; pointer-events:none; }
+    .as-cloud.busy svg { opacity:0; }
+    .as-cloud.busy::before { content:""; position:absolute; inset:3px; border-radius:50%; border:2px solid #3a3a3c; }
+    .as-cloud.busy::after { content:""; position:absolute; inset:3px; border-radius:50%; border:2px solid transparent; border-top-color:#0a84ff; animation:asspin .75s linear infinite; }
+    .as-more { background:none; border:none; color:var(--as-sub); cursor:pointer; font-size:15px; padding:0 2px; }
+    .as-more:hover { color:#ff453a; }
+    .as-empty { text-align:center; color:var(--as-sub); padding:80px 0; font-size:14px; }
+    .as-empty strong { display:block; color:var(--as-text); font-size:18px; margin-bottom:6px; }
+    @keyframes asspin { to { transform:rotate(360deg); } }
+
+    /* ===== Dev Hub (Safari frame editor) ===== */
+    .window.devhub-window { background: rgba(28,28,30,0.92) !important; border-radius: 14px !important; width: min(560px, 92vw); height: auto; max-height: 82vh; }
+    .dh-field { display: flex; gap: 8px; margin: 8px 0 10px; }
+    .dh-field input { flex: 1; min-width: 0; height: 34px; padding: 0 12px; border-radius: 9px; border: 1px solid rgba(255,255,255,.14); background: rgba(0,0,0,.35); color: #f5f5f7; font: 13px ui-monospace, Menlo, monospace; outline: none; }
+    .dh-field input:focus { border-color: #0a84ff; box-shadow: 0 0 0 3px rgba(10,132,255,.3); }
+    .dh-btn { height: 34px; padding: 0 16px; border-radius: 9px; border: none; cursor: pointer; font: 600 13px inherit; font-family: inherit; color: #fff; background: rgba(120,120,128,.4); }
+    .dh-btn:hover { filter: brightness(1.15); }
+    .dh-btn.primary { background: #0a84ff; }
+    .dh-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .dh-status { font-size: 12px; color: #8e8e93; margin-top: 10px; line-height: 1.5; word-break: break-all; }
+    .dh-status strong { color: #30d158; font-weight: 600; }
+  </style>
 </head>
 
 <body onload="digi(); lockload(); calculateBattery();">
@@ -9996,12 +10414,70 @@ html[data-theme] .window-header.steam-popup-header,
         <button type="button" class="full-devhub" title="Maximize"></button>
       </div>
       <div class="window__taskbar--content">
-        <h2>Dev Hub <span class="devhub-badge">DEV</span></h2>
+        <h2>Dev Hub</h2>
       </div>
     </div>
     <div class="devhub-body" id="devhub-body">
       <!-- filled by JS -->
     </div>
+  </div>
+
+  <!-- App Store window -->
+  <div class="window appstore-window" id="appstore-window">
+    <aside class="as-sidebar">
+      <div class="window__taskbar--actions as-traffic">
+        <button type="button" class="close-appstore" title="Close"></button>
+        <button type="button" class="min-appstore" title="Minimize"></button>
+        <button type="button" class="full-appstore" title="Maximize"></button>
+      </div>
+      <label class="as-search"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4 4"/></svg><input id="as-search" type="text" placeholder="Search" autocomplete="off" spellcheck="false"></label>
+      <nav class="as-nav" id="as-nav">
+        <button type="button" class="active" data-as-tab="discover"><span class="ic">✦</span>Discover</button>
+        <button type="button" data-as-tab="create"><span class="ic">✎</span>Create</button>
+        <button type="button" data-as-tab="work"><span class="ic">💼</span>Work</button>
+        <button type="button" data-as-tab="play"><span class="ic">🎮</span>Play</button>
+        <button type="button" data-as-tab="develop"><span class="ic">💻</span>Develop</button>
+        <button type="button" data-as-tab="categories"><span class="ic">▦</span>Categories</button>
+        <button type="button" data-as-tab="updates"><span class="ic">⬇</span>Updates</button>
+      </nav>
+      <div class="as-account"><div class="as-avatar">N</div>Nyx</div>
+    </aside>
+    <main class="as-content" id="as-main"></main>
+  </div>
+
+  <!-- Apps that are not installed live here (not in the Dock) until installed from the App Store -->
+  <div id="nyx-app-pool" style="display:none">
+      <button type="button" class="dock-open-app-button icon open-cal open-cal-lunching" data-dock-id="calculator" title="Calculator" aria-label="Launch Calculator" >
+        <p class="tooltip">Calculator</p>
+        <span class="dock-icon-wrap">
+          <img src="https://macos-web.app/app-icons/calculator/512.png" alt="Calculator" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-cal" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon" data-dock-id="calendar" title="Calendar" aria-label="Launch Calendar" >
+        <p class="tooltip">Calendar</p>
+        <span class="dock-icon-wrap">
+          <img src="https://macos-web.app/app-icons/calendar/512.png" alt="Calendar" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon opening" data-dock-id="terminal" title="Terminal" aria-label="Launch Terminal" >
+        <p class="tooltip">Terminal</p>
+        <span class="dock-icon-wrap">
+          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png" alt="Terminal" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-terminal" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_vscode" data-dock-id="vscode" title="VS Code" aria-label="Launch VS Code" >
+        <p class="tooltip">VS Code</p>
+        <span class="dock-icon-wrap">
+          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg" alt="VS Code" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-vscode" style="display:none"></div>
+      </button>
   </div>
 
 <div id="bootup-screen" class="splash-screen" aria-label="Loading macOS">
@@ -10035,7 +10511,7 @@ html[data-theme] .window-header.steam-popup-header,
         <input type="password" id="login-password" placeholder="Enter Password" autocomplete="off" spellcheck="false">
         <div class="login-go" id="login-go" title="Sign in">➔</div>
       </div>
-      <div class="login-hint" id="login-hint">Touch ID or Enter Password</div>
+      <div class="login-hint" id="login-hint">Password: nyx</div>
     </div>
 
     <div class="login-actions">
@@ -10103,20 +10579,63 @@ html[data-theme] .window-header.steam-popup-header,
       </li>
       <li class="leftLi menu-item" data-menu="edit">Edit
         <ul>
-          <li><button type="button" data-action="undo">Undo</button></li>
-          <li><button type="button" data-action="redo">Redo</button></li>
+          <li><button type="button" data-action="undo" disabled>Undo</button></li>
+          <li><button type="button" data-action="redo" disabled>Redo</button></li>
           <li class="menu-sep"></li>
-          <li><button type="button" data-action="cut">Cut</button></li>
-          <li><button type="button" data-action="copy">Copy</button></li>
-          <li><button type="button" data-action="paste">Paste</button></li>
-          <li class="menu-sep"></li>
+          <li><button type="button" data-action="cut" disabled>Cut</button></li>
+          <li><button type="button" data-action="copy" disabled>Copy</button></li>
+          <li><button type="button" data-action="paste" disabled>Paste</button></li>
           <li><button type="button" data-action="select-all">Select All</button></li>
+          <li class="menu-sep"></li>
+          <li><button type="button" data-action="show-clipboard">Show Clipboard</button></li>
+          <li class="menu-sep"></li>
+          <li><button type="button" data-action="start-dictation">Start Dictation...</button></li>
+          <li><button type="button" data-action="emoji-symbols">Emoji &amp; Symbols</button></li>
         </ul>
       </li>
       <li class="leftLi menu-item" data-menu="view">View
         <ul>
-          <li><button type="button" data-action="reload">Reload</button></li>
-          <li><button type="button" data-action="fullscreen">Enter Full Screen</button></li>
+          <li><button type="button" data-action="view-icons" class="finder-only">As Icons</button></li>
+          <li><button type="button" data-action="view-list" class="finder-only">As List</button></li>
+          <li><button type="button" data-action="view-columns" class="finder-only">As Columns</button></li>
+          <li><button type="button" data-action="view-gallery" class="finder-only">As Gallery</button></li>
+          <li class="menu-sep finder-only"></li>
+          <li><button type="button" data-action="use-stacks" class="finder-only">Use Stacks</button></li>
+          <li><button type="button" data-action="sort-by" class="finder-only">Sort By</button></li>
+          <li class="menu-sep finder-only"></li>
+          <li><button type="button" data-action="clean-up" class="finder-only" disabled>Clean Up</button></li>
+          <li><button type="button" data-action="clean-up-by" class="finder-only" disabled>Clean Up By</button></li>
+          <li class="menu-sep finder-only"></li>
+          <li><button type="button" data-action="hide-sidebar" class="finder-only">Hide Sidebar</button></li>
+          <li><button type="button" data-action="show-preview" class="finder-only">Show Preview</button></li>
+          <li class="menu-sep finder-only"></li>
+          <li><button type="button" data-action="hide-toolbar" class="finder-only">Hide Toolbar</button></li>
+          <li><button type="button" data-action="show-all-tabs" class="finder-only">Show All Tabs</button></li>
+          <li><button type="button" data-action="show-tab-bar" class="finder-only">Show Tab Bar</button></li>
+          <li><button type="button" data-action="show-path-bar" class="finder-only">Show Path Bar</button></li>
+          <li style="display:none" class="safari-only"><button type="button" data-action="reload">Reload Page</button></li>
+          <li style="display:none" class="safari-only"><button type="button" data-action="fullscreen">Enter Full Screen</button></li>
+        </ul>
+      </li>
+      <li class="leftLi menu-item" data-menu="go">Go
+        <ul>
+          <li><button type="button" data-action="go-back" disabled>Back</button></li>
+          <li><button type="button" data-action="go-forward" disabled>Forward</button></li>
+          <li><button type="button" data-action="enclosing-folder">Enclosing Folder</button></li>
+          <li class="menu-sep"></li>
+          <li><button type="button" data-action="go-recents">Recents</button></li>
+          <li><button type="button" data-action="go-documents">Documents</button></li>
+          <li><button type="button" data-action="go-desktop">Desktop</button></li>
+          <li><button type="button" data-action="go-downloads">Downloads</button></li>
+          <li><button type="button" data-action="go-home">Home</button></li>
+          <li><button type="button" data-action="go-computer">Computer</button></li>
+          <li><button type="button" data-action="go-airdrop">Airdrop</button></li>
+          <li><button type="button" data-action="go-network">Network</button></li>
+          <li><button type="button" data-action="go-icloud">iCloud Drive</button></li>
+          <li><button type="button" data-action="go-applications">Applications</button></li>
+          <li><button type="button" data-action="go-utilities">Utilities</button></li>
+          <li class="menu-sep"></li>
+          <li><button type="button" data-action="go-to-folder">Go to Folder...</button></li>
         </ul>
       </li>
       <li class="leftLi menu-item safari-menu-extra" data-menu="history" style="display:none">History
@@ -10125,23 +10644,13 @@ html[data-theme] .window-header.steam-popup-header,
           <li><button type="button" data-action="clear-history">Clear History...</button></li>
         </ul>
       </li>
-      <li class="leftLi menu-item" data-menu="bookmarks">Bookmarks
+      <li class="leftLi menu-item safari-menu-extra" data-menu="bookmarks" style="display:none">Bookmarks
         <ul class="menu-bookmarks-ul">
           <li><button type="button" data-action="show-start-page">Show Start Page</button></li>
           <li><button type="button" data-action="show-bookmarks">Show Bookmarks</button></li>
           <li><button type="button" data-action="edit-bookmarks">Edit Bookmarks<span class="menu-shortcut">⌥⌘B</span></button></li>
           <li class="menu-sep"></li>
           <li><button type="button" data-action="add-bookmark">Add Bookmark...<span class="menu-shortcut">⌘D</span></button></li>
-          <li><button type="button" data-action="add-bookmarks-tabs">Add Bookmarks for Open Tabs...</button></li>
-          <li><button type="button" data-action="add-bookmark-folder">Add Bookmark Folder</button></li>
-          <li class="menu-sep"></li>
-          <li><button type="button" data-action="add-reading-list" disabled>Add to Reading List<span class="menu-shortcut">⇧⌘D</span></button></li>
-          <li><button type="button" data-action="add-open-tabs-reading" disabled>Add Open Tabs to Reading List</button></li>
-          <li><button type="button" data-action="prev-reading" disabled>Select Previous Item in Reading List<span class="menu-shortcut">⇧⌘▲</span></button></li>
-          <li><button type="button" data-action="next-reading" disabled>Select Next Item in Reading List<span class="menu-shortcut">⇧⌘▼</span></button></li>
-          <li class="menu-sep"></li>
-          <li class="menu-has-sub"><button type="button" data-action="favorites-submenu"><span class="menu-icon-star">★</span> Favorites<span class="menu-chevron">›</span></button></li>
-          <li class="menu-has-sub"><button type="button" data-action="tab-group-favorites"><span class="menu-icon-tab">⧉</span> Tab Group Favorites<span class="menu-chevron">›</span></button></li>
         </ul>
       </li>
       <li class="leftLi menu-item safari-menu-extra" data-menu="develop" style="display:none">Develop
@@ -10152,35 +10661,61 @@ html[data-theme] .window-header.steam-popup-header,
       </li>
       <li class="leftLi menu-item" data-menu="window">Window
         <ul>
-          <li><button type="button" data-action="minimize">Minimize</button></li>
-          <li><button type="button" data-action="zoom">Zoom</button></li>
+          <li><button type="button" data-action="minimize" disabled>Minimize</button></li>
+          <li><button type="button" data-action="zoom" disabled>Zoom</button></li>
+          <li><button type="button" data-action="move-left" disabled>Move Window to Left Side of Screen</button></li>
+          <li><button type="button" data-action="move-right" disabled>Move Window to Right Side of Screen</button></li>
+          <li class="menu-sep"></li>
+          <li><button type="button" data-action="cycle-windows">Cycle Through Windows</button></li>
+          <li class="menu-sep"></li>
+          <li><button type="button" data-action="prev-tab" disabled>Show Previous Tab</button></li>
+          <li><button type="button" data-action="next-tab" disabled>Show Next Tab</button></li>
+          <li><button type="button" data-action="move-tab-new" disabled>Move Tab to New Window</button></li>
+          <li><button type="button" data-action="merge-windows" disabled>Merge All Windows</button></li>
           <li class="menu-sep"></li>
           <li><button type="button" data-action="front">Bring All to Front</button></li>
         </ul>
       </li>
       <li class="leftLi menu-item" data-menu="help">Help
         <ul>
-          <li><button type="button">macOS Help</button></li>
+          <li><button type="button" data-action="finder-feedback">Send Finder Feedback</button></li>
+          <li class="menu-sep"></li>
+          <li><button type="button" data-action="macos-help">macOS Help</button></li>
         </ul>
       </li>
 </ul>
 
     <ul class="navbar__right">
-      <li class="battery">
-        <span class="battery__text"></span>
-        <div class="battery__container"><div class="battery__progress"></div></div>
+      <li class="battery" title="Battery">
+        <span class="battery__text">100%</span>
+        <div class="battery__container"><div class="battery__progress" style="width:100%"></div></div>
         <div class="battery__popup">
-          <header><h3>Battery</h3><span></span></header>
-          <p>Power Source: <span class="power-source">Battery</span></p>
+          <header><h3>Battery</h3><span>100%</span></header>
+          <p>Power Source: <span class="power-source">Power Adapter</span></p>
           <hr>
           <button>Battery Preferences...</button>
         </div>
       </li>
-      <li class="wifi">
-        <svg width="20" height="20" fill="white"><path d="M12 6c3.537 0 6.837 1.353 9.293 3.809l1.414-1.414C19.874 5.561 16.071 4 12 4 7.929 4.001 4.126 5.561 1.293 8.395l1.414 1.414C5.163 7.353 8.463 6 12 6zm5.671 8.307c-3.074-3.074-8.268-3.074-11.342 0l1.414 1.414c2.307-2.307 6.207-2.307 8.514 0l1.414-1.414z"/><circle cx="12" cy="18" r="2"/></svg>
+      <li class="wifi" title="Wi-Fi">
+        <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
+          <path d="M8 13.5a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5z"/>
+          <path d="M4.93 9.93a4.5 4.5 0 016.14 0 .75.75 0 001.06-1.06 6 6 0 00-8.26 0 .75.75 0 101.06 1.06z"/>
+          <path d="M2.1 7.1a8.5 8.5 0 0111.8 0 .75.75 0 001.06-1.06 10 10 0 00-13.92 0A.75.75 0 102.1 7.1z"/>
+        </svg>
       </li>
-      <li class="open_Search">
-        <svg width="18" height="18" fill="white"><path d="M10 18c1.846 0 3.543-.635 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396C17.365 13.543 18 11.846 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>
+      <li class="open_Search" title="Spotlight Search">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.5"/>
+          <path d="M10.5 10.5L14 14"/>
+        </svg>
+      </li>
+      <li class="cc-btn open_settings_menu" title="Control Center">
+        <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor" aria-hidden="true">
+          <rect x="1" y="2.5" width="14" height="4.5" rx="2.25"/>
+          <circle cx="11.25" cy="4.75" r="1.35" fill="#1d1d1f"/>
+          <rect x="1" y="9" width="14" height="4.5" rx="2.25"/>
+          <circle cx="4.75" cy="11.25" r="1.35" fill="#1d1d1f"/>
+        </svg>
       </li>
       <li class="clock"><span id="clock"></span></li>
     </ul>
@@ -10234,21 +10769,6 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-launchpad" style="display:none"></div>
       </button>
-      <button type="button" class="dock-open-app-button icon open-cal open-cal-lunching" data-dock-id="calculator" title="Calculator" aria-label="Launch Calculator" >
-        <p class="tooltip">Calculator</p>
-        <span class="dock-icon-wrap">
-          <img src="https://macos-web.app/app-icons/calculator/512.png" alt="Calculator" draggable="false" />
-        </span>
-        <div class="dot" data-open-dot></div>
-        <div class="point" id="point-cal" style="display:none"></div>
-      </button>
-      <button type="button" class="dock-open-app-button icon" data-dock-id="calendar" title="Calendar" aria-label="Launch Calendar" >
-        <p class="tooltip">Calendar</p>
-        <span class="dock-icon-wrap">
-          <img src="https://macos-web.app/app-icons/calendar/512.png" alt="Calendar" draggable="false" />
-        </span>
-        <div class="dot" data-open-dot></div>
-      </button>
       <button type="button" class="dock-open-app-button icon open_safari" data-dock-id="safari" title="Safari" aria-label="Launch Safari" >
         <p class="tooltip">Safari</p>
         <span class="dock-icon-wrap">
@@ -10263,22 +10783,6 @@ html[data-theme] .window-header.steam-popup-header,
           <img src="https://macos-web.app/app-icons/appstore/512.png" alt="App Store" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
-      </button>
-      <button type="button" class="dock-open-app-button icon open_vscode" data-dock-id="vscode" title="VS Code" aria-label="Launch VS Code" >
-        <p class="tooltip">VS Code</p>
-        <span class="dock-icon-wrap">
-          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg" alt="VS Code" draggable="false" />
-        </span>
-        <div class="dot" data-open-dot></div>
-        <div class="point" id="point-vscode" style="display:none"></div>
-      </button>
-      <button type="button" class="dock-open-app-button icon opening" data-dock-id="terminal" title="Terminal" aria-label="Launch Terminal" >
-        <p class="tooltip">Terminal</p>
-        <span class="dock-icon-wrap">
-          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png" alt="Terminal" draggable="false" />
-        </span>
-        <div class="dot" data-open-dot></div>
-        <div class="point" id="point-terminal" style="display:none"></div>
       </button>
       <button type="button" class="dock-open-app-button icon open_steam" data-dock-id="steam" title="Steam" aria-label="Launch Steam" >
         <p class="tooltip">Steam</p>
@@ -10319,48 +10823,78 @@ html[data-theme] .window-header.steam-popup-header,
   <div class="launchpad" id="launchpad">
     <div class="searchbox">
       <div class="searchContainer">
-        <svg width="18" height="18" fill="white"><path d="M10 18c1.846 0 3.543-.635 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396C17.365 13.543 18 11.846 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>
-        <input type="search" placeholder="Search" class="searchbox">
+        <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/></svg>
+        <input type="search" id="launchpad-search" placeholder="Search" class="searchbox" autocomplete="off" spellcheck="false">
       </div>
     </div>
-    <div class="Apps-container">
-      <div class="child-launchpad open-cal-lunching" data-keywords="Calculator">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/calculator.png">
-        <strong>Calculator</strong>
+    <div class="Apps-container" id="launchpad-apps">
+      <div class="child-launchpad" data-lp-app="finder" data-keywords="Finder files folder">
+        <img src="https://macos-web.app/app-icons/finder/512.png" alt="Finder" draggable="false">
+        <strong>Finder</strong>
       </div>
-      <div class="child-launchpad" data-keywords="Calendar">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/calendar.png">
-        <strong>Calendar</strong>
-      </div>
-      <div class="child-launchpad" data-keywords="Safari">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/safari.png">
+      <div class="child-launchpad" data-lp-app="safari" data-keywords="Safari browser web">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/safari.png" alt="Safari" draggable="false">
         <strong>Safari</strong>
       </div>
-      <div class="child-launchpad open-tiktok" data-keywords="TikTok">
-        <img src="https://www.google.com/s2/favicons?domain=tiktok.com&sz=128" alt="TikTok" style="border-radius:18px;background:#111">
-        <strong>TikTok</strong>
-      </div>
-      <div class="child-launchpad" data-keywords="Messages">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/messages.png">
-        <strong>Messages</strong>
-      </div>
-      <div class="child-launchpad" data-keywords="App Store">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/appstore.png">
+      <div class="child-launchpad" data-lp-app="appstore" data-keywords="App Store download install">
+        <img src="https://macos-web.app/app-icons/appstore/512.png" alt="App Store" draggable="false">
         <strong>App Store</strong>
       </div>
-      <div class="child-launchpad" data-keywords="Contacts">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/contacts.png">
-        <strong>Contacts</strong>
+      <div class="child-launchpad" data-lp-app="messages" data-keywords="Messages chat text">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/messages.png" alt="Messages" draggable="false">
+        <strong>Messages</strong>
       </div>
-      <div class="child-launchpad" data-keywords="Siri">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/siri.png">
-        <strong>Siri</strong>
+      <div class="child-launchpad" data-lp-app="calendar" data-keywords="Calendar schedule events">
+        <img src="https://macos-web.app/app-icons/calendar/512.png" alt="Calendar" draggable="false">
+        <strong>Calendar</strong>
       </div>
-      <div class="child-launchpad open_imovie" data-keywords="Apple TV TV video movie film streaming">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png" alt="Apple TV" style="border-radius:18px">
+      <div class="child-launchpad" data-lp-app="notes" data-keywords="Notes write memo">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/notes.png" alt="Notes" draggable="false">
+        <strong>Notes</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="maps" data-keywords="Maps navigation location">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/maps.png" alt="Maps" draggable="false">
+        <strong>Maps</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="photos" data-keywords="Photos pictures gallery">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/photos.png" alt="Photos" draggable="false" onerror="this.src='https://macos-web.app/app-icons/photos/512.png'">
+        <strong>Photos</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="calculator" data-keywords="Calculator math numbers">
+        <img src="https://macos-web.app/app-icons/calculator/512.png" alt="Calculator" draggable="false">
+        <strong>Calculator</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="terminal" data-keywords="Terminal shell command line">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png" alt="Terminal" draggable="false">
+        <strong>Terminal</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="vscode" data-keywords="Code VS Code editor develop">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg" alt="Code" draggable="false">
+        <strong>Code</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="steam" data-keywords="Steam games play">
+        <img src="https://cdn.jsdelivr.net/gh/NaoTomori1/yukios@main/static/icons/steam.webp" alt="Steam" draggable="false">
+        <strong>Steam</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="appletv" data-keywords="Apple TV video movie film streaming">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png" alt="Apple TV" draggable="false">
         <strong>Apple TV</strong>
       </div>
+      <div class="child-launchpad" data-lp-app="settings" data-keywords="System Settings preferences system">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/preferences.png" alt="System Settings" draggable="false">
+        <strong>System Settings</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="contacts" data-keywords="Contacts people address book">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/contacts.png" alt="Contacts" draggable="false">
+        <strong>Contacts</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="siri" data-keywords="Siri assistant voice">
+        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/siri.png" alt="Siri" draggable="false">
+        <strong>Siri</strong>
+      </div>
+      <div class="lp-empty" id="launchpad-empty">No Results</div>
     </div>
+    <div class="lp-dots" aria-hidden="true"><span class="active"></span><span></span></div>
   </div>
 
   <!-- WINDOWS -->
@@ -10788,12 +11322,17 @@ html[data-theme] .window-header.steam-popup-header,
           <button type="button" class="settings-nav active" data-panel="wallpaper"><span class="nav-icon" style="background:linear-gradient(135deg,#5ac8fa,#007aff)">🖼</span>Wallpaper</button>
           <button type="button" class="settings-nav" data-panel="general"><span class="nav-icon" style="background:linear-gradient(135deg,#8e8e93,#636366)">⚙</span>General</button>
           <button type="button" class="settings-nav" data-panel="appearance"><span class="nav-icon" style="background:linear-gradient(135deg,#bf5af2,#5856d6)">🎨</span>Appearance</button>
-          <div class="settings-nav-label">Desktop & Apps</div>
+          <button type="button" class="settings-nav" data-panel="displays"><span class="nav-icon" style="background:linear-gradient(135deg,#64d2ff,#007aff)">🖥</span>Displays</button>
+          <button type="button" class="settings-nav" data-panel="sound"><span class="nav-icon" style="background:linear-gradient(135deg,#ff9f0a,#ff6b00)">🔊</span>Sound</button>
+          <div class="settings-nav-label">Desktop & Dock</div>
           <button type="button" class="settings-nav" data-panel="dock"><span class="nav-icon" style="background:linear-gradient(135deg,#5e5ce6,#007aff)">▦</span>Desktop & Dock</button>
           <button type="button" class="settings-nav" data-panel="multitasking"><span class="nav-icon" style="background:linear-gradient(135deg,#ff9f0a,#ff375f)">⧉</span>Multitasking</button>
+          <button type="button" class="settings-nav" data-panel="controlcenter"><span class="nav-icon" style="background:linear-gradient(135deg,#30d158,#34c759)">☰</span>Control Center</button>
+          <button type="button" class="settings-nav" data-panel="notifications"><span class="nav-icon" style="background:linear-gradient(135deg,#ff453a,#ff6961)">🔔</span>Notifications</button>
+          <div class="settings-nav-label">Apps</div>
           <button type="button" class="settings-nav" data-panel="safari"><span class="nav-icon" style="background:linear-gradient(135deg,#64d2ff,#0a84ff)">🧭</span>Safari</button>
           <div class="settings-nav-label">Privacy & Security</div>
-          <button type="button" class="settings-nav" data-panel="privacy"><span class="nav-icon" style="background:linear-gradient(135deg,#30d158,#34c759)">🔒</span>Privacy</button>
+          <button type="button" class="settings-nav" data-panel="privacy"><span class="nav-icon" style="background:linear-gradient(135deg,#30d158,#34c759)">🔒</span>Privacy & Security</button>
           <div class="settings-nav-label">About</div>
           <button type="button" class="settings-nav" data-panel="about"><span class="nav-icon" style="background:linear-gradient(135deg,#64d2ff,#0a84ff)"></span>About This Mac</button>
         </div>
@@ -10819,6 +11358,15 @@ html[data-theme] .window-header.steam-popup-header,
               <div class="settings-row">
                 <div class="row-label"><strong>Ask to keep changes when closing documents</strong></div>
                 <button type="button" class="settings-toggle on" data-toggle="ask-close" aria-pressed="true"></button>
+              </div>
+            </div>
+            <div class="settings-group" style="margin-top:14px">
+              <div class="settings-row">
+                <div class="row-label">
+                  <strong>Reset All Settings</strong>
+                  <span>Restore wallpaper, dock, appearance, Safari, and other preferences to defaults. This page will reload.</span>
+                </div>
+                <button type="button" id="btn-reset-all-settings" class="cloak-btn" style="height:28px;padding:0 14px;font-size:12px;background:#ff3b30;color:#fff;border:none;border-radius:6px;cursor:pointer;white-space:nowrap">Reset…</button>
               </div>
             </div>
             <p class="sub" style="margin-top:8px">Wallpaper is managed under the Wallpaper section. Right-click the desktop for quick access.</p>
@@ -10997,10 +11545,135 @@ html[data-theme] .window-header.steam-popup-header,
               </div>
             </div>
           </div>
+          <div id="settings-panel-displays" style="display:none">
+            <h3>Displays</h3>
+            <p class="sub">Resolution, brightness, and arrangement.</p>
+            <div class="settings-group">
+              <div class="settings-row">
+                <div class="row-label"><strong>Brightness</strong><span>Adjust display brightness</span></div>
+                <input type="range" id="settings-brightness" min="40" max="100" value="100" style="width:120px">
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Resolution</strong><span>Use default for this display</span></div>
+                <select style="height:28px;border-radius:6px;border:1px solid rgba(0,0,0,0.12);padding:0 8px;font-size:13px;background:#fff">
+                  <option selected>Default for display</option>
+                  <option>Scaled — Larger Text</option>
+                  <option>Scaled — More Space</option>
+                </select>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Automatically adjust brightness</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="auto-brightness" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>True Tone</strong><span>Automatically adapt display to ambient light</span></div>
+                <button type="button" class="settings-toggle" data-toggle="true-tone" aria-pressed="false"></button>
+              </div>
+            </div>
+          </div>
+          <div id="settings-panel-sound" style="display:none">
+            <h3>Sound</h3>
+            <p class="sub">Output volume and alert sounds.</p>
+            <div class="settings-group">
+              <div class="settings-row">
+                <div class="row-label"><strong>Output volume</strong></div>
+                <input type="range" id="settings-volume" min="0" max="100" value="70" style="width:120px">
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Play sound on startup</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="startup-sound" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Play user interface sound effects</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="ui-sounds" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Alert volume</strong></div>
+                <input type="range" min="0" max="100" value="80" style="width:120px">
+              </div>
+            </div>
+          </div>
+          <div id="settings-panel-controlcenter" style="display:none">
+            <h3>Control Center</h3>
+            <p class="sub">Choose what appears in Control Center and the menu bar.</p>
+            <div class="settings-group">
+              <div class="settings-row">
+                <div class="row-label"><strong>Wi-Fi</strong><span>Show in Control Center</span></div>
+                <button type="button" class="settings-toggle on" data-toggle="cc-wifi" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Bluetooth</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="cc-bt" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>AirDrop</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="cc-airdrop" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Focus</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="cc-focus" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Display</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="cc-display" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Sound</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="cc-sound" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Now Playing</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="cc-now" aria-pressed="true"></button>
+              </div>
+            </div>
+          </div>
+          <div id="settings-panel-notifications" style="display:none">
+            <h3>Notifications</h3>
+            <p class="sub">Choose when and how you receive notifications.</p>
+            <div class="settings-group">
+              <div class="settings-row">
+                <div class="row-label"><strong>Allow notifications</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="notif-allow" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Show previews</strong><span>Always, when unlocked, or never</span></div>
+                <select style="height:28px;border-radius:6px;border:1px solid rgba(0,0,0,0.12);padding:0 8px;font-size:13px;background:#fff">
+                  <option selected>Always</option>
+                  <option>When Unlocked</option>
+                  <option>Never</option>
+                </select>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Notification Center</strong><span>Show in Notification Center</span></div>
+                <button type="button" class="settings-toggle on" data-toggle="notif-center" aria-pressed="true"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Play sound for notifications</strong></div>
+                <button type="button" class="settings-toggle on" data-toggle="notif-sound" aria-pressed="true"></button>
+              </div>
+            </div>
+          </div>
           <div id="settings-panel-about" style="display:none">
             <h3>About This Mac</h3>
-            <p class="sub">macOS web clone</p>
-            <p style="font-size:13px;opacity:0.8;line-height:1.6">A browser-based desktop experience with Dock, Launchpad, Spotlight, and Steam.</p>
+            <p class="sub">macOS Sequoia · Web Edition</p>
+            <div class="settings-group" style="margin-top:16px">
+              <div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:16px">
+                <div style="display:flex;align-items:center;gap:14px;width:100%">
+                  <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(145deg,#1d1d1f,#3a3a3c);display:grid;place-items:center;font-size:28px;color:#fff"></div>
+                  <div>
+                    <strong style="font-size:16px;display:block">macOS Sequoia</strong>
+                    <span style="font-size:12px;color:#6e6e73">Version 15.0 (Web Build)</span>
+                  </div>
+                </div>
+                <div style="font-size:12px;color:#6e6e73;line-height:1.7;margin-top:8px">
+                  Chip · Apple M-series (emulated)<br>
+                  Memory · Browser RAM<br>
+                  Startup Disk · LocalStorage<br>
+                  Serial Number · NYX-WEB-001
+                </div>
+              </div>
+            </div>
+            <p style="font-size:12px;color:#6e6e73;margin-top:12px;line-height:1.5">A browser-based desktop experience with Dock, Launchpad, Spotlight, Safari, and more.</p>
           </div>
         </div>
       </div>
@@ -11067,7 +11740,13 @@ html[data-theme] .window-header.steam-popup-header,
         </div>
       </div>
       <div id="safari-frames" class="safari-frames">
-        <iframe id="safari-frame" class="safari-frame-pane active" data-tab-id="0" allow="fullscreen; autoplay; encrypted-media; picture-in-picture; clipboard-read; clipboard-write" allowfullscreen="true" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div id="safari-proxy-loading" class="is-visible" aria-live="polite" aria-busy="true">
+          <div class="spl-spinner" aria-hidden="true"></div>
+          <p class="spl-title">Loading…</p>
+          <p class="spl-sub">This could take a minute. It only happens once.</p>
+        </div>
+        <iframe id="safari-frame" class="safari-frame-pane active" data-tab-id="0" src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg" allow="fullscreen; autoplay; encrypted-media; picture-in-picture; clipboard-read; clipboard-write" allowfullscreen="true" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <script>try{var _o=localStorage.getItem("nyx_safari_iframe");if(_o)document.getElementById("safari-frame").src=_o;}catch(e){}</script>
       </div>
 
 </div>
@@ -11224,18 +11903,18 @@ html[data-theme] .window-header.steam-popup-header,
       };
 
       const catalog = [
-        { name: "Terminal", kind: "Application", section: "Applications", keywords: "shell bash cmd console tty", icon: ICON.terminal, action: openApp.terminal },
-        { name: "Notes", kind: "Application", section: "Applications", keywords: "memo write text", icon: ICON.notes, action: openApp.notes },
-        { name: "Calculator", kind: "Application", section: "Applications", keywords: "math calc arithmetic", icon: ICON.calculator, action: openApp.calculator },
-        { name: "VS Code", kind: "Application", section: "Applications", keywords: "code editor ide visual studio programming", icon: ICON.vscode, action: openApp.vscode },
-        { name: "Maps", kind: "Application", section: "Applications", keywords: "location gps navigation", icon: ICON.maps, action: openApp.maps },
+        ...((window.nyxIsInstalled && window.nyxIsInstalled("terminal")) ? [{ name: "Terminal", kind: "Application", section: "Applications", keywords: "shell bash cmd console tty", icon: ICON.terminal, action: openApp.terminal }] : []),
+        ...((window.nyxIsInstalled && window.nyxIsInstalled("notes")) ? [{ name: "Notes", kind: "Application", section: "Applications", keywords: "memo write text", icon: ICON.notes, action: openApp.notes }] : []),
+        ...((window.nyxIsInstalled && window.nyxIsInstalled("calculator")) ? [{ name: "Calculator", kind: "Application", section: "Applications", keywords: "math calc arithmetic", icon: ICON.calculator, action: openApp.calculator }] : []),
+        ...((window.nyxIsInstalled && window.nyxIsInstalled("vscode")) ? [{ name: "Code", kind: "Application", section: "Applications", keywords: "vs code editor ide visual studio programming", icon: ICON.vscode, action: openApp.vscode }] : []),
+        ...((window.nyxIsInstalled && window.nyxIsInstalled("maps")) ? [{ name: "Maps", kind: "Application", section: "Applications", keywords: "location gps navigation", icon: ICON.maps, action: openApp.maps }] : []),
         { name: "Steam", kind: "Application", section: "Applications", keywords: "games gaming play library", icon: ICON.steam, action: openApp.steam },
         { name: "Safari", kind: "Application", section: "Applications", keywords: "browser web internet www", icon: ICON.safari, action: openApp.safari },
         { name: "Apple TV", kind: "Application", section: "Applications", keywords: "video editor movie film imovie apple tv streaming", icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png", action: () => { try { if (typeof openIMovie === "function") openIMovie(); } catch (e) {} } },
         { name: "System Settings", kind: "System", section: "System", keywords: "preferences wallpaper desktop background config", icon: ICON.settings, action: openApp.settings },
         { name: "Launchpad", kind: "System", section: "System", keywords: "apps grid all applications", icon: ICON.launchpad, action: openApp.launchpad },
         { name: "Finder", kind: "Application", section: "Applications", keywords: "files folder disk", icon: ICON.finder, action: () => {} },
-        { name: "App Store", kind: "Application", section: "Applications", keywords: "download install", icon: ICON.appstore, action: () => {} },
+        { name: "App Store", kind: "Application", section: "Applications", keywords: "download install", icon: ICON.appstore, action: () => { try { window.openAppStore && window.openAppStore(); } catch (e) {} } },
         { name: "Messages", kind: "Application", section: "Applications", keywords: "chat imessage text sms", icon: ICON.messages, action: () => {} },
         { name: "Music", kind: "Application", section: "Applications", keywords: "songs apple music audio", icon: ICON.music, action: () => {} },
         { name: "Mail", kind: "Application", section: "Applications", keywords: "email inbox", icon: ICON.mail, action: () => {} },
@@ -11844,22 +12523,50 @@ html[data-theme] .window-header.steam-popup-header,
       toggleMaximize(steam_window);
     }
 
+    function closeLaunchpad() {
+      if (!launchpad) return;
+      launchpad.classList.remove("is-open");
+      launchpad.style.display = "none";
+      if (navbar) navbar.style.display = "flex";
+      try {
+        var si = document.getElementById("launchpad-search");
+        if (si) { si.value = ""; si.blur(); }
+        document.querySelectorAll("#launchpad-apps .child-launchpad").forEach(function (el) {
+          el.classList.remove("is-hidden");
+        });
+        var empty = document.getElementById("launchpad-empty");
+        if (empty) empty.classList.remove("show");
+      } catch (e) {}
+    }
+    function openLaunchpad() {
+      if (!launchpad) return;
+      launchpad.style.display = "flex";
+      // force reflow for fade-in
+      void launchpad.offsetWidth;
+      launchpad.classList.add("is-open");
+      if (navbar) navbar.style.display = "flex";
+      try {
+        var si = document.getElementById("launchpad-search");
+        if (si) setTimeout(function () { si.focus(); }, 80);
+      } catch (e) {}
+    }
     function handleOpenLaunching() {
-      if (launchpad.style.display === "block") {
-        launchpad.style.display = "none";
-        navbar.style.display = "flex";
+      if (!launchpad) return;
+      if (launchpad.classList.contains("is-open") || launchpad.style.display === "flex" || launchpad.style.display === "block") {
+        closeLaunchpad();
       } else {
-        launchpad.style.display = "block";
-        navbar.style.display = "none";
-        container.style.display = "none";
+        openLaunchpad();
       }
     }
+    window.handleOpenLaunching = handleOpenLaunching;
+    window.openLaunchpad = openLaunchpad;
+    window.closeLaunchpad = closeLaunchpad;
 
     function handleOpenCal_lunchpad() {
-      calculator.style.display = "block";
-      container.style.display = "flex";
-      navbar.style.display = "flex";
-      launchpad.style.display = "none";
+      closeLaunchpad();
+      if (calculator) calculator.style.display = "block";
+      if (container) container.style.display = "flex";
+      if (navbar) navbar.style.display = "flex";
       if (point_cal) point_cal.style.display = "block";
     }
 
@@ -12713,7 +13420,8 @@ html[data-theme] .window-header.steam-popup-header,
       const m = String(now.getMinutes()).padStart(2, "0");
       const period = h >= 12 ? "PM" : "AM";
       h = h % 12 || 12;
-      clockElement.textContent = `${h}:${m} ${period}`;
+      const _dn = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], _mn = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      clockElement.textContent = `${_dn[now.getDay()]} ${_mn[now.getMonth()]} ${now.getDate()}\u2002${h}:${m} ${period}`;
       const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
       document.getElementById("day-num").textContent = now.getDate();
       document.getElementById("day-name").textContent = days[now.getDay()];
@@ -14211,12 +14919,34 @@ window.setDesktopBackground = setDesktopBackground;
         document.querySelectorAll(".settings-nav").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         const panel = btn.dataset.panel;
-        ["wallpaper", "general", "appearance", "dock", "multitasking", "safari", "privacy", "about"].forEach(p => {
+        ["wallpaper", "general", "appearance", "displays", "sound", "dock", "multitasking", "controlcenter", "notifications", "safari", "privacy", "about"].forEach(p => {
           const el = document.getElementById("settings-panel-" + p);
           if (el) el.style.display = p === panel ? "block" : "none";
         });
       });
     });
+
+    /* Brightness slider → desktop filter */
+    (function () {
+      var br = document.getElementById("settings-brightness");
+      if (!br) return;
+      function apply() {
+        var v = Math.max(40, Math.min(100, parseInt(br.value, 10) || 100)) / 100;
+        document.documentElement.style.setProperty("--desktop-brightness", String(v));
+        var bg = document.getElementById("desktop-bg");
+        if (bg) bg.style.filter = "brightness(" + v + ")";
+        var vid = document.getElementById("desktop-bg-video");
+        if (vid) vid.style.filter = "brightness(" + v + ")";
+      }
+      br.addEventListener("input", apply);
+      try {
+        var saved = localStorage.getItem("nyx_brightness");
+        if (saved) { br.value = saved; apply(); }
+      } catch (e) {}
+      br.addEventListener("change", function () {
+        try { localStorage.setItem("nyx_brightness", br.value); } catch (e) {}
+      });
+    })();
 
     // Tab cloaking (about:blank + blob)
     function buildCloakShell(srcUrl) {
@@ -14500,7 +15230,9 @@ window.setDesktopBackground = setDesktopBackground;
 
 
     // ===== Safari: Scramjet v2 stack via Wisp transport (libcurl) + DuckDuckGo =====
-    const NYX_PROXY_URL = "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy@main/index.svg";
+    const NYX_PROXY_DEFAULT = "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg";
+    function nyxGetFrameOverride() { try { return localStorage.getItem("nyx_safari_iframe") || ""; } catch (e) { return ""; } }
+    let NYX_PROXY_URL = nyxGetFrameOverride() || NYX_PROXY_DEFAULT;
     /* singlefilev3.html — loaded as Safari start page via srcdoc */
     const NYX_SINGLEFILE_V3 = `<!DOCTYPE html>
 <html lang="en">
@@ -14546,58 +15278,6 @@ window.setDesktopBackground = setDesktopBackground;
 })();
 <\/script>
 
-  <script>
-(function () {
-  var CDN_BASE = "https://cdn.jsdelivr.net/gh/Mo9nikeypurple/svgproxy@main/";
-  function isBadBase(b) {
-    if (b == null || b === "") return true;
-    var s = String(b);
-    return s === "about:srcdoc" || s === "about:blank" || s.indexOf("blob:") === 0 ||
-      s === "null" || s.indexOf("about:") === 0;
-  }
-  function safeBase() {
-    try {
-      var h = String(location.href || "");
-      if (isBadBase(h)) return CDN_BASE;
-      return h;
-    } catch (e) { return CDN_BASE; }
-  }
-  try {
-    var OrigURL = window.URL;
-    function PatchedURL(path, base) {
-      if (arguments.length < 2 || isBadBase(base)) base = safeBase();
-      try {
-        return new OrigURL(path, base);
-      } catch (e1) {
-        try { return new OrigURL(path, CDN_BASE); }
-        catch (e2) {
-          try { return new OrigURL(String(path)); }
-          catch (e3) { throw e1; }
-        }
-      }
-    }
-    PatchedURL.prototype = OrigURL.prototype;
-    try {
-      Object.defineProperty(PatchedURL, "createObjectURL", { value: OrigURL.createObjectURL.bind(OrigURL) });
-      Object.defineProperty(PatchedURL, "revokeObjectURL", { value: OrigURL.revokeObjectURL.bind(OrigURL) });
-      if (OrigURL.canParse) Object.defineProperty(PatchedURL, "canParse", { value: OrigURL.canParse.bind(OrigURL) });
-      if (OrigURL.parse) Object.defineProperty(PatchedURL, "parse", { value: OrigURL.parse.bind(OrigURL) });
-    } catch (e) {
-      PatchedURL.createObjectURL = OrigURL.createObjectURL.bind(OrigURL);
-      PatchedURL.revokeObjectURL = OrigURL.revokeObjectURL.bind(OrigURL);
-    }
-    window.URL = PatchedURL;
-    window.__nyxSafeUrl = function (path, base) {
-      try { return new PatchedURL(path, base || safeBase()).href; }
-      catch (e) { return String(path); }
-    };
-    window.__nyxSafeBase = safeBase;
-  } catch (e) {
-    console.warn("[nyx] URL patch failed", e);
-  }
-})();
-<\/script>
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>raplon</title>
@@ -14621,34 +15301,77 @@ window.setDesktopBackground = setDesktopBackground;
   <\/script>
 
   <script>
-    // SW cannot control srcdoc/blob/about: frames — skip registration to avoid Invalid URL / reloads
+    // Register the SAME-ORIGIN service worker (required for the proxy).
+    // On GitHub Pages this must be the file in THIS repo, e.g. ./4mkcjl.js
+    // — never a cross-origin CDN URL (browsers block that).
     (function () {
-      var embedded = false;
+      // Resolve SW against the page origin, not <base href>
+      var swUrl = new URL("4mkcjl.js", location.href).href;
+      // If page is .../singlefile.html, SW is still .../4mkcjl.js next to it
+      // Prefer repo-root SW when under /svgproxy/
       try {
-        var h = String(location.href || "");
-        embedded = !h || h === "about:srcdoc" || h === "about:blank" || h.indexOf("blob:") === 0;
-      } catch (e) { embedded = true; }
-      window.__SW_FILE__ = "";
-      window.__swRegistration = Promise.resolve(null);
-      if (embedded) {
-        console.info("[sw] embedded frame — service worker skipped");
-        return;
-      }
-      try {
-        var base = (typeof window.__nyxSafeBase === "function") ? window.__nyxSafeBase() : location.href;
-        var swUrl = new URL("4mkcjl.js", base).href;
-        window.__SW_FILE__ = swUrl;
-        if (!navigator.serviceWorker) return;
-        var scope = new URL(".", swUrl).href;
-        window.__swRegistration = navigator.serviceWorker
-          .register(swUrl, { updateViaCache: "all", scope: scope })
-          .catch(function (err) {
-            console.error("[sw] registration failed:", err);
-            return null;
-          });
-      } catch (err) {
-        console.error("[sw] skipped:", err);
-      }
+        var path = location.pathname;
+        if (path.endsWith(".html")) {
+          swUrl = new URL("4mkcjl.js", location.href.replace(/[^/]+$/, "")).href;
+        }
+      } catch (e) {}
+
+      window.__SW_FILE__ = swUrl;
+      window.__swRegistration = navigator.serviceWorker
+        ? (function () {
+            var FILE = (window.__SW_FILE__ || "").split("/").pop();
+            var baseName = function (u) {
+              try { return new URL(u, location.href).pathname.split("/").pop(); }
+              catch (e) { return String(u); }
+            };
+            var scope = new URL(".", new URL(window.__SW_FILE__, location.href)).href;
+            // Drop stale workers from other builds/paths only
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+              regs.forEach(function (r) {
+                var w = r.active || r.waiting || r.installing;
+                if (r.scope !== scope && w && baseName(w.scriptURL) !== FILE) r.unregister();
+              });
+            }).catch(function () {});
+
+            return navigator.serviceWorker
+              .register(window.__SW_FILE__, { updateViaCache: "all", scope: scope })
+              .then(function (reg) {
+                function currentControls() {
+                  var c = navigator.serviceWorker.controller;
+                  return !!c && baseName(c.scriptURL) === FILE;
+                }
+                if (currentControls()) {
+                  sessionStorage.removeItem("__sw_reload");
+                  return reg;
+                }
+                if (sessionStorage.getItem("__sw_reload")) return reg;
+                navigator.serviceWorker.ready.then(function () {
+                  if (currentControls()) return;
+                  var settled = false;
+                  var onCtrl = function () {
+                    if (!currentControls()) return;
+                    settled = true;
+                    navigator.serviceWorker.removeEventListener("controllerchange", onCtrl);
+                  };
+                  navigator.serviceWorker.addEventListener("controllerchange", onCtrl);
+                  setTimeout(function () {
+                    navigator.serviceWorker.removeEventListener("controllerchange", onCtrl);
+                    if (!settled && !currentControls()) {
+                      /* skip reload inside Safari iframe — SW cannot control srcdoc/blob */
+                      console.warn("[sw] skip reload (embedded)");
+                    }
+                  }, 1500);
+                });
+                return reg;
+              })
+              .catch(function (err) {
+                console.error("[sw] registration failed:", err);
+                console.error("[sw] The proxy needs 4mkcjl.js on the SAME origin as this page.");
+                console.error("[sw] Expected SW URL:", swUrl);
+                return null;
+              });
+          })()
+        : Promise.resolve(null);
     })();
   <\/script>
 
@@ -14664,28 +15387,175 @@ window.setDesktopBackground = setDesktopBackground;
 `;
     function nyxLoadSinglefileV3(frame) {
       if (!frame) return;
-      var url = (typeof NYX_PROXY_URL !== "undefined" && NYX_PROXY_URL)
-        ? NYX_PROXY_URL
-        : "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy@main/index.svg";
+      var PROXY = NYX_PROXY_URL;
+      function afterLoad() {
+        try {
+          var t = document.querySelector('.safari-tab.active .safari-tab-title');
+          if (t) t.textContent = "Proxy";
+          var u = document.getElementById("safari-url");
+          if (u && (!u.value || u.value === "raplon" || u.value === "about:blank")) u.value = "proxy";
+        } catch (e) {}
+      }
       try {
         try { frame.removeAttribute("srcdoc"); } catch (e0) {}
-        try { frame.removeAttribute("src"); } catch (e1) {}
-        frame.onload = function () {
-          try {
-            var t = document.querySelector('.safari-tab.active .safari-tab-title');
-            if (t) t.textContent = "cherri";
-            var u = document.getElementById("safari-url");
-            if (u) u.value = url;
-          } catch (e) {}
-        };
-        frame.src = url;
+        try { frame.removeAttribute("sandbox"); } catch (e1) {}
+        frame.onload = afterLoad;
+        // Direct iframe load of the SVG proxy (avoids about:srcdoc Invalid URL)
+        if (frame.getAttribute("src") !== PROXY) {
+          frame.src = PROXY;
+        }
+        setTimeout(afterLoad, 80);
       } catch (e) {
-        try { frame.src = url; } catch (e2) {
-          console.error("[nyx] safari load failed", e2);
+        try {
+          frame.src = PROXY;
+        } catch (e2) {
+          console.error("[nyx] failed to load Safari proxy iframe", e2);
         }
       }
     }
-    const NYX_PROXY_HTML = "<!DOCTYPE html><html><head><meta charset=UTF-8><title>Lumaos</title><style>html,body{margin:0;height:100%;background:#0b0b0f;color:#eee;font:15px system-ui;display:flex;align-items:center;justify-content:center}a{color:#8cf}</style></head><body><div>Opening SVG proxy…</div><script>location.replace('https://fastly.jsdelivr.net/gh/mathissofun137/Lumaos@main/index.svg')<\/script></body></html>";
+    window.nyxLoadSinglefileV3 = nyxLoadSinglefileV3;
+
+    // ===== Safari proxy first-load splash (once only) =====
+    (function initSafariProxyLoading() {
+      var KEY = "nyx_safari_proxy_ready_v1";
+      var MAX_MS = 90000;
+      var hideTimer = null;
+
+      function overlay() {
+        return document.getElementById("safari-proxy-loading");
+      }
+      function alreadyDone() {
+        try { return localStorage.getItem(KEY) === "1"; } catch (e) { return false; }
+      }
+      function markDone() {
+        try { localStorage.setItem(KEY, "1"); } catch (e) {}
+      }
+      function hide() {
+        var el = overlay();
+        if (!el) return;
+        el.classList.remove("is-visible");
+        el.setAttribute("aria-busy", "false");
+        el.style.display = "none";
+        if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+      }
+      function show() {
+        var el = overlay();
+        if (!el) return;
+        el.style.display = "flex";
+        el.classList.add("is-visible");
+        el.setAttribute("aria-busy", "true");
+      }
+
+      function onReady() {
+        markDone();
+        hide();
+      }
+
+      function wireFrame(frame) {
+        if (!frame || frame.__nyxProxyLoadWired) return;
+        frame.__nyxProxyLoadWired = true;
+        var done = false;
+        function finish() {
+          if (done) return;
+          done = true;
+          onReady();
+        }
+        frame.addEventListener("load", finish);
+        // Already complete (disk/memory cache)
+        try {
+          if (frame.contentDocument && frame.contentDocument.readyState === "complete") {
+            setTimeout(finish, 120);
+          }
+        } catch (e) {
+          // cross-origin: rely on load event / timeout
+        }
+        try {
+          if (frame.complete) setTimeout(finish, 120);
+        } catch (e2) {}
+        hideTimer = setTimeout(finish, MAX_MS);
+      }
+
+      function startIfNeeded() {
+        if (alreadyDone()) {
+          hide();
+          return;
+        }
+        show();
+        var frame = document.getElementById("safari-frame");
+        try {
+          if (typeof window.getSafariActiveFrame === "function") {
+            var af = window.getSafariActiveFrame();
+            if (af) frame = af;
+          }
+        } catch (e) {}
+        if (frame) wireFrame(frame);
+      }
+
+      window.nyxSafariProxyLoading = {
+        start: startIfNeeded,
+        hide: hide,
+        done: alreadyDone
+      };
+
+      // Boot: if already loaded once, hide immediately; else show and wait for iframe
+      function boot() {
+        if (alreadyDone()) {
+          hide();
+        } else {
+          show();
+          var frame = document.getElementById("safari-frame");
+          if (frame) wireFrame(frame);
+        }
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+      else boot();
+      setTimeout(boot, 0);
+
+      // When Safari opens / reloads proxy, only show if first time
+      var _origLoad = window.nyxLoadSinglefileV3;
+      if (typeof _origLoad === "function") {
+        window.nyxLoadSinglefileV3 = function (frame) {
+          if (!alreadyDone()) {
+            show();
+            if (frame) {
+              frame.__nyxProxyLoadWired = false;
+              wireFrame(frame);
+            }
+          } else {
+            hide();
+          }
+          return _origLoad.apply(this, arguments);
+        };
+      } else {
+        // Patch later when defined
+        Object.defineProperty(window, "nyxLoadSinglefileV3", {
+          configurable: true,
+          set: function (fn) {
+            Object.defineProperty(window, "nyxLoadSinglefileV3", {
+              configurable: true,
+              writable: true,
+              value: function (frame) {
+                if (!alreadyDone()) {
+                  show();
+                  if (frame) {
+                    frame.__nyxProxyLoadWired = false;
+                    wireFrame(frame);
+                  }
+                } else {
+                  hide();
+                }
+                return fn.apply(this, arguments);
+              }
+            });
+          },
+          get: function () { return undefined; }
+        });
+      }
+    })();
+
+
+
+    const NYX_PROXY_HTML = "<!DOCTYPE html><html><head><meta charset=UTF-8><title>Lumaos</title><style>html,body{margin:0;height:100%;background:#0b0b0f;color:#eee;font:15px system-ui;display:flex;align-items:center;justify-content:center}a{color:#8cf}</style></head><body><div>Opening SVG proxy…</div><script>location.replace('https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg')<\/script></body></html>";
 // Direct iframe navigation (no proxy)
     window.addEventListener("message", function (ev) {
       try {
@@ -16316,52 +17186,112 @@ window.setDesktopBackground = setDesktopBackground;
 
       // Password auth — default password is "nyx" (change with Terminal: passwd)
       const DEFAULT_PASSWORD = "nyx";
+      const PASS_HASH_KEY = "macos_login_pass_hash";
+      const PASS_CUSTOM_KEY = "macos_login_pass_custom"; // "1" only when user ran passwd
+      const PASS_VERSION_KEY = "macos_login_pass_v";
+      const PASS_VERSION = "2";
+
       function hashPass(s) {
-        // Simple deterministic hash (not crypto-secure; fine for this demo UI)
-        s = String(s || "");
-        let h = 2166136261;
-        for (let i = 0; i < s.length; i++) {
+        // FNV-1a 32-bit (deterministic; fine for this demo UI)
+        s = String(s == null ? "" : s);
+        var h = 2166136261;
+        for (var i = 0; i < s.length; i++) {
           h ^= s.charCodeAt(i);
           h = Math.imul(h, 16777619);
         }
         return ("00000000" + (h >>> 0).toString(16)).slice(-8);
       }
+
+      function isCustomPassword() {
+        try { return localStorage.getItem(PASS_CUSTOM_KEY) === "1"; } catch (e) { return false; }
+      }
+
       function getStoredPassHash() {
         try {
-          const h = localStorage.getItem("macos_login_pass_hash");
-          if (h) return h;
+          var h = localStorage.getItem(PASS_HASH_KEY);
+          if (h && /^[0-9a-f]{8}$/i.test(h)) return h.toLowerCase();
         } catch (e) {}
         return hashPass(DEFAULT_PASSWORD);
       }
-      function setStoredPassword(plain) {
+
+      function setStoredPassword(plain, isCustom) {
+        plain = String(plain == null ? "" : plain);
         try {
-          localStorage.setItem("macos_login_pass_hash", hashPass(plain));
-          localStorage.setItem("macos_login_pass_set", "1");
+          localStorage.setItem(PASS_HASH_KEY, hashPass(plain));
+          if (isCustom) {
+            localStorage.setItem(PASS_CUSTOM_KEY, "1");
+            localStorage.setItem("macos_login_pass_set", "1");
+          } else {
+            localStorage.removeItem(PASS_CUSTOM_KEY);
+            localStorage.removeItem("macos_login_pass_set");
+          }
+          localStorage.setItem(PASS_VERSION_KEY, PASS_VERSION);
         } catch (e) {}
       }
-      // Seed default hash on first run
-      try {
-        if (!localStorage.getItem("macos_login_pass_hash")) {
-          setStoredPassword(DEFAULT_PASSWORD);
-        }
-      } catch (e) {}
 
-      window.setLoginPassword = setStoredPassword;
+      // Migrate / seed: ensure default "nyx" works. Old builds set pass_set even for default.
+      try {
+        var ver = localStorage.getItem(PASS_VERSION_KEY);
+        var stored = localStorage.getItem(PASS_HASH_KEY);
+        var legacySet = localStorage.getItem("macos_login_pass_set") === "1";
+        var defaultHash = hashPass(DEFAULT_PASSWORD);
+        if (ver !== PASS_VERSION) {
+          // If never customized to something other than nyx, reset to nyx
+          if (!stored || stored.toLowerCase() === defaultHash || !legacySet) {
+            setStoredPassword(DEFAULT_PASSWORD, false);
+          } else if (legacySet && stored.toLowerCase() !== defaultHash) {
+            // Keep custom password from passwd, mark as custom
+            localStorage.setItem(PASS_CUSTOM_KEY, "1");
+            localStorage.setItem(PASS_VERSION_KEY, PASS_VERSION);
+          } else {
+            setStoredPassword(DEFAULT_PASSWORD, false);
+          }
+        } else if (!stored) {
+          setStoredPassword(DEFAULT_PASSWORD, false);
+        }
+      } catch (e) {
+        try { setStoredPassword(DEFAULT_PASSWORD, false); } catch (e2) {}
+      }
+
+      window.setLoginPassword = function (plain) {
+        setStoredPassword(plain, true);
+      };
       window.verifyLoginPassword = function (plain) {
-        return hashPass(plain) === getStoredPassHash();
+        plain = String(plain == null ? "" : plain).trim();
+        if (!plain) return false;
+        var stored = getStoredPassHash();
+        var defaultHash = hashPass(DEFAULT_PASSWORD);
+        // Exact match (trimmed)
+        if (hashPass(plain) === stored) return true;
+        // Default password: case-insensitive "nyx"
+        if (plain.toLowerCase() === DEFAULT_PASSWORD) {
+          if (stored === defaultHash || !isCustomPassword()) {
+            // Heal storage so future logins stay consistent
+            try { setStoredPassword(DEFAULT_PASSWORD, false); } catch (e) {}
+            return true;
+          }
+        }
+        // Case-insensitive match against stored when still on default
+        if (!isCustomPassword() && hashPass(plain.toLowerCase()) === defaultHash) {
+          return true;
+        }
+        return false;
       };
       window.getDefaultLoginHint = function () {
         try {
-          if (localStorage.getItem("macos_login_pass_set") === "1" &&
-              localStorage.getItem("macos_login_pass_hash") !== hashPass(DEFAULT_PASSWORD)) {
+          if (isCustomPassword() && getStoredPassHash() !== hashPass(DEFAULT_PASSWORD)) {
             return "Enter Password";
           }
         } catch (e) {}
         return "Password: nyx";
       };
+      window.resetLoginPassword = function () {
+        setStoredPassword(DEFAULT_PASSWORD, false);
+        return DEFAULT_PASSWORD;
+      };
 
       function attemptSignIn() {
-        const typed = input ? String(input.value || "") : "";
+        var typed = input ? String(input.value || "").trim() : "";
         if (!typed) {
           if (hint) hint.textContent = "Enter a password";
           if (field) {
@@ -16371,8 +17301,15 @@ window.setDesktopBackground = setDesktopBackground;
           }
           return;
         }
-        if (!window.verifyLoginPassword(typed)) {
-          if (hint) hint.textContent = "Incorrect password";
+        var ok = false;
+        try {
+          ok = !!(window.verifyLoginPassword && window.verifyLoginPassword(typed));
+        } catch (e) {
+          // Last-resort: accept default password if verifier throws
+          ok = typed.toLowerCase() === DEFAULT_PASSWORD;
+        }
+        if (!ok) {
+          if (hint) hint.textContent = "Incorrect password — try nyx";
           if (field) {
             field.classList.remove("shake");
             void field.offsetWidth;
@@ -16974,95 +17911,40 @@ window.setDesktopBackground = setDesktopBackground;
       function renderDevHubBody() {
         const body = document.getElementById("devhub-body");
         if (!body) return;
-        const current = getWispServer();
-        let html = "<h1>Dev Hub</h1>"
-          + "<p class=\"lede\">Developer toolkit unlocked via <code>sudo apt install dev</code>. "
-          + "Click any link to open it in Safari (proxied). Run <code>sudo apt remove dev</code> to hide this app.</p>";
-
-        // Wisp proxy server editor (dev-mode only)
-        html += '<div class="devhub-wisp">'
-          + '<h3>Wisp Proxy Server</h3>'
-          + '<p class="hint">Safari’s browser uses a Wisp WebSocket proxy. When set, the custom <code>wss://</code> URL is used <strong>exclusively</strong> (no fallback). Reset clears it so the built-in list is used. Stored in <code>localStorage.nyx_wisp</code>.</p>'
-          + '<div class="devhub-wisp-row">'
-          + '<input type="text" id="devhub-wisp-input" spellcheck="false" autocomplete="off" '
-          + 'placeholder="wss://your-wisp-server.example/wisp/" value="'
-          + String(current).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;") + '">'
-          + '<button type="button" class="save" id="devhub-wisp-save">Save</button>'
-          + '<button type="button" class="reset" id="devhub-wisp-reset">Reset</button>'
-          + '</div>'
-          + '<div class="devhub-wisp-status" id="devhub-wisp-status">'
-          + (current
-              ? 'Using ONLY: <strong>' + String(current).replace(/&/g,"&amp;").replace(/</g,"&lt;") + '</strong> (no fallback)'
-              : 'Built-in server list (fallback enabled)')
-          + '</div>'
-          + '<div class="devhub-wisp-presets">';
-        WISP_PRESETS.forEach(function (u) {
-          html += '<button type="button" class="devhub-wisp-preset" data-url="'
-            + String(u).replace(/"/g, "&quot;") + '">' + String(u).replace(/</g, "&lt;") + "</button>";
-        });
-        html += "</div></div>";
-
-        DEV_LINKS.forEach(function (sec) {
-          html += '<div class="devhub-section"><h3>' + sec.section + "</h3><div class=\"devhub-links\">";
-          sec.items.forEach(function (it) {
-            html += '<button type="button" class="devhub-link" data-url="'
-              + String(it.url).replace(/"/g, "&quot;") + '">'
-              + '<span class="emoji">' + (it.emoji || "🔗") + "</span>"
-              + '<span class="meta"><strong>' + String(it.name).replace(/</g, "&lt;") + "</strong>"
-              + "<span>" + String(it.desc || "").replace(/</g, "&lt;") + "</span></span></button>";
-          });
-          html += "</div></div>";
-        });
-        body.innerHTML = html;
-
-        body.querySelectorAll(".devhub-link").forEach(function (btn) {
-          btn.addEventListener("click", function (e) {
-            e.preventDefault();
-            openDevLink(btn.getAttribute("data-url"));
-          });
-        });
-
-        function refreshStatus() {
-          const st = document.getElementById("devhub-wisp-status");
-          const inp = document.getElementById("devhub-wisp-input");
-          const cur = getWispServer();
-          if (inp) inp.value = cur;
-          if (st) {
-            st.innerHTML = cur
-              ? 'Using ONLY: <strong>' + String(cur).replace(/&/g,"&amp;").replace(/</g,"&lt;") + '</strong> (no fallback). Reopen Safari to apply.'
-              : "Built-in server list (fallback enabled)";
-          }
+        const esc = function (v) { return String(v || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); };
+        const DEFAULT = (typeof NYX_PROXY_DEFAULT !== "undefined") ? NYX_PROXY_DEFAULT : "";
+        const override = (typeof nyxGetFrameOverride === "function") ? nyxGetFrameOverride() : "";
+        body.innerHTML = "<h1>Safari Frame</h1>"
+          + "<p class=\"lede\">Change the page Safari’s iframe loads. Run <code>sudo apt remove dev</code> to hide Dev Hub.</p>"
+          + '<div class="dh-field"><input type="text" id="dh-frame-input" spellcheck="false" autocomplete="off" placeholder="https://example.com/" value="' + esc(override || DEFAULT) + '">'
+          + '<button type="button" class="dh-btn primary" id="dh-apply">Apply</button></div>'
+          + '<div class="dh-row"><button type="button" class="dh-btn" id="dh-reset">Reset to default</button>'
+          + '<button type="button" class="dh-btn" id="dh-open">Open Safari</button></div>'
+          + '<div class="dh-status" id="dh-status"></div>';
+        const inp = document.getElementById("dh-frame-input");
+        const st = document.getElementById("dh-status");
+        function status() {
+          const cur = nyxGetFrameOverride();
+          st.innerHTML = cur ? "Custom frame: <strong>" + esc(cur) + "</strong>" : "Using default frame: <strong>" + esc(DEFAULT) + "</strong>";
         }
-        const saveBtn = document.getElementById("devhub-wisp-save");
-        const resetBtn = document.getElementById("devhub-wisp-reset");
-        const inp = document.getElementById("devhub-wisp-input");
-        if (saveBtn && inp) {
-          saveBtn.addEventListener("click", function () {
-            setWispServer(inp.value);
-            refreshStatus();
-          });
-          inp.addEventListener("keydown", function (e) {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              setWispServer(inp.value);
-              refreshStatus();
-            }
-          });
+        function apply(url) {
+          url = String(url || "").trim();
+          if (url && !/^[a-z][a-z0-9+.-]*:/i.test(url)) url = "https://" + url;
+          if (url === DEFAULT) url = "";
+          try { if (url) localStorage.setItem("nyx_safari_iframe", url); else localStorage.removeItem("nyx_safari_iframe"); } catch (e) {}
+          try { NYX_PROXY_URL = url || NYX_PROXY_DEFAULT; } catch (e) {}
+          try {
+            const fr = document.getElementById("safari-frame");
+            if (fr) { fr.removeAttribute("srcdoc"); fr.src = url || NYX_PROXY_DEFAULT; }
+          } catch (e) {}
+          inp.value = url || DEFAULT;
+          status();
         }
-        if (resetBtn) {
-          resetBtn.addEventListener("click", function () {
-            setWispServer("");
-            refreshStatus();
-          });
-        }
-        body.querySelectorAll(".devhub-wisp-preset").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            const u = btn.getAttribute("data-url") || "";
-            if (inp) inp.value = u;
-            setWispServer(u);
-            refreshStatus();
-          });
-        });
+        document.getElementById("dh-apply").addEventListener("click", function () { apply(inp.value); });
+        inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); apply(inp.value); } });
+        document.getElementById("dh-reset").addEventListener("click", function () { apply(""); });
+        document.getElementById("dh-open").addEventListener("click", function () { if (typeof openSafari === "function") openSafari(); });
+        status();
       }
 
       function openDevHub() {
@@ -17075,6 +17957,7 @@ window.setDesktopBackground = setDesktopBackground;
         win.style.visibility = "visible";
         win.style.opacity = "1";
         win.style.zIndex = "80";
+        try { window.nyxBumpZ(win); if (!win._zWired) { win._zWired = true; win.addEventListener("mousedown", function () { window.nyxBumpZ(win); }, true); } } catch (e) {}
         const pt = document.getElementById("point-devhub");
         if (pt) pt.style.display = "block";
         try {
@@ -17085,7 +17968,7 @@ window.setDesktopBackground = setDesktopBackground;
             win._dragWired = true;
             $(win).draggable({
               handle: ".window__taskbar",
-              cancel: "button, a, input, .devhub-link, .devhub-body, .devhub-wisp",
+              cancel: "button, a, input, .devhub-body",
               containment: "window"
             });
           }
@@ -18933,9 +19816,11 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   }
 
   function applyWidth(item, w) {
-    // macos-web: style:width="{$width_px / 16}rem"
-    item.img.style.width = (w / 16) + "rem";
-    item.img.style.height = "auto";
+    // macos-web style: square icons so they stay centered/even
+    var rem = (w / 16) + "rem";
+    item.img.style.width = rem;
+    item.img.style.height = rem;
+    item.img.style.objectFit = "contain";
   }
 
   var _dockNeedsAnim = false;
@@ -19803,5 +20688,455 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     } catch (e) {}
 </script>
 
+<script>
+/* ===== App Store + install state ===== */
+(function () {
+  var KEY = "nyx_installed_apps";
+  var CODE_ICON = "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg";
+  // Code is installable; the rest are built in and simply open.
+  var APPS = [
+    { id: "vscode", name: "Code", sub: "Code editor", cats: ["develop", "create", "work"], icon: CODE_ICON, code: true, inst: true, win: ".Vscode", badge: true },
+    { id: "terminal", name: "Terminal", sub: "Command line", cats: ["develop", "work"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png", dock: "terminal", inst: true, win: ".terminal", lp: "" },
+    { id: "calculator", name: "Calculator", sub: "Math made easy", cats: ["work"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/calculator.png", dock: "calculator", inst: true, win: ".calculator", lp: "Calculator" },
+    { id: "calendar", name: "Calendar", sub: "Organize your day", cats: ["work"], icon: "https://macos-web.app/app-icons/calendar/512.png", dock: "calendar", inst: true, lp: "Calendar" },
+    { id: "notes", name: "Notes", sub: "Capture quick thoughts", cats: ["create", "work"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/notes.png", inst: true, win: ".note" },
+    { id: "maps", name: "Maps", sub: "Find your way", cats: ["work", "play"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/maps.png", inst: true, win: ".maps" },
+    { id: "safari", name: "Safari", sub: "Web browser", cats: ["work"], dock: "safari" },
+    { id: "steam", name: "Steam", sub: "Games & community", cats: ["arcade", "play"], dock: "steam" },
+    { id: "appletv", name: "Apple TV", sub: "Movies & shows", cats: ["play"], dock: "appletv" },
+    { id: "settings", name: "System Settings", sub: "Customize your Mac", cats: ["work"], dock: "settings" }
+  ];
+
+  var TITLES = { discover: "Discover", arcade: "Arcade", create: "Create", work: "Work", play: "Play", develop: "Develop", categories: "Categories", updates: "Updates" };
+
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || "[]") || []; } catch (e) { return []; } }
+  function save(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} }
+  var installed = load();
+  window.nyxIsInstalled = function (id) { return installed.indexOf(id) >= 0; };
+
+  function dock() { return document.getElementById("macos-dock"); }
+  function pool() { return document.getElementById("nyx-app-pool"); }
+  function dockBtn(id) { return document.querySelector('.dock-open-app-button[data-dock-id="' + id + '"]'); }
+  function appById(id) { return APPS.filter(function (x) { return x.id === id; })[0]; }
+  function syncDock(id) {
+    var a = appById(id); if (!a) return;
+    var on = window.nyxIsInstalled(id);
+    var d = dock(), p = pool();
+    var btn = dockBtn(a.dock || id);
+    if (btn && d && p) {
+      if (on) {
+        if (btn.parentNode !== d) {
+          var anchor = dockBtn("appstore");
+          if (anchor && anchor.nextSibling) d.insertBefore(btn, anchor.nextSibling); else d.appendChild(btn);
+        }
+      } else if (btn.parentNode === d) p.appendChild(btn);
+      d.__mwDock = false;
+    }
+    if (!on && a.win) {
+      try { document.querySelectorAll(a.win).forEach(function (w) { w.style.display = "none"; w.classList.remove("active"); }); } catch (e) {}
+    }
+    if (a.lp) {
+      document.querySelectorAll('.child-launchpad[data-keywords="' + a.lp + '"]').forEach(function (el) { el.style.display = on ? "" : "none"; });
+    }
+  }
+  function setInstalled(id, on) {
+    installed = installed.filter(function (x) { return x !== id; });
+    if (on) installed.push(id);
+    save(installed);
+    syncDock(id);
+  }
+  function has(a) { return a.inst ? window.nyxIsInstalled(a.id) : true; }
+  function iconSrc(a) {
+    if (a.icon) return a.icon;
+    var b = dockBtn(a.dock); var im = b && b.querySelector("img");
+    return im ? im.src : "";
+  }
+  function iconHTML(a) {
+    var src = iconSrc(a);
+    if (src) return '<div class="as-icon ' + (a.code ? "code" : "") + '"><img src="' + src + '" alt=""></div>';
+    return '<div class="as-icon" style="background:linear-gradient(145deg,#3a3a3c,#2c2c2e);font-size:22px">' + (a.emoji || "📦") + '</div>';
+  }
+  var CLOUD_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18h10a4 4 0 0 0 .3-8 5.5 5.5 0 0 0-10.7 1.5A3.5 3.5 0 0 0 7 18z"/><path d="M12 12v6m0 0l-2.5-2.5M12 18l2.5-2.5"/></svg>';
+  function btnHTML(a) {
+    if (!has(a)) {
+      return '<div class="as-act"><button type="button" class="as-cloud" data-get="' + a.id + '" title="Get">' + CLOUD_SVG + '</button>'
+        + (a.badge ? '<small>In-App Purchases</small>' : '') + '</div>';
+    }
+    return '<div class="as-act"><button type="button" class="as-btn" data-open="' + a.id + '">Open</button></div>'
+      + (a.inst ? '<button type="button" class="as-more" data-remove="' + a.id + '" title="Remove from Mac">⋯</button>' : '');
+  }
+  function row(a) {
+    return '<div class="as-row">' + iconHTML(a) + '<div class="as-meta"><strong>' + a.name + '</strong><span>' + a.sub + '</span></div>' + btnHTML(a) + '</div>';
+  }
+  function head(t, more) {
+    return '<div class="as-sec-head"><h2>' + t + '</h2>' + (more ? '<a data-as-tab="' + more + '">See All</a>' : '') + '</div>';
+  }
+  function grid(list) { return '<div class="as-grid">' + list.map(row).join("") + '</div>'; }
+
+  var tab = "discover", query = "";
+  function render() {
+    var m = document.getElementById("as-main"); if (!m) return;
+    var h = "";
+    if (query) {
+      var q = query.toLowerCase();
+      var r = APPS.filter(function (a) { return (a.name + " " + a.sub).toLowerCase().indexOf(q) >= 0; });
+      h = '<h1>Results</h1><p class="as-subhead">Matching apps on this Mac.</p>'
+        + (r.length ? grid(r) : '<div class="as-empty"><strong>No Results</strong>Check the spelling or try a new search.</div>');
+    } else if (tab === "discover") {
+      h = '<h1>Discover</h1><p class="as-subhead">Browse and install apps for your Mac.</p>'
+        + grid(APPS);
+    } else if (tab === "categories") {
+      h = '<h1>Categories</h1><p class="as-subhead">All available apps.</p>' + grid(APPS);
+    } else if (tab === "updates") {
+      h = '<h1>Updates</h1><div class="as-empty"><strong>Everything is up to date</strong>Your apps are all current.</div>';
+    } else {
+      var list = APPS.filter(function (a) { return a.cats.indexOf(tab) >= 0; });
+      h = '<h1>' + TITLES[tab] + '</h1><p class="as-subhead">' + (list.length ? list.length + " apps" : "No apps in this category.") + '</p>'
+        + (list.length ? grid(list) : '<div class="as-empty"><strong>No apps yet</strong>Check back later.</div>');
+    }
+    m.innerHTML = h;
+    document.querySelectorAll("#as-nav [data-as-tab]").forEach(function (b) {
+      b.classList.toggle("active", !query && b.getAttribute("data-as-tab") === tab);
+    });
+  }
+
+  function openApp(id) {
+    if (id === "vscode") { if (typeof window.openVSCode === "function") window.openVSCode(); return; }
+    try {
+      if (id === "notes" && typeof note !== "undefined") { open_window(note, point_note, app_name_notes); return; }
+      if (id === "maps" && typeof maps_window !== "undefined") { open_window(maps_window, document.getElementById("point-maps"), app_name_maps); return; }
+    } catch (e) {}
+    var a = appById(id);
+    var b = a && dockBtn(a.dock);
+    if (b) b.click();
+  }
+
+  var win;
+  window.nyxBumpZ = function (el) {
+    var z = 80;
+    document.querySelectorAll(".window, .safari, .steam, .settings-window, .Vscode, .imovie-window, .devhub-window, .calculator, .game-app, .finder-window").forEach(function (w) {
+      if (w === el) return;
+      var wz = parseInt(w.style.zIndex || "0", 10);
+      if (wz > z) z = wz;
+    });
+    el.style.zIndex = String(z + 1);
+  };
+  window.openAppStore = function () {
+    win = document.getElementById("appstore-window"); if (!win) return;
+    var lp = document.getElementById("launchpad"); if (lp) lp.style.display = "none";
+    win.classList.remove("minimized");
+    win.style.display = "flex"; win.style.visibility = "visible"; win.style.opacity = "1";
+    win.classList.add("active");
+    window.nyxBumpZ(win);
+    if (!win._zWired) { win._zWired = true; win.addEventListener("mousedown", function () { window.nyxBumpZ(win); }, true); }
+    var dot = document.querySelector('.dock-open-app-button[data-dock-id="appstore"] .dot'); if (dot) dot.classList.add("is-open");
+    render();
+    try {
+      if (window.jQuery && !win._dragWired) {
+        win._dragWired = true;
+        $(win).draggable({ handle: ".as-traffic", cancel: "button, a, input", containment: "window" });
+      }
+    } catch (e) {}
+    window.nyxSyncMenuName();
+  };
+  function closeStore() {
+    var w = document.getElementById("appstore-window"); if (!w) return;
+    w.style.display = "none"; w.classList.remove("active", "is-maximized");
+    var dot = document.querySelector('.dock-open-app-button[data-dock-id="appstore"] .dot'); if (dot) dot.classList.remove("is-open");
+    window.nyxSyncMenuName();
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target; if (!t || !t.closest) return;
+    var launcher = t.closest('.dock-open-app-button[data-dock-id="appstore"], .child-launchpad[data-keywords="App Store"]');
+    if (launcher) { e.preventDefault(); e.stopPropagation(); window.openAppStore(); return; }
+    var w = document.getElementById("appstore-window");
+    if (!w || !w.contains(t)) return;
+    if (t.closest(".close-appstore")) { e.preventDefault(); e.stopPropagation(); closeStore(); return; }
+    if (t.closest(".min-appstore")) { e.preventDefault(); e.stopPropagation(); w.style.display = "none"; w.classList.add("minimized"); window.nyxSyncMenuName(); return; }
+    if (t.closest(".full-appstore")) { e.preventDefault(); e.stopPropagation(); w.classList.toggle("is-maximized"); return; }
+    var tb = t.closest("[data-as-tab]");
+    if (tb) { tab = tb.getAttribute("data-as-tab"); query = ""; var si = document.getElementById("as-search"); if (si) si.value = ""; render(); var mm = document.getElementById("as-main"); if (mm) mm.scrollTop = 0; return; }
+    var g = t.closest("[data-get]");
+    if (g) {
+      if (g.classList.contains("busy")) return;
+      var id = g.getAttribute("data-get");
+      document.querySelectorAll('[data-get="' + id + '"]').forEach(function (x) { x.classList.add("busy"); });
+      setTimeout(function () { setInstalled(id, true); render(); }, 1800);
+      return;
+    }
+    var o = t.closest("[data-open]"); if (o) { openApp(o.getAttribute("data-open")); return; }
+    var r = t.closest("[data-remove]"); if (r) { setInstalled(r.getAttribute("data-remove"), false); render(); }
+  }, true);
+  document.addEventListener("input", function (e) {
+    if (e.target && e.target.id === "as-search") { query = e.target.value.trim(); render(); }
+  });
+
+  /* ===== Menu bar app name follows the frontmost open window (falls back to Finder) ===== */
+  var NAMES = [
+    [".appstore-window", "App Store"], [".devhub-window", "Dev Hub"], [".Vscode", "Code"], [".terminal", "Terminal"],
+    [".note", "Notes"], [".calculator", "Calculator"], [".maps", "Maps"], [".steam", "Steam"],
+    [".settings-window", "System Settings"], [".imovie-window", "Apple TV"], [".safari", "Safari"], [".finder-window", "Finder"]
+  ];
+  function visible(el) {
+    if (!el || el.classList.contains("minimized")) return false;
+    var cs = getComputedStyle(el);
+    if (cs.display === "none" || cs.visibility === "hidden" || cs.opacity === "0") return false;
+    var r = el.getBoundingClientRect();
+    return r.width > 40 && r.height > 40;
+  }
+  window.nyxSyncMenuName = function () {
+    try {
+      if (document.querySelector(".game-app") && Array.prototype.some.call(document.querySelectorAll(".game-app"), visible)) return;
+      var best = null, bz = -1;
+      NAMES.forEach(function (n) {
+        document.querySelectorAll(n[0]).forEach(function (el) {
+          if (!visible(el)) return;
+          var z = parseInt(getComputedStyle(el).zIndex, 10); if (isNaN(z)) z = 0;
+          if (z >= bz) { bz = z; best = n[1]; }
+        });
+      });
+      var name = best || "Finder";
+      var el = document.getElementById("menu-app-name"); var pe = el && (el.querySelector("p") || el);
+      if (pe && pe.textContent !== name) {
+        if (typeof window.setMenuAppName === "function") window.setMenuAppName(name); else pe.textContent = name;
+        if (typeof window.updateMenuBarForApp === "function") window.updateMenuBarForApp(name);
+      }
+    } catch (e) {}
+  };
+  setInterval(window.nyxSyncMenuName, 300);
+  document.addEventListener("click", function () { setTimeout(window.nyxSyncMenuName, 60); setTimeout(window.nyxSyncMenuName, 400); }, true);
+
+  function boot() { APPS.forEach(function (a) { if (a.inst) syncDock(a.id); }); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+  setTimeout(boot, 300);
+})();
+</script>
+
+<script>
+/* ===== Launchpad controller (macOS-like open / search / launch) ===== */
+(function () {
+  "use strict";
+  var lp = document.getElementById("launchpad");
+  if (!lp) return;
+
+  function closeLP() {
+    if (typeof window.closeLaunchpad === "function") window.closeLaunchpad();
+    else {
+      lp.classList.remove("is-open");
+      lp.style.display = "none";
+    }
+  }
+
+  function launchApp(id) {
+    closeLP();
+    setTimeout(function () {
+      try {
+        switch (id) {
+          case "finder":
+            if (typeof window.openFinder === "function") window.openFinder();
+            else {
+              var fb = document.querySelector('.dock-open-app-button[data-dock-id="finder"]');
+              if (fb) fb.click();
+            }
+            break;
+          case "safari":
+            if (typeof window.openSafari === "function") window.openSafari();
+            else {
+              var sb = document.querySelector('.dock-open-app-button[data-dock-id="safari"], .open_safari');
+              if (sb) sb.click();
+            }
+            break;
+          case "appstore":
+            if (typeof window.openAppStore === "function") window.openAppStore();
+            break;
+          case "calculator":
+            if (typeof open_window === "function") {
+              var cal = document.querySelector(".calculator");
+              open_window(cal, document.getElementById("point-cal"), document.querySelector("#calculator"));
+            } else {
+              var cb = document.querySelector('.dock-open-app-button[data-dock-id="calculator"], .open-cal');
+              if (cb) cb.click();
+            }
+            break;
+          case "notes":
+            if (typeof open_window === "function") {
+              var note = document.querySelector(".note");
+              open_window(note, document.getElementById("point-note") || document.querySelector(".point-note"), document.querySelector("#notes") || document.querySelector(".app_name"));
+            } else {
+              var nb = document.querySelector('.dock-open-app-button[data-dock-id="notes"], .openNote');
+              if (nb) nb.click();
+            }
+            break;
+          case "maps":
+            if (typeof open_window === "function") {
+              var maps = document.querySelector(".maps");
+              open_window(maps, document.getElementById("point-maps"), document.querySelector("#maps"));
+            } else {
+              var mb = document.querySelector('.dock-open-app-button[data-dock-id="maps"], .open_map');
+              if (mb) mb.click();
+            }
+            break;
+          case "terminal":
+            if (typeof open_window === "function") {
+              var term = document.querySelector(".terminal");
+              open_window(term, document.getElementById("point-terminal") || document.querySelector(".point-terminal"), document.querySelector("#terminal"));
+            } else {
+              var tb = document.querySelector('.dock-open-app-button[data-dock-id="terminal"], .opening');
+              if (tb) tb.click();
+            }
+            break;
+          case "vscode":
+            if (typeof window.openVSCode === "function") window.openVSCode();
+            else {
+              var vb = document.querySelector('.dock-open-app-button[data-dock-id="vscode"], .open_vscode');
+              if (vb) vb.click();
+            }
+            break;
+          case "steam":
+            var stb = document.querySelector('.dock-open-app-button[data-dock-id="steam"], .open_steam');
+            if (stb) stb.click();
+            break;
+          case "appletv":
+            if (typeof window.openIMovie === "function") window.openIMovie();
+            else {
+              var ab = document.querySelector('.dock-open-app-button[data-dock-id="appletv"], .open_imovie');
+              if (ab) ab.click();
+            }
+            break;
+          case "settings":
+            if (typeof window.openSettings === "function") window.openSettings();
+            else {
+              var setb = document.querySelector('.dock-open-app-button[data-dock-id="settings"], .open_settings');
+              if (setb) setb.click();
+            }
+            break;
+          case "calendar":
+            var calb = document.querySelector('.dock-open-app-button[data-dock-id="calendar"]');
+            if (calb) calb.click();
+            else alert("Calendar isn’t available in this build.");
+            break;
+          case "messages":
+          case "contacts":
+          case "siri":
+          case "photos":
+            /* decorative / not fully implemented */
+            break;
+          default:
+            break;
+        }
+      } catch (err) {}
+    }, 120);
+  }
+
+  // Click an app tile
+  lp.addEventListener("click", function (e) {
+    var tile = e.target.closest && e.target.closest(".child-launchpad[data-lp-app]");
+    if (tile) {
+      e.preventDefault();
+      e.stopPropagation();
+      launchApp(tile.getAttribute("data-lp-app"));
+      return;
+    }
+    // Click empty area closes (not search / apps)
+    if (e.target === lp || e.target.classList.contains("lp-dots")) {
+      closeLP();
+    }
+  });
+
+  // Search filter
+  var search = document.getElementById("launchpad-search");
+  if (search) {
+    search.addEventListener("input", function () {
+      var q = (search.value || "").trim().toLowerCase();
+      var tiles = lp.querySelectorAll(".child-launchpad[data-lp-app]");
+      var visible = 0;
+      tiles.forEach(function (t) {
+        var kw = ((t.getAttribute("data-keywords") || "") + " " + (t.querySelector("strong") ? t.querySelector("strong").textContent : "")).toLowerCase();
+        var show = !q || kw.indexOf(q) >= 0;
+        t.classList.toggle("is-hidden", !show);
+        if (show) visible++;
+      });
+      var empty = document.getElementById("launchpad-empty");
+      if (empty) empty.classList.toggle("show", visible === 0);
+    });
+    search.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        if (search.value) {
+          search.value = "";
+          search.dispatchEvent(new Event("input"));
+        } else closeLP();
+      }
+      if (e.key === "Enter") {
+        var first = lp.querySelector(".child-launchpad[data-lp-app]:not(.is-hidden)");
+        if (first) launchApp(first.getAttribute("data-lp-app"));
+      }
+    });
+  }
+
+  // Escape closes launchpad
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && lp.classList.contains("is-open")) {
+      closeLP();
+    }
+  });
+
+  // Dock launchpad button
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest('.dock-open-app-button[data-dock-id="launchpad"]');
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof window.handleOpenLaunching === "function") window.handleOpenLaunching();
+  }, true);
+})();
+
+/* ===== Reset All Settings ===== */
+(function () {
+  "use strict";
+  var RESET_PREFIXES = ["nyx_", "macos_", "safari_"];
+  var RESET_KEYS = [
+    "nyx_installed_apps", "nyx_brightness", "nyx_dev_mode", "nyx_perf_mode",
+    "nyx_safari_iframe", "nyx_safari_proxy_engine", "nyx_safari_school_wifi",
+    "nyx_safari_http_proxy", "nyx_force_http_proxy", "nyx_wisp", "nyx_assets_base",
+    "macos_desktop_bg", "macos_dock_order_v1", "safari_dark_mode",
+    "safari_whats_new_seen", "safari_privacy_banner_seen", "ABDE", "WID", "TRNSPRT"
+  ];
+
+  function resetAllSettings() {
+    var ok = window.confirm("Reset all settings?\n\nThis restores wallpaper, dock order, appearance, Safari preferences, and other options to defaults. The desktop will reload.");
+    if (!ok) return;
+    try {
+      var toRemove = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k) continue;
+        if (RESET_KEYS.indexOf(k) >= 0) toRemove.push(k);
+        else {
+          for (var p = 0; p < RESET_PREFIXES.length; p++) {
+            if (k.indexOf(RESET_PREFIXES[p]) === 0) { toRemove.push(k); break; }
+          }
+        }
+      }
+      toRemove.forEach(function (k) {
+        try { localStorage.removeItem(k); } catch (e) {}
+      });
+      // clear session bits that affect chrome
+      try { sessionStorage.clear(); } catch (e) {}
+    } catch (e) {}
+    location.reload();
+  }
+
+  window.nyxResetAllSettings = resetAllSettings;
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest("#btn-reset-all-settings");
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    resetAllSettings();
+  });
+})();
+</script>
 </body>
 </html>

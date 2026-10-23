@@ -19718,7 +19718,8 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
 (function () {
   function nyxDockCfg() {
     var base = (typeof window.__nyxDockBaseWidth === "number" ? window.__nyxDockBaseWidth : 57.6);
-    var magOn = window.__nyxDockMagnify !== false;
+    var nonMac = !!(document.body && document.body.getAttribute("data-os-style"));
+    var magOn = !nonMac && window.__nyxDockMagnify !== false;
     var magAmt = (typeof window.__nyxDockMagAmount === "number" ? window.__nyxDockMagAmount : 2);
     var distanceLimit = base * 6;
     var beyond = distanceLimit + 1;
@@ -21137,6 +21138,1904 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     resetAllSettings();
   });
 })();
+</script>
+<style id="nyx-ext-css">
+/* ====================================================================
+   NYX EXTENSIONS: macOS-style Settings polish + OS Styles + MotionBGs UI
+   ==================================================================== */
+:root{
+  --st-win:#ececec; --st-side:rgba(240,240,242,.82); --st-content:#f5f5f7; --st-card:#fff;
+  --st-text:#1d1d1f; --st-sub:#6e6e73; --st-sep:rgba(0,0,0,.08); --st-accent:#0a84ff;
+  --st-hover:rgba(0,0,0,.05); --st-field:rgba(0,0,0,.06); --st-chip:rgba(0,0,0,.06);
+}
+
+/* ---------- Settings: more macOS (Tahoe / Sequoia feel) ---------- */
+.settings-window{
+  border-radius:14px !important;
+  background:var(--st-win) !important; color:var(--st-text) !important;
+  border:0.5px solid rgba(0,0,0,.28) !important;
+  box-shadow:0 0 0 0.5px rgba(255,255,255,.35) inset,0 30px 80px rgba(0,0,0,.38),0 6px 16px rgba(0,0,0,.16) !important;
+}
+.settings-window .window__taskbar{
+  background:transparent !important; border-bottom:0 !important;
+  height:52px !important; min-height:52px !important; position:absolute !important;
+  top:0; left:0; right:0; z-index:5;
+}
+.settings-window .window__taskbar--actions{gap:8px !important}
+.settings-window .window__taskbar--actions button{width:12px !important;height:12px !important;min-width:12px !important;min-height:12px !important;
+  box-shadow:inset 0 0 0 .5px rgba(0,0,0,.25) !important}
+.settings-body{height:100% !important}
+.settings-sidebar{
+  background:var(--st-side) !important;
+  -webkit-backdrop-filter:saturate(180%) blur(30px); backdrop-filter:saturate(180%) blur(30px);
+  border-right:.5px solid var(--st-sep) !important;
+  padding:52px 10px 16px !important; width:236px !important; min-width:236px !important;
+}
+.settings-sidebar .settings-nav-label{
+  font-size:11px !important; font-weight:600 !important; color:var(--st-sub) !important; padding:12px 10px 4px !important;
+}
+.settings-sidebar button.settings-nav{
+  color:var(--st-text) !important; border-radius:8px !important; padding:5px 8px !important; min-height:30px !important; gap:9px !important;
+}
+.settings-sidebar button.settings-nav:hover{background:var(--st-hover) !important}
+.settings-sidebar button.settings-nav.active{background:var(--st-accent) !important;color:#fff !important}
+.settings-sidebar button.settings-nav .nav-icon{width:24px !important;height:24px !important;border-radius:6px !important;font-size:13px !important}
+.settings-profile{padding:6px 8px 12px !important}
+.settings-sidebar .settings-search{background-color:var(--st-field) !important;box-shadow:none !important;height:30px !important;border-radius:8px !important;color:var(--st-text) !important}
+.settings-content{background:var(--st-content) !important;padding:56px 26px 30px !important;position:relative}
+.settings-content h3{font-size:26px !important;font-weight:700 !important;letter-spacing:-.035em !important;color:var(--st-text) !important}
+.settings-content p.sub{color:var(--st-sub) !important}
+.settings-group{background:var(--st-card) !important;border-radius:12px !important;box-shadow:0 0 0 .5px var(--st-sep),0 1px 2px rgba(0,0,0,.04) !important;margin-bottom:18px !important}
+.settings-row{background:transparent !important;border-bottom:.5px solid var(--st-sep) !important;padding:12px 16px !important;min-height:48px !important}
+.settings-row:last-child{border-bottom:0 !important}
+.settings-row .row-label strong{color:var(--st-text) !important}
+.settings-row .row-label span{color:var(--st-sub) !important}
+.settings-toggle.on{background:#30d158 !important}
+.settings-content select{background:var(--st-field) !important;color:var(--st-text) !important;height:28px !important;border-radius:7px !important}
+.settings-content .cloak-btn,.settings-content button.cloak-btn{background:var(--st-accent) !important}
+.cloak-card{background:var(--st-card) !important;border:.5px solid var(--st-sep) !important}
+
+/* Wallpaper panel */
+#wp-hero{display:flex;gap:16px;align-items:center;background:var(--st-card);border-radius:14px;padding:14px;margin:0 0 14px;box-shadow:0 0 0 .5px var(--st-sep)}
+#wp-hero .wp-hero-img{width:190px;aspect-ratio:16/10;border-radius:9px;background:#2a2a2c center/cover no-repeat;box-shadow:0 2px 8px rgba(0,0,0,.25);flex-shrink:0;position:relative;overflow:hidden}
+#wp-hero .wp-hero-img::after{content:"";position:absolute;left:50%;top:6px;width:22%;height:7%;transform:translateX(-50%);background:#000;border-radius:0 0 4px 4px;opacity:.0}
+#wp-hero .wp-hero-meta strong{display:block;font-size:14px;font-weight:600;color:var(--st-text)}
+#wp-hero .wp-hero-meta span{display:block;font-size:12px;color:var(--st-sub);margin-top:3px}
+#wp-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+#wp-chips button{border:0;background:var(--st-chip);color:var(--st-text);font-weight:500;font-size:12px;line-height:1;font-family:inherit;padding:7px 12px;border-radius:999px;cursor:pointer}
+#wp-chips button:hover{background:rgba(0,0,0,.1)}
+#wp-chips button.on{background:var(--st-accent);color:#fff}
+#wp-tools{display:flex;gap:10px;align-items:center;margin:0 0 12px;flex-wrap:wrap}
+#wp-tools .wp-count{font-size:12px;color:var(--st-sub)}
+#wp-load{border:0;background:var(--st-accent);color:#fff;font-weight:600;font-size:12px;font-family:inherit;padding:7px 14px;border-radius:7px;cursor:pointer}
+#wp-load[disabled]{opacity:.6;cursor:default}
+.wallpaper-card[data-cat-hidden="1"]{display:none !important}
+.wallpaper-card{background:var(--st-card) !important}
+.wallpaper-card .label{color:var(--st-text) !important}
+.wallpaper-card.selected{border-color:var(--st-accent) !important}
+#wallpaper-search{background:var(--st-field) !important;color:var(--st-text) !important}
+
+/* Styles panel */
+#settings-panel-styles .os-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:6px 0 18px}
+.os-card{border:0;background:var(--st-card);border-radius:14px;padding:10px;text-align:left;cursor:pointer;font-family:inherit;color:var(--st-text);
+  box-shadow:0 0 0 .5px var(--st-sep),0 1px 2px rgba(0,0,0,.05);transition:box-shadow .15s,transform .15s}
+.os-card:hover{transform:translateY(-1px)}
+.os-card.on{box-shadow:0 0 0 2.5px var(--st-accent),0 4px 14px rgba(0,0,0,.12)}
+.os-card .os-name{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;margin:9px 2px 1px}
+.os-card .os-name i{font-style:normal;font-size:11px;font-weight:600;color:#fff;background:var(--st-accent);border-radius:99px;padding:2px 8px;display:none}
+.os-card.on .os-name i{display:inline-block}
+.os-card .os-desc{font-size:11.5px;color:var(--st-sub);margin:0 2px 2px;line-height:1.35}
+.os-prev{position:relative;aspect-ratio:16/10;border-radius:9px;overflow:hidden;background:linear-gradient(135deg,#355c7d,#6c5b7b 55%,#c06c84)}
+.os-prev .p-top{position:absolute;left:0;right:0;top:0;height:9%}
+.os-prev .p-dock{position:absolute}
+.os-prev .p-win{position:absolute;left:24%;top:22%;width:50%;height:46%;border-radius:4px;background:#f2f2f2;box-shadow:0 4px 12px rgba(0,0,0,.35);overflow:hidden}
+.os-prev .p-win b{display:block;height:20%}
+.os-prev .p-win u{position:absolute;display:block;border-radius:50%}
+/* mac */
+.os-prev.mac .p-top{background:rgba(255,255,255,.28)}
+.os-prev.mac .p-dock{left:30%;right:30%;bottom:5%;height:11%;border-radius:6px;background:rgba(255,255,255,.35)}
+.os-prev.mac .p-win b{background:#e9e9e9}
+.os-prev.mac .p-win u{top:6%;width:5px;height:5px;background:#ff5f56;left:5%;box-shadow:8px 0 #ffbd2e,16px 0 #27c93f}
+/* windows */
+.os-prev.win{background:linear-gradient(135deg,#0b5cad,#1e90ff 50%,#9bd1ff)}
+.os-prev.win .p-top{display:none}
+.os-prev.win .p-dock{left:0;right:0;bottom:0;height:11%;background:rgba(243,243,243,.85)}
+.os-prev.win .p-dock::before{content:"";position:absolute;left:44%;top:25%;width:6%;height:50%;background:#0067c0;border-radius:2px;box-shadow:12px 0 #888,24px 0 #aaa,36px 0 #999}
+.os-prev.win .p-win b{background:#f3f3f3}
+.os-prev.win .p-win u{top:0;right:0;width:8px;height:8px;border-radius:0;background:#c42b1c}
+/* ubuntu */
+.os-prev.ubu{background:linear-gradient(135deg,#2c001e,#77216f 50%,#e95420)}
+.os-prev.ubu .p-top{background:#000}
+.os-prev.ubu .p-top::before{content:"";position:absolute;left:4%;top:30%;width:12%;height:40%;background:#fff;opacity:.8;border-radius:2px}
+.os-prev.ubu .p-dock{left:0;top:9%;bottom:0;width:9%;background:rgba(30,30,30,.85)}
+.os-prev.ubu .p-dock::before{content:"";position:absolute;left:25%;top:10%;width:50%;height:9%;background:#e95420;border-radius:2px;box-shadow:0 14px #aaa,0 28px #aaa,0 42px #aaa}
+.os-prev.ubu .p-win b{background:#3d3d3d}
+.os-prev.ubu .p-win u{top:4%;right:4%;width:6px;height:6px;background:#e95420}
+/* kali */
+.os-prev.kali{background:linear-gradient(135deg,#05070d,#101a33 55%,#1d4ed8)}
+.os-prev.kali .p-top{background:#14161c}
+.os-prev.kali .p-top::before{content:"";position:absolute;left:3%;top:30%;width:10%;height:40%;background:#367bf0;border-radius:2px}
+.os-prev.kali .p-dock{left:32%;right:32%;bottom:5%;height:10%;border-radius:5px;background:rgba(25,28,36,.9);box-shadow:0 0 0 .5px #367bf0}
+.os-prev.kali .p-win{background:#0d1117}
+.os-prev.kali .p-win b{background:#1b1f27}
+.os-prev.kali .p-win u{top:4%;right:4%;width:6px;height:6px;background:#367bf0}
+
+/* ====================================================================
+   OS STYLES   (body[data-os-style])
+   ==================================================================== */
+#os-chrome{display:none}
+body[data-os-style] #os-chrome{display:block}
+#os-chrome .oc{display:none}
+#os-start-menu{display:none}
+
+/* shared window-control rewrite for non-mac styles */
+body[data-os-style="windows"] .window__taskbar,
+body[data-os-style="ubuntu"] .window__taskbar,
+body[data-os-style="kali"] .window__taskbar{
+  flex-direction:row-reverse !important; justify-content:space-between !important;
+  padding:0 0 0 14px !important;
+}
+body[data-os-style="windows"] .window__taskbar--content,
+body[data-os-style="ubuntu"] .window__taskbar--content,
+body[data-os-style="kali"] .window__taskbar--content{
+  position:static !important; flex:1; display:flex; justify-content:flex-start; pointer-events:none;
+}
+body[data-os-style="windows"] .settings-window .window__taskbar,
+body[data-os-style="ubuntu"] .settings-window .window__taskbar,
+body[data-os-style="kali"] .settings-window .window__taskbar{position:relative !important;height:38px !important;min-height:38px !important}
+body[data-os-style="windows"] .settings-body,
+body[data-os-style="ubuntu"] .settings-body,
+body[data-os-style="kali"] .settings-body{height:calc(100% - 38px) !important}
+body[data-os-style="windows"] .settings-sidebar,
+body[data-os-style="ubuntu"] .settings-sidebar,
+body[data-os-style="kali"] .settings-sidebar{padding-top:12px !important}
+body[data-os-style="windows"] .settings-content,
+body[data-os-style="ubuntu"] .settings-content,
+body[data-os-style="kali"] .settings-content{padding-top:22px !important}
+body[data-os-style] .window__taskbar--actions{gap:0 !important;padding:0 !important;align-self:stretch}
+body[data-os-style] .window__taskbar--actions button{
+  border-radius:0 !important;width:46px !important;height:100% !important;min-width:46px !important;min-height:0 !important;
+  background:transparent !important;box-shadow:none !important;transform:none !important;filter:none !important;
+  display:flex !important;align-items:center;justify-content:center;font:400 12px/1 "Segoe UI Symbol","Segoe UI",system-ui,sans-serif;
+}
+body[data-os-style] .window__taskbar--actions button::before,
+body[data-os-style] .window__taskbar--actions button::after{all:unset}
+body[data-os-style] .window__taskbar--actions button:nth-child(1){order:3}
+body[data-os-style] .window__taskbar--actions button:nth-child(2){order:1}
+body[data-os-style] .window__taskbar--actions button:nth-child(3){order:2}
+body[data-os-style] .window__taskbar--actions button:nth-child(1)::before{content:"\2715"}
+body[data-os-style] .window__taskbar--actions button:nth-child(2)::before{content:"\2014"}
+body[data-os-style] .window__taskbar--actions button:nth-child(3)::before{content:"\25A1";font-size:13px}
+body[data-os-style] .window__taskbar--actions button::before{display:block !important;position:static !important}
+body[data-os-style] .safari-chrome-top .safari-traffic{align-self:center;height:30px}
+
+/* ================= WINDOWS 11 ================= */
+body[data-os-style="windows"]{--st-win:#f3f3f3;--st-side:#f3f3f3;--st-content:#fafafa;--st-card:#fff;--st-text:#1b1b1b;--st-sub:#5f5f5f;--st-sep:rgba(0,0,0,.08);--st-accent:#0067c0;--st-hover:rgba(0,0,0,.05);--st-field:#f0f0f0;--st-chip:#ececec;font-family:"Segoe UI Variable","Segoe UI",system-ui,sans-serif}
+body[data-os-style="windows"] .navbar{display:none !important}
+body[data-os-style="windows"] .dock-container{height:48px !important;padding:0 !important;left:0 !important;right:0 !important;bottom:0 !important;top:auto !important;width:100% !important}
+body[data-os-style="windows"] .dock-el.dock,body[data-os-style="windows"] #macos-dock{
+  width:100% !important;max-width:100% !important;height:48px !important;border-radius:0 !important;padding:0 !important;align-items:center !important;
+  background:rgba(243,243,243,.86) !important;box-shadow:0 -1px 0 rgba(0,0,0,.1) !important;
+  -webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);margin:0 !important}
+body[data-os-style="windows"] .dock-el::before{display:none}
+body[data-os-style="windows"] .dock-el .dock-open-app-button{height:40px !important;width:44px !important;margin:0 2px !important;border-radius:6px !important;justify-content:center !important;align-items:center !important}
+body[data-os-style="windows"] .dock-el .dock-open-app-button:hover{background:rgba(0,0,0,.07) !important}
+body[data-os-style="windows"] .dock-el .dock-open-app-button img{width:28px !important;height:28px !important;border-radius:6px;filter:none}
+body[data-os-style="windows"] .dock-el .divider{display:none}
+body[data-os-style="windows"] .window,body[data-os-style="windows"] .safari,body[data-os-style="windows"] .settings-window{border-radius:8px !important}
+body[data-os-style="windows"] .window__taskbar{background:#f3f3f3 !important;height:32px !important;min-height:32px !important}
+body[data-os-style="windows"] .window__taskbar--content h2,body[data-os-style="windows"] .window__taskbar--content p{font-size:12px !important;font-weight:400 !important;color:#1b1b1b !important}
+body[data-os-style="windows"] .window__taskbar--actions button{color:#1b1b1b}
+body[data-os-style="windows"] .window__taskbar--actions button:hover{background:rgba(0,0,0,.07) !important}
+body[data-os-style="windows"] .window__taskbar--actions button:nth-child(1):hover{background:#c42b1c !important;color:#fff}
+body[data-os-style="windows"] .settings-sidebar button.settings-nav.active{background:rgba(0,0,0,.06) !important;color:var(--st-text) !important;position:relative}
+body[data-os-style="windows"] .settings-sidebar button.settings-nav.active::before{content:"";position:absolute;left:0;top:25%;bottom:25%;width:3px;border-radius:2px;background:var(--st-accent)}
+body[data-os-style="windows"] .settings-sidebar button.settings-nav{border-radius:5px !important}
+body[data-os-style="windows"] .settings-window{border-radius:8px !important}
+/* ================= UBUNTU (GNOME / Yaru) ================= */
+body[data-os-style="ubuntu"]{--st-win:#2b2b2b;--st-side:#262626;--st-content:#303030;--st-card:#3a3a3a;--st-text:#f2f2f2;--st-sub:#a8a8a8;--st-sep:rgba(255,255,255,.09);--st-accent:#e95420;--st-hover:rgba(255,255,255,.07);--st-field:rgba(255,255,255,.09);--st-chip:rgba(255,255,255,.1);font-family:Ubuntu,"Cantarell","Noto Sans",system-ui,sans-serif}
+body[data-os-style="ubuntu"] .navbar{background:#000 !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important;border-bottom:0 !important;box-shadow:none !important;height:28px;font-family:Ubuntu,"Cantarell",system-ui,sans-serif}
+body[data-os-style="ubuntu"] .navbar__left>li:not(.logo):not(.app_name){display:none !important}
+body[data-os-style="ubuntu"] .navbar .leftLi.logo img{display:none}
+body[data-os-style="ubuntu"] .navbar .leftLi.logo::before{content:"Activities";font-size:13px;font-weight:600;padding:0 4px}
+body[data-os-style="ubuntu"] .navbar .leftLi:hover{background:rgba(255,255,255,.14) !important;border-radius:14px !important}
+body[data-os-style="ubuntu"] .dock-container{left:0 !important;top:28px !important;bottom:0 !important;right:auto !important;width:68px !important;height:auto !important;padding:0 !important;align-items:flex-start !important;justify-content:flex-start !important}
+body[data-os-style="ubuntu"] .dock-el.dock,body[data-os-style="ubuntu"] #macos-dock{
+  flex-direction:column !important;width:68px !important;max-width:68px !important;height:100% !important;border-radius:0 !important;padding:8px 0 !important;margin:0 !important;
+  align-items:center !important;justify-content:flex-start !important;overflow-y:auto !important;overflow-x:hidden !important;
+  background:rgba(34,34,34,.88) !important;box-shadow:none !important;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+body[data-os-style="ubuntu"] .dock-el::before{display:none}
+body[data-os-style="ubuntu"] .dock-el .dock-open-app-button{width:52px !important;height:52px !important;margin:2px 0 !important;border-radius:10px !important;justify-content:center !important;align-items:center !important;flex:0 0 auto}
+body[data-os-style="ubuntu"] .dock-el .dock-open-app-button:hover{background:rgba(255,255,255,.12) !important}
+body[data-os-style="ubuntu"] .dock-el .dock-open-app-button img{width:40px !important;height:40px !important}
+body[data-os-style="ubuntu"] .dock-el .divider{width:70% !important;height:1px !important;margin:6px 0 !important;background:rgba(255,255,255,.15)}
+body[data-os-style="ubuntu"] .dock-el .dock-open-app-button .tooltip{left:calc(100% + 10px);bottom:auto;top:50%;transform:translateY(-50%)}
+body[data-os-style="ubuntu"] .window,body[data-os-style="ubuntu"] .safari,body[data-os-style="ubuntu"] .settings-window{border-radius:12px 12px 6px 6px !important}
+body[data-os-style="ubuntu"] .window__taskbar{background:#3d3d3d !important;height:38px !important;min-height:38px !important}
+body[data-os-style="ubuntu"] .window__taskbar--content{justify-content:center !important}
+body[data-os-style="ubuntu"] .window__taskbar--content h2,body[data-os-style="ubuntu"] .window__taskbar--content p{color:#f2f2f2 !important;font-size:13px !important;font-weight:700 !important}
+body[data-os-style="ubuntu"] .window__taskbar--actions{padding:0 8px !important;align-items:center;gap:6px !important}
+body[data-os-style="ubuntu"] .window__taskbar--actions button{width:24px !important;min-width:24px !important;height:24px !important;border-radius:50% !important;background:rgba(255,255,255,.1) !important;color:#f2f2f2;font-size:11px}
+body[data-os-style="ubuntu"] .window__taskbar--actions button:hover{background:rgba(255,255,255,.2) !important}
+body[data-os-style="ubuntu"] .window__taskbar--actions button:nth-child(1):hover{background:#e95420 !important}
+body[data-os-style="ubuntu"] .settings-window{border:1px solid #000 !important}
+body[data-os-style="ubuntu"] .settings-sidebar .settings-search{color:#f2f2f2 !important}
+body[data-os-style="ubuntu"] #os-chrome .oc-ubu{display:block}
+
+/* ================= KALI LINUX ================= */
+body[data-os-style="kali"]{--st-win:#0d1117;--st-side:#11151c;--st-content:#0d1117;--st-card:#161b22;--st-text:#e6edf3;--st-sub:#8b949e;--st-sep:rgba(255,255,255,.09);--st-accent:#367bf0;--st-hover:rgba(255,255,255,.06);--st-field:rgba(255,255,255,.07);--st-chip:rgba(255,255,255,.08);font-family:"Cantarell","Noto Sans",system-ui,sans-serif}
+body[data-os-style="kali"] .navbar{background:#14161c !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important;border-bottom:1px solid #000 !important;box-shadow:none !important}
+body[data-os-style="kali"] .navbar__left>li:not(.logo):not(.app_name){display:none !important}
+body[data-os-style="kali"] .navbar .leftLi.logo img{display:none}
+body[data-os-style="kali"] .navbar .leftLi.logo::before{content:"\25C8  Kali";font:700 13px "Cantarell",system-ui;color:#367bf0;letter-spacing:.02em}
+body[data-os-style="kali"] .navbar .leftLi:hover{background:rgba(54,123,240,.2) !important}
+body[data-os-style="kali"] .dock-el.dock,body[data-os-style="kali"] #macos-dock{border-radius:10px !important;background:rgba(20,22,28,.9) !important;
+  box-shadow:0 0 0 1px rgba(54,123,240,.55),0 8px 28px rgba(0,0,0,.55) !important;padding:5px 8px !important}
+body[data-os-style="kali"] .dock-el::before{display:none}
+body[data-os-style="kali"] .dock-el .divider{background:rgba(54,123,240,.5) !important}
+body[data-os-style="kali"] .window,body[data-os-style="kali"] .safari,body[data-os-style="kali"] .settings-window{border-radius:6px !important}
+body[data-os-style="kali"] .window__taskbar{background:#1b1f27 !important;height:34px !important;min-height:34px !important;border-bottom:1px solid #000 !important}
+body[data-os-style="kali"] .window__taskbar--content{justify-content:center !important}
+body[data-os-style="kali"] .window__taskbar--content h2,body[data-os-style="kali"] .window__taskbar--content p{color:#e6edf3 !important;font-size:12px !important;font-weight:600 !important;font-family:ui-monospace,"DejaVu Sans Mono",monospace !important}
+body[data-os-style="kali"] .window__taskbar--actions{padding:0 4px !important;align-items:center}
+body[data-os-style="kali"] .window__taskbar--actions button{width:30px !important;min-width:30px !important;color:#8b949e;font-size:11px}
+body[data-os-style="kali"] .window__taskbar--actions button:hover{background:rgba(54,123,240,.25) !important;color:#fff}
+body[data-os-style="kali"] .window__taskbar--actions button:nth-child(1):hover{background:#d73a49 !important}
+body[data-os-style="kali"] .settings-window{border:1px solid #367bf0 !important}
+body[data-os-style="kali"] .settings-sidebar .settings-search{color:#e6edf3 !important}
+body[data-os-style="kali"] .settings-content{background-image:radial-gradient(circle at 100% 0,rgba(54,123,240,.08),transparent 45%)}
+
+/* dark themes: invert tweaks inside settings */
+body[data-os-style="ubuntu"] .settings-content input,body[data-os-style="kali"] .settings-content input,
+body[data-os-style="ubuntu"] .settings-content select,body[data-os-style="kali"] .settings-content select{color:var(--st-text) !important;border-color:var(--st-sep) !important}
+body[data-os-style="ubuntu"] .settings-content select option,body[data-os-style="kali"] .settings-content select option{background:#222;color:#eee}
+body[data-os-style="ubuntu"] .settings-toggle,body[data-os-style="kali"] .settings-toggle{background:rgba(255,255,255,.2)}
+body[data-os-style="ubuntu"] #settings-panel-styles,body[data-os-style="kali"] #settings-panel-styles{color:var(--st-text)}
+body[data-os-style="ubuntu"] #wp-chips button:hover,body[data-os-style="kali"] #wp-chips button:hover{background:rgba(255,255,255,.18)}
+
+@media (max-width:720px){ #settings-panel-styles .os-cards{grid-template-columns:1fr} #wp-hero{flex-direction:column;align-items:flex-start} }
+
+/* ====================================================================
+   OS KIT (apps, panels, Start menu, desktop icons, indicators)
+   ==================================================================== */
+.os-hidden{display:none !important}
+.os-dock-btn{display:none !important}
+#os-tray,#os-ubu-bar,#os-kali-bar,#os-desktop,#os-start-menu{display:none}
+body[data-os-style="windows"] .os-dock-btn.os-only-win{display:flex !important}
+body[data-os-style="ubuntu"] .os-dock-btn.os-only-ubu{display:flex !important}
+body[data-os-style] .dock-el .dot{display:none !important}
+body[data-os-style] .dock-el .dot.is-open,body[data-os-style] .dock-el .os-open .dot{display:block !important;position:absolute}
+body[data-os-style] #os-desktop{display:block;position:fixed;z-index:1;width:84px;user-select:none}
+.dk-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;margin-bottom:6px;border-radius:5px;cursor:default;border:1px solid transparent}
+.dk-item img{width:46px;height:46px;pointer-events:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))}
+.dk-item span{color:#fff;font-size:12px;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.9);line-height:1.15}
+.dk-item:hover{background:rgba(255,255,255,.12)}
+.dk-item.sel{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.35)}
+body[data-os-style] #menu-app-name p{font-size:0 !important}
+body[data-os-style] #menu-app-name p::after{content:attr(data-os);font-size:13px;font-weight:700}
+
+/* Finder window as Explorer / Files / Thunar */
+body[data-os-style] .finder-toolbar{flex-direction:row !important;padding-left:12px !important}
+body[data-os-style] .finder-traffic{order:20;margin-left:auto;padding:0 !important}
+body[data-os-style] .finder-window{border-radius:8px !important}
+body[data-os-style] .finder-window .finder-sidebar{background:var(--fx-side,#f3f3f3) !important}
+
+/* ================= WINDOWS 11 ================= */
+body[data-os-style="windows"]{--fx-side:#f3f3f3}
+body[data-os-style="windows"] #os-desktop{left:6px;top:8px}
+body[data-os-style="windows"] .dock-container{height:48px !important}
+body[data-os-style="windows"] .dock-el.dock,body[data-os-style="windows"] #macos-dock{
+  background:rgba(238,240,246,.82) !important;border-top:1px solid rgba(0,0,0,.08);box-shadow:none !important;
+  -webkit-backdrop-filter:blur(40px) saturate(200%);backdrop-filter:blur(40px) saturate(200%)}
+body[data-os-style="windows"] .dock-el .dock-open-app-button{width:44px !important;height:42px !important;position:relative}
+body[data-os-style="windows"] .dock-el .dock-open-app-button:hover{background:rgba(255,255,255,.6) !important}
+body[data-os-style="windows"] .dock-el .dock-open-app-button:active{transform:scale(.94)}
+body[data-os-style="windows"] .dock-el .dock-open-app-button img{width:26px !important;height:26px !important;filter:none;border-radius:0}
+body[data-os-style="windows"] .dock-el .dot.is-open,body[data-os-style="windows"] .dock-el .os-open .dot{bottom:1px;left:50%;transform:translateX(-50%);width:6px;height:3px;border-radius:2px;background:#0067c0}
+body[data-os-style="windows"] .dock-el .tooltip{background:#f9f9f9 !important;color:#1b1b1b !important;border:1px solid rgba(0,0,0,.1) !important;border-radius:6px !important;font-size:12px !important;box-shadow:0 4px 14px rgba(0,0,0,.18) !important}
+body[data-os-style="windows"] #os-tray{display:flex;position:fixed;right:0;bottom:0;height:48px;z-index:101;align-items:center;gap:2px;padding-right:0;color:#1b1b1b;font:12px/1.2 "Segoe UI Variable","Segoe UI",system-ui,sans-serif}
+body[data-os-style="windows"] #os-tray .t-ico{display:flex;align-items:center;gap:10px;padding:0 8px;height:36px;border-radius:5px}
+body[data-os-style="windows"] #os-tray .t-ico:hover,body[data-os-style="windows"] #os-tray .t-clock:hover{background:rgba(255,255,255,.6)}
+body[data-os-style="windows"] #os-tray .t-clock{text-align:right;padding:4px 8px;border-radius:5px;font-size:12px;min-width:76px}
+body[data-os-style="windows"] #os-tray .t-edge{width:8px;height:48px;border-left:1px solid rgba(0,0,0,.15);margin-left:4px}
+body[data-os-style="windows"] #os-start-menu.open{display:block}
+#os-start-menu{position:fixed;left:50%;transform:translateX(-50%);bottom:60px;width:min(640px,96vw);max-height:calc(100vh - 80px);overflow:auto;border-radius:12px;padding:26px 28px 0;z-index:200;
+  background:rgba(243,243,243,.92);-webkit-backdrop-filter:blur(50px) saturate(200%);backdrop-filter:blur(50px) saturate(200%);
+  box-shadow:0 0 0 1px rgba(0,0,0,.12),0 28px 70px rgba(0,0,0,.38);font-family:"Segoe UI Variable","Segoe UI",system-ui,sans-serif;color:#1b1b1b}
+#os-start-menu .sm-search{display:flex;align-items:center;gap:10px;background:#fff;border-radius:99px;padding:0 16px;height:38px;box-shadow:0 0 0 1px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);margin-bottom:20px}
+#os-start-menu .sm-search input{flex:1;border:0;background:transparent;font-size:13px;outline:0;height:100%;color:#1b1b1b;user-select:text}
+#os-start-menu .sm-head{display:flex;justify-content:space-between;align-items:center;margin:0 4px 8px}
+#os-start-menu .sm-head b{font-size:14px;font-weight:600}
+#os-start-menu .sm-head button{border:0;background:#fff;border-radius:5px;padding:4px 10px;font-size:12px;cursor:pointer;box-shadow:0 0 0 1px rgba(0,0,0,.08);color:#1b1b1b}
+#os-start-menu .sm-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:20px}
+#os-start-menu .sm-grid button{border:0;background:transparent;border-radius:6px;padding:10px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;font-size:12px;color:#1b1b1b}
+#os-start-menu .sm-grid button:hover{background:rgba(255,255,255,.75)}
+#os-start-menu .sm-grid img{width:30px;height:30px}
+#os-start-menu .sm-grid span{text-align:center;line-height:1.2;max-width:84px}
+#os-start-menu .sm-rec{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:22px}
+#os-start-menu .sm-rec button{border:0;background:transparent;border-radius:6px;padding:8px;display:flex;align-items:center;gap:12px;cursor:pointer;text-align:left;color:#1b1b1b;font-size:12.5px}
+#os-start-menu .sm-rec button:hover{background:rgba(255,255,255,.75)}
+#os-start-menu .sm-rec img{width:28px;height:28px}
+#os-start-menu .sm-rec small{display:block;color:#666;font-size:11px;margin-top:1px}
+#os-start-menu .sm-foot{display:flex;justify-content:space-between;align-items:center;margin:0 -28px;padding:12px 28px;background:rgba(230,232,238,.8);border-top:1px solid rgba(0,0,0,.08);position:sticky;bottom:0;border-radius:0 0 12px 12px}
+#os-start-menu .sm-user{display:flex;align-items:center;gap:10px;font-size:12.5px}
+#os-start-menu .sm-user i{font-style:normal;width:28px;height:28px;border-radius:50%;background:#0067c0;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+#os-start-menu .sm-pw{display:flex;gap:6px}
+#os-start-menu .sm-pw button{border:0;background:transparent;border-radius:5px;padding:6px 10px;font-size:12px;cursor:pointer;color:#1b1b1b;display:flex;align-items:center}
+#os-start-menu .sm-pw button:hover{background:rgba(255,255,255,.8)}
+body[data-os-style="windows"] .window,body[data-os-style="windows"] .safari,body[data-os-style="windows"] .finder-window{box-shadow:0 0 0 1px rgba(0,0,0,.18),0 18px 50px rgba(0,0,0,.28) !important}
+
+/* ================= UBUNTU ================= */
+body[data-os-style="ubuntu"]{--fx-side:#2b2b2b}
+body[data-os-style="ubuntu"] #os-desktop{left:84px;top:40px}
+body[data-os-style="ubuntu"] .navbar__right>li{display:none !important}
+body[data-os-style="ubuntu"] .navbar{height:28px;font-size:13px}
+body[data-os-style="ubuntu"] .navbar__left>li.app_name{padding-left:4px !important}
+body[data-os-style="ubuntu"] #os-ubu-bar{display:flex;position:fixed;top:0;left:0;right:0;height:28px;z-index:101;align-items:center;justify-content:center;pointer-events:none;color:#fff;font:600 13px Ubuntu,Cantarell,system-ui,sans-serif}
+body[data-os-style="ubuntu"] #os-ubu-bar .ub-tray{position:absolute;right:8px;top:2px;height:24px;display:flex;align-items:center;gap:10px;padding:0 12px;border-radius:12px;pointer-events:auto;background:transparent}
+body[data-os-style="ubuntu"] #os-ubu-bar .ub-tray:hover{background:rgba(255,255,255,.16)}
+body[data-os-style="ubuntu"] .dock-el .dock-open-app-button{position:relative}
+body[data-os-style="ubuntu"] .dock-el .dot.is-open,body[data-os-style="ubuntu"] .dock-el .os-open .dot{left:3px;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:#e95420}
+body[data-os-style="ubuntu"] .dock-el .tooltip{background:#2d2d2d !important;color:#fff !important;border:1px solid #000 !important;border-radius:6px !important;font-size:12px !important;white-space:nowrap}
+body[data-os-style="ubuntu"] #macos-dock #os-showapps{margin-top:auto !important}
+body[data-os-style="ubuntu"] #macos-dock #os-showapps img{width:28px !important;height:28px !important}
+body[data-os-style="ubuntu"] .dock-container{pointer-events:none}
+body[data-os-style="ubuntu"] .window,body[data-os-style="ubuntu"] .safari,body[data-os-style="ubuntu"] .finder-window{box-shadow:0 0 0 1px #000,0 12px 40px rgba(0,0,0,.55) !important}
+
+/* ================= KALI ================= */
+body[data-os-style="kali"]{--fx-side:#11151c}
+body[data-os-style="kali"] #os-desktop{left:12px;top:40px}
+body[data-os-style="kali"] .navbar__right>li,body[data-os-style="kali"] .navbar__left>li.app_name{display:none !important}
+/* logo text set in primary kali navbar rule */
+body[data-os-style="kali"] #os-kali-bar{display:flex;position:fixed;top:0;left:0;right:0;height:28px;z-index:101;align-items:center;justify-content:space-between;pointer-events:none;color:#e6edf3;font:13px "Cantarell","Noto Sans",system-ui,sans-serif}
+body[data-os-style="kali"] #os-kali-bar .kb-l{display:flex;align-items:center;padding-left:40px;height:100%}
+body[data-os-style="kali"] #os-kali-bar .kb-logo{display:none}
+body[data-os-style="kali"] #os-kali-bar .kb-item{pointer-events:auto;padding:0 12px;height:100%;display:flex;align-items:center;cursor:pointer}
+body[data-os-style="kali"] #os-kali-bar .kb-item:hover{background:rgba(54,123,240,.25)}
+body[data-os-style="kali"] #os-kali-bar .kb-r{display:flex;align-items:center;gap:12px;padding-right:12px}
+/* kali dock details handled in authenticity pass */
+body[data-os-style="kali"] .window,body[data-os-style="kali"] .safari,body[data-os-style="kali"] .finder-window{box-shadow:0 0 0 1px #367bf0,0 14px 44px rgba(0,0,0,.7) !important}
+
+
+/* ====================================================================
+   AUTHENTICITY PASS — Windows 11 / Ubuntu GNOME / Kali XFCE
+   Settings + chrome closer to the real OSes
+   ==================================================================== */
+
+/* ---------- WINDOWS 11 Settings (Fluent / WinUI) ---------- */
+body[data-os-style="windows"] .settings-window{
+  border-radius:8px !important;
+  background:#f3f3f3 !important;
+  border:1px solid rgba(0,0,0,.14) !important;
+  box-shadow:0 0 0 1px rgba(0,0,0,.06),0 16px 48px rgba(0,0,0,.22) !important;
+  font-family:"Segoe UI Variable","Segoe UI",system-ui,sans-serif !important;
+}
+body[data-os-style="windows"] .settings-window .window__taskbar{
+  position:relative !important;
+  height:32px !important; min-height:32px !important;
+  background:#f3f3f3 !important;
+  border-bottom:1px solid rgba(0,0,0,.06) !important;
+  padding:0 0 0 12px !important;
+}
+body[data-os-style="windows"] .settings-window .window__taskbar--content h2{
+  font-size:12px !important; font-weight:400 !important; color:#1b1b1b !important;
+  letter-spacing:0 !important;
+}
+body[data-os-style="windows"] .settings-body{
+  height:calc(100% - 32px) !important;
+  display:flex !important;
+  background:#f3f3f3 !important;
+}
+body[data-os-style="windows"] .settings-sidebar{
+  width:280px !important; min-width:280px !important;
+  background:#f3f3f3 !important;
+  border-right:none !important;
+  padding:8px 8px 16px !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+}
+body[data-os-style="windows"] .settings-profile{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 12px 16px !important;
+  margin:0 4px 8px;
+  border-radius:8px;
+  background:transparent;
+}
+body[data-os-style="windows"] .settings-profile:hover{background:rgba(0,0,0,.04)}
+body[data-os-style="windows"] .settings-profile-avatar{
+  width:40px !important; height:40px !important; border-radius:50% !important;
+  background:#0067c0 !important; color:#fff !important; font-weight:600 !important;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+}
+body[data-os-style="windows"] .settings-profile-text strong{font-size:14px !important; font-weight:600 !important; color:#1b1b1b !important}
+body[data-os-style="windows"] .settings-profile-text span{font-size:12px !important; color:#5f5f5f !important}
+body[data-os-style="windows"] .settings-sidebar .settings-search{
+  margin:0 8px 12px !important;
+  height:32px !important;
+  border-radius:4px !important;
+  background:#fff !important;
+  border:1px solid rgba(0,0,0,.12) !important;
+  box-shadow:none !important;
+  padding:0 12px !important;
+  font-size:13px !important;
+  color:#1b1b1b !important;
+}
+body[data-os-style="windows"] .settings-sidebar .settings-nav-label{
+  font-size:11px !important; font-weight:600 !important; color:#5f5f5f !important;
+  text-transform:none !important; padding:10px 12px 4px !important; letter-spacing:0 !important;
+}
+body[data-os-style="windows"] .settings-sidebar button.settings-nav{
+  border-radius:4px !important;
+  min-height:36px !important;
+  padding:6px 10px 6px 12px !important;
+  gap:12px !important;
+  font-size:13.5px !important;
+  font-weight:400 !important;
+  color:#1b1b1b !important;
+  margin:1px 4px !important;
+  position:relative;
+}
+body[data-os-style="windows"] .settings-sidebar button.settings-nav:hover{
+  background:rgba(0,0,0,.04) !important;
+}
+body[data-os-style="windows"] .settings-sidebar button.settings-nav.active{
+  background:rgba(0,103,192,.12) !important;
+  color:#1b1b1b !important;
+  font-weight:600 !important;
+}
+body[data-os-style="windows"] .settings-sidebar button.settings-nav.active::before{
+  content:""; position:absolute; left:0; top:20%; bottom:20%;
+  width:3px; border-radius:0 2px 2px 0; background:#0067c0;
+}
+body[data-os-style="windows"] .settings-sidebar button.settings-nav .nav-icon{
+  width:20px !important; height:20px !important; border-radius:4px !important;
+  font-size:12px !important; background:transparent !important;
+}
+body[data-os-style="windows"] .settings-content{
+  background:#f3f3f3 !important;
+  padding:20px 28px 40px !important;
+  max-width:1000px;
+}
+body[data-os-style="windows"] .settings-content h3{
+  font-size:28px !important; font-weight:600 !important;
+  letter-spacing:-.02em !important; color:#1b1b1b !important;
+  margin:0 0 6px !important;
+}
+body[data-os-style="windows"] .settings-content p.sub{
+  font-size:13px !important; color:#5f5f5f !important; margin:0 0 18px !important;
+}
+body[data-os-style="windows"] .settings-group{
+  background:#fff !important;
+  border-radius:8px !important;
+  box-shadow:none !important;
+  border:1px solid rgba(0,0,0,.06) !important;
+  margin-bottom:8px !important;
+  overflow:hidden;
+}
+body[data-os-style="windows"] .settings-row{
+  padding:14px 16px !important;
+  min-height:56px !important;
+  border-bottom:1px solid rgba(0,0,0,.06) !important;
+}
+body[data-os-style="windows"] .settings-row:last-child{border-bottom:0 !important}
+body[data-os-style="windows"] .settings-row:hover{background:rgba(0,0,0,.02)}
+body[data-os-style="windows"] .settings-row .row-label strong{font-size:14px !important; font-weight:400 !important; color:#1b1b1b !important}
+body[data-os-style="windows"] .settings-row .row-label span{font-size:12px !important; color:#5f5f5f !important}
+body[data-os-style="windows"] .settings-toggle{
+  width:40px !important; height:20px !important; border-radius:10px !important;
+  background:#8a8a8a !important;
+}
+body[data-os-style="windows"] .settings-toggle.on{background:#0067c0 !important}
+body[data-os-style="windows"] .settings-toggle .settings-toggle-slider,
+body[data-os-style="windows"] .settings-toggle-slider{
+  width:16px !important; height:16px !important; top:2px !important; left:2px !important;
+}
+body[data-os-style="windows"] .settings-toggle.on .settings-toggle-slider{transform:translateX(20px) !important}
+body[data-os-style="windows"] .settings-content select{
+  background:#fff !important; border:1px solid rgba(0,0,0,.14) !important;
+  border-radius:4px !important; height:32px !important; padding:0 10px !important;
+  font-size:13px !important; color:#1b1b1b !important;
+}
+body[data-os-style="windows"] .settings-content .cloak-btn,
+body[data-os-style="windows"] .settings-content button.cloak-btn,
+body[data-os-style="windows"] #wp-load{
+  background:#0067c0 !important; border-radius:4px !important; font-weight:600 !important;
+}
+body[data-os-style="windows"] #wp-hero{
+  background:#fff !important; border-radius:8px !important;
+  border:1px solid rgba(0,0,0,.06) !important; box-shadow:none !important;
+}
+body[data-os-style="windows"] #wp-chips button{
+  border-radius:4px !important; background:#eee !important; font-weight:400 !important;
+}
+body[data-os-style="windows"] #wp-chips button.on{background:#0067c0 !important; color:#fff !important}
+body[data-os-style="windows"] .os-card{
+  border-radius:8px !important; box-shadow:none !important;
+  border:1px solid rgba(0,0,0,.08) !important;
+}
+body[data-os-style="windows"] .os-card.on{box-shadow:0 0 0 2px #0067c0 !important}
+
+/* Windows 11 taskbar polish */
+body[data-os-style="windows"] .dock-container{
+  height:48px !important; padding:0 !important;
+  background:transparent !important;
+}
+body[data-os-style="windows"] .dock-el.dock,
+body[data-os-style="windows"] #macos-dock{
+  justify-content:center !important;
+  gap:2px !important;
+  background:rgba(243,243,243,.72) !important;
+  -webkit-backdrop-filter:blur(40px) saturate(180%) !important;
+  backdrop-filter:blur(40px) saturate(180%) !important;
+  border-top:1px solid rgba(0,0,0,.08) !important;
+  box-shadow:none !important;
+}
+body[data-os-style="windows"] .dock-el .dock-open-app-button{
+  width:44px !important; height:40px !important;
+  border-radius:4px !important;
+  margin:0 1px !important;
+}
+body[data-os-style="windows"] .dock-el .dock-open-app-button:hover{
+  background:rgba(255,255,255,.55) !important;
+}
+body[data-os-style="windows"] .dock-el .dock-open-app-button img{
+  width:24px !important; height:24px !important;
+  border-radius:0 !important; filter:none !important;
+}
+body[data-os-style="windows"] #os-tray{
+  background:transparent !important;
+  height:48px !important;
+  font-family:"Segoe UI Variable","Segoe UI",system-ui,sans-serif !important;
+}
+body[data-os-style="windows"] #os-start-menu{
+  background:rgba(243,243,243,.92) !important;
+  border-radius:12px !important;
+  box-shadow:0 0 0 1px rgba(0,0,0,.1),0 32px 80px rgba(0,0,0,.35) !important;
+}
+body[data-os-style="windows"] .window,
+body[data-os-style="windows"] .safari,
+body[data-os-style="windows"] .finder-window{
+  border-radius:8px !important;
+  border:1px solid rgba(0,0,0,.12) !important;
+}
+body[data-os-style="windows"] .window__taskbar{
+  background:#f3f3f3 !important;
+  height:32px !important; min-height:32px !important;
+  border-bottom:1px solid rgba(0,0,0,.06) !important;
+}
+body[data-os-style="windows"] .window.is-maximized,
+body[data-os-style="windows"] .safari.is-maximized,
+body[data-os-style="windows"] .settings-window.is-maximized{
+  top:0 !important;
+  height:calc(100vh - 48px) !important;
+  border-radius:0 !important;
+}
+
+/* ---------- UBUNTU GNOME Settings (Yaru) ---------- */
+body[data-os-style="ubuntu"] .settings-window{
+  border-radius:12px !important;
+  background:#242424 !important;
+  border:1px solid #000 !important;
+  box-shadow:0 0 0 1px #000,0 18px 50px rgba(0,0,0,.55) !important;
+  font-family:Ubuntu,"Cantarell","Noto Sans",system-ui,sans-serif !important;
+  color:#f2f2f2 !important;
+}
+body[data-os-style="ubuntu"] .settings-window .window__taskbar{
+  position:relative !important;
+  height:46px !important; min-height:46px !important;
+  background:#303030 !important;
+  border-bottom:1px solid #1a1a1a !important;
+  padding:0 12px !important;
+  display:flex !important; align-items:center !important;
+}
+body[data-os-style="ubuntu"] .settings-window .window__taskbar--content{
+  flex:1; display:flex; justify-content:center; pointer-events:none;
+}
+body[data-os-style="ubuntu"] .settings-window .window__taskbar--content h2{
+  font-size:14px !important; font-weight:700 !important; color:#f2f2f2 !important;
+  letter-spacing:0 !important;
+}
+body[data-os-style="ubuntu"] .settings-window .window__taskbar--actions{
+  gap:8px !important; padding:0 4px !important;
+}
+body[data-os-style="ubuntu"] .settings-window .window__taskbar--actions button{
+  width:24px !important; height:24px !important; min-width:24px !important;
+  border-radius:50% !important; background:rgba(255,255,255,.12) !important;
+  color:#f2f2f2 !important; font-size:11px !important;
+}
+body[data-os-style="ubuntu"] .settings-window .window__taskbar--actions button:nth-child(1):hover{
+  background:#e95420 !important; color:#fff !important;
+}
+body[data-os-style="ubuntu"] .settings-body{
+  height:calc(100% - 46px) !important;
+  background:#242424 !important;
+}
+body[data-os-style="ubuntu"] .settings-sidebar{
+  width:260px !important; min-width:260px !important;
+  background:#2c2c2c !important;
+  border-right:1px solid #1a1a1a !important;
+  padding:12px 8px 16px !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+}
+body[data-os-style="ubuntu"] .settings-profile{
+  padding:10px 12px 14px !important;
+}
+body[data-os-style="ubuntu"] .settings-profile-avatar{
+  background:#e95420 !important; color:#fff !important; border-radius:50% !important;
+}
+body[data-os-style="ubuntu"] .settings-profile-text strong{color:#f2f2f2 !important}
+body[data-os-style="ubuntu"] .settings-profile-text span{color:#a8a8a8 !important}
+body[data-os-style="ubuntu"] .settings-sidebar .settings-search{
+  background:rgba(255,255,255,.08) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:8px !important;
+  color:#f2f2f2 !important;
+  height:34px !important;
+  margin:0 4px 10px !important;
+}
+body[data-os-style="ubuntu"] .settings-sidebar .settings-nav-label{
+  color:#a8a8a8 !important; font-size:11px !important; font-weight:700 !important;
+  text-transform:uppercase !important; letter-spacing:.04em !important;
+  padding:12px 12px 6px !important;
+}
+body[data-os-style="ubuntu"] .settings-sidebar button.settings-nav{
+  border-radius:8px !important;
+  min-height:36px !important;
+  padding:6px 10px !important;
+  margin:1px 2px !important;
+  color:#f2f2f2 !important;
+  font-size:13.5px !important;
+  font-weight:500 !important;
+}
+body[data-os-style="ubuntu"] .settings-sidebar button.settings-nav:hover{
+  background:rgba(255,255,255,.08) !important;
+}
+body[data-os-style="ubuntu"] .settings-sidebar button.settings-nav.active{
+  background:#e95420 !important;
+  color:#fff !important;
+  font-weight:600 !important;
+}
+body[data-os-style="ubuntu"] .settings-sidebar button.settings-nav.active::before{display:none !important}
+body[data-os-style="ubuntu"] .settings-sidebar button.settings-nav .nav-icon{
+  width:22px !important; height:22px !important; border-radius:6px !important;
+  background:rgba(255,255,255,.08) !important;
+}
+body[data-os-style="ubuntu"] .settings-sidebar button.settings-nav.active .nav-icon{
+  background:rgba(0,0,0,.15) !important;
+}
+body[data-os-style="ubuntu"] .settings-content{
+  background:#242424 !important;
+  padding:24px 28px 36px !important;
+}
+body[data-os-style="ubuntu"] .settings-content h3{
+  font-size:24px !important; font-weight:700 !important; color:#f2f2f2 !important;
+  letter-spacing:0 !important;
+}
+body[data-os-style="ubuntu"] .settings-content p.sub{color:#a8a8a8 !important}
+body[data-os-style="ubuntu"] .settings-group{
+  background:#303030 !important;
+  border-radius:12px !important;
+  box-shadow:none !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  margin-bottom:14px !important;
+  overflow:hidden;
+}
+body[data-os-style="ubuntu"] .settings-row{
+  border-bottom:1px solid rgba(255,255,255,.06) !important;
+  padding:14px 16px !important;
+  min-height:52px !important;
+}
+body[data-os-style="ubuntu"] .settings-row:last-child{border-bottom:0 !important}
+body[data-os-style="ubuntu"] .settings-row .row-label strong{color:#f2f2f2 !important; font-weight:500 !important}
+body[data-os-style="ubuntu"] .settings-row .row-label span{color:#a8a8a8 !important}
+body[data-os-style="ubuntu"] .settings-toggle{
+  background:rgba(255,255,255,.2) !important;
+  border-radius:12px !important;
+}
+body[data-os-style="ubuntu"] .settings-toggle.on{background:#e95420 !important}
+body[data-os-style="ubuntu"] .settings-content select{
+  background:#3a3a3a !important; color:#f2f2f2 !important;
+  border:1px solid rgba(255,255,255,.1) !important;
+  border-radius:8px !important; height:32px !important;
+}
+body[data-os-style="ubuntu"] .settings-content .cloak-btn,
+body[data-os-style="ubuntu"] .settings-content button.cloak-btn,
+body[data-os-style="ubuntu"] #wp-load{
+  background:#e95420 !important; border-radius:8px !important;
+}
+body[data-os-style="ubuntu"] #wp-hero{
+  background:#303030 !important; border-radius:12px !important;
+  border:1px solid rgba(255,255,255,.06) !important; box-shadow:none !important;
+}
+body[data-os-style="ubuntu"] #wp-chips button{
+  background:rgba(255,255,255,.1) !important; color:#f2f2f2 !important;
+  border-radius:999px !important;
+}
+body[data-os-style="ubuntu"] #wp-chips button.on{background:#e95420 !important; color:#fff !important}
+body[data-os-style="ubuntu"] .os-card{
+  background:#303030 !important; border-radius:12px !important;
+  border:1px solid rgba(255,255,255,.08) !important; box-shadow:none !important;
+  color:#f2f2f2 !important;
+}
+body[data-os-style="ubuntu"] .os-card.on{box-shadow:0 0 0 2px #e95420 !important}
+body[data-os-style="ubuntu"] .os-card .os-desc{color:#a8a8a8 !important}
+
+/* Ubuntu dock + top bar polish */
+body[data-os-style="ubuntu"] .navbar{
+  background:#000 !important;
+  height:28px !important;
+}
+body[data-os-style="ubuntu"] .dock-container{
+  width:64px !important;
+  top:28px !important; bottom:0 !important; left:0 !important;
+  pointer-events:none;
+}
+body[data-os-style="ubuntu"] .dock-el.dock,
+body[data-os-style="ubuntu"] #macos-dock{
+  width:64px !important; max-width:64px !important;
+  background:rgba(30,30,30,.92) !important;
+  border-right:1px solid rgba(0,0,0,.5) !important;
+  padding:10px 0 !important;
+  pointer-events:auto;
+}
+body[data-os-style="ubuntu"] .dock-el .dock-open-app-button{
+  width:48px !important; height:48px !important;
+  border-radius:12px !important;
+  margin:3px 0 !important;
+}
+body[data-os-style="ubuntu"] .dock-el .dock-open-app-button:hover{
+  background:rgba(255,255,255,.1) !important;
+}
+body[data-os-style="ubuntu"] .dock-el .dock-open-app-button img{
+  width:36px !important; height:36px !important;
+  border-radius:10px !important;
+}
+body[data-os-style="ubuntu"] .dock-el .dot.is-open,
+body[data-os-style="ubuntu"] .dock-el .os-open .dot{
+  left:2px !important; width:5px !important; height:5px !important;
+  background:#e95420 !important; border-radius:50% !important;
+}
+body[data-os-style="ubuntu"] .window,
+body[data-os-style="ubuntu"] .safari,
+body[data-os-style="ubuntu"] .finder-window{
+  border-radius:12px 12px 8px 8px !important;
+  border:1px solid #000 !important;
+}
+body[data-os-style="ubuntu"] .window__taskbar{
+  background:#303030 !important;
+  height:40px !important; min-height:40px !important;
+  border-bottom:1px solid #1a1a1a !important;
+}
+body[data-os-style="ubuntu"] .window.is-maximized,
+body[data-os-style="ubuntu"] .safari.is-maximized,
+body[data-os-style="ubuntu"] .settings-window.is-maximized{
+  top:28px !important;
+  left:64px !important;
+  width:calc(100vw - 64px) !important;
+  height:calc(100vh - 28px) !important;
+  border-radius:0 !important;
+}
+
+/* ---------- KALI LINUX Settings (XFCE / dark) ---------- */
+body[data-os-style="kali"] .settings-window{
+  border-radius:4px !important;
+  background:#0d1117 !important;
+  border:1px solid #367bf0 !important;
+  box-shadow:0 0 0 1px #1a3a7a,0 16px 48px rgba(0,0,0,.7) !important;
+  font-family:"Cantarell","Noto Sans",system-ui,sans-serif !important;
+  color:#e6edf3 !important;
+}
+body[data-os-style="kali"] .settings-window .window__taskbar{
+  position:relative !important;
+  height:30px !important; min-height:30px !important;
+  background:#1b1f27 !important;
+  border-bottom:1px solid #000 !important;
+  padding:0 6px 0 10px !important;
+}
+body[data-os-style="kali"] .settings-window .window__taskbar--content{
+  flex:1; display:flex; justify-content:center;
+}
+body[data-os-style="kali"] .settings-window .window__taskbar--content h2{
+  font-size:12px !important; font-weight:600 !important;
+  color:#e6edf3 !important;
+  font-family:ui-monospace,"DejaVu Sans Mono",monospace !important;
+  letter-spacing:0 !important;
+}
+body[data-os-style="kali"] .settings-window .window__taskbar--actions button{
+  width:28px !important; height:28px !important; min-width:28px !important;
+  border-radius:0 !important; color:#8b949e !important; font-size:11px !important;
+  background:transparent !important;
+}
+body[data-os-style="kali"] .settings-window .window__taskbar--actions button:hover{
+  background:rgba(54,123,240,.25) !important; color:#fff !important;
+}
+body[data-os-style="kali"] .settings-window .window__taskbar--actions button:nth-child(1):hover{
+  background:#d73a49 !important; color:#fff !important;
+}
+body[data-os-style="kali"] .settings-body{
+  height:calc(100% - 30px) !important;
+  background:#0d1117 !important;
+}
+body[data-os-style="kali"] .settings-sidebar{
+  width:220px !important; min-width:220px !important;
+  background:#11151c !important;
+  border-right:1px solid #1a2030 !important;
+  padding:8px 6px 12px !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+}
+body[data-os-style="kali"] .settings-profile{
+  padding:8px 8px 12px !important;
+}
+body[data-os-style="kali"] .settings-profile-avatar{
+  background:#367bf0 !important; color:#fff !important;
+  border-radius:4px !important; width:32px !important; height:32px !important;
+  font-size:13px !important;
+}
+body[data-os-style="kali"] .settings-profile-text strong{color:#e6edf3 !important; font-size:13px !important}
+body[data-os-style="kali"] .settings-profile-text span{color:#8b949e !important; font-size:11px !important}
+body[data-os-style="kali"] .settings-sidebar .settings-search{
+  background:#161b22 !important;
+  border:1px solid #30363d !important;
+  border-radius:4px !important;
+  color:#e6edf3 !important;
+  height:28px !important;
+  margin:0 2px 8px !important;
+  font-size:12px !important;
+}
+body[data-os-style="kali"] .settings-sidebar .settings-nav-label{
+  color:#8b949e !important; font-size:10px !important; font-weight:700 !important;
+  text-transform:uppercase !important; letter-spacing:.06em !important;
+  padding:10px 8px 4px !important;
+}
+body[data-os-style="kali"] .settings-sidebar button.settings-nav{
+  border-radius:4px !important;
+  min-height:30px !important;
+  padding:4px 8px !important;
+  margin:1px 0 !important;
+  color:#c9d1d9 !important;
+  font-size:12.5px !important;
+  font-weight:500 !important;
+}
+body[data-os-style="kali"] .settings-sidebar button.settings-nav:hover{
+  background:rgba(54,123,240,.15) !important;
+  color:#e6edf3 !important;
+}
+body[data-os-style="kali"] .settings-sidebar button.settings-nav.active{
+  background:rgba(54,123,240,.25) !important;
+  color:#7aa7ff !important;
+  font-weight:600 !important;
+  box-shadow:inset 2px 0 0 #367bf0;
+}
+body[data-os-style="kali"] .settings-sidebar button.settings-nav.active::before{display:none !important}
+body[data-os-style="kali"] .settings-sidebar button.settings-nav .nav-icon{
+  width:18px !important; height:18px !important; border-radius:3px !important;
+  background:transparent !important; color:#367bf0 !important; font-size:11px !important;
+}
+body[data-os-style="kali"] .settings-content{
+  background:#0d1117 !important;
+  padding:18px 22px 30px !important;
+  background-image:radial-gradient(ellipse at 100% 0, rgba(54,123,240,.07),transparent 50%) !important;
+}
+body[data-os-style="kali"] .settings-content h3{
+  font-size:18px !important; font-weight:700 !important; color:#e6edf3 !important;
+  font-family:ui-monospace,"DejaVu Sans Mono",monospace !important;
+  letter-spacing:0 !important;
+}
+body[data-os-style="kali"] .settings-content p.sub{color:#8b949e !important; font-size:12px !important}
+body[data-os-style="kali"] .settings-group{
+  background:#161b22 !important;
+  border-radius:6px !important;
+  box-shadow:none !important;
+  border:1px solid #30363d !important;
+  margin-bottom:12px !important;
+  overflow:hidden;
+}
+body[data-os-style="kali"] .settings-row{
+  border-bottom:1px solid #21262d !important;
+  padding:12px 14px !important;
+  min-height:44px !important;
+}
+body[data-os-style="kali"] .settings-row:last-child{border-bottom:0 !important}
+body[data-os-style="kali"] .settings-row:hover{background:rgba(54,123,240,.06)}
+body[data-os-style="kali"] .settings-row .row-label strong{color:#e6edf3 !important; font-size:13px !important; font-weight:500 !important}
+body[data-os-style="kali"] .settings-row .row-label span{color:#8b949e !important; font-size:11px !important}
+body[data-os-style="kali"] .settings-toggle{
+  background:#30363d !important;
+  border-radius:10px !important;
+}
+body[data-os-style="kali"] .settings-toggle.on{background:#367bf0 !important}
+body[data-os-style="kali"] .settings-content select{
+  background:#161b22 !important; color:#e6edf3 !important;
+  border:1px solid #30363d !important;
+  border-radius:4px !important; height:28px !important;
+  font-size:12px !important;
+}
+body[data-os-style="kali"] .settings-content .cloak-btn,
+body[data-os-style="kali"] .settings-content button.cloak-btn,
+body[data-os-style="kali"] #wp-load{
+  background:#367bf0 !important; border-radius:4px !important;
+  border:1px solid #1d4ed8 !important;
+}
+body[data-os-style="kali"] #wp-hero{
+  background:#161b22 !important; border-radius:6px !important;
+  border:1px solid #30363d !important; box-shadow:none !important;
+}
+body[data-os-style="kali"] #wp-chips button{
+  background:#21262d !important; color:#c9d1d9 !important;
+  border-radius:4px !important; border:1px solid #30363d !important;
+}
+body[data-os-style="kali"] #wp-chips button.on{background:#367bf0 !important; color:#fff !important; border-color:#367bf0 !important}
+body[data-os-style="kali"] .os-card{
+  background:#161b22 !important; border-radius:6px !important;
+  border:1px solid #30363d !important; box-shadow:none !important;
+  color:#e6edf3 !important;
+}
+body[data-os-style="kali"] .os-card.on{box-shadow:0 0 0 2px #367bf0 !important}
+body[data-os-style="kali"] .os-card .os-desc{color:#8b949e !important}
+
+/* Kali panel + dock polish — XFCE-style bottom floating panel */
+body[data-os-style="kali"] .navbar{
+  background:#14161c !important;
+  border-bottom:1px solid #000 !important;
+  height:28px !important;
+}
+/* Force bottom-centered horizontal dock (never inherit Ubuntu left column) */
+body[data-os-style="kali"] .dock-container{
+  position:fixed !important;
+  left:0 !important; right:0 !important; bottom:0 !important; top:auto !important;
+  width:100% !important; height:64px !important;
+  padding:0 0 10px !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:flex-end !important;
+  pointer-events:none !important;
+  z-index:100 !important;
+}
+body[data-os-style="kali"] .dock-el.dock,
+body[data-os-style="kali"] #macos-dock{
+  position:relative !important;
+  left:auto !important; right:auto !important; top:auto !important; bottom:auto !important;
+  flex-direction:row !important;
+  flex-wrap:nowrap !important;
+  align-items:flex-end !important;
+  justify-content:center !important;
+  width:max-content !important;
+  max-width:calc(100vw - 24px) !important;
+  height:auto !important;
+  min-height:52px !important;
+  border-radius:10px !important;
+  background:rgba(20,22,28,.94) !important;
+  box-shadow:0 0 0 1px rgba(54,123,240,.55),0 10px 32px rgba(0,0,0,.65) !important;
+  padding:6px 10px 8px !important;
+  margin:0 auto !important;
+  gap:2px !important;
+  overflow:visible !important;
+  pointer-events:auto !important;
+  transform:none !important;
+}
+body[data-os-style="kali"] .dock-el::before{display:none !important}
+body[data-os-style="kali"] .dock-el .divider{
+  display:none !important;
+}
+body[data-os-style="kali"] .dock-el .dock-open-app-button,
+body[data-os-style="kali"] .dock-el .dock-open-app-button.os-proxy{
+  position:relative !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  width:48px !important;
+  height:48px !important;
+  min-width:48px !important;
+  margin:0 2px !important;
+  padding:0 !important;
+  border-radius:8px !important;
+  flex:0 0 auto !important;
+  order:unset !important;
+}
+body[data-os-style="kali"] .dock-el .dock-open-app-button.os-hidden{
+  display:none !important;
+}
+body[data-os-style="kali"] .dock-el .dock-open-app-button:hover{
+  background:rgba(54,123,240,.18) !important;
+}
+body[data-os-style="kali"] .dock-el .dock-open-app-button > span.dock-icon-wrap{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:40px !important;
+  height:40px !important;
+  line-height:0 !important;
+}
+/* Kill magnification inline sizes — fixed XFCE icon size */
+body[data-os-style="kali"] .dock-el .dock-open-app-button img{
+  width:36px !important;
+  height:36px !important;
+  max-width:36px !important;
+  max-height:36px !important;
+  border-radius:6px !important;
+  object-fit:contain !important;
+  transform:none !important;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.45));
+}
+body[data-os-style="kali"] .dock-el .dock-open-app-button .dot,
+body[data-os-style="kali"] .dock-el .dock-open-app-button .dot.is-open,
+body[data-os-style="kali"] .dock-el .os-open .dot{
+  position:absolute !important;
+  bottom:1px !important;
+  left:50% !important;
+  top:auto !important;
+  transform:translateX(-50%) !important;
+  width:14px !important;
+  height:3px !important;
+  margin:0 !important;
+  border-radius:2px !important;
+  background:#367bf0 !important;
+  opacity:0;
+}
+body[data-os-style="kali"] .dock-el .dock-open-app-button .dot.is-open,
+body[data-os-style="kali"] .dock-el .os-open .dot{
+  opacity:1 !important;
+}
+body[data-os-style="kali"] .dock-el .dock-open-app-button .tooltip{
+  background:#14161c !important;
+  color:#e6edf3 !important;
+  border:1px solid #367bf0 !important;
+  border-radius:5px !important;
+  font-size:12px !important;
+  bottom:calc(100% + 10px) !important;
+  left:50% !important;
+  top:auto !important;
+  transform:translateX(-50%) !important;
+  white-space:nowrap !important;
+}
+body[data-os-style="kali"] .dock-el .dock-open-app-button.dock-bounce > span.dock-icon-wrap{
+  animation:none !important;
+}
+body[data-os-style="kali"] .window.is-maximized,
+body[data-os-style="kali"] .safari.is-maximized,
+body[data-os-style="kali"] .settings-window.is-maximized{
+  top:28px !important;
+  height:calc(100vh - 28px - 64px) !important;
+  border-radius:0 !important;
+  border-left:none !important; border-right:none !important; border-bottom:none !important;
+}
+
+/* Shared: non-mac window controls stay right-aligned & square */
+body[data-os-style="windows"] .window__taskbar--actions,
+body[data-os-style="ubuntu"] .window__taskbar--actions,
+body[data-os-style="kali"] .window__taskbar--actions{
+  margin-left:auto;
+}
+body[data-os-style="windows"] .settings-content input[type="text"],
+body[data-os-style="windows"] .settings-content input[type="search"]{
+  background:#fff !important; border:1px solid rgba(0,0,0,.14) !important;
+  border-radius:4px !important; color:#1b1b1b !important;
+}
+body[data-os-style="ubuntu"] .settings-content input[type="text"],
+body[data-os-style="ubuntu"] .settings-content input[type="search"]{
+  background:#3a3a3a !important; border:1px solid rgba(255,255,255,.1) !important;
+  border-radius:8px !important; color:#f2f2f2 !important;
+}
+body[data-os-style="kali"] .settings-content input[type="text"],
+body[data-os-style="kali"] .settings-content input[type="search"]{
+  background:#161b22 !important; border:1px solid #30363d !important;
+  border-radius:4px !important; color:#e6edf3 !important;
+}
+
+
+/* Per-OS browser window chrome accents */
+.safari[data-os-browser="edge"] .safari-chrome,
+.safari[data-os-browser="edge"] .safari-chrome-top {
+  background: linear-gradient(180deg, #f3f3f3 0%, #e8e8e8 100%) !important;
+}
+body[data-os-style="windows"] .safari .safari-urlbar,
+body[data-os-style="windows"] .safari #safari-url {
+  border-radius: 4px !important;
+}
+.safari[data-os-browser="firefox"] .safari-chrome,
+.safari[data-os-browser="firefox"] .safari-chrome-top {
+  background: linear-gradient(180deg, #2b2a33 0%, #1c1b22 100%) !important;
+}
+body[data-os-style="ubuntu"] .safari .safari-chrome-top,
+body[data-os-style="kali"] .safari .safari-chrome-top {
+  background: #1c1b22 !important;
+}
+body[data-os-style="ubuntu"] .safari .safari-urlbar,
+body[data-os-style="kali"] .safari .safari-urlbar {
+  background: #42414d !important;
+  color: #fbfbfe !important;
+  border-radius: 8px !important;
+}
+body[data-os-style="ubuntu"] .safari .safari-tab,
+body[data-os-style="kali"] .safari .safari-tab {
+  background: #42414d !important;
+  color: #fbfbfe !important;
+}
+
+</style>
+<script id="nyx-ext-js">
+/* ====================================================================
+   NYX EXTENSIONS JS: Styles panel, OS chrome, Settings polish, MotionBGs
+   ==================================================================== */
+(function () {
+  "use strict";
+  function $(id) { return document.getElementById(id); }
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+  /* ---------------- OS chrome (Windows start/tray) ---------------- */
+  var STYLE_KEY = "nyx_os_style";
+  var STYLES = {
+    mac:     { label: "macOS",       desc: "Menu bar on top, magnifying dock, traffic-light windows.", cls: "mac" },
+    windows: { label: "Windows 11",  desc: "Bottom taskbar with Start menu, min/max/close on the right.", cls: "win" },
+    ubuntu:  { label: "Ubuntu",      desc: "GNOME top bar, Yaru dock on the left, orange accent.", cls: "ubu" },
+    kali:    { label: "Kali Linux",  desc: "Dark XFCE-style panel, blue accent, floating dock.", cls: "kali" }
+  };
+
+  function applyStyle(key) {
+    if (!STYLES[key]) key = "mac";
+    if (key === "mac") document.body.removeAttribute("data-os-style");
+    else document.body.setAttribute("data-os-style", key);
+    lsSet(STYLE_KEY, key);
+    document.title = key === "mac" ? document.title.replace(/^(Windows|Ubuntu|Kali).*? — /, "") : document.title;
+    document.querySelectorAll("#settings-panel-styles .os-card").forEach(function (c) {
+      c.classList.toggle("on", c.getAttribute("data-style") === key);
+    });
+    var sub = $("os-style-current"); if (sub) sub.textContent = STYLES[key].label;
+    var m = $("os-start-menu"); if (m) m.classList.remove("open");
+    // Re-run dock layout so magnification sizes don't stay stuck
+    try { window.dispatchEvent(new Event("resize")); } catch (e) {}
+    try { if (window.nyxOnStyle) window.nyxOnStyle(key); } catch (e) {}
+  }
+  window.nyxSetOSStyle = applyStyle;
+
+  /* ---------------- Settings: Styles panel ---------------- */
+  function injectStylesPanel() {
+    var nav = document.querySelector('.settings-nav[data-panel="appearance"]');
+    var content = document.querySelector(".settings-content");
+    if (!nav || !content || $("settings-panel-styles")) return;
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "settings-nav"; btn.setAttribute("data-panel", "styles");
+    btn.innerHTML = '<span class="nav-icon" style="background:linear-gradient(135deg,#ff9f0a,#ff375f)">✦</span>Styles';
+    nav.insertAdjacentElement("afterend", btn);
+
+    var cards = Object.keys(STYLES).map(function (k) {
+      var s = STYLES[k];
+      return '<button type="button" class="os-card" data-style="' + k + '">' +
+        '<div class="os-prev ' + s.cls + '"><div class="p-top"></div><div class="p-dock"></div><div class="p-win"><b></b><u></u></div></div>' +
+        '<div class="os-name">' + s.label + '<i>Active</i></div><div class="os-desc">' + s.desc + '</div></button>';
+    }).join("");
+    var panel = document.createElement("div");
+    panel.id = "settings-panel-styles"; panel.style.display = "none";
+    panel.innerHTML =
+      '<h3>Styles</h3><p class="sub">Make this desktop look like another operating system. Your choice is remembered.</p>' +
+      '<div class="os-cards">' + cards + '</div>' +
+      '<div class="settings-group"><div class="settings-row"><div class="row-label"><strong>Current style</strong><span>Switches the bar, dock/taskbar, window buttons and Settings colors</span></div>' +
+      '<span id="os-style-current" style="font-size:13px;color:var(--st-sub)">macOS</span></div></div>';
+    content.appendChild(panel);
+    panel.addEventListener("click", function (e) {
+      var c = e.target.closest(".os-card"); if (c) applyStyle(c.getAttribute("data-style"));
+    });
+  }
+
+  /* Own panel switching (the built-in handler doesn't know about "styles") */
+  var PANEL_TITLES = { wallpaper: "Wallpaper", general: "General", appearance: "Appearance", styles: "Styles", displays: "Displays", sound: "Sound", dock: "Desktop & Dock",
+    multitasking: "Multitasking", controlcenter: "Control Center", notifications: "Notifications", safari: "Safari", privacy: "Privacy & Security", about: "About" };
+  function wireNav() {
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest(".settings-nav"); if (!b) return;
+      var p = b.getAttribute("data-panel"), st = $("settings-panel-styles");
+      if (st) {
+        if (p === "styles") {
+          document.querySelectorAll('[id^="settings-panel-"]').forEach(function (el) { el.style.display = el.id === "settings-panel-styles" ? "block" : "none"; });
+        } else st.style.display = "none";
+      }
+      var h = document.querySelector(".settings-window .window__taskbar--content h2");
+      if (h && PANEL_TITLES[p]) {
+        var osStyle = document.body.getAttribute("data-os-style");
+        if (osStyle === "windows" || osStyle === "ubuntu") h.textContent = "Settings";
+        else if (osStyle === "kali") h.textContent = "Settings Manager";
+        else h.textContent = PANEL_TITLES[p];
+      }
+      if (p === "wallpaper") updateHero();
+    }, true);
+  }
+
+  /* ---------------- Wallpaper panel: hero, chips, MotionBGs loader ---------------- */
+  var CATS = [
+    ["all", "All"], ["live", "Live"], ["pics", "Pictures"],
+    ["anime", "Anime", "anime girl naruto jujutsu demon slayer miku genshin hsr wuwa wuthering project sekai chainsaw makima reze rezero kei mahiru yuji scaramouche firefly sparkle ahri bomb"],
+    ["games", "Games", "game minecraft valorant fnaf starcraft warcraft titanfall lol league hunt pixel zelda mario witcher overwatch sombra blizzard brown dust"],
+    ["cars", "Cars", "car bmw nissan gtr porsche lamborghini ferrari mclaren supra mustang skyline audi mercedes"],
+    ["space", "Space", "space galaxy star planet astronaut nebula moon cosmos earth hyperion"],
+    ["nature", "Nature", "forest mountain ocean sea lake river rain snow winter sunset sunrise cloud waterfall tree flower aurora beach"],
+    ["hero", "Superhero", "superman batman spider marvel hulk avengers iron man deadpool wolverine joker"],
+    ["dark", "Dark / Horror", "horror dark skull demon vampire ghost night reaper abyss"],
+    ["tech", "Tech", "code coding cyber neon tech robot hacker terminal matrix"]
+  ];
+  var curCat = "all";
+
+  function getCurrentBg() {
+    var cur = lsGet("macos_desktop_bg"); var list = window.DESKTOP_BACKGROUNDS || (typeof DESKTOP_BACKGROUNDS !== "undefined" ? DESKTOP_BACKGROUNDS : []);
+    if (!cur && list[0]) cur = list[0].url;
+    var hit = null; for (var i = 0; i < list.length; i++) if (list[i].url === cur) { hit = list[i]; break; }
+    return { url: cur, bg: hit };
+  }
+  function updateHero() {
+    var h = $("wp-hero"); if (!h) return;
+    var c = getCurrentBg(), img = h.querySelector(".wp-hero-img"), meta = h.querySelector(".wp-hero-meta");
+    var name = c.bg ? c.bg.name : "Custom", ver = c.bg ? c.bg.version : "";
+    var thumb = c.bg && c.bg.thumb ? c.bg.thumb : (c.url && /\.(jpe?g|png|webp)/i.test(c.url) ? c.url : "");
+    img.style.backgroundImage = thumb ? 'url("' + thumb + '")' : "";
+    meta.innerHTML = "<strong></strong><span></span>";
+    meta.firstChild.textContent = name; meta.lastChild.textContent = ver + (c.bg && c.bg.type === "video" ? " · Live wallpaper" : "");
+  }
+  function listAll() { return (typeof DESKTOP_BACKGROUNDS !== "undefined") ? DESKTOP_BACKGROUNDS : []; }
+  function catMatch(bg, cat) {
+    if (cat === "all") return true;
+    if (cat === "live") return bg.type === "video" || bg.type === "dynamic";
+    if (cat === "pics") return !bg.type || bg.type === "image";
+    var def = CATS.filter(function (c) { return c[0] === cat; })[0]; if (!def || !def[2]) return true;
+    var n = (" " + (bg.name || "").toLowerCase() + " "); var words = def[2].split(" ");
+    for (var i = 0; i < words.length; i++) if (n.indexOf(words[i]) >= 0) return true;
+    return false;
+  }
+  function applyCat() {
+    var grid = $("wallpaper-grid"); if (!grid) return;
+    var list = listAll(), shown = 0;
+    grid.querySelectorAll(".wallpaper-card").forEach(function (card) {
+      var i = parseInt(card.getAttribute("data-i"), 10), bg = list[i];
+      var ok = bg ? catMatch(bg, curCat) : true;
+      if (ok) { card.removeAttribute("data-cat-hidden"); shown++; } else card.setAttribute("data-cat-hidden", "1");
+    });
+    var cnt = $("wp-count"); if (cnt) cnt.textContent = shown + " of " + list.length + " wallpapers";
+  }
+  function rebuildGrid() {
+    try { if (typeof _wallpaperGridBuilt !== "undefined") _wallpaperGridBuilt = false; } catch (e) {}
+    if (typeof renderWallpaperGrid === "function") renderWallpaperGrid();
+    applyCat();
+    var s = $("wallpaper-search"); if (s && s.value) s.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  /* --- MotionBGs crawler (best effort; the site must allow browser access, directly or via a CORS relay) --- */
+  var MB_KEY = "nyx_motionbgs_extra";
+  function titleCase(slug) { return slug.split("-").filter(Boolean).map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(" "); }
+  function mbEntry(id, slug) {
+    return { name: titleCase(slug), version: "MotionBGs 4K", url: "https://motionbgs.com/dl/4k/" + id + "/", type: "video",
+      thumb: "https://motionbgs.com/i/c/364x205/media/" + id + "/" + slug + ".3840x2160.jpg.webp",
+      preview: "https://motionbgs.com/media/" + id + "/" + slug + ".960x540.mp4", mbId: String(id) };
+  }
+  function knownIds() { var s = {}; listAll().forEach(function (b) { if (b.mbId) s[b.mbId] = 1; }); return s; }
+  function addEntries(pairs) {
+    var known = knownIds(), added = 0, list = listAll();
+    pairs.forEach(function (p) { if (!known[p[0]]) { known[p[0]] = 1; list.push(mbEntry(p[0], p[1])); added++; } });
+    return added;
+  }
+  function loadSaved() {
+    var raw = lsGet(MB_KEY); if (!raw) return 0;
+    try { return addEntries(JSON.parse(raw)); } catch (e) { return 0; }
+  }
+  function saveExtra(pairs) {
+    var cur = []; try { cur = JSON.parse(lsGet(MB_KEY) || "[]"); } catch (e) {}
+    var seen = {}; cur.forEach(function (p) { seen[p[0]] = 1; });
+    pairs.forEach(function (p) { if (!seen[p[0]]) { seen[p[0]] = 1; cur.push(p); } });
+    lsSet(MB_KEY, JSON.stringify(cur));
+  }
+  var RELAYS = [
+    function (u) { return u; },
+    function (u) { return "https://corsproxy.io/?" + encodeURIComponent(u); },
+    function (u) { return "https://api.allorigins.win/raw?url=" + encodeURIComponent(u); }
+  ];
+  var goodRelay = 0;
+  function fetchHtml(url) {
+    var order = [goodRelay].concat([0, 1, 2].filter(function (i) { return i !== goodRelay; }));
+    var idx = 0;
+    function next() {
+      if (idx >= order.length) return Promise.reject(new Error("blocked"));
+      var r = order[idx++];
+      return fetch(RELAYS[r](url), { mode: "cors" }).then(function (res) {
+        if (!res.ok) throw new Error("http " + res.status);
+        return res.text();
+      }).then(function (t) { if (t.length < 500) throw new Error("empty"); goodRelay = r; return t; }).catch(next);
+    }
+    return next();
+  }
+  function parsePairs(html) {
+    var re = /\/media\/(\d+)\/([a-z0-9][a-z0-9\-_]*?)\.(?:\d{3,4}x\d{3,4})\.(?:jpe?g|png)/gi, m, out = [], seen = {};
+    while ((m = re.exec(html))) { if (!seen[m[1]]) { seen[m[1]] = 1; out.push([m[1], m[2].toLowerCase()]); } }
+    return out;
+  }
+  var crawling = false, stopFlag = false;
+  function crawl() {
+    var btn = $("wp-load"), cnt = $("wp-count");
+    if (crawling) { stopFlag = true; btn.textContent = "Stopping…"; return; }
+    crawling = true; stopFlag = false; btn.textContent = "Stop loading";
+    var page = 1, empty = 0, total = 0;
+    var startPage = parseInt(lsGet("nyx_motionbgs_page") || "1", 10) || 1;
+    page = startPage;
+    function step() {
+      if (stopFlag || empty >= 3) return finish();
+      cnt.textContent = "Fetching MotionBGs page " + page + "… (" + total + " new)";
+      var url = page === 1 ? "https://motionbgs.com/" : "https://motionbgs.com/" + page + "/";
+      fetchHtml(url).then(function (html) {
+        var pairs = parsePairs(html), n = addEntries(pairs);
+        if (pairs.length === 0) empty++; else empty = 0;
+        if (n) { saveExtra(pairs); total += n; if (total % 60 < n || page % 5 === 0) rebuildGrid(); }
+        lsSet("nyx_motionbgs_page", String(page + 1)); page++;
+        setTimeout(step, 350);
+      }).catch(function (err) {
+        cnt.textContent = (total ? "Loaded " + total + " new wallpapers, then " : "") + "MotionBGs didn’t respond (the site may block browser access). Try again later.";
+        finish(true);
+      });
+    }
+    function finish(failed) {
+      crawling = false; btn.textContent = "Load more from MotionBGs";
+      rebuildGrid();
+      if (!failed) cnt.textContent = (empty >= 3 ? "Reached the end of the catalog. " : "Stopped. ") + total + " new wallpapers added. " + cnt.textContent;
+    }
+    step();
+  }
+
+  function injectWallpaperUI() {
+    var panel = $("settings-panel-wallpaper"); if (!panel || $("wp-hero")) return;
+    var search = $("wallpaper-search");
+    var hero = document.createElement("div"); hero.id = "wp-hero";
+    hero.innerHTML = '<div class="wp-hero-img"></div><div class="wp-hero-meta"></div>';
+    var sub = panel.querySelector("p.sub");
+    (sub || panel.querySelector("h3")).insertAdjacentElement("afterend", hero);
+    var chips = document.createElement("div"); chips.id = "wp-chips";
+    chips.innerHTML = CATS.map(function (c) { return '<button type="button" data-cat="' + c[0] + '"' + (c[0] === "all" ? ' class="on"' : "") + ">" + c[1] + "</button>"; }).join("");
+    var tools = document.createElement("div"); tools.id = "wp-tools";
+    tools.innerHTML = '<button type="button" id="wp-load">Load more from MotionBGs</button><span class="wp-count" id="wp-count"></span>';
+    if (search) { search.insertAdjacentElement("beforebegin", chips); search.insertAdjacentElement("afterend", tools); }
+    else { panel.insertBefore(chips, $("wallpaper-grid")); panel.insertBefore(tools, $("wallpaper-grid")); }
+    chips.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      curCat = b.getAttribute("data-cat");
+      chips.querySelectorAll("button").forEach(function (x) { x.classList.toggle("on", x === b); });
+      applyCat();
+    });
+    $("wp-load").addEventListener("click", crawl);
+    var g = $("wallpaper-grid");
+    if (g) g.addEventListener("click", function () { setTimeout(updateHero, 30); });
+  }
+
+  /* ---------------- init ---------------- */
+  function init() {
+    injectStylesPanel();
+    wireNav();
+    var added = loadSaved();
+    injectWallpaperUI();
+    if (added) { try { if (typeof _wallpaperGridBuilt !== "undefined") _wallpaperGridBuilt = false; } catch (e) {} }
+    var saved = lsGet(STYLE_KEY); if (saved && STYLES[saved]) applyStyle(saved); else applyStyle("mac");
+    setTimeout(function () { rebuildGrid(); updateHero(); }, 300);
+    // Re-count when Settings opens
+    document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".open_settings, .open_settings_menu")) setTimeout(function () { applyCat(); updateHero(); }, 120); });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+})();
+
+/* ====================================================================
+   NYX OS KIT: per-OS apps, names, icons, panels, Start menu, desktop icons
+   ==================================================================== */
+(function () {
+  "use strict";
+  function $(id) { return document.getElementById(id); }
+  function qa(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function svg(inner, vb) { return "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + (vb || "0 0 64 64") + '">' + inner + "</svg>"); }
+  function grad(id, a, b) { return '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + a + '"/><stop offset="1" stop-color="' + b + '"/></linearGradient></defs>'; }
+
+  /* Polished OS-specific app icons (non-mac) */
+  var IC = {
+    folderWin: svg(
+      '<defs><linearGradient id="fw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#f5b942"/></linearGradient>' +
+      '<linearGradient id="fw2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd36b"/><stop offset="1" stop-color="#e8a317"/></linearGradient></defs>' +
+      '<path d="M8 16h16l4 5h28a4 4 0 0 1 4 4v27a5 5 0 0 1-5 5H13a5 5 0 0 1-5-5V16z" fill="url(#fw2)"/>' +
+      '<path d="M8 26h48v26a5 5 0 0 1-5 5H13a5 5 0 0 1-5-5V26z" fill="url(#fw)"/>' +
+      '<path d="M8 26h48" stroke="rgba(255,255,255,.35)" stroke-width="1"/>'
+    ),
+    folderUbu: svg(
+      '<defs><linearGradient id="fu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8c8ea"/><stop offset="1" stop-color="#6b93c4"/></linearGradient>' +
+      '<linearGradient id="fu2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7aa0c8"/><stop offset="1" stop-color="#4a6f96"/></linearGradient></defs>' +
+      '<path d="M8 16h16l4 5h28a4 4 0 0 1 4 4v27a5 5 0 0 1-5 5H13a5 5 0 0 1-5-5V16z" fill="url(#fu2)"/>' +
+      '<path d="M8 26h48v26a5 5 0 0 1-5 5H13a5 5 0 0 1-5-5V26z" fill="url(#fu)"/>'
+    ),
+    folderKali: svg(
+      '<defs><linearGradient id="fk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b9cff"/><stop offset="1" stop-color="#1e4eb8"/></linearGradient></defs>' +
+      '<rect x="6" y="14" width="52" height="40" rx="5" fill="#0d1526" stroke="#367bf0" stroke-width="1.5"/>' +
+      '<path d="M10 18h14l3 4h27v6H10z" fill="#1a2a4a"/>' +
+      '<path d="M10 28h44v22a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3V28z" fill="url(#fk)" opacity=".9"/>'
+    ),
+    globeBlue: svg(
+      '<defs><linearGradient id="ed" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#36c5f0"/><stop offset="0.45" stop-color="#2b7de9"/><stop offset="1" stop-color="#1b4fbf"/></linearGradient>' +
+      '<linearGradient id="edw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#c8e8ff"/></linearGradient></defs>' +
+      '<circle cx="32" cy="32" r="28" fill="url(#ed)"/>' +
+      '<path d="M12 38c6-14 18-22 32-20 2 8-2 16-10 20-6 3-14 3-22 0z" fill="url(#edw)" opacity=".95"/>' +
+      '<path d="M18 42c8 6 20 8 30 2 1 4-2 8-8 10-10 2-18-2-22-12z" fill="#0b3d91" opacity=".55"/>' +
+      '<circle cx="40" cy="24" r="7" fill="#fff" opacity=".95"/>'
+    ),
+    globeOrange: svg(
+      '<defs><linearGradient id="ff" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6a3d"/><stop offset="0.5" stop-color="#e0312b"/><stop offset="1" stop-color="#9b1d1f"/></linearGradient>' +
+      '<radialGradient id="ffc" cx="40%" cy="40%"><stop offset="0" stop-color="#fff6a0"/><stop offset="0.5" stop-color="#ffd24a"/><stop offset="1" stop-color="#ff9f1a"/></radialGradient></defs>' +
+      '<circle cx="32" cy="32" r="28" fill="url(#ff)"/>' +
+      '<circle cx="34" cy="34" r="14" fill="url(#ffc)"/>' +
+      '<path d="M10 28c8-16 22-22 36-16 2 6-1 12-8 16 6 2 10 8 8 14-6 10-20 14-30 8-8-4-12-12-6-22z" fill="#ff8a5b" opacity=".85"/>' +
+      '<path d="M22 18c6-4 14-4 20 2-8 0-14 4-18 10-4-4-4-10-2-12z" fill="#ffe08a"/>'
+    ),
+    globeKali: svg(
+      '<defs><linearGradient id="fk2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4b8bff"/><stop offset="1" stop-color="#0a1628"/></linearGradient>' +
+      '<radialGradient id="fkc" cx="45%" cy="40%"><stop offset="0" stop-color="#9ec1ff"/><stop offset="1" stop-color="#367bf0"/></radialGradient></defs>' +
+      '<circle cx="32" cy="32" r="28" fill="url(#fk2)" stroke="#367bf0" stroke-width="1.5"/>' +
+      '<circle cx="34" cy="34" r="13" fill="url(#fkc)"/>' +
+      '<path d="M12 30c8-14 20-20 34-14 1 6-2 12-8 15 5 3 9 8 7 14-5 9-18 12-28 7-8-4-11-12-5-22z" fill="#1d4ed8" opacity=".7"/>'
+    ),
+    storeWin: svg(
+      '<defs><linearGradient id="ms" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3aa0ff"/><stop offset="1" stop-color="#0067c0"/></linearGradient></defs>' +
+      '<rect x="6" y="6" width="52" height="52" rx="12" fill="url(#ms)"/>' +
+      '<path d="M18 22h28l-2.5 26H20.5z" fill="#fff" opacity=".95"/>' +
+      '<path d="M26 22v-4a6 6 0 0 1 12 0v4" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>' +
+      '<path d="M18 30h28" stroke="#0067c0" stroke-width="2" opacity=".35"/>'
+    ),
+    storeUbu: svg(
+      '<defs><linearGradient id="us" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a45"/><stop offset="1" stop-color="#c34113"/></linearGradient></defs>' +
+      '<rect x="6" y="6" width="52" height="52" rx="12" fill="url(#us)"/>' +
+      '<path d="M18 22h28l-2.5 26H20.5z" fill="#fff"/>' +
+      '<path d="M26 22v-4a6 6 0 0 1 12 0v4" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>' +
+      '<circle cx="32" cy="36" r="4" fill="#e95420"/>'
+    ),
+    gearWin: svg(
+      '<defs><linearGradient id="gw" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b95a5"/><stop offset="1" stop-color="#4b5563"/></linearGradient></defs>' +
+      '<rect x="6" y="6" width="52" height="52" rx="12" fill="url(#gw)"/>' +
+      '<circle cx="32" cy="32" r="10" fill="none" stroke="#fff" stroke-width="4"/>' +
+      '<circle cx="32" cy="32" r="4.5" fill="#fff"/>' +
+      '<g stroke="#fff" stroke-width="4" stroke-linecap="round">' +
+      '<path d="M32 14v6M32 44v6M14 32h6M44 32h6M19 19l4 4M41 41l4 4M19 45l4-4M41 23l4-4"/>' +
+      '</g>'
+    ),
+    gearUbu: svg(
+      '<defs><linearGradient id="gu" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6b6870"/><stop offset="1" stop-color="#3d3b42"/></linearGradient></defs>' +
+      '<rect x="6" y="6" width="52" height="52" rx="12" fill="url(#gu)"/>' +
+      '<circle cx="32" cy="32" r="10" fill="none" stroke="#f2f2f2" stroke-width="4"/>' +
+      '<circle cx="32" cy="32" r="4.5" fill="#e95420"/>' +
+      '<g stroke="#f2f2f2" stroke-width="4" stroke-linecap="round">' +
+      '<path d="M32 14v6M32 44v6M14 32h6M44 32h6M19 19l4 4M41 41l4 4M19 45l4-4M41 23l4-4"/>' +
+      '</g>'
+    ),
+    gearKali: svg(
+      '<rect x="6" y="6" width="52" height="52" rx="8" fill="#0d1117" stroke="#367bf0" stroke-width="2"/>' +
+      '<circle cx="32" cy="32" r="10" fill="none" stroke="#367bf0" stroke-width="4"/>' +
+      '<circle cx="32" cy="32" r="4.5" fill="#7aa7ff"/>' +
+      '<g stroke="#367bf0" stroke-width="3.5" stroke-linecap="round">' +
+      '<path d="M32 14v5M32 45v5M14 32h5M45 32h5M20 20l3.5 3.5M40.5 40.5L44 44M20 44l3.5-3.5M40.5 23.5L44 20"/>' +
+      '</g>'
+    ),
+    bin: svg(
+      '<defs><linearGradient id="bn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8eef5"/><stop offset="1" stop-color="#b8c4d4"/></linearGradient></defs>' +
+      '<path d="M16 18h32l-2.5 36a5 5 0 0 1-5 4.5H23.5a5 5 0 0 1-5-4.5z" fill="url(#bn)" stroke="#8a97a8" stroke-width="1.5"/>' +
+      '<rect x="12" y="12" width="40" height="7" rx="3" fill="#9aa8ba"/>' +
+      '<path d="M26 10h12" stroke="#9aa8ba" stroke-width="4" stroke-linecap="round"/>' +
+      '<path d="M26 28v20M32 28v20M38 28v20" stroke="#7a8798" stroke-width="2.2" stroke-linecap="round"/>'
+    ),
+    termWin: svg(
+      '<defs><linearGradient id="tw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2a2a"/><stop offset="1" stop-color="#121212"/></linearGradient></defs>' +
+      '<rect x="6" y="10" width="52" height="44" rx="8" fill="url(#tw)"/>' +
+      '<rect x="6" y="10" width="52" height="10" rx="4" fill="#3c3c3c"/>' +
+      '<circle cx="14" cy="15" r="2" fill="#ff5f57"/><circle cx="20" cy="15" r="2" fill="#febc2e"/><circle cx="26" cy="15" r="2" fill="#28c840"/>' +
+      '<path d="M16 30l8 5-8 5" fill="none" stroke="#4ec9b0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M28 42h16" stroke="#dcdcaa" stroke-width="3" stroke-linecap="round"/>'
+    ),
+    termUbu: svg(
+      '<defs><linearGradient id="tu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a1a3d"/><stop offset="1" stop-color="#2a0a20"/></linearGradient></defs>' +
+      '<rect x="6" y="10" width="52" height="44" rx="8" fill="url(#tu)"/>' +
+      '<rect x="6" y="10" width="52" height="10" rx="4" fill="#5e2750"/>' +
+      '<path d="M16 30l8 5-8 5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M28 42h16" stroke="#e95420" stroke-width="3" stroke-linecap="round"/>'
+    ),
+    termKali: svg(
+      '<rect x="6" y="10" width="52" height="44" rx="6" fill="#0b0f16" stroke="#367bf0" stroke-width="2"/>' +
+      '<path d="M16 30l8 5-8 5" fill="none" stroke="#367bf0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M28 42h16" stroke="#7aa7ff" stroke-width="3" stroke-linecap="round"/>' +
+      '<text x="48" y="20" fill="#367bf0" font-size="9" font-family="monospace">$</text>'
+    ),
+    calc: svg(
+      '<defs><linearGradient id="cl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4b5568"/><stop offset="1" stop-color="#2d3340"/></linearGradient></defs>' +
+      '<rect x="10" y="6" width="44" height="52" rx="8" fill="url(#cl)"/>' +
+      '<rect x="16" y="12" width="32" height="12" rx="3" fill="#b8e1c6"/>' +
+      '<g fill="#e5e9f0"><circle cx="20" cy="34" r="3.5"/><circle cx="32" cy="34" r="3.5"/><circle cx="44" cy="34" r="3.5"/><circle cx="20" cy="45" r="3.5"/><circle cx="32" cy="45" r="3.5"/><circle cx="44" cy="45" r="3.5" fill="#f59e0b"/></g>'
+    ),
+    apps9: svg(
+      '<defs><linearGradient id="a9" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b5b5b"/><stop offset="1" stop-color="#2e2e2e"/></linearGradient></defs>' +
+      '<rect x="6" y="6" width="52" height="52" rx="12" fill="url(#a9)"/>' +
+      '<g fill="#fff">' +
+      '<circle cx="20" cy="20" r="5"/><circle cx="32" cy="20" r="5"/><circle cx="44" cy="20" r="5"/>' +
+      '<circle cx="20" cy="32" r="5"/><circle cx="32" cy="32" r="5"/><circle cx="44" cy="32" r="5"/>' +
+      '<circle cx="20" cy="44" r="5"/><circle cx="32" cy="44" r="5"/><circle cx="44" cy="44" r="5"/>' +
+      '</g>'
+    ),
+    start: svg(
+      '<defs><linearGradient id="st" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4db2ff"/><stop offset="1" stop-color="#0067c0"/></linearGradient></defs>' +
+      '<g fill="url(#st)">' +
+      '<rect x="8" y="8" width="22" height="22" rx="2.5"/>' +
+      '<rect x="34" y="8" width="22" height="22" rx="2.5"/>' +
+      '<rect x="8" y="34" width="22" height="22" rx="2.5"/>' +
+      '<rect x="34" y="34" width="22" height="22" rx="2.5"/>' +
+      '</g>'
+    ),
+    search: svg(
+      '<defs><linearGradient id="sr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f5f5f5"/><stop offset="1" stop-color="#d8d8d8"/></linearGradient></defs>' +
+      '<rect x="6" y="6" width="52" height="52" rx="12" fill="url(#sr)"/>' +
+      '<circle cx="28" cy="28" r="12" fill="none" stroke="#1b1b1b" stroke-width="4"/>' +
+      '<path d="M37 37l12 12" stroke="#1b1b1b" stroke-width="4" stroke-linecap="round"/>'
+    ),
+    home: svg(
+      '<defs><linearGradient id="hm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8c8ea"/><stop offset="1" stop-color="#6b93c4"/></linearGradient></defs>' +
+      '<path d="M8 30L32 8l24 22" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>' +
+      '<path d="M14 28v26h14V38h8v16h14V28L32 12z" fill="url(#hm)"/>'
+    ),
+    drive: svg(
+      '<defs><linearGradient id="dv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b0bbc8"/><stop offset="1" stop-color="#6b7785"/></linearGradient></defs>' +
+      '<rect x="6" y="18" width="52" height="28" rx="6" fill="url(#dv)"/>' +
+      '<rect x="6" y="38" width="52" height="8" rx="3" fill="#4a5563"/>' +
+      '<circle cx="48" cy="32" r="3.5" fill="#34d399"/>' +
+      '<rect x="12" y="24" width="18" height="4" rx="1" fill="rgba(255,255,255,.35)"/>'
+    )
+  };
+
+  var CFG = {
+
+    windows: {
+      label: "Windows 11", user: "Nyx", userSub: "Local account", host: "DESKTOP-NYX",
+      dock: { finder: ["File Explorer", IC.folderWin], safari: ["Microsoft Edge", IC.globeBlue], appstore: ["Microsoft Store", IC.storeWin], settings: ["Settings", IC.gearWin],
+        steam: null, launchpad: false, appletv: false, trash: false },
+      extras: [["terminal", "Terminal", IC.termWin], ["calculator", "Calculator", IC.calc], ["vscode", "Visual Studio Code", null]],
+      names: { Finder: "File Explorer", Safari: "Microsoft Edge", "System Settings": "Settings", "App Store": "Microsoft Store", Terminal: "Terminal", Calculator: "Calculator" },
+      nav: { Wallpaper: "Personalization", General: "System", Appearance: "Personalization", Styles: "Personalization", Displays: "System", Sound: "System", "Desktop & Dock": "Personalization", Multitasking: "System", "Control Center": "System",
+        Notifications: "System", Safari: "Apps", "Privacy & Security": "Privacy & security", "About This Mac": "System" },
+      finder: { Favorites: "Quick access", Locations: "This PC", Recents: "Recent", Applications: "Programs", Desktop: "Desktop", Documents: "Documents", Downloads: "Downloads", "Macintosh HD": "Local Disk (C:)", "Date Added": "Date modified", Kind: "Type" },
+      apple: { "About This Mac": "About", "System Settings...": "Settings", "Recent Items": "Recent files", "Force Quit...": "Task Manager", "Sleep": "Sleep", "Restart...": "Restart", "Shut Down...": "Shut down", "Lock Screen": "Lock", "Log Out...": "Sign out" },
+      desktop: [["Recycle Bin", IC.bin, "trash"], ["File Explorer", IC.folderWin, "finder"], ["Microsoft Edge", IC.globeBlue, "safari"]]
+    },
+    ubuntu: {
+      label: "Ubuntu", user: "nyx", userSub: "Administrator", host: "ubuntu",
+      dock: { finder: ["Files", IC.folderUbu], safari: ["Firefox Web Browser", IC.globeOrange], appstore: ["Ubuntu Software", IC.storeUbu], settings: ["Settings", IC.gearUbu],
+        steam: null, launchpad: false, appletv: false, trash: ["Trash", null] },
+      extras: [["terminal", "Terminal", IC.termUbu], ["calculator", "Calculator", IC.calc], ["vscode", "Visual Studio Code", null]],
+      names: { Finder: "Files", Safari: "Firefox Web Browser", "System Settings": "Settings", "App Store": "Ubuntu Software", Terminal: "Terminal" },
+      nav: { Wallpaper: "Background", General: "System", Appearance: "Appearance", Styles: "Styles", Displays: "Displays", Sound: "Sound", "Desktop & Dock": "Ubuntu Desktop", Multitasking: "Multitasking",
+        "Control Center": "Power", Notifications: "Notifications", Safari: "Firefox", "Privacy & Security": "Privacy", "About This Mac": "About" },
+      finder: { Favorites: "Places", Locations: "Devices", Recents: "Recent", Applications: "Software", Desktop: "Desktop", Documents: "Documents", Downloads: "Downloads", "Macintosh HD": "Computer", "Date Added": "Modified", Kind: "Type" },
+      apple: { "About This Mac": "About Ubuntu", "System Settings...": "Settings", "Recent Items": "Recent", "Force Quit...": "Power Off...", "Sleep": "Suspend", "Restart...": "Restart...", "Shut Down...": "Power Off...", "Lock Screen": "Lock", "Log Out...": "Log Out..." },
+      desktop: [["Home", IC.home, "finder"]]
+    },
+    kali: {
+      label: "Kali Linux", user: "kali", userSub: "root", host: "kali",
+      dock: { finder: ["Files", IC.folderKali], safari: ["Firefox ESR", IC.globeKali], appstore: false, settings: ["Settings Manager", IC.gearKali],
+        steam: false, launchpad: false, appletv: false, trash: false },
+      extras: [["terminal", "Terminal Emulator", IC.termKali], ["vscode", "Visual Studio Code", null], ["calculator", "Calculator", IC.calc]],
+      names: { Finder: "Thunar", Safari: "Firefox ESR", "System Settings": "Settings Manager", "App Store": "Kali Tools", Terminal: "Terminal Emulator" },
+      nav: { Wallpaper: "Desktop", General: "System", Appearance: "Appearance", Styles: "Styles", Displays: "Display", Sound: "Audio", "Desktop & Dock": "Panel", Multitasking: "Workspaces",
+        "Control Center": "Power Manager", Notifications: "Notifications", Safari: "Firefox ESR", "Privacy & Security": "Security", "About This Mac": "About" },
+      finder: { Favorites: "Places", Locations: "Devices", Recents: "Recent", Applications: "Applications", Desktop: "Desktop", Documents: "Documents", Downloads: "Downloads", "Macintosh HD": "File System", "Date Added": "Date Modified", Kind: "Type" },
+      apple: { "About This Mac": "About Kali", "System Settings...": "Settings Manager", "Recent Items": "Recent", "Force Quit...": "Kill Window", "Sleep": "Suspend", "Restart...": "Restart", "Shut Down...": "Shut Down", "Lock Screen": "Lock Screen", "Log Out...": "Log Out" },
+      desktop: [["Home", IC.home, "finder"], ["File System", IC.drive, "finder"]]
+    }
+  };
+
+  var cur = "mac";
+  function dockEl() { return $("macos-dock"); }
+  function origKeep(el, key, val) { if (el.dataset["o" + key] === undefined) el.dataset["o" + key] = val; return el.dataset["o" + key]; }
+
+  /* ---- text retargeting (stores the original so we can restore for macOS) ---- */
+  function lastTextNode(el) {
+    var n = null; for (var c = el.firstChild; c; c = c.nextSibling) if (c.nodeType === 3 && c.nodeValue.trim()) n = c;
+    return n;
+  }
+  function retext(el, map) {
+    var t = lastTextNode(el); if (!t) return;
+    if (el.__oTxt === undefined) el.__oTxt = t.nodeValue;
+    var key = el.__oTxt.trim();
+    var pad = el.__oTxt.match(/^\s*/)[0];
+    t.nodeValue = (map && map[key]) ? pad + map[key] : el.__oTxt;
+  }
+
+  function rebrandDock(os) {
+    var cfg = CFG[os], dock = dockEl(); if (!dock) return;
+    qa(".dock-open-app-button[data-dock-id]", dock).forEach(function (b) {
+      var id = b.getAttribute("data-dock-id");
+      var img = b.querySelector("img"), tip = b.querySelector(".tooltip");
+      origKeep(b, "title", b.getAttribute("title") || ""); if (img) origKeep(b, "src", img.getAttribute("src"));
+      b.classList.remove("os-hidden"); b.style.order = "";
+      var c = cfg ? cfg.dock[id] : undefined;
+      if (!cfg) { b.setAttribute("title", b.dataset.otitle); b.setAttribute("aria-label", "Launch " + b.dataset.otitle); if (tip) tip.textContent = b.dataset.otitle; if (img && b.dataset.osrc) img.setAttribute("src", b.dataset.osrc); return; }
+      if (c === false) { b.classList.add("os-hidden"); return; }
+      var title = (c && c[0]) || b.dataset.otitle;
+      b.setAttribute("title", title); b.setAttribute("aria-label", "Launch " + title); if (tip) tip.textContent = title;
+      if (img) img.setAttribute("src", (c && c[1]) || b.dataset.osrc);
+    });
+    qa(".os-proxy", dock).forEach(function (p) { p.remove(); });
+    var div = dock.querySelector(".divider");
+    if (div) div.classList.toggle("os-hidden", os === "windows" || os === "kali");
+    // Reset any magnification inline sizes left on icons
+    qa(".dock-open-app-button img", dock).forEach(function (img) {
+      img.style.width = "";
+      img.style.height = "";
+      img.style.transform = "";
+    });
+    qa(".dock-open-app-button", dock).forEach(function (b) {
+      b.style.width = "";
+      b.style.height = "";
+      b.style.order = "";
+      b.style.margin = "";
+    });
+    // Magnification is macOS-only — disable for Windows/Ubuntu/Kali panels
+    try {
+      if (os) {
+        window.__nyxDockMagnify = false;
+      } else {
+        var magPref = true;
+        try { magPref = localStorage.getItem("nyx_dock_magnify") !== "0"; } catch (e2) {}
+        window.__nyxDockMagnify = magPref;
+      }
+      window.dispatchEvent(new CustomEvent("nyx-dock-settings"));
+    } catch (e) {}
+    if (!cfg) {
+      try { window.dispatchEvent(new Event("resize")); } catch (e) {}
+      return;
+    }
+    var order = 10;
+    cfg.extras.forEach(function (x) {
+      var orig = document.querySelector('#nyx-app-pool [data-dock-id="' + x[0] + '"]')
+        || document.querySelector('[data-dock-id="' + x[0] + '"]');
+      if (!orig) return;
+      var src = x[2] || (orig.querySelector("img") && orig.querySelector("img").getAttribute("src"));
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "dock-open-app-button icon os-proxy";
+      b.setAttribute("data-dock-id", "proxy-" + x[0]);
+      b.title = x[1];
+      b.setAttribute("aria-label", "Launch " + x[1]);
+      b.innerHTML = '<p class="tooltip"></p><span class="dock-icon-wrap"><img alt="" draggable="false"></span><div class="dot" data-open-dot></div>';
+      b.querySelector(".tooltip").textContent = x[1];
+      b.querySelector("img").src = src;
+      b.style.order = String(order++);
+      b.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        orig.click();
+        b.classList.add("os-open");
+        var dot = b.querySelector(".dot");
+        if (dot) dot.classList.add("is-open");
+      });
+      dock.appendChild(b);
+    });
+    // Keep original items before proxies; trash/divider last on Ubuntu
+    qa(".dock-open-app-button[data-dock-id]", dock).forEach(function (b) {
+      var id = b.getAttribute("data-dock-id") || "";
+      if (id === "trash") b.style.order = "99";
+    });
+    if (div) div.style.order = "98";
+    // Kali: terminal first among proxies, natural DOM order for the rest
+    if (os === "kali") {
+      qa(".os-proxy", dock).forEach(function (p, i) {
+        p.style.order = String(50 + i);
+      });
+      var term = dock.querySelector('[data-dock-id="proxy-terminal"]');
+      if (term) term.style.order = "5";
+    }
+    try { window.dispatchEvent(new Event("resize")); } catch (e) {}
+  }
+
+  /* ---- dock extras: Windows start/search, Ubuntu show-apps ---- */
+  function ensureDockExtras() {
+    var dock = dockEl(); if (!dock || $("os-start")) return;
+    function mk(id, cls, title, icon, order) {
+      var b = document.createElement("button"); b.type = "button"; b.id = id; b.className = "dock-open-app-button icon os-dock-btn " + cls; b.title = title;
+      b.innerHTML = '<p class="tooltip"></p><span class="dock-icon-wrap"><img alt="" draggable="false"></span>';
+      b.querySelector(".tooltip").textContent = title; b.querySelector("img").src = icon; b.style.order = order; dock.appendChild(b); return b;
+    }
+    var start = mk("os-start", "os-only-win", "Start", IC.start, "-5");
+    var search = mk("os-search", "os-only-win", "Search", IC.search, "-4");
+    var apps = mk("os-showapps", "os-only-ubu", "Show Applications", IC.apps9, "120");
+    start.addEventListener("click", function (e) { e.stopPropagation(); toggleStart(); });
+    search.addEventListener("click", function (e) { e.stopPropagation(); closeStart(); var s = document.querySelector(".open_Search"); if (s) s.click(); });
+    apps.addEventListener("click", function (e) { e.stopPropagation(); var l = document.querySelector('[data-dock-id="launchpad"]'); if (l) l.click(); });
+  }
+
+  /* ---- Windows 11 Start menu + tray ---- */
+  var SVGI = {
+    wifi: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></svg>',
+    vol: '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"/></svg>',
+    bat: '<svg viewBox="0 0 24 24" width="17" height="15" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="17" height="10" rx="2.5"/><path d="M21.5 10.5v3" stroke-linecap="round"/><rect x="4" y="9" width="12" height="6" rx="1" fill="currentColor" stroke="none"/></svg>',
+    chev: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>',
+    power: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v9"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg>',
+    caret: '<svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M5 9l7 7 7-7z"/></svg>'
+  };
+  var PINNED = [["Settings", IC.gearWin, "settings"], ["File Explorer", IC.folderWin, "finder"], ["Microsoft Edge", IC.globeBlue, "safari"], ["Microsoft Store", IC.storeWin, "appstore"],
+    ["Terminal", IC.termWin, "terminal"], ["Calculator", IC.calc, "calculator"], ["Visual Studio Code", null, "vscode"], ["Steam", null, "steam"], ["Styles", IC.gearWin, "__styles"], ["Personalization", IC.gearWin, "__wallpaper"]];
+  function launch(id) {
+    if (id === "__styles" || id === "__wallpaper") {
+      if (typeof window.openSettings === "function") window.openSettings();
+      setTimeout(function () { var n = document.querySelector('.settings-nav[data-panel="' + (id === "__styles" ? "styles" : "wallpaper") + '"]'); if (n) n.click(); }, 80); return;
+    }
+    var b = document.querySelector('#macos-dock [data-dock-id="' + id + '"]') || document.querySelector('#nyx-app-pool [data-dock-id="' + id + '"]');
+    if (b) b.click();
+  }
+  function srcOf(id) { var b = document.querySelector('[data-dock-id="' + id + '"] img'); return b ? b.getAttribute("src") : ""; }
+  function buildChrome() {
+    if ($("os-start-menu")) return;
+    var tray = document.createElement("div"); tray.id = "os-tray";
+    tray.innerHTML = '<span class="t-ico">' + SVGI.chev + '</span><span class="t-ico t-grp">' + SVGI.wifi + SVGI.vol + SVGI.bat + '</span><span class="t-clock" id="os-clock-t"></span><span class="t-edge" title="Show desktop"></span>';
+    document.body.appendChild(tray);
+    var menu = document.createElement("div"); menu.id = "os-start-menu";
+    menu.innerHTML =
+      '<div class="sm-search"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#666" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M16 16l5 5"/></svg><input type="text" placeholder="Search for apps, settings, and documents"></div>' +
+      '<div class="sm-head"><b>Pinned</b><button data-a="allapps">All apps ›</button></div><div class="sm-grid" id="sm-grid"></div>' +
+      '<div class="sm-head"><b>Recommended</b></div><div class="sm-rec">' +
+      '<button data-a="settings"><img src="' + IC.gearWin + '"><span>Settings<small>Recently added</small></span></button>' +
+      '<button data-a="finder"><img src="' + IC.folderWin + '"><span>Downloads<small>Folder</small></span></button>' +
+      '<button data-a="safari"><img src="' + IC.globeBlue + '"><span>Microsoft Edge<small>Recently used</small></span></button>' +
+      '<button data-a="terminal"><img src="' + IC.termWin + '"><span>Terminal<small>Recently used</small></span></button></div>' +
+      '<div class="sm-foot"><span class="sm-user"><i>N</i>Nyx</span><span class="sm-pw"><button data-a="lock" title="Lock">Lock</button><button data-a="restart" title="Restart">Restart</button><button data-a="mac" title="Back to macOS">macOS</button><button data-a="power" title="Power">' + SVGI.power + '</button></span></div>';
+    document.body.appendChild(menu);
+    var grid = menu.querySelector("#sm-grid");
+    PINNED.forEach(function (p) {
+      var bt = document.createElement("button"); bt.setAttribute("data-a", p[2]);
+      var img = document.createElement("img"); img.src = p[1] || srcOf(p[2]) || IC.folderWin; bt.appendChild(img);
+      var sp = document.createElement("span"); sp.textContent = p[0]; bt.appendChild(sp); grid.appendChild(bt);
+    });
+    menu.addEventListener("click", function (e) {
+      e.stopPropagation(); var b = e.target.closest("button"); if (!b) return;
+      var a = b.getAttribute("data-a"); closeStart();
+      if (a === "allapps") { var l = document.querySelector('[data-dock-id="launchpad"]'); if (l) l.click(); }
+      else if (a === "lock") { if (window.lockScreen) window.lockScreen(); }
+      else if (a === "restart") location.reload();
+      else if (a === "power") { var s = document.getElementById("login-shutdown"); if (s) s.click(); }
+      else if (a === "mac") { if (window.nyxSetOSStyle) window.nyxSetOSStyle("mac"); }
+      else launch(a);
+    });
+    document.addEventListener("click", function (e) { if (!menu.contains(e.target)) closeStart(); });
+    function tick() {
+      var d = new Date(), el = $("os-clock-t"); if (!el) return;
+      el.innerHTML = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) + "<br>" + d.toLocaleDateString([], { month: "numeric", day: "numeric", year: "numeric" });
+      var u = $("os-ubu-clock"); if (u) u.textContent = d.toLocaleDateString([], { month: "short", day: "numeric" }) + "  " + d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      var k = $("os-kali-clock"); if (k) k.textContent = d.toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" }) + " " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
+    }
+    tick(); setInterval(tick, 10000);
+
+    // Ubuntu top bar + Kali panel extras
+    var ubu = document.createElement("div"); ubu.id = "os-ubu-bar";
+    ubu.innerHTML = '<span id="os-ubu-clock"></span><span class="ub-tray">' + SVGI.wifi + SVGI.vol + SVGI.bat + SVGI.caret + "</span>";
+    document.body.appendChild(ubu);
+    var kali = document.createElement("div"); kali.id = "os-kali-bar";
+    kali.innerHTML = '<span class="kb-l"><b class="kb-logo">◈</b><span class="kb-item">Applications</span><span class="kb-item">Places</span></span><span class="kb-r">' + SVGI.wifi + SVGI.vol + SVGI.bat + '<span id="os-kali-clock"></span></span>';
+    document.body.appendChild(kali);
+    kali.querySelector(".kb-item").addEventListener("click", function () { var l = document.querySelector('[data-dock-id="launchpad"]'); if (l) l.click(); });
+    kali.querySelectorAll(".kb-item")[1].addEventListener("click", function () { launch("finder"); });
+    ubu.addEventListener("click", function (e) { if (e.target.closest(".ub-tray") && typeof window.openSettings === "function") window.openSettings(); });
+    // Desktop icons
+    var di = document.createElement("div"); di.id = "os-desktop"; document.body.appendChild(di);
+    di.addEventListener("dblclick", function (e) { var it = e.target.closest(".dk-item"); if (it) launch(it.getAttribute("data-id")); });
+    di.addEventListener("click", function (e) { var it = e.target.closest(".dk-item"); qa(".dk-item", di).forEach(function (x) { x.classList.toggle("sel", x === it); }); });
+  }
+  function toggleStart() { var m = $("os-start-menu"); if (m) m.classList.toggle("open"); }
+  function closeStart() { var m = $("os-start-menu"); if (m) m.classList.remove("open"); }
+
+  function buildDesktop(os) {
+    var di = $("os-desktop"); if (!di) return; di.textContent = "";
+    var cfg = CFG[os]; if (!cfg) return;
+    cfg.desktop.forEach(function (d) {
+      var it = document.createElement("div"); it.className = "dk-item"; it.setAttribute("data-id", d[2]);
+      var im = document.createElement("img"); im.src = d[1]; im.draggable = false; var sp = document.createElement("span"); sp.textContent = d[0];
+      it.appendChild(im); it.appendChild(sp); di.appendChild(it);
+    });
+  }
+
+  function retextAll(os) {
+    var cfg = CFG[os];
+    qa(".settings-nav").forEach(function (b) { retext(b, cfg && cfg.nav); });
+    qa(".finder-side-label, .finder-side-item, .finder-list-header span").forEach(function (b) { retext(b, cfg && cfg.finder); });
+    qa(".navbar__left > li.logo > ul button").forEach(function (b) { retext(b, cfg && cfg.apple); });
+    var ps = document.querySelector(".settings-profile-text strong"), pv = document.querySelector(".settings-profile-text span"), av = document.querySelector(".settings-profile-avatar");
+    if (ps) { if (ps.__o === undefined) { ps.__o = ps.textContent; pv.__o = pv.textContent; } ps.textContent = cfg ? cfg.user : ps.__o; pv.textContent = cfg ? cfg.userSub : pv.__o; }
+    if (av) av.textContent = cfg ? cfg.user.charAt(0).toUpperCase() : "N";
+    var ab = document.querySelector("#settings-panel-about h3"); if (ab) { if (ab.__o === undefined) ab.__o = ab.textContent; ab.textContent = cfg ? "About" : ab.__o; }
+    var h = document.querySelector(".settings-window .window__taskbar--content h2"); if (h) {
+      var act = document.querySelector(".settings-nav.active");
+      if (os === "windows") h.textContent = "Settings";
+      else if (os === "ubuntu") h.textContent = "Settings";
+      else if (os === "kali") h.textContent = "Settings Manager";
+      else h.textContent = act ? (act.__oTxt || act.textContent).trim() : "System Settings";
+    }
+    var ft = $("finder-title"); if (ft && cfg) { /* keep folder name */ }
+    var sh = document.querySelector(".settings-search"); if (sh) { if (sh.__o === undefined) sh.__o = sh.getAttribute("placeholder"); sh.setAttribute("placeholder", os === "windows" ? "Find a setting" : sh.__o); }
+    var sp = $("spotlight-input"); if (sp) { if (sp.__o === undefined) sp.__o = sp.getAttribute("placeholder"); sp.setAttribute("placeholder", os === "windows" ? "Type here to search" : (os === "ubuntu" ? "Type to search…" : sp.__o)); }
+  }
+
+  /* menu-bar app name mapping (display only, via data attribute) */
+  function mapAppName() {
+    var el = $("menu-app-name"); if (!el) return; var p = el.querySelector("p") || el;
+    var cfg = CFG[cur]; var n = (p.textContent || "").trim();
+    var name = cfg && cfg.names[n] ? cfg.names[n] : n;
+    p.setAttribute("data-os", name);
+    // File Explorer etc. when Finder window is the active app
+    var fw = $("finder-window"); if (cfg && fw && fw.style.display !== "none") { var t = fw.querySelector(".finder-title"); }
+  }
+  function observeAppName() {
+    var el = $("menu-app-name"); if (!el) return;
+    new MutationObserver(mapAppName).observe(el, { childList: true, subtree: true, characterData: true });
+    mapAppName();
+  }
+
+  /* Per-OS browser iframe start pages (distinct chrome / start for each style) */
+  var OS_BROWSER_IFRAMES = {
+    mac: "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg",
+    windows: "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy@main/index.svg#edge",
+    ubuntu: "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy@main/index.svg#firefox",
+    kali: "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy@main/index.svg#firefox-esr"
+  };
+  var OS_BROWSER_LABELS = {
+    mac: "Safari",
+    windows: "Microsoft Edge",
+    ubuntu: "Firefox",
+    kali: "Firefox ESR"
+  };
+  function applyOsBrowserIframe(key) {
+    var url = OS_BROWSER_IFRAMES[key] || OS_BROWSER_IFRAMES.mac;
+    var label = OS_BROWSER_LABELS[key] || "Safari";
+    try {
+      var custom = null;
+      try { custom = localStorage.getItem("nyx_safari_iframe"); } catch (e) {}
+      var known = {};
+      Object.keys(OS_BROWSER_IFRAMES).forEach(function (k) { known[OS_BROWSER_IFRAMES[k]] = 1; });
+      if (custom && !known[custom]) {
+        url = custom;
+      } else {
+        try { localStorage.setItem("nyx_safari_iframe", url); } catch (e) {}
+        try { if (typeof NYX_PROXY_URL !== "undefined") NYX_PROXY_URL = url; } catch (e) {}
+      }
+      var fr = document.getElementById("safari-frame");
+      if (fr) {
+        var curSrc = fr.getAttribute("src") || "";
+        if (!custom || known[custom] || known[curSrc] || !curSrc) {
+          if (curSrc !== url) {
+            try { fr.removeAttribute("srcdoc"); } catch (e) {}
+            fr.src = url;
+          }
+        }
+      }
+      try {
+        var t = document.querySelector(".safari-tab.active .safari-tab-title");
+        if (t) t.textContent = label;
+        var u = document.getElementById("safari-url");
+        if (u && (!u.value || known[u.value] || u.value === "proxy" || u.value === "raplon")) {
+          u.value = label.toLowerCase().replace(/\s+/g, "-");
+        }
+      } catch (e) {}
+      var sw = $("safari-window") || document.querySelector(".safari");
+      if (sw) {
+        sw.setAttribute("data-os-browser", key === "mac" ? "safari" : (key === "windows" ? "edge" : "firefox"));
+        sw.setAttribute("data-os-name", label);
+      }
+    } catch (e) {}
+  }
+
+  /* hook into the style switch */
+  window.nyxOnStyle = function (key) {
+    cur = key; ensureDockExtras(); buildChrome();
+    var os = key === "mac" ? null : key;
+    document.body.classList.toggle("os-nonmac", !!os);
+    rebrandDock(os || null); retextAll(os); buildDesktop(os || ""); mapAppName(); closeStart();
+    var tt = { windows: "File Explorer", ubuntu: "Files", kali: "Thunar" };
+    var fw = $("finder-window"); if (fw) fw.setAttribute("data-os-name", tt[key] || "");
+    applyOsBrowserIframe(key || "mac");
+    try { window.dispatchEvent(new Event("resize")); } catch (e) {}
+  };
+  observeAppName();
+  // if a style was already applied before this script's hooks existed
+  try { var s = localStorage.getItem("nyx_os_style"); if (s && s !== "mac") setTimeout(function () { window.nyxOnStyle(s); }, 400); } catch (e) {}
+  setTimeout(function () { try { var s = document.body.getAttribute("data-os-style"); if (s) window.nyxOnStyle(s); } catch (e) {} }, 800);
+})();
+
 </script>
 </body>
 </html>

@@ -546,6 +546,58 @@
       border: 1px solid #ffffff34; z-index: 10; touch-action: none;
       position: absolute;
     }
+    /* TikTok / YouTube / Geometry Dash iframe apps */
+    .window.tiktok-app,
+    .window.youtube-app,
+    .window.gdash-app {
+      display: none !important;
+      flex-direction: column;
+      overflow: hidden;
+      background: #1c1c1e;
+      z-index: 90;
+    }
+    .window.tiktok-app.is-open,
+    .window.youtube-app.is-open,
+    .window.gdash-app.is-open {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    .window.tiktok-app .window__taskbar,
+    .window.youtube-app .window__taskbar,
+    .window.gdash-app .window__taskbar {
+      position: relative;
+      z-index: 20;
+      flex: 0 0 40px;
+      pointer-events: auto !important;
+    }
+    .window.tiktok-app .window__taskbar--actions,
+    .window.youtube-app .window__taskbar--actions,
+    .window.gdash-app .window__taskbar--actions {
+      pointer-events: auto !important;
+      z-index: 21;
+      position: relative;
+    }
+    .window.tiktok-app .window__taskbar--actions button,
+    .window.youtube-app .window__taskbar--actions button,
+    .window.gdash-app .window__taskbar--actions button {
+      pointer-events: auto !important;
+      z-index: 22;
+      position: relative;
+      cursor: pointer !important;
+    }
+    .window.tiktok-app iframe,
+    .window.youtube-app iframe,
+    .window.gdash-app iframe {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      border: 0;
+      position: relative;
+      z-index: 1;
+    }
+
     /* Proper maximize — fills desktop under menu bar */
     .window.is-maximized,
     .steam.is-maximized,
@@ -555,7 +607,10 @@
     .calculator.is-maximized,
     .imovie-window.is-maximized,
     .devhub-window.is-maximized,
-    .game-app.is-maximized {
+    .game-app.is-maximized,
+    .tiktok-app.is-maximized,
+    .youtube-app.is-maximized,
+    .gdash-app.is-maximized {
       position: fixed !important;
       top: 28px !important;
       left: 0 !important;
@@ -10478,6 +10533,31 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-vscode" style="display:none"></div>
       </button>
+      <!-- TikTok / YouTube / Geometry Dash — Launchpad only (not on Dock by default) -->
+      <button type="button" class="dock-open-app-button icon open_tiktok" data-dock-id="tiktok" title="TikTok" aria-label="Launch TikTok" >
+        <p class="tooltip">TikTok</p>
+        <span class="dock-icon-wrap">
+          <img src="https://s3-new.macosicons.com/macosicons/parse/TikTok_GegK37qUrB_lowResPng-97cb4a3ee3.png" alt="TikTok" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-tiktok" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_youtube" data-dock-id="youtube" title="YouTube" aria-label="Launch YouTube" >
+        <p class="tooltip">YouTube</p>
+        <span class="dock-icon-wrap">
+          <img src="https://s3-new.macosicons.com/macosicons/parse/low_res_YouTube_VnDNflASuV-1ebde983a6.png" alt="YouTube" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-youtube" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_gdash" data-dock-id="gdash" title="Geometry Dash" aria-label="Launch Geometry Dash" >
+        <p class="tooltip">Geometry Dash</p>
+        <span class="dock-icon-wrap">
+          <img src="https://s3-new.macosicons.com/macosicons/parse/Geometry_Dash_bzAPv60BiU_lowResPng-e9bd2ab8f7.png" alt="Geometry Dash" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-gdash" style="display:none"></div>
+      </button>
   </div>
 
 <div id="bootup-screen" class="splash-screen" aria-label="Loading macOS">
@@ -10745,8 +10825,10 @@ html[data-theme] .window-header.steam-popup-header,
   <div id="dockContextMenu" class="context-menu dock-context-menu" style="opacity:0;pointer-events:none;position:fixed;display:none;z-index:10000">
     <ul>
       <li><button type="button" id="dock-ctx-open">Open</button></li>
-      <li class="separator"></li>
+      <li class="separator" id="dock-ctx-sep-close"></li>
       <li><button type="button" id="dock-ctx-close" class="danger">Close</button></li>
+      <li class="separator" id="dock-ctx-sep-remove"></li>
+      <li><button type="button" id="dock-ctx-remove" class="danger">Remove from Dock</button></li>
     </ul>
   </div>
 
@@ -10880,6 +10962,18 @@ html[data-theme] .window-header.steam-popup-header,
         <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png" alt="Apple TV" draggable="false">
         <strong>Apple TV</strong>
       </div>
+      <div class="child-launchpad" data-lp-app="tiktok" data-keywords="TikTok social video short">
+        <img src="https://s3-new.macosicons.com/macosicons/parse/TikTok_GegK37qUrB_lowResPng-97cb4a3ee3.png" alt="TikTok" draggable="false">
+        <strong>TikTok</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="youtube" data-keywords="YouTube video watch stream">
+        <img src="https://s3-new.macosicons.com/macosicons/parse/low_res_YouTube_VnDNflASuV-1ebde983a6.png" alt="YouTube" draggable="false">
+        <strong>YouTube</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="gdash" data-keywords="Geometry Dash GD game dash rhythm">
+        <img src="https://s3-new.macosicons.com/macosicons/parse/Geometry_Dash_bzAPv60BiU_lowResPng-e9bd2ab8f7.png" alt="Geometry Dash" draggable="false">
+        <strong>Geometry Dash</strong>
+      </div>
       <div class="child-launchpad" data-lp-app="settings" data-keywords="System Settings preferences system">
         <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/preferences.png" alt="System Settings" draggable="false">
         <strong>System Settings</strong>
@@ -10991,6 +11085,45 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="window__taskbar--content"><h2>Maps</h2></div>
       </div>
       <iframe src="https://maps.google.com/maps?q=Apple+Park&output=embed" style="width:100%;height:calc(100% - 38px);border:none"></iframe>
+    </div>
+
+    <!-- TikTok app (iframe) -->
+    <div class="window tiktok-app" id="tiktok-window" style="display:none;min-width:50%;max-width:90%;width:900px;height:620px">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-tiktok" title="Close"></button>
+          <button type="button" class="backfull-tiktok" title="Minimize"></button>
+          <button type="button" class="full-tiktok" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>TikTok</h2></div>
+      </div>
+      <iframe id="tiktok-frame" src="https://cdn.jsdelivr.net/gh/mathissofun137/Luma-os-apps@main/index.svg#/embed?u=https%3A%2F%2Fwww.tiktok.com%2F" allow="fullscreen; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
+    </div>
+
+    <!-- YouTube app (iframe) -->
+    <div class="window youtube-app" id="youtube-window" style="display:none;min-width:50%;max-width:90%;width:960px;height:640px">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-youtube" title="Close"></button>
+          <button type="button" class="backfull-youtube" title="Minimize"></button>
+          <button type="button" class="full-youtube" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>YouTube</h2></div>
+      </div>
+      <iframe id="youtube-frame" src="https://cdn.jsdelivr.net/gh/mathissofun137/Luma-os-apps@main/index.svg#/embed?u=https%3A%2F%2Fyoutube.com%2FGDWASM%2F%3Fi%3D2" allow="fullscreen; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#0f0f0f;display:block"></iframe>
+    </div>
+
+    <!-- Geometry Dash app (iframe) -->
+    <div class="window gdash-app" id="gdash-window" style="display:none;min-width:50%;max-width:90%;width:960px;height:640px">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-gdash" title="Close"></button>
+          <button type="button" class="backfull-gdash" title="Minimize"></button>
+          <button type="button" class="full-gdash" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>Geometry Dash</h2></div>
+      </div>
+      <iframe id="gdash-frame" src="https://cdn.jsdelivr.net/gh/mathissofun137/Luma-os-apps@main/index.svg#/embed?u=https%3A%2F%2Fbluetoadmaker.infinityfreeapp.com%2FGDWASM%2F%3Fi%3D2" allow="fullscreen; autoplay; gamepad; keyboard-map; clipboard-write; pointer-lock" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
     </div>
 
     <!-- Dynamic per-game app windows are created here -->
@@ -11872,53 +12005,91 @@ html[data-theme] .window-header.steam-popup-header,
       const qRaw = (query || "").trim();
       const q = qRaw.toLowerCase();
 
+      function dockIcon(id, fallback) {
+        try {
+          var b = document.querySelector('.dock-open-app-button[data-dock-id="' + id + '"] img')
+            || document.querySelector('#nyx-app-pool [data-dock-id="' + id + '"] img')
+            || document.querySelector('.child-launchpad[data-lp-app="' + id + '"] img');
+          if (b && b.src) return b.src;
+        } catch (e) {}
+        return fallback || "";
+      }
+      function clickDock(id) {
+        try {
+          var b = document.querySelector('.dock-open-app-button[data-dock-id="' + id + '"]')
+            || document.querySelector('#nyx-app-pool [data-dock-id="' + id + '"]')
+            || document.querySelector('.child-launchpad[data-lp-app="' + id + '"]');
+          if (b) b.click();
+        } catch (e) {}
+      }
+
       const openApp = {
-        terminal: () => { try { if (typeof terminal !== "undefined" && terminal && typeof open_window === "function") open_window(terminal, point_terminal, app_name_terminal); } catch (e) {} },
-        notes: () => { try { if (typeof note !== "undefined" && note && typeof open_window === "function") open_window(note, point_note, app_name_notes); } catch (e) {} },
-        calculator: () => { try { if (typeof calculator !== "undefined" && calculator && typeof open_window === "function") open_window(calculator, point_cal, app_name_calculator); } catch (e) {} },
-        vscode: () => { try { if (typeof openVSCode === "function") openVSCode(); else if (typeof Vscode_window !== "undefined" && Vscode_window) open_window(Vscode_window, point_vscode, app_name_VScode); } catch (e) {} },
-        maps: () => { try { if (typeof maps_window !== "undefined" && maps_window && typeof open_window === "function") open_window(maps_window, typeof point_map !== "undefined" ? point_map : document.getElementById("point-maps"), app_name_maps); } catch (e) {} },
-        steam: () => { try { const w = document.querySelector(".steam"); if (w && typeof open_window === "function") { open_window(w, document.getElementById("point-steam"), document.querySelector("#Steam")); w.style.display = "flex"; } } catch (e) {} },
-        safari: () => { try { if (typeof openSafari === "function") openSafari(); } catch (e) {} },
-        settings: () => { try { if (typeof openSettings === "function") openSettings(); } catch (e) {} },
-        launchpad: () => { try { if (typeof handleOpenLaunching === "function") handleOpenLaunching(); } catch (e) {} }
+        finder: () => { try { if (typeof openFinder === "function") openFinder(); else clickDock("finder"); } catch (e) {} },
+        terminal: () => { try { if (typeof terminal !== "undefined" && terminal && typeof open_window === "function") open_window(terminal, point_terminal, app_name_terminal); else clickDock("terminal"); } catch (e) {} },
+        notes: () => { try { if (typeof note !== "undefined" && note && typeof open_window === "function") open_window(note, point_note, app_name_notes); else clickDock("notes"); } catch (e) {} },
+        calculator: () => { try { if (typeof calculator !== "undefined" && calculator && typeof open_window === "function") open_window(calculator, point_cal, app_name_calculator); else clickDock("calculator"); } catch (e) {} },
+        calendar: () => { try { clickDock("calendar"); } catch (e) {} },
+        vscode: () => { try { if (typeof openVSCode === "function") openVSCode(); else if (typeof Vscode_window !== "undefined" && Vscode_window) open_window(Vscode_window, point_vscode, app_name_VScode); else clickDock("vscode"); } catch (e) {} },
+        maps: () => { try { if (typeof maps_window !== "undefined" && maps_window && typeof open_window === "function") open_window(maps_window, typeof point_map !== "undefined" ? point_map : document.getElementById("point-maps"), app_name_maps); else clickDock("maps"); } catch (e) {} },
+        steam: () => { try { const w = document.querySelector(".steam"); if (w && typeof open_window === "function") { open_window(w, document.getElementById("point-steam"), document.querySelector("#Steam")); w.style.display = "flex"; } else clickDock("steam"); } catch (e) {} },
+        safari: () => { try { if (typeof openSafari === "function") openSafari(); else clickDock("safari"); } catch (e) {} },
+        settings: () => { try { if (typeof openSettings === "function") openSettings(); else clickDock("settings"); } catch (e) {} },
+        launchpad: () => { try { if (typeof handleOpenLaunching === "function") handleOpenLaunching(); else clickDock("launchpad"); } catch (e) {} },
+        appstore: () => { try { if (typeof window.openAppStore === "function") window.openAppStore(); else clickDock("appstore"); } catch (e) {} },
+        appletv: () => { try { if (typeof openIMovie === "function") openIMovie(); else clickDock("appletv"); } catch (e) {} },
+        tiktok: () => { try { if (typeof window.openTikTok === "function") window.openTikTok(); else clickDock("tiktok"); } catch (e) {} },
+        youtube: () => { try { if (typeof window.openYoutube === "function") window.openYoutube(); else clickDock("youtube"); } catch (e) {} },
+        gdash: () => { try { if (typeof window.openGdash === "function") window.openGdash(); else clickDock("gdash"); } catch (e) {} },
+        devhub: () => { try { if (typeof openDevHub === "function") openDevHub(); else clickDock("devhub"); } catch (e) {} }
       };
 
       const ICON = {
-        terminal: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png",
-        notes: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/notes.png",
-        calculator: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/calculator.png",
-        vscode: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg",
-        maps: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/maps.png",
-        steam: "https://cdn.jsdelivr.net/gh/NaoTomori1/yukios@main/static/icons/steam.webp",
-        safari: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/safari.png",
-        settings: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/preferences.png",
-        launchpad: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/launchpad.png",
-        finder: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/finder.png",
-        appstore: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/appstore.png",
+        terminal: dockIcon("terminal", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png"),
+        notes: dockIcon("notes", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/notes.png"),
+        calculator: dockIcon("calculator", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/calculator.png"),
+        calendar: dockIcon("calendar", "https://macos-web.app/app-icons/calendar/512.png"),
+        vscode: dockIcon("vscode", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg"),
+        maps: dockIcon("maps", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/maps.png"),
+        steam: dockIcon("steam", "https://cdn.jsdelivr.net/gh/NaoTomori1/yukios@main/static/icons/steam.webp"),
+        safari: dockIcon("safari", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/safari.png"),
+        settings: dockIcon("settings", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/preferences.png"),
+        launchpad: dockIcon("launchpad", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/launchpad.png"),
+        finder: dockIcon("finder", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/finder.png"),
+        appstore: dockIcon("appstore", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/appstore.png"),
+        appletv: dockIcon("appletv", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png"),
+        tiktok: dockIcon("tiktok", "https://s3-new.macosicons.com/macosicons/parse/TikTok_GegK37qUrB_lowResPng-97cb4a3ee3.png"),
+        youtube: dockIcon("youtube", "https://s3-new.macosicons.com/macosicons/parse/low_res_YouTube_VnDNflASuV-1ebde983a6.png"),
+        gdash: dockIcon("gdash", "https://s3-new.macosicons.com/macosicons/parse/Geometry_Dash_bzAPv60BiU_lowResPng-e9bd2ab8f7.png"),
         messages: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/message.png",
         music: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/music.png",
         mail: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/mail.png",
-        photos: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/photos.png"
+        photos: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/photos.png",
+        contacts: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/contacts.png"
       };
 
+      // Every app is always listed in Spotlight (not gated on install state)
       const catalog = [
-        ...((window.nyxIsInstalled && window.nyxIsInstalled("terminal")) ? [{ name: "Terminal", kind: "Application", section: "Applications", keywords: "shell bash cmd console tty", icon: ICON.terminal, action: openApp.terminal }] : []),
-        ...((window.nyxIsInstalled && window.nyxIsInstalled("notes")) ? [{ name: "Notes", kind: "Application", section: "Applications", keywords: "memo write text", icon: ICON.notes, action: openApp.notes }] : []),
-        ...((window.nyxIsInstalled && window.nyxIsInstalled("calculator")) ? [{ name: "Calculator", kind: "Application", section: "Applications", keywords: "math calc arithmetic", icon: ICON.calculator, action: openApp.calculator }] : []),
-        ...((window.nyxIsInstalled && window.nyxIsInstalled("vscode")) ? [{ name: "Code", kind: "Application", section: "Applications", keywords: "vs code editor ide visual studio programming", icon: ICON.vscode, action: openApp.vscode }] : []),
-        ...((window.nyxIsInstalled && window.nyxIsInstalled("maps")) ? [{ name: "Maps", kind: "Application", section: "Applications", keywords: "location gps navigation", icon: ICON.maps, action: openApp.maps }] : []),
-        { name: "Steam", kind: "Application", section: "Applications", keywords: "games gaming play library", icon: ICON.steam, action: openApp.steam },
-        { name: "Safari", kind: "Application", section: "Applications", keywords: "browser web internet www", icon: ICON.safari, action: openApp.safari },
-        { name: "Apple TV", kind: "Application", section: "Applications", keywords: "video editor movie film imovie apple tv streaming", icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png", action: () => { try { if (typeof openIMovie === "function") openIMovie(); } catch (e) {} } },
-        { name: "System Settings", kind: "System", section: "System", keywords: "preferences wallpaper desktop background config", icon: ICON.settings, action: openApp.settings },
+        { name: "Finder", kind: "Application", section: "Applications", keywords: "files folder disk home", icon: ICON.finder, action: openApp.finder },
         { name: "Launchpad", kind: "System", section: "System", keywords: "apps grid all applications", icon: ICON.launchpad, action: openApp.launchpad },
-        { name: "Finder", kind: "Application", section: "Applications", keywords: "files folder disk", icon: ICON.finder, action: () => {} },
-        { name: "App Store", kind: "Application", section: "Applications", keywords: "download install", icon: ICON.appstore, action: () => { try { window.openAppStore && window.openAppStore(); } catch (e) {} } },
-        { name: "Messages", kind: "Application", section: "Applications", keywords: "chat imessage text sms", icon: ICON.messages, action: () => {} },
-        { name: "Music", kind: "Application", section: "Applications", keywords: "songs apple music audio", icon: ICON.music, action: () => {} },
-        { name: "Mail", kind: "Application", section: "Applications", keywords: "email inbox", icon: ICON.mail, action: () => {} },
-        { name: "Photos", kind: "Application", section: "Applications", keywords: "pictures gallery images", icon: ICON.photos, action: () => {} },
+        { name: "Safari", kind: "Application", section: "Applications", keywords: "browser web internet www", icon: ICON.safari, action: openApp.safari },
+        { name: "App Store", kind: "Application", section: "Applications", keywords: "download install store apps", icon: ICON.appstore, action: openApp.appstore },
+        { name: "Steam", kind: "Application", section: "Applications", keywords: "games gaming play library", icon: ICON.steam, action: openApp.steam },
+        { name: "Apple TV", kind: "Application", section: "Applications", keywords: "video editor movie film imovie apple tv streaming", icon: ICON.appletv, action: openApp.appletv },
+        { name: "System Settings", kind: "System", section: "System", keywords: "preferences wallpaper desktop background config settings", icon: ICON.settings, action: openApp.settings },
+        { name: "Terminal", kind: "Application", section: "Applications", keywords: "shell bash cmd console tty command", icon: ICON.terminal, action: openApp.terminal },
+        { name: "Notes", kind: "Application", section: "Applications", keywords: "memo write text notepad", icon: ICON.notes, action: openApp.notes },
+        { name: "Calculator", kind: "Application", section: "Applications", keywords: "math calc arithmetic numbers", icon: ICON.calculator, action: openApp.calculator },
+        { name: "Calendar", kind: "Application", section: "Applications", keywords: "schedule events date agenda", icon: ICON.calendar, action: openApp.calendar },
+        { name: "Code", kind: "Application", section: "Applications", keywords: "vs code editor ide visual studio programming vscode", icon: ICON.vscode, action: openApp.vscode },
+        { name: "Maps", kind: "Application", section: "Applications", keywords: "location gps navigation directions", icon: ICON.maps, action: openApp.maps },
+        { name: "TikTok", kind: "Application", section: "Applications", keywords: "tiktok social short video fyp", icon: ICON.tiktok, action: openApp.tiktok },
+        { name: "YouTube", kind: "Application", section: "Applications", keywords: "youtube video watch stream", icon: ICON.youtube, action: openApp.youtube },
+        { name: "Geometry Dash", kind: "Application", section: "Applications", keywords: "geometry dash gd game rhythm dash platformer", icon: ICON.gdash, action: openApp.gdash },
+        { name: "Messages", kind: "Application", section: "Applications", keywords: "chat imessage text sms", icon: ICON.messages, action: () => { try { clickDock("messages"); } catch (e) {} } },
+        { name: "Music", kind: "Application", section: "Applications", keywords: "songs apple music audio player", icon: ICON.music, action: () => { try { clickDock("music"); } catch (e) {} } },
+        { name: "Mail", kind: "Application", section: "Applications", keywords: "email inbox mail", icon: ICON.mail, action: () => { try { clickDock("mail"); } catch (e) {} } },
+        { name: "Photos", kind: "Application", section: "Applications", keywords: "pictures gallery images camera", icon: ICON.photos, action: () => { try { clickDock("photos"); } catch (e) {} } },
+        { name: "Contacts", kind: "Application", section: "Applications", keywords: "people address book phone", icon: ICON.contacts, action: () => { try { var el = document.querySelector('.child-launchpad[data-lp-app="contacts"]'); if (el) el.click(); } catch (e) {} } },
         { name: "Lock Screen", kind: "Action", section: "Actions", keywords: "lock login sign out sleep", icon: ICON.settings, action: () => { try { if (typeof window.lockScreen === "function") window.lockScreen(); else if (typeof window.showLoginScreen === "function") window.showLoginScreen(); } catch (e) {} } },
         { name: "Sleep", kind: "Action", section: "Actions", keywords: "sleep display off", icon: ICON.settings, action: () => { try { if (typeof window.macSleep === "function") window.macSleep(); } catch (e) {} } },
         { name: "Reload Desktop", kind: "Action", section: "Actions", keywords: "refresh reload restart page", icon: ICON.settings, action: () => location.reload() },
@@ -11930,6 +12101,27 @@ html[data-theme] .window-header.steam-popup-header,
         }},
         { name: "Change Wallpaper", kind: "Action", section: "Actions", keywords: "wallpaper desktop background theme", icon: ICON.settings, action: () => { try { if (typeof openSettings === "function") openSettings(); } catch (e) {} } }
       ];
+
+      // Also index every Launchpad tile so any extra apps appear automatically
+      try {
+        document.querySelectorAll(".child-launchpad").forEach(function (el) {
+          var nameEl = el.querySelector("strong");
+          var name = (nameEl && nameEl.textContent || el.getAttribute("data-lp-app") || "").trim();
+          if (!name) return;
+          var already = catalog.some(function (c) { return c.name.toLowerCase() === name.toLowerCase(); });
+          if (already) return;
+          var img = el.querySelector("img");
+          var keywords = (el.getAttribute("data-keywords") || name).toLowerCase();
+          catalog.push({
+            name: name,
+            kind: "Application",
+            section: "Applications",
+            keywords: keywords,
+            icon: (img && img.src) || ICON.appstore,
+            action: function () { try { el.click(); } catch (e) {} }
+          });
+        });
+      } catch (e) {}
 
       // Dev Hub appears in Spotlight only when dev mode is on
       try {
@@ -12389,7 +12581,7 @@ html[data-theme] .window-header.steam-popup-header,
 
     function close_window(win, point, appName) {
       if (!win) return;
-      win.classList.remove("maximized", "minimized", "is-maximized", "active", "open");
+      win.classList.remove("maximized", "minimized", "is-maximized", "active", "open", "is-open");
       win.style.setProperty("display", "none", "important");
       win.style.visibility = "hidden";
       win.style.opacity = "0";
@@ -12398,6 +12590,48 @@ html[data-theme] .window-header.steam-popup-header,
       if (point) point.style.display = "none";
       if (typeof setMenuAppName === "function") setMenuAppName("Finder");
     }
+    /** Center a window on the desktop (under the menu bar). Skips maximized windows. */
+    function centerWindow(win) {
+      if (!win || !win.style) return;
+      if (win.classList.contains("is-maximized") || win.classList.contains("maximized")) return;
+      try {
+        // Ensure measurable size
+        var prevVis = win.style.visibility;
+        var prevDisp = win.style.display;
+        if (prevDisp === "none" || getComputedStyle(win).display === "none") {
+          win.style.visibility = "hidden";
+          win.style.display = win.style.display === "none" ? "flex" : prevDisp || "block";
+        }
+        var menuH = 28;
+        try {
+          var nav = document.querySelector(".navbar");
+          if (nav) menuH = nav.offsetHeight || 28;
+        } catch (e) {}
+        var vw = window.innerWidth || document.documentElement.clientWidth || 1280;
+        var vh = window.innerHeight || document.documentElement.clientHeight || 800;
+        var rect = win.getBoundingClientRect();
+        var w = rect.width || win.offsetWidth || parseInt(win.style.width, 10) || 800;
+        var h = rect.height || win.offsetHeight || parseInt(win.style.height, 10) || 500;
+        // Clamp size so window fits
+        if (w > vw - 24) w = Math.max(320, vw - 24);
+        if (h > vh - menuH - 24) h = Math.max(200, vh - menuH - 24);
+        var left = Math.max(0, Math.round((vw - w) / 2));
+        var top = Math.max(menuH, Math.round(menuH + (vh - menuH - h) / 2));
+        win.style.position = "absolute";
+        win.style.left = left + "px";
+        win.style.top = top + "px";
+        win.style.right = "auto";
+        win.style.bottom = "auto";
+        win.style.margin = "0";
+        win.style.transform = "none";
+        if (prevDisp === "none") {
+          // caller will set final display
+        }
+        win.style.visibility = prevVis || "visible";
+      } catch (e) {}
+    }
+    window.centerWindow = centerWindow;
+
     function open_window(win, point, appName) {
       if (!win) return;
       try {
@@ -12411,13 +12645,24 @@ html[data-theme] .window-header.steam-popup-header,
         win.classList.contains("safari") ||
         win.classList.contains("settings-window") ||
         win.classList.contains("Vscode") ||
+        win.classList.contains("tiktok-app") ||
+        win.classList.contains("youtube-app") ||
+        win.classList.contains("gdash-app") ||
         win.id === "safari-window" ||
         win.id === "settings-window" ||
-        win.id === "vscode-window";
+        win.id === "vscode-window" ||
+        win.id === "tiktok-window" ||
+        win.id === "youtube-window" ||
+        win.id === "gdash-window";
       win.style.display = needsFlex ? "flex" : "block";
+      if (needsFlex) {
+        win.style.flexDirection = "column";
+        win.classList.add("is-open");
+      }
       win.style.visibility = "visible";
       win.style.opacity = "1";
       win.style.zIndex = "50";
+      try { centerWindow(win); } catch (e) {}
       try { if (typeof bringWindowToFront === "function") bringWindowToFront(win); else if (win.parentElement && !(win.querySelector && win.querySelector("iframe"))) win.parentElement.appendChild(win); } catch (e) {}
       if (typeof setMenuAppName === "function") {
         setMenuAppName(inferMenuAppName(win, appName));
@@ -12444,6 +12689,9 @@ html[data-theme] .window-header.steam-popup-header,
         const t = win.querySelector(".game-app-title");
         return (t && t.textContent.trim()) || "Games";
       }
+      if (win.classList.contains("tiktok-app") || win.id === "tiktok-window") return "TikTok";
+      if (win.classList.contains("youtube-app") || win.id === "youtube-window") return "YouTube";
+      if (win.classList.contains("gdash-app") || win.id === "gdash-window") return "Geometry Dash";
       return "Finder";
     }
 
@@ -12476,10 +12724,11 @@ html[data-theme] .window-header.steam-popup-header,
     function minimize_window(win, pointEl) {
       if (!win) return;
       win.classList.add("minimized");
-      win.classList.remove("active", "open");
-      win.style.display = "none";
+      win.classList.remove("active", "open", "is-open");
+      win.style.setProperty("display", "none", "important");
       win.style.visibility = "hidden";
       win.style.opacity = "0";
+      win.style.pointerEvents = "none";
       // Keep dock indicator so clicking the icon restores the window
       if (pointEl) pointEl.style.display = "block";
       try {
@@ -12564,7 +12813,10 @@ html[data-theme] .window-header.steam-popup-header,
 
     function handleOpenCal_lunchpad() {
       closeLaunchpad();
-      if (calculator) calculator.style.display = "block";
+      if (calculator) {
+        calculator.style.display = "block";
+        try { if (typeof centerWindow === "function") centerWindow(calculator); } catch (e) {}
+      }
       if (container) container.style.display = "flex";
       if (navbar) navbar.style.display = "flex";
       if (point_cal) point_cal.style.display = "block";
@@ -12621,14 +12873,215 @@ html[data-theme] .window-header.steam-popup-header,
     if (opencalculator_lunchpad) opencalculator_lunchpad.addEventListener("click", handleOpenCal_lunchpad);
     if (open_spotlight) open_spotlight.addEventListener("click", handleopen_spotlight);
 
+    /* ===== TikTok + YouTube + Geometry Dash iframe apps ===== */
+    (function initIframeApps() {
+      var APPS = [
+        { name: "TikTok", winId: "tiktok-window", pointId: "point-tiktok", frameId: "tiktok-frame", openSel: ".open_tiktok, [data-dock-id='tiktok'], .child-launchpad[data-lp-app='tiktok']", title: "TikTok" },
+        { name: "Youtube", winId: "youtube-window", pointId: "point-youtube", frameId: "youtube-frame", openSel: ".open_youtube, [data-dock-id='youtube'], .child-launchpad[data-lp-app='youtube']", title: "YouTube" },
+        { name: "Gdash", winId: "gdash-window", pointId: "point-gdash", frameId: "gdash-frame", openSel: ".open_gdash, [data-dock-id='gdash'], .child-launchpad[data-lp-app='gdash']", title: "Geometry Dash" }
+      ];
+
+      function getFrame(opts) {
+        var win = document.getElementById(opts.winId);
+        return (opts.frameId && document.getElementById(opts.frameId)) || (win && win.querySelector("iframe"));
+      }
+
+      // Mute / stop media: blank the iframe (works cross-origin). Restore on open.
+      function muteApp(opts) {
+        var fr = getFrame(opts);
+        if (!fr) return;
+        try {
+          var src = fr.getAttribute("src") || fr.src || "";
+          if (src && src !== "about:blank" && src.indexOf("about:blank") !== 0) {
+            fr.dataset.nyxSrc = src;
+          }
+          fr.setAttribute("src", "about:blank");
+          fr.src = "about:blank";
+          try { fr.muted = true; } catch (e) {}
+        } catch (e) {}
+      }
+
+      function unmuteApp(opts) {
+        var fr = getFrame(opts);
+        if (!fr) return;
+        try {
+          var saved = fr.dataset.nyxSrc || "";
+          var cur = fr.getAttribute("src") || fr.src || "";
+          if (saved && (!cur || cur === "about:blank" || cur.indexOf("about:blank") === 0)) {
+            fr.setAttribute("src", saved);
+            fr.src = saved;
+          }
+          try { fr.muted = false; } catch (e) {}
+        } catch (e) {}
+      }
+
+      function hideHard(win) {
+        if (!win) return;
+        win.classList.remove("active", "is-open", "is-maximized", "minimized", "maximized", "open");
+        win.style.setProperty("display", "none", "important");
+        win.style.setProperty("visibility", "hidden", "important");
+        win.style.setProperty("opacity", "0", "important");
+        win.style.setProperty("pointer-events", "none", "important");
+      }
+
+      function showHard(win) {
+        if (!win) return;
+        win.classList.remove("minimized", "is-maximized", "maximized");
+        win.classList.add("active", "is-open");
+        win.style.setProperty("display", "flex", "important");
+        win.style.setProperty("flex-direction", "column", "important");
+        win.style.setProperty("visibility", "visible", "important");
+        win.style.setProperty("opacity", "1", "important");
+        win.style.setProperty("pointer-events", "auto", "important");
+        win.style.zIndex = "120";
+      }
+
+      function doOpen(opts) {
+        var win = document.getElementById(opts.winId);
+        var point = document.getElementById(opts.pointId);
+        if (!win) return;
+        try {
+          var lp = document.getElementById("launchpad");
+          if (lp) lp.style.display = "none";
+          var nav = document.querySelector(".navbar");
+          if (nav) nav.style.display = "flex";
+          var cont = document.querySelector(".container__Window");
+          if (cont) cont.style.display = "flex";
+        } catch (e) {}
+        // Keep on body so parent display:none can't trap the window
+        try {
+          if (win.parentElement !== document.body) document.body.appendChild(win);
+        } catch (e) {}
+        unmuteApp(opts);
+        showHard(win);
+        try { if (typeof centerWindow === "function") centerWindow(win); } catch (e) {}
+        if (point) point.style.display = "block";
+        try {
+          if (typeof setMenuAppName === "function") setMenuAppName(opts.title);
+          if (typeof bringWindowToFront === "function") bringWindowToFront(win);
+        } catch (e) {}
+      }
+
+      function doClose(opts) {
+        var win = document.getElementById(opts.winId);
+        var point = document.getElementById(opts.pointId);
+        if (!win) return;
+        muteApp(opts);
+        hideHard(win);
+        if (point) point.style.display = "none";
+        try {
+          if (typeof setMenuAppName === "function") setMenuAppName("Finder");
+        } catch (e) {}
+      }
+
+      function doMin(opts) {
+        var win = document.getElementById(opts.winId);
+        var point = document.getElementById(opts.pointId);
+        if (!win) return;
+        // Minimize keeps session; only full close mutes
+        win.classList.add("minimized");
+        win.classList.remove("active", "is-open", "open");
+        win.style.setProperty("display", "none", "important");
+        win.style.setProperty("visibility", "hidden", "important");
+        win.style.setProperty("opacity", "0", "important");
+        win.style.setProperty("pointer-events", "none", "important");
+        if (point) point.style.display = "block";
+      }
+
+      function doFull(opts) {
+        var win = document.getElementById(opts.winId);
+        if (!win) return;
+        if (typeof window.toggleMaximize === "function") window.toggleMaximize(win);
+        else win.classList.toggle("is-maximized");
+      }
+
+      APPS.forEach(function (opts) {
+        window["open" + opts.name] = function () { doOpen(opts); };
+        window["close" + opts.name] = function () { doClose(opts); };
+
+        document.querySelectorAll(opts.openSel).forEach(function (b) {
+          b.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            doOpen(opts);
+          });
+        });
+
+        var win = document.getElementById(opts.winId);
+        if (win && window.jQuery) {
+          try {
+            $(win).draggable({
+              handle: ".window__taskbar",
+              cancel: "button, iframe, input, textarea, a",
+              containment: "window",
+              start: function (ev) {
+                if (this.classList.contains("is-maximized")) {
+                  ev.preventDefault();
+                  return false;
+                }
+              }
+            });
+          } catch (e) {}
+        }
+      });
+
+      // Single document capture handler — always wins over drag / other listeners
+      function trafficHit(e) {
+        var t = e.target;
+        if (!t || !t.closest) return null;
+        var btn = t.closest(
+          ".close-tiktok, .backfull-tiktok, .full-tiktok, " +
+          ".close-youtube, .backfull-youtube, .full-youtube, " +
+          ".close-gdash, .backfull-gdash, .full-gdash"
+        );
+        if (!btn) return null;
+        var cls = btn.className || "";
+        var app = null;
+        if (cls.indexOf("tiktok") >= 0) app = APPS[0];
+        else if (cls.indexOf("youtube") >= 0) app = APPS[1];
+        else if (cls.indexOf("gdash") >= 0) app = APPS[2];
+        if (!app) return null;
+        var action = "close";
+        if (cls.indexOf("backfull") >= 0 || cls.indexOf("min-") >= 0) action = "min";
+        else if (cls.indexOf("full-") >= 0) action = "full";
+        return { app: app, action: action, btn: btn };
+      }
+
+      function onTraffic(e) {
+        var hit = trafficHit(e);
+        if (!hit) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+        if (e.type === "click") {
+          if (hit.action === "close") doClose(hit.app);
+          else if (hit.action === "min") doMin(hit.app);
+          else if (hit.action === "full") doFull(hit.app);
+        }
+      }
+
+      document.addEventListener("mousedown", onTraffic, true);
+      document.addEventListener("pointerdown", onTraffic, true);
+      document.addEventListener("click", onTraffic, true);
+
+      // Cache original iframe src so mute/close can restore it on reopen
+      APPS.forEach(function (opts) {
+        var fr = getFrame(opts);
+        if (fr) {
+          var src = fr.getAttribute("src") || fr.src || "";
+          if (src && src !== "about:blank") fr.dataset.nyxSrc = src;
+        }
+      });
+    })();
+
     if (full) full.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); handleFullScreen(terminal); });
     if (fullnote) fullnote.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); handleFullScreen(note); });
 
     // Capture-phase delegation — works even if other handlers stop propagation
-    const MAXIMIZE_BTN_SEL = ".full, .full-note, .full-Vscode, .full-map, .full-settings, .full-safari, .full-steam, .full-imovie, .full-devhub, .full-cal, .full-game-app";
+    const MAXIMIZE_BTN_SEL = ".full, .full-note, .full-Vscode, .full-map, .full-settings, .full-safari, .full-steam, .full-imovie, .full-devhub, .full-cal, .full-game-app, .full-tiktok, .full-youtube, .full-gdash";
     function findWindowFrom(el) {
       if (!el) return null;
-      return el.closest(".window, .settings-window, .safari, .steam, .Vscode, .calculator, .imovie-window, .devhub-window, .game-app, #vscode-window, #settings-window, #safari-window, #imovie-window, #devhub-window");
+      return el.closest(".window, .settings-window, .safari, .steam, .Vscode, .calculator, .imovie-window, .devhub-window, .game-app, .tiktok-app, .youtube-app, .gdash-app, #vscode-window, #settings-window, #safari-window, #imovie-window, #devhub-window, #tiktok-window, #youtube-window, #gdash-window");
     }
     document.addEventListener("click", function(e) {
       const btn = e.target && e.target.closest && e.target.closest(MAXIMIZE_BTN_SEL);
@@ -12986,15 +13439,28 @@ html[data-theme] .window-header.steam-popup-header,
       win.className = "window game-app active";
       win.id = "game-app-" + instanceKey;
       win.dataset.gameIdx = String(idx);
-      // Stagger position so multiple games don't stack perfectly
-      const offset = (Object.keys(_gameAppWindows).length % 6) * 28;
-      win.style.top = (8 + offset / 10) + "%";
-      win.style.left = (10 + offset / 8) + "%";
       win.style.width = "min(960px, 90vw)";
       win.style.height = "min(640px, 82vh)";
       win.style.zIndex = String(88 + (idx % 10));
       win.style.display = "flex";
       win.style.position = "absolute";
+      // Center on screen (slight stagger if many open)
+      try {
+        if (typeof centerWindow === "function") {
+          centerWindow(win);
+          var stagger = (Object.keys(_gameAppWindows).length % 6) * 24;
+          if (stagger && win.style.left && win.style.top) {
+            win.style.left = (parseInt(win.style.left, 10) + stagger) + "px";
+            win.style.top = (parseInt(win.style.top, 10) + stagger) + "px";
+          }
+        } else {
+          win.style.top = "12%";
+          win.style.left = "15%";
+        }
+      } catch (e) {
+        win.style.top = "12%";
+        win.style.left = "15%";
+      }
 
       const safeTitle = (g.title || "Game").replace(/</g, "&lt;").replace(/"/g, "&quot;");
       const safeImg = (g.image || "").replace(/"/g, "&quot;");
@@ -14865,6 +15331,7 @@ window.setDesktopBackground = setDesktopBackground;
       win.style.opacity = "1";
       win.style.zIndex = "80";
       win.style.pointerEvents = "auto";
+      try { if (typeof centerWindow === "function") centerWindow(win); } catch (e) {}
       const ps = document.getElementById("point-settings");
       if (ps) ps.style.display = "block";
       // Defer heavy wallpaper grid so the window appears instantly
@@ -16234,6 +16701,7 @@ window.setDesktopBackground = setDesktopBackground;
         win.style.opacity = "1";
         win.classList.add("active");
         win.classList.remove("minimized");
+        try { if (typeof centerWindow === "function") centerWindow(win); } catch (e) {}
         if (typeof setMenuAppName === "function") setMenuAppName("Finder");
         if (typeof bringWindowToFront === "function") bringWindowToFront(win);
         try {
@@ -16515,6 +16983,7 @@ window.setDesktopBackground = setDesktopBackground;
       win.style.opacity = "1";
       win.style.zIndex = "80";
       win.classList.add("active");
+      try { if (typeof centerWindow === "function") centerWindow(win); } catch (e) {}
       if (pt) pt.style.display = "block";
       try {
         if (typeof bringWindowToFront === "function") bringWindowToFront(win);
@@ -17001,6 +17470,7 @@ window.setDesktopBackground = setDesktopBackground;
       win.style.display = "flex";
       win.style.zIndex = "50";
       win.classList.add("active");
+      try { if (typeof centerWindow === "function") centerWindow(win); } catch (e) {}
       if (typeof point_vscode !== "undefined" && point_vscode) point_vscode.style.display = "block";
       if (typeof app_name_VScode !== "undefined" && app_name_VScode) app_name_VScode.style.display = "block";
       try { if (typeof bringWindowToFront === "function") bringWindowToFront(win); else if (win.parentElement && !(win.querySelector && win.querySelector("iframe"))) win.parentElement.appendChild(win); } catch (e) {}
@@ -17056,27 +17526,19 @@ window.setDesktopBackground = setDesktopBackground;
 
 
     
-    document.querySelectorAll(".open-tiktok, .child-launchpad[data-keywords='TikTok']").forEach(el => {
+    document.querySelectorAll(".open-tiktok").forEach(el => {
       el.style.cursor = "pointer";
       el.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
+        if (typeof window.openTikTok === "function") {
+          window.openTikTok();
+          return;
+        }
         const lp = document.getElementById("launchpad");
         if (lp) lp.style.display = "none";
-        if (typeof openSafari === "function") openSafari();
-        setTimeout(() => {
-          try {
-            const fr = document.getElementById("safari-frame");
-            const doc = fr && fr.contentDocument;
-            if (!doc) return;
-            const input = doc.getElementById("url");
-            const go = doc.getElementById("go");
-            if (input) {
-              input.value = "https://www.tiktok.com/";
-              if (go) go.click();
-            }
-          } catch (err) { console.warn(err); }
-        }, 1200);
+        var tb = document.querySelector('.dock-open-app-button[data-dock-id="tiktok"], .open_tiktok');
+        if (tb && tb !== el) tb.click();
       });
     });
 
@@ -17442,6 +17904,7 @@ window.setDesktopBackground = setDesktopBackground;
         win.style.display = "flex";
         win.classList.add("active");
         win.style.zIndex = "80";
+        try { if (typeof centerWindow === "function") centerWindow(win); } catch (e) {}
         const pt = $("point-imovie");
         if (pt) pt.style.display = "block";
         try {
@@ -18100,11 +18563,94 @@ window.setDesktopBackground = setDesktopBackground;
     })();
 
 
-    // ===== Dock right-click: Close running apps =====
+    // ===== Dock right-click: Open / Close / Remove from Dock =====
     (function wireDockContextMenu() {
       const menu = document.getElementById("dockContextMenu");
       if (!menu) return;
       let _dockTarget = null;
+      const DOCK_PIN_KEY = "nyx_dock_removed";
+      // Core items that cannot be removed from the dock
+      const PINNED_IDS = { finder: 1, launchpad: 1, trash: 1, __divider__: 1 };
+
+      function loadRemoved() {
+        try { return JSON.parse(localStorage.getItem(DOCK_PIN_KEY) || "[]") || []; } catch (e) { return []; }
+      }
+      function saveRemoved(arr) {
+        try { localStorage.setItem(DOCK_PIN_KEY, JSON.stringify(arr)); } catch (e) {}
+      }
+
+      function dockIdOf(btn) {
+        if (!btn) return "";
+        return (btn.getAttribute("data-dock-id") || btn.id || "").trim();
+      }
+
+      function canRemoveFromDock(btn) {
+        if (!btn) return false;
+        var id = dockIdOf(btn);
+        if (!id || PINNED_IDS[id]) return false;
+        // Must currently live on the dock
+        var d = document.getElementById("macos-dock");
+        if (!d || !d.contains(btn)) return false;
+        return true;
+      }
+
+      function removeFromDock(btn) {
+        if (!canRemoveFromDock(btn)) return false;
+        var id = dockIdOf(btn);
+        var p = document.getElementById("nyx-app-pool");
+        var d = document.getElementById("macos-dock");
+        if (!p || !d) return false;
+        // Close running instance first
+        try {
+          var app = resolveDockApp(btn);
+          if (app && typeof app.close === "function") app.close();
+        } catch (e) {}
+        // Move icon into hidden pool
+        p.appendChild(btn);
+        d.__mwDock = false;
+        // Persist
+        var removed = loadRemoved().filter(function (x) { return x !== id; });
+        removed.push(id);
+        saveRemoved(removed);
+        // Keep App Store install state in sync when possible
+        try {
+          if (typeof window.nyxIsInstalled === "function" && window.nyxIsInstalled(id)) {
+            // Prefer official uninstall path if available
+            var storeSet = null;
+            // setInstalled is scoped inside App Store IIFE; use a public helper if present
+            if (typeof window.nyxSetInstalled === "function") window.nyxSetInstalled(id, false);
+            else {
+              // Fall back: update localStorage key used by App Store
+              var KEY = "nyx_installed_apps";
+              var list = [];
+              try { list = JSON.parse(localStorage.getItem(KEY) || "[]") || []; } catch (e) {}
+              list = list.filter(function (x) { return x !== id; });
+              try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {}
+            }
+          }
+        } catch (e) {}
+        return true;
+      }
+
+      function applyRemovedOnBoot() {
+        var removed = loadRemoved();
+        if (!removed.length) return;
+        var d = document.getElementById("macos-dock");
+        var p = document.getElementById("nyx-app-pool");
+        if (!d || !p) return;
+        removed.forEach(function (id) {
+          if (PINNED_IDS[id]) return;
+          var btn = d.querySelector('.dock-open-app-button[data-dock-id="' + id + '"]');
+          if (btn) p.appendChild(btn);
+        });
+        d.__mwDock = false;
+      }
+      // Run after DOM is ready (script is already at end of body, but pool/dock exist)
+      try { applyRemovedOnBoot(); } catch (e) {}
+      setTimeout(function () { try { applyRemovedOnBoot(); } catch (e) {} }, 200);
+
+      window.nyxRemoveFromDock = removeFromDock;
+      window.nyxCanRemoveFromDock = canRemoveFromDock;
 
       function hideDockMenu() {
         menu.style.opacity = "0";
@@ -18117,23 +18663,31 @@ window.setDesktopBackground = setDesktopBackground;
       function showDockMenu(x, y, target) {
         _dockTarget = target;
         const running = isDockAppRunning(target);
+        const removable = canRemoveFromDock(target);
         const closeBtn = document.getElementById("dock-ctx-close");
         const openBtn = document.getElementById("dock-ctx-open");
+        const removeBtn = document.getElementById("dock-ctx-remove");
+        const sepClose = document.getElementById("dock-ctx-sep-close");
+        const sepRemove = document.getElementById("dock-ctx-sep-remove");
         if (closeBtn) {
           closeBtn.style.display = running ? "block" : "none";
           closeBtn.disabled = !running;
         }
-        // hide separator if not running
-        const sep = menu.querySelector("li.separator");
-        if (sep) sep.style.display = running ? "block" : "none";
+        if (sepClose) sepClose.style.display = running ? "block" : "none";
+        if (removeBtn) {
+          removeBtn.style.display = removable ? "block" : "none";
+          removeBtn.disabled = !removable;
+        }
+        if (sepRemove) sepRemove.style.display = removable ? "block" : "none";
 
         menu.style.display = "block";
         menu.style.opacity = "1";
         menu.style.pointerEvents = "auto";
         menu.classList.add("is-open");
         // position above dock if needed
-        const mw = 210;
-        const mh = running ? 90 : 48;
+        const mw = 220;
+        var rows = 1 + (running ? 1 : 0) + (removable ? 1 : 0);
+        const mh = 12 + rows * 36;
         let left = Math.min(x, window.innerWidth - mw - 8);
         let top = y - mh - 8;
         if (top < 40) top = y + 8;
@@ -18402,6 +18956,10 @@ window.setDesktopBackground = setDesktopBackground;
             if (app.open) app.open();
             else if (_dockTarget) _dockTarget.click();
           } catch (err) { console.warn(err); }
+        } else if (t.id === "dock-ctx-remove") {
+          try {
+            removeFromDock(_dockTarget);
+          } catch (err) { console.warn(err); }
         }
         hideDockMenu();
       });
@@ -18585,11 +19143,14 @@ window.setDesktopBackground = setDesktopBackground;
         const btn = e.target.closest && e.target.closest(
           "button.backfull, button.backfull-note, button.backfull-Vscode, button.backfull-map, " +
           "button.backfull-steam, button.backfull-settings, button.min-safari, button.min-imovie, " +
-          "button.min-devhub, button.min-game-app, button.backfull-cal, button.min-calculator"
+          "button.min-devhub, button.min-game-app, button.backfull-cal, button.min-calculator, " +
+          "button.backfull-tiktok, button.backfull-youtube, button.backfull-gdash"
         );
         if (!btn) return;
         e.preventDefault();
         e.stopPropagation();
+        // Dedicated iframe apps handle their own min via capture handler
+        if (btn.classList.contains("backfull-tiktok") || btn.classList.contains("backfull-youtube") || btn.classList.contains("backfull-gdash")) return;
         const taskbar = btn.closest(".window__taskbar") || btn.closest(".calculator__top--taskabr");
         const win = (taskbar && taskbar.closest(".window, .safari, .steam, .settings-window, .Vscode, .calculator, .imovie-window, .devhub-window, .game-app, .terminal, .note, .maps"))
           || btn.closest(".window, .safari, .steam, .settings-window, .Vscode, .calculator, .imovie-window, .devhub-window, .game-app");
@@ -18616,7 +19177,8 @@ window.setDesktopBackground = setDesktopBackground;
           minimize_window(win, point);
         } else {
           win.classList.add("minimized");
-          win.style.display = "none";
+          win.classList.remove("is-open", "active");
+          win.style.setProperty("display", "none", "important");
           if (point) point.style.display = "block";
         }
       }
@@ -20695,6 +21257,9 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   var KEY = "nyx_installed_apps";
   var CODE_ICON = "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg";
   // Code is installable; the rest are built in and simply open.
+  var TIKTOK_ICON = "https://s3-new.macosicons.com/macosicons/parse/TikTok_GegK37qUrB_lowResPng-97cb4a3ee3.png";
+  var YOUTUBE_ICON = "https://s3-new.macosicons.com/macosicons/parse/low_res_YouTube_VnDNflASuV-1ebde983a6.png";
+  var GDASH_ICON = "https://s3-new.macosicons.com/macosicons/parse/Geometry_Dash_bzAPv60BiU_lowResPng-e9bd2ab8f7.png";
   var APPS = [
     { id: "vscode", name: "Code", sub: "Code editor", cats: ["develop", "create", "work"], icon: CODE_ICON, code: true, inst: true, win: ".Vscode", badge: true },
     { id: "terminal", name: "Terminal", sub: "Command line", cats: ["develop", "work"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png", dock: "terminal", inst: true, win: ".terminal", lp: "" },
@@ -20702,6 +21267,9 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     { id: "calendar", name: "Calendar", sub: "Organize your day", cats: ["work"], icon: "https://macos-web.app/app-icons/calendar/512.png", dock: "calendar", inst: true, lp: "Calendar" },
     { id: "notes", name: "Notes", sub: "Capture quick thoughts", cats: ["create", "work"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/notes.png", inst: true, win: ".note" },
     { id: "maps", name: "Maps", sub: "Find your way", cats: ["work", "play"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/maps.png", inst: true, win: ".maps" },
+    { id: "tiktok", name: "TikTok", sub: "Watch short videos", cats: ["play", "create"], icon: TIKTOK_ICON, dock: "tiktok", inst: true, win: "#tiktok-window,.tiktok-app" },
+    { id: "youtube", name: "YouTube", sub: "Watch videos online", cats: ["play"], icon: YOUTUBE_ICON, dock: "youtube", inst: true, win: "#youtube-window,.youtube-app" },
+    { id: "gdash", name: "Geometry Dash", sub: "Rhythm platformer", cats: ["arcade", "play"], icon: GDASH_ICON, dock: "gdash", inst: true, win: "#gdash-window,.gdash-app" },
     { id: "safari", name: "Safari", sub: "Web browser", cats: ["work"], dock: "safari" },
     { id: "steam", name: "Steam", sub: "Games & community", cats: ["arcade", "play"], dock: "steam" },
     { id: "appletv", name: "Apple TV", sub: "Movies & shows", cats: ["play"], dock: "appletv" },
@@ -20744,8 +21312,18 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     installed = installed.filter(function (x) { return x !== id; });
     if (on) installed.push(id);
     save(installed);
+    // If installing back, clear "removed from dock" pin so icon can return
+    if (on) {
+      try {
+        var KEYR = "nyx_dock_removed";
+        var rem = JSON.parse(localStorage.getItem(KEYR) || "[]") || [];
+        rem = rem.filter(function (x) { return x !== id; });
+        localStorage.setItem(KEYR, JSON.stringify(rem));
+      } catch (e) {}
+    }
     syncDock(id);
   }
+  window.nyxSetInstalled = setInstalled;
   function has(a) { return a.inst ? window.nyxIsInstalled(a.id) : true; }
   function iconSrc(a) {
     if (a.icon) return a.icon;
@@ -20801,14 +21379,34 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     });
   }
 
+  function restoreDockIcon(id) {
+    try {
+      var d = dock(), p = pool();
+      var b = dockBtn(id);
+      if (b && d && p && b.parentNode === p) {
+        var anchor = dockBtn("appstore");
+        if (anchor && anchor.nextSibling) d.insertBefore(b, anchor.nextSibling); else d.appendChild(b);
+        d.__mwDock = false;
+      }
+      var KEYR = "nyx_dock_removed";
+      var rem = JSON.parse(localStorage.getItem(KEYR) || "[]") || [];
+      rem = rem.filter(function (x) { return x !== id; });
+      localStorage.setItem(KEYR, JSON.stringify(rem));
+    } catch (e) {}
+  }
   function openApp(id) {
+    // Opening from App Store puts the icon back on the Dock
+    try { restoreDockIcon(id); } catch (e) {}
     if (id === "vscode") { if (typeof window.openVSCode === "function") window.openVSCode(); return; }
+    if (id === "tiktok") { if (typeof window.openTikTok === "function") window.openTikTok(); else { var tb = dockBtn("tiktok"); if (tb) tb.click(); } return; }
+    if (id === "youtube") { if (typeof window.openYoutube === "function") window.openYoutube(); else { var yb = dockBtn("youtube"); if (yb) yb.click(); } return; }
+    if (id === "gdash") { if (typeof window.openGdash === "function") window.openGdash(); else { var gb = dockBtn("gdash"); if (gb) gb.click(); } return; }
     try {
       if (id === "notes" && typeof note !== "undefined") { open_window(note, point_note, app_name_notes); return; }
       if (id === "maps" && typeof maps_window !== "undefined") { open_window(maps_window, document.getElementById("point-maps"), app_name_maps); return; }
     } catch (e) {}
     var a = appById(id);
-    var b = a && dockBtn(a.dock);
+    var b = a && dockBtn(a.dock || id);
     if (b) b.click();
   }
 
@@ -20828,6 +21426,7 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     win.classList.remove("minimized");
     win.style.display = "flex"; win.style.visibility = "visible"; win.style.opacity = "1";
     win.classList.add("active");
+    try { if (typeof centerWindow === "function") centerWindow(win); } catch (e) {}
     window.nyxBumpZ(win);
     if (!win._zWired) { win._zWired = true; win.addEventListener("mousedown", function () { window.nyxBumpZ(win); }, true); }
     var dot = document.querySelector('.dock-open-app-button[data-dock-id="appstore"] .dot'); if (dot) dot.classList.add("is-open");
@@ -20877,6 +21476,7 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   var NAMES = [
     [".appstore-window", "App Store"], [".devhub-window", "Dev Hub"], [".Vscode", "Code"], [".terminal", "Terminal"],
     [".note", "Notes"], [".calculator", "Calculator"], [".maps", "Maps"], [".steam", "Steam"],
+    [".tiktok-app", "TikTok"], [".youtube-app", "YouTube"], [".gdash-app", "Geometry Dash"],
     [".settings-window", "System Settings"], [".imovie-window", "Apple TV"], [".safari", "Safari"], [".finder-window", "Finder"]
   ];
   function visible(el) {
@@ -21003,6 +21603,27 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
             else {
               var ab = document.querySelector('.dock-open-app-button[data-dock-id="appletv"], .open_imovie');
               if (ab) ab.click();
+            }
+            break;
+          case "tiktok":
+            if (typeof window.openTikTok === "function") window.openTikTok();
+            else {
+              var tkb = document.querySelector('.dock-open-app-button[data-dock-id="tiktok"], .open_tiktok');
+              if (tkb) tkb.click();
+            }
+            break;
+          case "youtube":
+            if (typeof window.openYoutube === "function") window.openYoutube();
+            else {
+              var ytb = document.querySelector('.dock-open-app-button[data-dock-id="youtube"], .open_youtube');
+              if (ytb) ytb.click();
+            }
+            break;
+          case "gdash":
+            if (typeof window.openGdash === "function") window.openGdash();
+            else {
+              var gdb = document.querySelector('.dock-open-app-button[data-dock-id="gdash"], .open_gdash');
+              if (gdb) gdb.click();
             }
             break;
           case "settings":

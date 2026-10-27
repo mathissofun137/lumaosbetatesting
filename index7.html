@@ -635,7 +635,11 @@
     /* TikTok / YouTube / Geometry Dash iframe apps */
     .window.tiktok-app,
     .window.youtube-app,
-    .window.gdash-app {
+    .window.gdash-app,
+    .window.twitch-app,
+    .window.gfn-app,
+    .window.snapchat-app,
+    .window.instagram-app {
       display: none !important;
       flex-direction: column;
       overflow: hidden;
@@ -644,7 +648,11 @@
     }
     .window.tiktok-app.is-open,
     .window.youtube-app.is-open,
-    .window.gdash-app.is-open {
+    .window.gdash-app.is-open,
+    .window.twitch-app.is-open,
+    .window.gfn-app.is-open,
+    .window.snapchat-app.is-open,
+    .window.instagram-app.is-open {
       display: flex !important;
       visibility: visible !important;
       opacity: 1;
@@ -652,7 +660,11 @@
     }
     .window.tiktok-app .window__taskbar,
     .window.youtube-app .window__taskbar,
-    .window.gdash-app .window__taskbar {
+    .window.gdash-app .window__taskbar,
+    .window.twitch-app .window__taskbar,
+    .window.gfn-app .window__taskbar,
+    .window.snapchat-app .window__taskbar,
+    .window.instagram-app .window__taskbar {
       position: relative;
       z-index: 20;
       flex: 0 0 40px;
@@ -660,14 +672,22 @@
     }
     .window.tiktok-app .window__taskbar--actions,
     .window.youtube-app .window__taskbar--actions,
-    .window.gdash-app .window__taskbar--actions {
+    .window.gdash-app .window__taskbar--actions,
+    .window.twitch-app .window__taskbar--actions,
+    .window.gfn-app .window__taskbar--actions,
+    .window.snapchat-app .window__taskbar--actions,
+    .window.instagram-app .window__taskbar--actions {
       pointer-events: auto !important;
       z-index: 21;
       position: relative;
     }
     .window.tiktok-app .window__taskbar--actions button,
     .window.youtube-app .window__taskbar--actions button,
-    .window.gdash-app .window__taskbar--actions button {
+    .window.gdash-app .window__taskbar--actions button,
+    .window.twitch-app .window__taskbar--actions button,
+    .window.gfn-app .window__taskbar--actions button,
+    .window.snapchat-app .window__taskbar--actions button,
+    .window.instagram-app .window__taskbar--actions button {
       pointer-events: auto !important;
       z-index: 22;
       position: relative;
@@ -675,7 +695,11 @@
     }
     .window.tiktok-app iframe,
     .window.youtube-app iframe,
-    .window.gdash-app iframe {
+    .window.gdash-app iframe,
+    .window.twitch-app iframe,
+    .window.gfn-app iframe,
+    .window.snapchat-app iframe,
+    .window.instagram-app iframe {
       flex: 1 1 auto;
       min-height: 0;
       width: 100%;
@@ -696,7 +720,11 @@
     .game-app.is-maximized,
     .tiktok-app.is-maximized,
     .youtube-app.is-maximized,
-    .gdash-app.is-maximized {
+    .gdash-app.is-maximized,
+    .twitch-app.is-maximized,
+    .gfn-app.is-maximized,
+    .snapchat-app.is-maximized,
+    .instagram-app.is-maximized {
       position: fixed !important;
       top: 28px !important;
       left: 0 !important;
@@ -6614,6 +6642,235 @@ html[data-theme] .window-header.steam-popup-header,
       animation: none !important;
     }
 
+
+    /* ===== Netflix splash startup ===== */
+    .nflx-splash {
+      position: absolute;
+      inset: 0;
+      z-index: 100;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+    }
+    .nflx-splash.is-playing {
+      opacity: 1;
+      visibility: visible;
+      animation: nflxSplashFadeOut 0.55s ease 2.35s forwards;
+    }
+    @keyframes nflxSplashFadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+    .nflx-splash-logo {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nflx-splash-logo .nflx-n {
+      width: min(280px, 55vw);
+      height: auto;
+      opacity: 0;
+      transform: scale(0.92);
+    }
+    .nflx-splash.is-playing .nflx-n {
+      animation: nflxWordIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s forwards;
+    }
+    @keyframes nflxWordIn {
+      0% { opacity: 0; transform: scale(0.88); filter: brightness(0.6); }
+      40% { opacity: 1; transform: scale(1.04); filter: brightness(1.15); }
+      70% { transform: scale(0.98); filter: brightness(1); }
+      100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+    }
+    .nflx-n-mark {
+      position: absolute;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 900;
+      font-size: clamp(72px, 14vw, 120px);
+      color: #E50914;
+      letter-spacing: -0.04em;
+      opacity: 0;
+      transform: scale(1.4);
+      text-shadow: 0 0 40px rgba(229,9,20,0.45);
+    }
+    .nflx-splash.is-playing .nflx-n-mark {
+      animation: nflxNPop 1.1s cubic-bezier(0.16, 0.84, 0.24, 1) forwards;
+    }
+    @keyframes nflxNPop {
+      0% { opacity: 0; transform: scale(1.6); filter: blur(6px); }
+      35% { opacity: 1; transform: scale(0.92); filter: blur(0); }
+      55% { transform: scale(1.06); }
+      75% { transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    /* Prefer big N mark; hide wordmark SVG for classic ta-dum feel */
+    .nflx-splash-logo .nflx-n { display: none; }
+    .nflx-splash-logo .nflx-n-mark { display: block; }
+
+    /* Netflix-colored accents */
+    .imovie-window .atv-topbar {
+      background: linear-gradient(180deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 70%, transparent 100%) !important;
+      border-bottom: none !important;
+      padding: 12px 24px 18px !important;
+    }
+    .imovie-window .atv-topbar .atv-tabs {
+      background: transparent !important;
+      gap: 16px !important;
+      padding: 0 !important;
+    }
+    .imovie-window .atv-topbar .atv-tabs button {
+      color: rgba(255,255,255,0.7) !important;
+      font-size: 13.5px !important;
+      font-weight: 500 !important;
+      padding: 4px 2px !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    .imovie-window .atv-topbar .atv-tabs button:hover {
+      color: #fff !important;
+    }
+    .imovie-window .atv-topbar .atv-tabs button.active {
+      color: #fff !important;
+      font-weight: 600 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    .imovie-window .atv-search {
+      background-color: rgba(0,0,0,0.55) !important;
+      border: 1px solid rgba(255,255,255,0.35) !important;
+      border-radius: 2px !important;
+    }
+    .imovie-window .atv-search:focus {
+      box-shadow: 0 0 0 2px rgba(229,9,20,0.5) !important;
+      border-color: #E50914 !important;
+    }
+    .imovie-window .atv-hero {
+      height: 380px !important;
+    }
+    .imovie-window .atv-hero-badge {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 6px;
+      background: transparent !important;
+      color: #E50914 !important;
+      font-weight: 800 !important;
+      font-size: 14px !important;
+      letter-spacing: 0.12em !important;
+      text-transform: uppercase;
+      padding: 0 !important;
+      border-radius: 0 !important;
+    }
+    .imovie-window .atv-hero-badge::before {
+      content: "N";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      background: #E50914;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      border-radius: 2px;
+      letter-spacing: 0;
+    }
+    .imovie-window .atv-hero-actions .play {
+      background: #fff !important;
+      color: #141414 !important;
+      font-weight: 700 !important;
+      border-radius: 4px !important;
+      padding: 10px 22px !important;
+    }
+    .imovie-window .atv-hero-actions .play:hover {
+      background: rgba(255,255,255,0.85) !important;
+    }
+    .imovie-window .atv-hero-actions .info {
+      background: rgba(109,109,110,0.7) !important;
+      color: #fff !important;
+      font-weight: 600 !important;
+      border-radius: 4px !important;
+      padding: 10px 20px !important;
+    }
+    .imovie-window .atv-hero-actions .info:hover {
+      background: rgba(109,109,110,0.5) !important;
+    }
+    .imovie-window .atv-row h3 {
+      color: #e5e5e5 !important;
+      font-size: 18px !important;
+      font-weight: 700 !important;
+    }
+    .imovie-window .atv-card:hover {
+      transform: scale(1.08);
+      z-index: 2;
+    }
+    .imovie-window .atv-player-bar button.primary {
+      background: #E50914 !important;
+    }
+    .imovie-window .atv-player-bar button.primary:hover {
+      background: #f40612 !important;
+    }
+    .imovie-window .atv-player-sources button.active {
+      background: rgba(229,9,20,0.4) !important;
+      color: #fff !important;
+    }
+    .imovie-window .window__taskbar--content h2 {
+      color: #E50914 !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.04em !important;
+    }
+
+
+    /* Apple TV shell */
+    .imovie-window {
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      background: #000;
+    }
+    .imovie-window.active,
+    .imovie-window.is-open {
+      display: flex !important;
+    }
+    .imovie-window .imovie-body {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: hidden !important;
+      display: flex !important;
+      flex-direction: column !important;
+      position: relative;
+    }
+    .imovie-window .atv-shell {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: #000;
+    }
+    .imovie-window .atv-player {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      flex-direction: column;
+      background: #000;
+    }
+    .imovie-window .atv-player.active {
+      display: flex !important;
+    }
+    .imovie-window .atv-player iframe {
+      flex: 1;
+      width: 100%;
+      border: 0;
+      min-height: 0;
+      background: #000;
+    }
     /* ===== Apple TV app look ===== */
     .imovie-window {
       width: min(1100px, 96vw) !important;
@@ -6678,25 +6935,22 @@ html[data-theme] .window-header.steam-popup-header,
       z-index: 5;
     }
     .atv-logo {
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #f5f5f7;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      color: #E50914;
       display: flex;
       align-items: center;
       gap: 6px;
-      margin-right: 10px;
+      margin-right: 18px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      text-transform: uppercase;
     }
     .atv-logo span {
-      display: none; /* hide Cinera badge */
+      display: none;
     }
     .atv-logo::before {
-      content: "";
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
-      background: url("https://macos-web.app/app-icons/tv/512.png") center/cover no-repeat;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      display: none;
     }
     .atv-topbar .atv-tabs {
       display: flex;
@@ -11055,7 +11309,7 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon open-cal open-cal-lunching" data-dock-id="calculator" title="Calculator" aria-label="Launch Calculator" >
         <p class="tooltip">Calculator</p>
         <span class="dock-icon-wrap">
-          <img src="https://macos-web.app/app-icons/calculator/512.png" alt="Calculator" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calculator.png" alt="Calculator" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-cal" style="display:none"></div>
@@ -11063,14 +11317,14 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon" data-dock-id="calendar" title="Calendar" aria-label="Launch Calendar" >
         <p class="tooltip">Calendar</p>
         <span class="dock-icon-wrap">
-          <img src="https://macos-web.app/app-icons/calendar/512.png" alt="Calendar" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calendar.png" alt="Calendar" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
       </button>
       <button type="button" class="dock-open-app-button icon opening" data-dock-id="terminal" title="Terminal" aria-label="Launch Terminal" >
         <p class="tooltip">Terminal</p>
         <span class="dock-icon-wrap">
-          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png" alt="Terminal" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png" alt="Terminal" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-terminal" style="display:none"></div>
@@ -11078,7 +11332,7 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon open_vscode" data-dock-id="vscode" title="VS Code" aria-label="Launch VS Code" >
         <p class="tooltip">VS Code</p>
         <span class="dock-icon-wrap">
-          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg" alt="VS Code" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/VSCode.svg" alt="VS Code" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-vscode" style="display:none"></div>
@@ -11087,7 +11341,7 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon open_tiktok" data-dock-id="tiktok" title="TikTok" aria-label="Launch TikTok" >
         <p class="tooltip">TikTok</p>
         <span class="dock-icon-wrap">
-          <img src="https://s3-new.macosicons.com/macosicons/parse/TikTok_GegK37qUrB_lowResPng-97cb4a3ee3.png" alt="TikTok" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/TikTok.png" alt="TikTok" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-tiktok" style="display:none"></div>
@@ -11095,7 +11349,7 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon open_youtube" data-dock-id="youtube" title="YouTube" aria-label="Launch YouTube" >
         <p class="tooltip">YouTube</p>
         <span class="dock-icon-wrap">
-          <img src="https://s3-new.macosicons.com/macosicons/parse/low_res_YouTube_VnDNflASuV-1ebde983a6.png" alt="YouTube" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/YouTube.png" alt="YouTube" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-youtube" style="display:none"></div>
@@ -11103,10 +11357,42 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon open_gdash" data-dock-id="gdash" title="Geometry Dash" aria-label="Launch Geometry Dash" >
         <p class="tooltip">Geometry Dash</p>
         <span class="dock-icon-wrap">
-          <img src="https://s3-new.macosicons.com/macosicons/parse/Geometry_Dash_bzAPv60BiU_lowResPng-e9bd2ab8f7.png" alt="Geometry Dash" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/GeometryDash.png" alt="Geometry Dash" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-gdash" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_twitch" data-dock-id="twitch" title="Twitch" aria-label="Launch Twitch" >
+        <p class="tooltip">Twitch</p>
+        <span class="dock-icon-wrap">
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Twitch.png" alt="Twitch" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-twitch" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_gfn" data-dock-id="gfn" title="GeForce Now" aria-label="Launch GeForce Now" >
+        <p class="tooltip">GeForce Now</p>
+        <span class="dock-icon-wrap">
+          <img src="https://cdn.jsdelivr.net/gh/mathissofun137/Lumaicons/geforcenow.png" alt="GeForce Now" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-gfn" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_snapchat" data-dock-id="snapchat" title="Snapchat" aria-label="Launch Snapchat" >
+        <p class="tooltip">Snapchat</p>
+        <span class="dock-icon-wrap">
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/snapchat.png" alt="Snapchat" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-snapchat" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_instagram" data-dock-id="instagram" title="Instagram" aria-label="Launch Instagram" >
+        <p class="tooltip">Instagram</p>
+        <span class="dock-icon-wrap">
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png" alt="Instagram" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-instagram" style="display:none"></div>
       </button>
   </div>
 
@@ -11157,7 +11443,7 @@ html[data-theme] .window-header.steam-popup-header,
   <div class="navbar">
     <ul class="navbar__left">
       <li class="leftLi logo">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/apple-white.png" alt="Apple" height="14">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/AppleMenu.png" alt="Apple" height="14">
         <ul>
           <li><button type="button">About This Mac</button></li>
           <li><button type="button" class="open_settings_menu">System Settings...</button></li>
@@ -11391,14 +11677,14 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon" data-dock-id="finder" title="Finder" aria-label="Launch Finder" >
         <p class="tooltip">Finder</p>
         <span class="dock-icon-wrap">
-          <img src="https://macos-web.app/app-icons/finder/512.png" alt="Finder" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Finder.png" alt="Finder" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
       </button>
       <button type="button" class="dock-open-app-button icon" data-dock-id="launchpad" title="Launchpad" aria-label="Launch Launchpad" onclick="handleOpenLaunching()">
         <p class="tooltip">Launchpad</p>
         <span class="dock-icon-wrap">
-          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/launchpad.png" alt="Launchpad" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Launchpad.png" alt="Launchpad" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-launchpad" style="display:none"></div>
@@ -11406,7 +11692,7 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon open_safari" data-dock-id="safari" title="Safari" aria-label="Launch Safari" >
         <p class="tooltip">Safari</p>
         <span class="dock-icon-wrap">
-          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/safari.png" alt="Safari" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Safari.png" alt="Safari" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-safari" style="display:none"></div>
@@ -11414,22 +11700,22 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon" data-dock-id="appstore" title="App Store" aria-label="Launch App Store" >
         <p class="tooltip">App Store</p>
         <span class="dock-icon-wrap">
-          <img src="https://macos-web.app/app-icons/appstore/512.png" alt="App Store" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/AppStore.png" alt="App Store" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
       </button>
       <button type="button" class="dock-open-app-button icon open_steam" data-dock-id="steam" title="Steam" aria-label="Launch Steam" >
         <p class="tooltip">Steam</p>
         <span class="dock-icon-wrap">
-          <img src="https://cdn.jsdelivr.net/gh/NaoTomori1/yukios@main/static/icons/steam.webp" alt="Steam" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Steam.webp" alt="Steam" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-steam" style="display:none"></div>
       </button>
-      <button type="button" class="dock-open-app-button icon open_imovie" data-dock-id="appletv" title="Apple TV" aria-label="Launch Apple TV" >
-        <p class="tooltip">Apple TV</p>
+      <button type="button" class="dock-open-app-button icon open_imovie" data-dock-id="appletv" title="Netflix" aria-label="Launch Netflix" >
+        <p class="tooltip">Netflix</p>
         <span class="dock-icon-wrap">
-          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png" alt="Apple TV" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/netflix.png" alt="Netflix" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-imovie" style="display:none"></div>
@@ -11437,7 +11723,7 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon open_settings" data-dock-id="settings" title="System Settings" aria-label="Launch System Settings" >
         <p class="tooltip">System Settings</p>
         <span class="dock-icon-wrap">
-          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/preferences.png" alt="System Settings" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/SystemSettings.png" alt="System Settings" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-settings" style="display:none"></div>
@@ -11446,7 +11732,7 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon" data-dock-id="trash" title="Trash" aria-label="Launch Trash" >
         <p class="tooltip">Trash</p>
         <span class="dock-icon-wrap">
-          <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/bin.png" alt="Trash" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Trash.png" alt="Trash" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
       </button>
@@ -11463,79 +11749,95 @@ html[data-theme] .window-header.steam-popup-header,
     </div>
     <div class="Apps-container" id="launchpad-apps">
       <div class="child-launchpad" data-lp-app="finder" data-keywords="Finder files folder">
-        <img src="https://macos-web.app/app-icons/finder/512.png" alt="Finder" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Finder.png" alt="Finder" draggable="false">
         <strong>Finder</strong>
       </div>
       <div class="child-launchpad" data-lp-app="safari" data-keywords="Safari browser web">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/safari.png" alt="Safari" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Safari.png" alt="Safari" draggable="false">
         <strong>Safari</strong>
       </div>
       <div class="child-launchpad" data-lp-app="appstore" data-keywords="App Store download install">
-        <img src="https://macos-web.app/app-icons/appstore/512.png" alt="App Store" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/AppStore.png" alt="App Store" draggable="false">
         <strong>App Store</strong>
       </div>
       <div class="child-launchpad" data-lp-app="messages" data-keywords="Messages chat text">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/messages.png" alt="Messages" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Messages.png" alt="Messages" draggable="false">
         <strong>Messages</strong>
       </div>
       <div class="child-launchpad" data-lp-app="calendar" data-keywords="Calendar schedule events">
-        <img src="https://macos-web.app/app-icons/calendar/512.png" alt="Calendar" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calendar.png" alt="Calendar" draggable="false">
         <strong>Calendar</strong>
       </div>
       <div class="child-launchpad" data-lp-app="notes" data-keywords="Notes write memo">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/notes.png" alt="Notes" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Notes.png" alt="Notes" draggable="false">
         <strong>Notes</strong>
       </div>
       <div class="child-launchpad" data-lp-app="maps" data-keywords="Maps navigation location">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/maps.png" alt="Maps" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Maps.png" alt="Maps" draggable="false">
         <strong>Maps</strong>
       </div>
       <div class="child-launchpad" data-lp-app="photos" data-keywords="Photos pictures gallery">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/photos.png" alt="Photos" draggable="false" onerror="this.src='https://macos-web.app/app-icons/photos/512.png'">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Photos.png" alt="Photos" draggable="false" onerror="this.src='https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Photos.png'">
         <strong>Photos</strong>
       </div>
       <div class="child-launchpad" data-lp-app="calculator" data-keywords="Calculator math numbers">
-        <img src="https://macos-web.app/app-icons/calculator/512.png" alt="Calculator" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calculator.png" alt="Calculator" draggable="false">
         <strong>Calculator</strong>
       </div>
       <div class="child-launchpad" data-lp-app="terminal" data-keywords="Terminal shell command line">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png" alt="Terminal" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png" alt="Terminal" draggable="false">
         <strong>Terminal</strong>
       </div>
       <div class="child-launchpad" data-lp-app="vscode" data-keywords="Code VS Code editor develop">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg" alt="Code" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/VSCode.svg" alt="Code" draggable="false">
         <strong>Code</strong>
       </div>
       <div class="child-launchpad" data-lp-app="steam" data-keywords="Steam games play">
-        <img src="https://cdn.jsdelivr.net/gh/NaoTomori1/yukios@main/static/icons/steam.webp" alt="Steam" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Steam.webp" alt="Steam" draggable="false">
         <strong>Steam</strong>
       </div>
-      <div class="child-launchpad" data-lp-app="appletv" data-keywords="Apple TV video movie film streaming">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png" alt="Apple TV" draggable="false">
-        <strong>Apple TV</strong>
+      <div class="child-launchpad" data-lp-app="appletv" data-keywords="Netflix video movie film streaming series shows">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/netflix.png" alt="Netflix" draggable="false">
+        <strong>Netflix</strong>
       </div>
       <div class="child-launchpad" data-lp-app="tiktok" data-keywords="TikTok social video short">
-        <img src="https://s3-new.macosicons.com/macosicons/parse/TikTok_GegK37qUrB_lowResPng-97cb4a3ee3.png" alt="TikTok" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/TikTok.png" alt="TikTok" draggable="false">
         <strong>TikTok</strong>
       </div>
       <div class="child-launchpad" data-lp-app="youtube" data-keywords="YouTube video watch stream">
-        <img src="https://s3-new.macosicons.com/macosicons/parse/low_res_YouTube_VnDNflASuV-1ebde983a6.png" alt="YouTube" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/YouTube.png" alt="YouTube" draggable="false">
         <strong>YouTube</strong>
       </div>
       <div class="child-launchpad" data-lp-app="gdash" data-keywords="Geometry Dash GD game dash rhythm">
-        <img src="https://s3-new.macosicons.com/macosicons/parse/Geometry_Dash_bzAPv60BiU_lowResPng-e9bd2ab8f7.png" alt="Geometry Dash" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/GeometryDash.png" alt="Geometry Dash" draggable="false">
         <strong>Geometry Dash</strong>
       </div>
+      <div class="child-launchpad" data-lp-app="twitch" data-keywords="Twitch stream live gaming">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Twitch.png" alt="Twitch" draggable="false">
+        <strong>Twitch</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="gfn" data-keywords="GeForce Now NVIDIA cloud gaming stream">
+        <img src="https://cdn.jsdelivr.net/gh/mathissofun137/Lumaicons/geforcenow.png" alt="GeForce Now" draggable="false">
+        <strong>GeForce Now</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="snapchat" data-keywords="Snapchat snap social camera chat">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/snapchat.png" alt="Snapchat" draggable="false">
+        <strong>Snapchat</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="instagram" data-keywords="Instagram ig social photo reels stories">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png" alt="Instagram" draggable="false">
+        <strong>Instagram</strong>
+      </div>
       <div class="child-launchpad" data-lp-app="settings" data-keywords="System Settings preferences system">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/preferences.png" alt="System Settings" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/SystemSettings.png" alt="System Settings" draggable="false">
         <strong>System Settings</strong>
       </div>
       <div class="child-launchpad" data-lp-app="contacts" data-keywords="Contacts people address book">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/contacts.png" alt="Contacts" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Contacts.png" alt="Contacts" draggable="false">
         <strong>Contacts</strong>
       </div>
       <div class="child-launchpad" data-lp-app="siri" data-keywords="Siri assistant voice">
-        <img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/siri.png" alt="Siri" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Siri.png" alt="Siri" draggable="false">
         <strong>Siri</strong>
       </div>
       <div class="lp-empty" id="launchpad-empty">No Results</div>
@@ -11676,6 +11978,58 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="window__taskbar--content"><h2>Geometry Dash</h2></div>
       </div>
       <iframe id="gdash-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/Luma-os-apps@main/index.svg#/embed?u=https%3A%2F%2Fbluetoadmaker.infinityfreeapp.com%2FGDWASM%2F%3Fi%3D2" src="about:blank" allow="fullscreen; gamepad; keyboard-map; clipboard-write; pointer-lock" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
+    </div>
+
+    <!-- Twitch app (iframe) -->
+    <div class="window twitch-app" id="twitch-window" style="display:none;min-width:50%;max-width:90%;width:960px;height:640px">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-twitch" title="Close"></button>
+          <button type="button" class="backfull-twitch" title="Minimize"></button>
+          <button type="button" class="full-twitch" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>Twitch</h2></div>
+      </div>
+      <iframe id="twitch-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=https%3A%2F%2Fwww.twitch.tv%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#0e0e10;display:block"></iframe>
+    </div>
+
+    <!-- GeForce Now app (iframe) -->
+    <div class="window gfn-app" id="gfn-window" style="display:none;min-width:50%;max-width:90%;width:1100px;height:700px">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-gfn" title="Close"></button>
+          <button type="button" class="backfull-gfn" title="Minimize"></button>
+          <button type="button" class="full-gfn" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>GeForce Now</h2></div>
+      </div>
+      <iframe id="gfn-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=https%3A%2F%2Fplay.geforcenow.com%2Fmall%2F%23%2Floginwall" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; gamepad; keyboard-map" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
+    </div>
+
+    <!-- Snapchat app (iframe) -->
+    <div class="window snapchat-app" id="snapchat-window" style="display:none;min-width:50%;max-width:90%;width:420px;height:780px">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-snapchat" title="Close"></button>
+          <button type="button" class="backfull-snapchat" title="Minimize"></button>
+          <button type="button" class="full-snapchat" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>Snapchat</h2></div>
+      </div>
+      <iframe id="snapchat-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=https%3A%2F%2Fsnapchat.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; camera; microphone" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
+    </div>
+
+    <!-- Instagram app (iframe) -->
+    <div class="window instagram-app" id="instagram-window" style="display:none;min-width:50%;max-width:90%;width:440px;height:800px">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-instagram" title="Close"></button>
+          <button type="button" class="backfull-instagram" title="Minimize"></button>
+          <button type="button" class="full-instagram" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>Instagram</h2></div>
+      </div>
+      <iframe id="instagram-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=https%3A%2F%2Finstagram.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; camera; microphone" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
     </div>
 
     <!-- Dynamic per-game app windows are created here -->
@@ -11883,57 +12237,68 @@ html[data-theme] .window-header.steam-popup-header,
     
     <!-- SYSTEM SETTINGS -->
     
-  <!-- iMovie -->
-  <div class="window imovie-window" id="imovie-window">
+  <!-- Netflix — custom UI, movies via aether.ist proxy -->
+  <div class="window imovie-window" id="imovie-window" style="display:none;min-width:640px;max-width:96%;width:1080px;height:680px">
     <div class="window__taskbar">
       <div class="window__taskbar--actions">
         <button type="button" class="close-imovie" title="Close"></button>
         <button type="button" class="min-imovie" title="Minimize"></button>
         <button type="button" class="full-imovie" title="Maximize"></button>
       </div>
-      <div class="window__taskbar--content"><h2>Apple TV</h2></div>
+      <div class="window__taskbar--content"><h2>Netflix</h2></div>
     </div>
-        <div class="imovie-body">
+    <div class="imovie-body">
       <div class="atv-shell" id="atv-shell">
-        <div class="atv-topbar">
-          <div class="atv-logo">Apple TV</div>
-          <div class="atv-tabs" id="atv-tabs">
-            <button type="button" class="active" data-atv-tab="home">Watch Now</button>
-            <button type="button" data-atv-tab="popular">Movies</button>
-            <button type="button" data-atv-tab="top_rated">Top Rated</button>
-            <button type="button" data-atv-tab="now_playing">In Theaters</button>
-            <button type="button" data-atv-tab="upcoming">Coming Soon</button>
+        <!-- Netflix startup splash -->
+        <div class="nflx-splash" id="nflx-splash" aria-hidden="true">
+          <div class="nflx-splash-logo" id="nflx-splash-logo">
+            <svg class="nflx-n" viewBox="0 0 111 30" xmlns="http://www.w3.org/2000/svg" aria-label="Netflix">
+              <g>
+                <path class="nflx-letter" d="M105.06 14.28L110.29 30c-.97-.09-1.94-.19-2.95-.27l-3.28-9.55-3.4 9.82c-1.07-.09-2.13-.18-3.19-.26L103.2 0h3.69l3.34 9.62L113.6 0h3.63l-5.17 14.28zM90.66 0h-5.56v30h5.56V0zm-9.8 0h-5.97l-5.3 12.5L64.3 0h-6.2l7.8 14.28L57.7 30h5.97l5.5-12.9L74.7 30h6.08L72.9 14.28 80.86 0zM41.75 0h-6.5v21.6c0 3.14-1.14 4.6-3.48 4.6-2.3 0-3.5-1.55-3.5-4.6V0H21.7v22.07c0 6.1 3.4 9.06 9.4 9.06 5.9 0 10.65-2.9 10.65-9.06V0zM5.56 0H0v30h5.56V0z" fill="#E50914"/>
+              </g>
+            </svg>
+            <div class="nflx-n-mark">N</div>
           </div>
-          <input type="search" class="atv-search" id="atv-search" placeholder="Search" autocomplete="off">
+          <div class="nflx-splash-sound"></div>
+        </div>
+        <div class="atv-topbar">
+          <div class="atv-logo">NETFLIX</div>
+          <div class="atv-tabs" id="atv-tabs">
+            <button type="button" class="active" data-atv-tab="home">Home</button>
+            <button type="button" data-atv-tab="popular">TV Shows</button>
+            <button type="button" data-atv-tab="top_rated">Movies</button>
+            <button type="button" data-atv-tab="now_playing">New &amp; Popular</button>
+            <button type="button" data-atv-tab="upcoming">My List</button>
+          </div>
+          <input type="search" class="atv-search" id="atv-search" placeholder="Titles, people, genres" autocomplete="off">
         </div>
         <div class="atv-scroll" id="atv-scroll">
           <div class="atv-hero" id="atv-hero">
             <div class="atv-hero-inner">
-              <div class="atv-hero-badge">Featured on Apple TV</div>
+              <div class="atv-hero-badge">N SERIES</div>
               <h2 id="atv-hero-title">Loading…</h2>
               <p id="atv-hero-overview"></p>
               <div class="atv-hero-actions">
-                <button type="button" class="play" id="atv-hero-play">Watch Now</button>
-                <button type="button" class="info" id="atv-hero-info">+ Up Next</button>
+                <button type="button" class="play" id="atv-hero-play">▶ Play</button>
+                <button type="button" class="info" id="atv-hero-info">ℹ More Info</button>
               </div>
             </div>
           </div>
           <div class="atv-status" id="atv-status">Loading…</div>
           <div class="atv-rows" id="atv-rows" style="display:none"></div>
-          <div class="atv-source-note">Watch Now · Movies & more</div>
+          <div class="atv-source-note">Netflix · Browse &amp; watch</div>
         </div>
         <div class="atv-player" id="atv-player">
           <div class="atv-player-bar">
             <button type="button" id="atv-player-back">← Back</button>
             <strong id="atv-player-title">Movie</strong>
             <div class="atv-player-sources" id="atv-player-sources">
-              <button type="button" data-src="0" class="active">Source 1</button>
-              <button type="button" data-src="1">Source 2</button>
-              <button type="button" data-src="2">Source 3</button>
+              <button type="button" data-src="0" class="active">Aether</button>
+              <button type="button" data-src="1">Aether (alt)</button>
             </div>
-            <button type="button" class="primary" id="atv-player-external">Open in Safari</button>
+            <button type="button" class="primary" id="atv-player-external">Open</button>
           </div>
-          <iframe id="atv-player-frame" allow="autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-write" allowfullscreen referrerpolicy="no-referrer"></iframe>
+          <iframe id="atv-player-frame" allow="autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-write" allowfullscreen referrerpolicy="no-referrer" src="about:blank"></iframe>
         </div>
       </div>
     </div>
@@ -12710,31 +13075,39 @@ html[data-theme] .window-header.steam-popup-header,
         tiktok: () => { try { if (typeof window.openTikTok === "function") window.openTikTok(); else clickDock("tiktok"); } catch (e) {} },
         youtube: () => { try { if (typeof window.openYoutube === "function") window.openYoutube(); else clickDock("youtube"); } catch (e) {} },
         gdash: () => { try { if (typeof window.openGdash === "function") window.openGdash(); else clickDock("gdash"); } catch (e) {} },
+        twitch: () => { try { if (typeof window.openTwitch === "function") window.openTwitch(); else clickDock("twitch"); } catch (e) {} },
+        gfn: () => { try { if (typeof window.openGfn === "function") window.openGfn(); else clickDock("gfn"); } catch (e) {} },
+        snapchat: () => { try { if (typeof window.openSnapchat === "function") window.openSnapchat(); else clickDock("snapchat"); } catch (e) {} },
+        instagram: () => { try { if (typeof window.openInstagram === "function") window.openInstagram(); else clickDock("instagram"); } catch (e) {} },
         devhub: () => { try { if (typeof openDevHub === "function") openDevHub(); else clickDock("devhub"); } catch (e) {} }
       };
 
       const ICON = {
-        terminal: dockIcon("terminal", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png"),
-        notes: dockIcon("notes", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/notes.png"),
-        calculator: dockIcon("calculator", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/calculator.png"),
-        calendar: dockIcon("calendar", "https://macos-web.app/app-icons/calendar/512.png"),
-        vscode: dockIcon("vscode", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg"),
-        maps: dockIcon("maps", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/maps.png"),
-        steam: dockIcon("steam", "https://cdn.jsdelivr.net/gh/NaoTomori1/yukios@main/static/icons/steam.webp"),
-        safari: dockIcon("safari", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/safari.png"),
-        settings: dockIcon("settings", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/preferences.png"),
-        launchpad: dockIcon("launchpad", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/launchpad.png"),
-        finder: dockIcon("finder", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/finder.png"),
-        appstore: dockIcon("appstore", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/appstore.png"),
-        appletv: dockIcon("appletv", "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png"),
-        tiktok: dockIcon("tiktok", "https://s3-new.macosicons.com/macosicons/parse/TikTok_GegK37qUrB_lowResPng-97cb4a3ee3.png"),
-        youtube: dockIcon("youtube", "https://s3-new.macosicons.com/macosicons/parse/low_res_YouTube_VnDNflASuV-1ebde983a6.png"),
-        gdash: dockIcon("gdash", "https://s3-new.macosicons.com/macosicons/parse/Geometry_Dash_bzAPv60BiU_lowResPng-e9bd2ab8f7.png"),
-        messages: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/message.png",
-        music: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/music.png",
-        mail: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/mail.png",
-        photos: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/photos.png",
-        contacts: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/contacts.png"
+        terminal: dockIcon("terminal", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png"),
+        notes: dockIcon("notes", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Notes.png"),
+        calculator: dockIcon("calculator", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calculator.png"),
+        calendar: dockIcon("calendar", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calendar.png"),
+        vscode: dockIcon("vscode", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/VSCode.svg"),
+        maps: dockIcon("maps", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Maps.png"),
+        steam: dockIcon("steam", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Steam.webp"),
+        safari: dockIcon("safari", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Safari.png"),
+        settings: dockIcon("settings", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/SystemSettings.png"),
+        launchpad: dockIcon("launchpad", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Launchpad.png"),
+        finder: dockIcon("finder", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Finder.png"),
+        appstore: dockIcon("appstore", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/AppStore.png"),
+        appletv: dockIcon("appletv", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/netflix.png"),
+        tiktok: dockIcon("tiktok", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/TikTok.png"),
+        youtube: dockIcon("youtube", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/YouTube.png"),
+        gdash: dockIcon("gdash", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/GeometryDash.png"),
+        twitch: dockIcon("twitch", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Twitch.png"),
+        gfn: dockIcon("gfn", "https://cdn.jsdelivr.net/gh/mathissofun137/Lumaicons/geforcenow.png"),
+        snapchat: dockIcon("snapchat", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/snapchat.png"),
+        instagram: dockIcon("instagram", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png"),
+        messages: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Messages.png",
+        music: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Music.png",
+        mail: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Mail.png",
+        photos: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Photos.png",
+        contacts: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Contacts.png"
       };
 
       // Every app is always listed in Spotlight (not gated on install state)
@@ -12744,7 +13117,7 @@ html[data-theme] .window-header.steam-popup-header,
         { name: "Safari", kind: "Application", section: "Applications", keywords: "browser web internet www", icon: ICON.safari, action: openApp.safari },
         { name: "App Store", kind: "Application", section: "Applications", keywords: "download install store apps", icon: ICON.appstore, action: openApp.appstore },
         { name: "Steam", kind: "Application", section: "Applications", keywords: "games gaming play library", icon: ICON.steam, action: openApp.steam },
-        { name: "Apple TV", kind: "Application", section: "Applications", keywords: "video editor movie film imovie apple tv streaming", icon: ICON.appletv, action: openApp.appletv },
+        { name: "Netflix", kind: "Application", section: "Applications", keywords: "netflix video movie film streaming series shows", icon: ICON.appletv, action: openApp.appletv },
         { name: "System Settings", kind: "System", section: "System", keywords: "preferences wallpaper desktop background config settings", icon: ICON.settings, action: openApp.settings },
         { name: "Terminal", kind: "Application", section: "Applications", keywords: "shell bash cmd console tty command", icon: ICON.terminal, action: openApp.terminal },
         { name: "Notes", kind: "Application", section: "Applications", keywords: "memo write text notepad", icon: ICON.notes, action: openApp.notes },
@@ -12755,6 +13128,10 @@ html[data-theme] .window-header.steam-popup-header,
         { name: "TikTok", kind: "Application", section: "Applications", keywords: "tiktok social short video fyp", icon: ICON.tiktok, action: openApp.tiktok },
         { name: "YouTube", kind: "Application", section: "Applications", keywords: "youtube video watch stream", icon: ICON.youtube, action: openApp.youtube },
         { name: "Geometry Dash", kind: "Application", section: "Applications", keywords: "geometry dash gd game rhythm dash platformer", icon: ICON.gdash, action: openApp.gdash },
+        { name: "Twitch", kind: "Application", section: "Applications", keywords: "twitch stream live gaming broadcast", icon: ICON.twitch, action: openApp.twitch },
+        { name: "GeForce Now", kind: "Application", section: "Applications", keywords: "geforce now nvidia cloud gaming stream gfn", icon: ICON.gfn, action: openApp.gfn },
+        { name: "Snapchat", kind: "Application", section: "Applications", keywords: "snapchat snap social camera chat stories", icon: ICON.snapchat, action: openApp.snapchat },
+        { name: "Instagram", kind: "Application", section: "Applications", keywords: "instagram ig social photo reels stories", icon: ICON.instagram, action: openApp.instagram },
         { name: "Messages", kind: "Application", section: "Applications", keywords: "chat imessage text sms", icon: ICON.messages, action: () => { try { clickDock("messages"); } catch (e) {} } },
         { name: "Music", kind: "Application", section: "Applications", keywords: "songs apple music audio player", icon: ICON.music, action: () => { try { clickDock("music"); } catch (e) {} } },
         { name: "Mail", kind: "Application", section: "Applications", keywords: "email inbox mail", icon: ICON.mail, action: () => { try { clickDock("mail"); } catch (e) {} } },
@@ -12801,7 +13178,7 @@ html[data-theme] .window-header.steam-popup-header,
             kind: "Application",
             section: "Applications",
             keywords: "dev developer links proxies games hub toolkit",
-            icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png",
+            icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png",
             action: function () { if (typeof window.openDevHub === "function") window.openDevHub(); }
           });
         }
@@ -13385,12 +13762,20 @@ html[data-theme] .window-header.steam-popup-header,
         win.classList.contains("tiktok-app") ||
         win.classList.contains("youtube-app") ||
         win.classList.contains("gdash-app") ||
+        win.classList.contains("twitch-app") ||
+        win.classList.contains("gfn-app") ||
+        win.classList.contains("snapchat-app") ||
+        win.classList.contains("instagram-app") ||
         win.id === "safari-window" ||
         win.id === "settings-window" ||
         win.id === "vscode-window" ||
         win.id === "tiktok-window" ||
         win.id === "youtube-window" ||
-        win.id === "gdash-window";
+        win.id === "gdash-window" ||
+        win.id === "twitch-window" ||
+        win.id === "gfn-window" ||
+        win.id === "snapchat-window" ||
+        win.id === "instagram-window";
 
       // If already visible (not minimized), just focus — don't re-animate
       var alreadyOpen = false;
@@ -13459,6 +13844,10 @@ html[data-theme] .window-header.steam-popup-header,
       if (win.classList.contains("tiktok-app") || win.id === "tiktok-window") return "TikTok";
       if (win.classList.contains("youtube-app") || win.id === "youtube-window") return "YouTube";
       if (win.classList.contains("gdash-app") || win.id === "gdash-window") return "Geometry Dash";
+      if (win.classList.contains("twitch-app") || win.id === "twitch-window") return "Twitch";
+      if (win.classList.contains("gfn-app") || win.id === "gfn-window") return "GeForce Now";
+      if (win.classList.contains("snapchat-app") || win.id === "snapchat-window") return "Snapchat";
+      if (win.classList.contains("instagram-app") || win.id === "instagram-window") return "Instagram";
       return "Finder";
     }
 
@@ -13638,7 +14027,11 @@ html[data-theme] .window-header.steam-popup-header,
       var APPS = [
         { name: "TikTok", winId: "tiktok-window", pointId: "point-tiktok", frameId: "tiktok-frame", openSel: ".open_tiktok, [data-dock-id='tiktok'], .child-launchpad[data-lp-app='tiktok']", title: "TikTok" },
         { name: "Youtube", winId: "youtube-window", pointId: "point-youtube", frameId: "youtube-frame", openSel: ".open_youtube, [data-dock-id='youtube'], .child-launchpad[data-lp-app='youtube']", title: "YouTube" },
-        { name: "Gdash", winId: "gdash-window", pointId: "point-gdash", frameId: "gdash-frame", openSel: ".open_gdash, [data-dock-id='gdash'], .child-launchpad[data-lp-app='gdash']", title: "Geometry Dash" }
+        { name: "Gdash", winId: "gdash-window", pointId: "point-gdash", frameId: "gdash-frame", openSel: ".open_gdash, [data-dock-id='gdash'], .child-launchpad[data-lp-app='gdash']", title: "Geometry Dash" },
+        { name: "Twitch", winId: "twitch-window", pointId: "point-twitch", frameId: "twitch-frame", openSel: ".open_twitch, [data-dock-id='twitch'], .child-launchpad[data-lp-app='twitch']", title: "Twitch" },
+        { name: "Gfn", winId: "gfn-window", pointId: "point-gfn", frameId: "gfn-frame", openSel: ".open_gfn, [data-dock-id='gfn'], .child-launchpad[data-lp-app='gfn']", title: "GeForce Now" },
+        { name: "Snapchat", winId: "snapchat-window", pointId: "point-snapchat", frameId: "snapchat-frame", openSel: ".open_snapchat, [data-dock-id='snapchat'], .child-launchpad[data-lp-app='snapchat']", title: "Snapchat" },
+        { name: "Instagram", winId: "instagram-window", pointId: "point-instagram", frameId: "instagram-frame", openSel: ".open_instagram, [data-dock-id='instagram'], .child-launchpad[data-lp-app='instagram']", title: "Instagram" }
       ];
 
       function getFrame(opts) {
@@ -13814,7 +14207,11 @@ html[data-theme] .window-header.steam-popup-header,
         var btn = t.closest(
           ".close-tiktok, .backfull-tiktok, .full-tiktok, " +
           ".close-youtube, .backfull-youtube, .full-youtube, " +
-          ".close-gdash, .backfull-gdash, .full-gdash"
+          ".close-gdash, .backfull-gdash, .full-gdash, " +
+          ".close-twitch, .backfull-twitch, .full-twitch, " +
+          ".close-gfn, .backfull-gfn, .full-gfn, " +
+          ".close-snapchat, .backfull-snapchat, .full-snapchat, " +
+          ".close-instagram, .backfull-instagram, .full-instagram"
         );
         if (!btn) return null;
         var cls = btn.className || "";
@@ -13822,6 +14219,10 @@ html[data-theme] .window-header.steam-popup-header,
         if (cls.indexOf("tiktok") >= 0) app = APPS[0];
         else if (cls.indexOf("youtube") >= 0) app = APPS[1];
         else if (cls.indexOf("gdash") >= 0) app = APPS[2];
+        else if (cls.indexOf("twitch") >= 0) app = APPS[3];
+        else if (cls.indexOf("gfn") >= 0) app = APPS[4];
+        else if (cls.indexOf("snapchat") >= 0) app = APPS[5];
+        else if (cls.indexOf("instagram") >= 0) app = APPS[6];
         if (!app) return null;
         var action = "close";
         if (cls.indexOf("backfull") >= 0 || cls.indexOf("min-") >= 0) action = "min";
@@ -13860,10 +14261,10 @@ html[data-theme] .window-header.steam-popup-header,
     if (fullnote) fullnote.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); handleFullScreen(note); });
 
     // Capture-phase delegation — works even if other handlers stop propagation
-    const MAXIMIZE_BTN_SEL = ".full, .full-note, .full-Vscode, .full-map, .full-settings, .full-safari, .full-steam, .full-imovie, .full-devhub, .full-cal, .full-game-app, .full-tiktok, .full-youtube, .full-gdash";
+    const MAXIMIZE_BTN_SEL = ".full, .full-note, .full-Vscode, .full-map, .full-settings, .full-safari, .full-steam, .full-imovie, .full-devhub, .full-cal, .full-game-app, .full-tiktok, .full-youtube, .full-gdash, .full-twitch, .full-gfn, .full-snapchat, .full-instagram";
     function findWindowFrom(el) {
       if (!el) return null;
-      return el.closest(".window, .settings-window, .safari, .steam, .Vscode, .calculator, .imovie-window, .devhub-window, .game-app, .tiktok-app, .youtube-app, .gdash-app, #vscode-window, #settings-window, #safari-window, #imovie-window, #devhub-window, #tiktok-window, #youtube-window, #gdash-window");
+      return el.closest(".window, .settings-window, .safari, .steam, .Vscode, .calculator, .imovie-window, .devhub-window, .game-app, .tiktok-app, .youtube-app, .gdash-app, .twitch-app, .gfn-app, .snapchat-app, .instagram-app, #vscode-window, #settings-window, #safari-window, #imovie-window, #devhub-window, #tiktok-window, #youtube-window, #gdash-window, #twitch-window, #gfn-window, #snapchat-window, #instagram-window");
     }
     document.addEventListener("click", function(e) {
       const btn = e.target && e.target.closest && e.target.closest(MAXIMIZE_BTN_SEL);
@@ -22383,7 +22784,7 @@ window.setDesktopBackground = setDesktopBackground;
       go(".open_vscode", () => { if(typeof openVSCode==="function") openVSCode(); });
       go(".open_settings, .open_settings_menu, [title='System Settings']", () => { if(typeof openSettings==="function") openSettings(); });
       go(".open_safari, [title='Safari']", () => { if(typeof openSafari==="function") openSafari(); });
-      go(".open_imovie, [title='Apple TV']", () => { if(typeof openIMovie==="function") openIMovie(); });
+      go(".open_imovie, [title='Netflix'], [title='Apple TV']", () => { if(typeof openIMovie==="function") openIMovie(); });
     })();
 
 
@@ -22731,43 +23132,88 @@ window.setDesktopBackground = setDesktopBackground;
 
     
 
-    // ===== Apple TV (Cinera catalog) =====
+    
+    // ===== Netflix — custom catalog UI, play via aether.ist + luma-os-apps proxy =====
     (function initIMovie() {
-      const TMDB_KEY = "3816f294a308ffd35314e8a6a18d1dd0";
-      const TMDB = "https://api.themoviedb.org/3";
-      const IMG = "https://image.tmdb.org/t/p/w342";
-      const IMG_WIDE = "https://image.tmdb.org/t/p/w1280";
-      // Sources Cinera uses + reliable fallbacks
-      const SOURCES = [
-        { name: "Vidy", url: function (id) { return "https://www.vidy.st/movie/" + id + "?color=dc2626"; } },
-        { name: "Videasy", url: function (id) { return "https://player.videasy.net/movie/" + id; } },
-        { name: "Videasy.to", url: function (id) { return "https://player.videasy.to/movie/" + id; } }
-      ];
-      const CINERA_MOVIE = function (id) { return "https://cinera.cfd/movie/" + id; };
+      var TMDB_KEY = "3816f294a308ffd35314e8a6a18d1dd0";
+      var TMDB = "https://api.themoviedb.org/3";
+      var IMG = "https://image.tmdb.org/t/p/w342";
+      var IMG_WIDE = "https://image.tmdb.org/t/p/w1280";
+      var PROXY = "https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=";
 
-      let currentTab = "home";
-      let cache = {};
-      let currentMovie = null;
-      let currentSource = 0;
-      let heroMovie = null;
+      // Playback sources — all go through the luma-os-apps proxy
+      var SOURCES = [
+        {
+          name: "Aether",
+          url: function (id, title) {
+            var path = "https://aether.ist/media/tmdb-movie-" + id;
+            return PROXY + encodeURIComponent(path);
+          }
+        },
+        {
+          name: "Aether (alt)",
+          url: function (id, title) {
+            var slug = String(title || "movie")
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-")
+              .replace(/^-|-$/g, "")
+              .slice(0, 60);
+            var path = "https://aether.ist/media/tmdb-movie-" + id + (slug ? "-" + slug : "");
+            return PROXY + encodeURIComponent(path);
+          }
+        }
+      ];
+
+      var currentTab = "home";
+      var cache = {};
+      var currentMovie = null;
+      var currentSource = 0;
+      var heroMovie = null;
 
       function $(id) { return document.getElementById(id); }
 
+      function stopPlayer() {
+        var frame = $("atv-player-frame");
+        var player = $("atv-player");
+        if (frame) {
+          try {
+            frame.onload = null;
+            frame.removeAttribute("srcdoc");
+            frame.setAttribute("src", "about:blank");
+            frame.src = "about:blank";
+          } catch (e) {}
+        }
+        if (player) player.classList.remove("active");
+        currentMovie = null;
+      }
+
       function openIMovie() {
-        if (typeof setMenuAppName === "function") setMenuAppName("Apple TV");
-        const win = $("imovie-window");
+        if (typeof setMenuAppName === "function") setMenuAppName("Netflix");
+        var win = $("imovie-window");
         if (!win) return;
         win.classList.remove("minimized");
         try {
-          if (typeof navbar !== "undefined" && navbar) navbar.style.display = "flex";
-          if (typeof launchpad !== "undefined" && launchpad) launchpad.style.display = "none";
-          if (typeof container !== "undefined" && container) container.style.display = "flex";
+          var nav = document.querySelector(".navbar");
+          if (nav) nav.style.display = "flex";
+          var lp = document.getElementById("launchpad");
+          if (lp) lp.style.display = "none";
+          var cont = document.querySelector(".container__Window");
+          if (cont) cont.style.display = "flex";
         } catch (e) {}
-        win.style.display = "flex";
-        win.classList.add("active");
-        win.style.zIndex = "80";
+        try {
+          if (win.parentElement !== document.body) document.body.appendChild(win);
+        } catch (e) {}
+        win.style.setProperty("display", "flex", "important");
+        win.style.setProperty("flex-direction", "column", "important");
+        win.style.setProperty("visibility", "visible", "important");
+        win.style.setProperty("opacity", "1", "important");
+        win.style.setProperty("pointer-events", "auto", "important");
+        win.classList.add("active", "is-open");
+        win.classList.remove("minimized");
+        win.style.zIndex = "120";
         try { if (typeof centerWindow === "function") centerWindow(win); } catch (e) {}
-        const pt = $("point-imovie");
+        try { if (typeof bringWindowToFront === "function") bringWindowToFront(win); } catch (e) {}
+        var pt = $("point-imovie");
         if (pt) pt.style.display = "block";
         try {
           if (window.jQuery && !win._dragWired) {
@@ -22783,353 +23229,388 @@ window.setDesktopBackground = setDesktopBackground;
           }
         } catch (e) {}
         loadTab(currentTab);
+        try { if (typeof window.nyxSetDockOpen === "function") window.nyxSetDockOpen("appletv", true); } catch (e) {}
+        // Netflix startup splash (ta-dum style)
+        try {
+          var splash = $("nflx-splash");
+          if (splash) {
+            splash.classList.remove("is-playing");
+            // force reflow so animation restarts every open
+            void splash.offsetWidth;
+            splash.classList.add("is-playing");
+            // optional soft "ta-dum" via Web Audio (no external file)
+            try {
+              var AC = window.AudioContext || window.webkitAudioContext;
+              if (AC) {
+                var ctx = new AC();
+                function tone(freq, start, dur, type, gain) {
+                  var o = ctx.createOscillator();
+                  var g = ctx.createGain();
+                  o.type = type || "sine";
+                  o.frequency.value = freq;
+                  g.gain.setValueAtTime(0.0001, start);
+                  g.gain.exponentialRampToValueAtTime(gain || 0.18, start + 0.02);
+                  g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+                  o.connect(g); g.connect(ctx.destination);
+                  o.start(start); o.stop(start + dur + 0.05);
+                }
+                var t0 = ctx.currentTime + 0.12;
+                // dual thump similar to Netflix sting
+                tone(80, t0, 0.35, "sine", 0.22);
+                tone(160, t0, 0.28, "triangle", 0.12);
+                tone(55, t0 + 0.22, 0.45, "sine", 0.2);
+                tone(110, t0 + 0.22, 0.35, "triangle", 0.1);
+                setTimeout(function () { try { ctx.close(); } catch (e) {} }, 1200);
+              }
+            } catch (e) {}
+            setTimeout(function () {
+              if (splash) splash.classList.remove("is-playing");
+            }, 3000);
+          }
+        } catch (e) {}
       }
+
       function closeIMovie() {
-        const win = $("imovie-window");
+        var win = $("imovie-window");
+        if (!win) return;
+        try {
+          var splash = $("nflx-splash");
+          if (splash) splash.classList.remove("is-playing");
+        } catch (e) {}
+        stopPlayer();
+        win.classList.remove("active", "is-open", "is-maximized", "minimized", "win-anim-in");
+        win.style.setProperty("display", "none", "important");
+        win.style.setProperty("visibility", "hidden", "important");
+        win.style.setProperty("opacity", "0", "important");
+        win.style.setProperty("pointer-events", "none", "important");
+        var pt = $("point-imovie");
+        if (pt) pt.style.display = "none";
+        try { if (typeof window.nyxSetDockOpen === "function") window.nyxSetDockOpen("appletv", false); } catch (e) {}
+        try { if (typeof setMenuAppName === "function") setMenuAppName("Finder"); } catch (e) {}
+      }
+
+      function minIMovie() {
+        var win = $("imovie-window");
         if (!win) return;
         stopPlayer();
-        win.style.display = "none";
-        win.classList.remove("active", "is-maximized");
-        const pt = $("point-imovie");
-        if (pt) pt.style.display = "none";
+        win.classList.add("minimized");
+        win.classList.remove("active", "is-open");
+        win.style.setProperty("display", "none", "important");
+        var pt = $("point-imovie");
+        if (pt) pt.style.display = "block";
       }
+
       window.openIMovie = openIMovie;
       window.closeIMovie = closeIMovie;
-
-      function stopPlayer() {
-        const frame = $("atv-player-frame");
-        const player = $("atv-player");
-        if (frame) {
-          try {
-            frame.onload = null;
-            frame.removeAttribute("srcdoc");
-            frame.removeAttribute("src");
-            frame.src = "about:blank";
-          } catch (e) {}
-        }
-        if (player) player.classList.remove("active");
-        currentMovie = null;
-      }
 
       function playMovie(movie, sourceIdx) {
         if (!movie || !movie.id) return;
         currentMovie = movie;
-        if (typeof sourceIdx === "number") currentSource = sourceIdx;
-        const player = $("atv-player");
-        const frame = $("atv-player-frame");
-        const title = $("atv-player-title");
-        if (title) title.textContent = movie.title || movie.name || "Movie";
-        document.querySelectorAll("#atv-player-sources button").forEach(function (b) {
-          b.classList.toggle("active", parseInt(b.getAttribute("data-src"), 10) === currentSource);
-        });
-        if (frame) {
-          const src = SOURCES[currentSource] || SOURCES[0];
-          const url = src.url(movie.id);
-          // Load via the same Wisp / HTTP proxy stack Safari uses (not a direct embed)
-          if (typeof NYX_PROXY_HTML !== "undefined") {
-            try {
-              frame.onload = null;
-              frame.removeAttribute("src");
-              frame.removeAttribute("srcdoc");
-            } catch (e) {}
-            var navigated = false;
-            function sendNavigate() {
-              if (navigated) return;
-              navigated = true;
-              try {
-                if (frame.contentWindow) {
-                  frame.contentWindow.postMessage({ type: "safari-navigate", url: url }, "*");
-                }
-              } catch (err) {}
-            }
-            function onProxyMsg(ev) {
-              if (ev.source !== frame.contentWindow) return;
-              var d = ev.data;
-              if (!d || typeof d !== "object") return;
-              if (d.type === "safari-ready") {
-                sendNavigate();
-                window.removeEventListener("message", onProxyMsg);
-              }
-            }
-            window.addEventListener("message", onProxyMsg);
-            frame.onload = function () {
-              // Fallback if ready message was already sent before listener attached
-              setTimeout(sendNavigate, 400);
-              setTimeout(sendNavigate, 1200);
-            };
-            try {
-              if (typeof nyxLoadSinglefileV3 === "function") nyxLoadSinglefileV3(frame); else { frame.removeAttribute("srcdoc"); frame.src = NYX_PROXY_URL; }
-            } catch (e) {
-              window.removeEventListener("message", onProxyMsg);
-              frame.src = url;
-            }
-          } else {
-            frame.src = url;
-          }
+        currentSource = typeof sourceIdx === "number" ? sourceIdx : 0;
+        var player = $("atv-player");
+        var frame = $("atv-player-frame");
+        var titleEl = $("atv-player-title");
+        var sourcesEl = $("atv-player-sources");
+        if (!player || !frame) return;
+        if (titleEl) titleEl.textContent = movie.title || "Movie";
+        if (sourcesEl) {
+          var btns = sourcesEl.querySelectorAll("button");
+          btns.forEach(function (b, i) {
+            b.classList.toggle("active", i === currentSource);
+          });
         }
-        if (player) player.classList.add("active");
+        var srcFn = SOURCES[currentSource] || SOURCES[0];
+        var url = srcFn.url(movie.id, movie.title || movie.name || "");
+        try {
+          frame.onload = null;
+          frame.removeAttribute("srcdoc");
+          frame.setAttribute("src", "about:blank");
+          frame.src = "about:blank";
+        } catch (e) {}
+        // slight delay so blank sticks before loading proxy
+        setTimeout(function () {
+          try {
+            frame.setAttribute("allow", "autoplay; fullscreen; encrypted-media; picture-in-picture; clipboard-write");
+            frame.src = url;
+          } catch (e) {}
+        }, 40);
+        player.classList.add("active");
+      }
+
+      function tmdb(path) {
+        var join = path.indexOf("?") >= 0 ? "&" : "?";
+        return fetch(TMDB + path + join + "api_key=" + TMDB_KEY + "&language=en-US")
+          .then(function (r) {
+            if (!r.ok) throw new Error("tmdb " + r.status);
+            return r.json();
+          });
       }
 
       function cardHtml(m) {
-        const poster = m.poster_path
-          ? IMG + m.poster_path
-          : "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300'%3E%3Crect fill='%2312151c' width='200' height='300'/%3E%3C/svg%3E";
-        const year = (m.release_date || m.first_air_date || "").slice(0, 4);
-        const rating = m.vote_average ? m.vote_average.toFixed(1) : "—";
-        const title = String(m.title || m.name || "Untitled").replace(/</g, "&lt;").replace(/"/g, "&quot;");
-        return '<button type="button" class="atv-card" data-id="' + m.id + '" title="' + title + '">'
-          + '<div class="atv-poster-wrap">'
-          + '<img class="atv-poster" loading="lazy" decoding="async" src="' + poster + '" alt="">'
-          + '<span class="atv-rating">★ ' + rating + '</span>'
-          + '<div class="atv-play-overlay">▶</div>'
-          + '</div>'
-          + '<div class="atv-card-title">' + title + '</div>'
-          + '<div class="atv-card-meta">' + year + '</div>'
-          + '</button>';
+        var poster = m.poster_path ? IMG + m.poster_path : "";
+        var year = (m.release_date || "").slice(0, 4);
+        var title = (m.title || "Untitled").replace(/</g, "&lt;");
+        return (
+          '<button type="button" class="atv-card" data-id="' + m.id + '">' +
+            (poster
+              ? '<img src="' + poster + '" alt="" loading="lazy" draggable="false">'
+              : '<div class="atv-card-ph"></div>') +
+            '<div class="atv-card-meta"><strong>' + title + "</strong><span>" + year + "</span></div>" +
+          "</button>"
+        );
       }
 
-      function wireCards(root, list) {
-        if (!root) return;
-        root.querySelectorAll(".atv-card").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            const id = parseInt(btn.getAttribute("data-id"), 10);
-            const movie = (list || []).find(function (x) { return x.id === id; }) || { id: id, title: btn.title };
-            playMovie(movie, 0);
-          });
-        });
-      }
-
-      function setHero(movie) {
-        heroMovie = movie;
-        const hero = $("atv-hero");
-        if (!hero || !movie) {
-          if (hero) hero.classList.remove("visible");
-          return;
-        }
-        const bg = movie.backdrop_path ? IMG_WIDE + movie.backdrop_path : (movie.poster_path ? IMG_WIDE + movie.poster_path : "");
-        hero.style.backgroundImage = bg ? 'url("' + bg + '")' : "none";
-        hero.classList.add("visible");
-        const t = $("atv-hero-title");
-        const o = $("atv-hero-overview");
-        if (t) t.textContent = movie.title || movie.name || "";
-        if (o) o.textContent = movie.overview || "";
-      }
-
-      function renderRows(rows) {
-        const host = $("atv-rows");
-        const status = $("atv-status");
-        if (!host) return;
-        if (!rows || !rows.length) {
-          host.style.display = "none";
-          if (status) { status.style.display = "block"; status.textContent = "No movies found."; }
-          return;
-        }
+      function renderRows(sections) {
+        var rows = $("atv-rows");
+        var status = $("atv-status");
+        if (!rows) return;
+        rows.innerHTML = sections
+          .map(function (sec) {
+            if (!sec.items || !sec.items.length) return "";
+            return (
+              '<div class="atv-row">' +
+                "<h3>" + sec.title + "</h3>" +
+                '<div class="atv-row-track">' +
+                  sec.items.map(cardHtml).join("") +
+                "</div>" +
+              "</div>"
+            );
+          })
+          .join("");
+        rows.style.display = "block";
         if (status) status.style.display = "none";
-        host.style.display = "block";
-        host.innerHTML = rows.map(function (row) {
-          return '<div class="atv-row"><div class="atv-row-head"><h4>' + row.title + '</h4><span>' + row.items.length + ' titles</span></div>'
-            + '<div class="atv-row-track">' + row.items.map(cardHtml).join("") + '</div></div>';
-        }).join("");
-        rows.forEach(function (row, i) {
-          const track = host.querySelectorAll(".atv-row-track")[i];
-          wireCards(track, row.items);
-        });
       }
 
-      async function fetchMovies(path, query) {
-        const url = TMDB + path + (path.indexOf("?") >= 0 ? "&" : "?") + "api_key=" + TMDB_KEY + "&language=en-US" + (query || "");
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("TMDB " + res.status);
-        const data = await res.json();
-        return (data.results || []).filter(function (m) { return !m.adult; });
+      function setHero(m) {
+        heroMovie = m;
+        var hero = $("atv-hero");
+        if (!hero || !m) return;
+        var title = $("atv-hero-title");
+        var overview = $("atv-hero-overview");
+        if (title) title.textContent = m.title || "Featured";
+        if (overview) overview.textContent = m.overview || "";
+        var bg = m.backdrop_path ? IMG_WIDE + m.backdrop_path : (m.poster_path ? IMG_WIDE + m.poster_path : "");
+        hero.style.backgroundImage = bg ? 'linear-gradient(90deg,rgba(0,0,0,.85) 0%,rgba(0,0,0,.35) 55%,transparent 100%), url("' + bg + '")' : "";
+        hero.classList.add("visible");
       }
 
-      async function fetchPages(path, pages) {
-        const batches = await Promise.all((pages || [1, 2]).map(function (p) {
-          return fetchMovies(path, "&page=" + p).catch(function () { return []; });
-        }));
-        const seen = {}, list = [];
-        batches.flat().forEach(function (m) {
-          if (m && m.id && !seen[m.id]) { seen[m.id] = true; list.push(m); }
-        });
-        return list;
-      }
-
-      async function loadTab(tab) {
+      function loadTab(tab) {
         currentTab = tab || "home";
-        document.querySelectorAll("#atv-tabs button").forEach(function (b) {
+        var tabs = document.querySelectorAll("#atv-tabs button");
+        tabs.forEach(function (b) {
           b.classList.toggle("active", b.getAttribute("data-atv-tab") === currentTab);
         });
-        const status = $("atv-status");
-        const rows = $("atv-rows");
-        if (status) { status.style.display = "block"; status.textContent = "Loading…"; }
+        var status = $("atv-status");
+        var rows = $("atv-rows");
+        if (status) {
+          status.style.display = "block";
+          status.textContent = "Loading…";
+        }
         if (rows) rows.style.display = "none";
-        stopPlayer();
 
-        try {
-          if (currentTab === "home") {
-            if (!cache.home) {
-              const [popular, top, playing, upcoming, trending] = await Promise.all([
-                fetchPages("/movie/popular", [1, 2]),
-                fetchPages("/movie/top_rated", [1]),
-                fetchPages("/movie/now_playing", [1]),
-                fetchPages("/movie/upcoming", [1]),
-                fetchPages("/trending/movie/week", [1]).catch(function () { return []; })
-              ]);
-              cache.home = {
-                popular: popular,
-                top: top,
-                playing: playing,
-                upcoming: upcoming,
-                trending: trending
-              };
-            }
-            const h = cache.home;
-            const featured = (h.trending && h.trending[0]) || (h.popular && h.popular[0]);
-            setHero(featured);
-            renderRows([
-              { title: "Trending", items: h.trending && h.trending.length ? h.trending : h.popular.slice(0, 20) },
-              { title: "Popular Movies", items: h.popular },
-              { title: "Top Rated", items: h.top },
-              { title: "In Theaters", items: h.playing },
-              { title: "Coming Soon", items: h.upcoming }
-            ].filter(function (r) { return r.items && r.items.length; }));
-          } else {
-            setHero(null);
-            const pathMap = {
-              popular: "/movie/popular",
-              top_rated: "/movie/top_rated",
-              now_playing: "/movie/now_playing",
-              upcoming: "/movie/upcoming"
+        var key = "tab:" + currentTab;
+        if (cache[key]) {
+          applyData(cache[key]);
+          return;
+        }
+
+        var reqs;
+        if (currentTab === "home") {
+          reqs = Promise.all([
+            tmdb("/trending/movie/week"),
+            tmdb("/movie/popular"),
+            tmdb("/movie/top_rated"),
+            tmdb("/movie/now_playing")
+          ]).then(function (all) {
+            return {
+              hero: (all[0].results || [])[0] || (all[1].results || [])[0],
+              sections: [
+                { title: "Trending Now", items: all[0].results || [] },
+                { title: "Popular on Netflix", items: all[1].results || [] },
+                { title: "Top Rated", items: all[2].results || [] },
+                { title: "New Releases", items: all[3].results || [] }
+              ]
             };
-            const path = pathMap[currentTab] || "/movie/popular";
-            if (!cache[currentTab]) {
-              cache[currentTab] = await fetchPages(path, [1, 2, 3]);
-            }
-            const list = cache[currentTab];
-            if (list[0]) setHero(list[0]);
-            const labels = { popular: "Popular", top_rated: "Top Rated", now_playing: "In Theaters", upcoming: "Upcoming" };
-            renderRows([{ title: labels[currentTab] || "Movies", items: list }]);
-          }
-        } catch (err) {
-          console.warn("Apple TV catalog failed", err);
-          if (status) {
-            status.style.display = "block";
-            status.textContent = "Couldn't load catalog. Check your network.";
-          }
+          });
+        } else {
+          var path =
+            currentTab === "popular"
+              ? "/movie/popular"
+              : currentTab === "top_rated"
+              ? "/movie/top_rated"
+              : currentTab === "now_playing"
+              ? "/movie/now_playing"
+              : currentTab === "upcoming"
+              ? "/movie/upcoming"
+              : "/movie/popular";
+          reqs = tmdb(path).then(function (data) {
+            var list = data.results || [];
+            return {
+              hero: list[0],
+              sections: [{ title: (document.querySelector('#atv-tabs button[data-atv-tab="' + currentTab + '"]') || {}).textContent || "Movies", items: list }]
+            };
+          });
         }
+
+        reqs
+          .then(function (data) {
+            cache[key] = data;
+            applyData(data);
+          })
+          .catch(function (err) {
+            console.warn("Netflix catalog failed", err);
+            if (status) status.textContent = "Couldn’t load movies. Check your connection.";
+          });
       }
 
-      async function searchMovies(q) {
+      function applyData(data) {
+        if (data.hero) setHero(data.hero);
+        renderRows(data.sections || []);
+      }
+
+      function searchMovies(q) {
         q = String(q || "").trim();
-        if (!q) { loadTab(currentTab); return; }
-        const status = $("atv-status");
-        const rows = $("atv-rows");
-        if (status) { status.style.display = "block"; status.textContent = "Searching…"; }
-        if (rows) rows.style.display = "none";
-        setHero(null);
-        try {
-          const list = await fetchMovies("/search/movie", "&query=" + encodeURIComponent(q) + "&page=1");
-          renderRows([{ title: 'Results for "' + q.replace(/</g, "") + '"', items: list }]);
-        } catch (err) {
-          if (status) { status.style.display = "block"; status.textContent = "Search failed."; }
+        if (!q) {
+          loadTab(currentTab);
+          return;
         }
+        var status = $("atv-status");
+        if (status) {
+          status.style.display = "block";
+          status.textContent = "Searching…";
+        }
+        tmdb("/search/movie?query=" + encodeURIComponent(q))
+          .then(function (data) {
+            var list = data.results || [];
+            if (list[0]) setHero(list[0]);
+            renderRows([{ title: 'Results for “' + q.replace(/</g, "") + '”', items: list }]);
+          })
+          .catch(function () {
+            if (status) status.textContent = "Search failed.";
+          });
       }
 
-      document.addEventListener("click", function (e) {
-        const t = e.target;
+      function movieFromId(id) {
+        id = String(id);
+        // look in cache
+        var keys = Object.keys(cache);
+        for (var i = 0; i < keys.length; i++) {
+          var d = cache[keys[i]];
+          if (!d || !d.sections) continue;
+          for (var s = 0; s < d.sections.length; s++) {
+            var items = d.sections[s].items || [];
+            for (var j = 0; j < items.length; j++) {
+              if (String(items[j].id) === id) return items[j];
+            }
+          }
+          if (d.hero && String(d.hero.id) === id) return d.hero;
+        }
+        if (heroMovie && String(heroMovie.id) === id) return heroMovie;
+        return { id: id, title: "Movie" };
+      }
+
+      // Capture-phase handlers so close always wins over drag / iframe
+      function onPointer(e) {
+        var t = e.target;
         if (!t || !t.closest) return;
-        if (t.closest(".close-imovie")) { e.preventDefault(); closeIMovie(); }
-        else if (t.closest(".min-imovie")) {
-          e.preventDefault();
-          const win = $("imovie-window");
-          const pt = $("point-imovie");
-          if (typeof minimize_window === "function") minimize_window(win, pt);
-          else { if (win) { win.style.display = "none"; win.classList.add("minimized"); } if (pt) pt.style.display = "block"; }
-        } else if (t.closest(".full-imovie")) {
+        var closeBtn = t.closest(".close-imovie");
+        var minBtn = t.closest(".min-imovie");
+        var fullBtn = t.closest(".full-imovie");
+        var openBtn = t.closest(".open_imovie, [data-dock-id='appletv'], .child-launchpad[data-lp-app='appletv']");
+        if (closeBtn || minBtn || fullBtn || openBtn) {
           e.preventDefault();
           e.stopPropagation();
-          const win = $("imovie-window");
-          if (win && typeof window.toggleMaximize === "function") {
-            window.toggleMaximize(win);
-          } else if (win) {
-            const on = !win.classList.contains("is-maximized");
-            if (on) {
-              win.classList.add("is-maximized");
-              win.style.setProperty("position", "fixed", "important");
-              win.style.setProperty("top", "28px", "important");
-              win.style.setProperty("left", "0", "important");
-              win.style.setProperty("right", "0", "important");
-              win.style.setProperty("bottom", "0", "important");
-              win.style.setProperty("width", "100vw", "important");
-              win.style.setProperty("height", "calc(100vh - 28px)", "important");
-              win.style.setProperty("max-width", "none", "important");
-              win.style.setProperty("min-width", "0", "important");
-              win.style.setProperty("max-height", "none", "important");
-              win.style.setProperty("min-height", "0", "important");
-              win.style.setProperty("border-radius", "0", "important");
-              win.style.setProperty("display", "flex", "important");
-              win.style.setProperty("z-index", "80", "important");
-            } else {
-              win.classList.remove("is-maximized");
-              ["position","top","left","right","bottom","width","height","max-width","min-width",
-               "max-height","min-height","border-radius","z-index"].forEach(function (p) {
-                win.style.removeProperty(p);
-              });
-              win.style.setProperty("display", "flex", "important");
-            }
-          }
-        } else if (t.closest(".open_imovie")) {
-          e.preventDefault(); e.stopPropagation();
-          const lp = document.getElementById("launchpad");
+          if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+        }
+        if (e.type !== "click") return;
+        if (closeBtn) {
+          closeIMovie();
+          return;
+        }
+        if (minBtn) {
+          minIMovie();
+          return;
+        }
+        if (fullBtn) {
+          var win = $("imovie-window");
+          if (win && typeof window.toggleMaximize === "function") window.toggleMaximize(win);
+          else if (win) win.classList.toggle("is-maximized");
+          return;
+        }
+        if (openBtn) {
+          var lp = document.getElementById("launchpad");
           if (lp) lp.style.display = "none";
           openIMovie();
-        } else if (t.closest("#atv-tabs button")) {
+          return;
+        }
+        if (t.closest("#atv-tabs button")) {
           e.preventDefault();
-          const tab = t.closest("#atv-tabs button").getAttribute("data-atv-tab");
-          const search = $("atv-search");
+          var tab = t.closest("#atv-tabs button").getAttribute("data-atv-tab");
+          var search = $("atv-search");
           if (search) search.value = "";
           loadTab(tab);
-        } else if (t.closest("#atv-player-back")) {
-          e.preventDefault(); stopPlayer();
-        } else if (t.closest("#atv-player-sources button")) {
+          return;
+        }
+        if (t.closest("#atv-player-back")) {
           e.preventDefault();
-          const btn = t.closest("#atv-player-sources button");
-          const idx = parseInt(btn.getAttribute("data-src"), 10) || 0;
-          if (currentMovie) playMovie(currentMovie, idx);
-        } else if (t.closest("#atv-hero-play") || t.closest("#atv-hero-info")) {
+          stopPlayer();
+          return;
+        }
+        if (t.closest("#atv-player-sources button")) {
+          e.preventDefault();
+          var btn = t.closest("#atv-player-sources button");
+          var idxSrc = parseInt(btn.getAttribute("data-src"), 10) || 0;
+          if (currentMovie) playMovie(currentMovie, idxSrc);
+          return;
+        }
+        if (t.closest("#atv-player-external")) {
+          e.preventDefault();
+          if (currentMovie) {
+            var u = "https://aether.ist/media/tmdb-movie-" + currentMovie.id;
+            try { window.open(u, "_blank", "noopener"); } catch (err) {}
+          }
+          return;
+        }
+        if (t.closest("#atv-hero-play")) {
           e.preventDefault();
           if (heroMovie) playMovie(heroMovie, 0);
-        } else if (t.closest("#atv-player-external")) {
-          e.preventDefault();
-          if (currentMovie && currentMovie.id) {
-            const src = SOURCES[currentSource] || SOURCES[0];
-            const url = (src && src.url) ? src.url(currentMovie.id) : CINERA_MOVIE(currentMovie.id);
-            if (typeof openSafari === "function") {
-              openSafari();
-              setTimeout(function () {
-                try {
-                  const fr = document.getElementById("safari-frame");
-                  if (fr && fr.contentWindow) fr.contentWindow.postMessage({ type: "safari-navigate", url: url }, "*");
-                } catch (err) {}
-              }, 500);
-            } else window.open(url, "_blank");
-          }
+          return;
         }
-      }, true);
+        if (t.closest("#atv-hero-info")) {
+          e.preventDefault();
+          if (heroMovie) playMovie(heroMovie, 0);
+          return;
+        }
+        var card = t.closest(".atv-card");
+        if (card) {
+          e.preventDefault();
+          var id = card.getAttribute("data-id");
+          playMovie(movieFromId(id), 0);
+        }
+      }
 
-      let searchTimer = null;
-      document.addEventListener("input", function (e) {
-        if (!e.target || e.target.id !== "atv-search") return;
-        clearTimeout(searchTimer);
-        const q = e.target.value;
-        searchTimer = setTimeout(function () { searchMovies(q); }, 300);
-      });
+      document.addEventListener("mousedown", onPointer, true);
+      document.addEventListener("pointerdown", onPointer, true);
+      document.addEventListener("click", onPointer, true);
 
-      setTimeout(function () {
-        if (!cache.home) loadTab("home");
-      }, 2000);
+      var searchInput = $("atv-search");
+      if (searchInput) {
+        var searchTimer = null;
+        searchInput.addEventListener("input", function () {
+          clearTimeout(searchTimer);
+          var v = searchInput.value;
+          searchTimer = setTimeout(function () { searchMovies(v); }, 350);
+        });
+        searchInput.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            searchMovies(searchInput.value);
+          }
+        });
+      }
     })();
+
+
 
 
     // ===== Dev Mode + Dev Hub app =====
@@ -23327,7 +23808,7 @@ window.setDesktopBackground = setDesktopBackground;
             btn.setAttribute("aria-label", "Launch Dev Hub");
             btn.innerHTML = '<p class="tooltip">Dev Hub</p>'
               + '<span class="dock-icon-wrap">'
-              + '<img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png" alt="Dev Hub" draggable="false" style="width:3.6rem;height:auto;aspect-ratio:1;filter:hue-rotate(90deg) saturate(1.4)">'
+              + '<img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png" alt="Dev Hub" draggable="false" style="width:3.6rem;height:auto;aspect-ratio:1;filter:hue-rotate(90deg) saturate(1.4)">'
               + '</span>'
               + '<div class="dot" data-open-dot></div>'
               + '<div class="point" id="point-devhub" style="display:none"></div>';
@@ -23363,7 +23844,7 @@ window.setDesktopBackground = setDesktopBackground;
             el.className = "child-launchpad";
             el.id = "lp-devhub";
             el.setAttribute("data-keywords", "Dev Hub developer links proxies games");
-            el.innerHTML = '<img src="https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png" alt="Dev Hub" style="filter:hue-rotate(90deg) saturate(1.4)"><strong>Dev Hub</strong>';
+            el.innerHTML = '<img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png" alt="Dev Hub" style="filter:hue-rotate(90deg) saturate(1.4)"><strong>Dev Hub</strong>';
             el.addEventListener("click", function () {
               const lp = document.getElementById("launchpad");
               if (lp) lp.style.display = "none";
@@ -23433,6 +23914,10 @@ window.setDesktopBackground = setDesktopBackground;
         { id: "tiktok", sel: "#tiktok-window, .tiktok-app" },
         { id: "youtube", sel: "#youtube-window, .youtube-app" },
         { id: "gdash", sel: "#gdash-window, .gdash-app" },
+        { id: "twitch", sel: "#twitch-window, .twitch-app" },
+        { id: "gfn", sel: "#gfn-window, .gfn-app" },
+        { id: "snapchat", sel: "#snapchat-window, .snapchat-app" },
+        { id: "instagram", sel: "#instagram-window, .instagram-app" },
         { id: "terminal", sel: ".terminal" },
         { id: "notes", sel: ".note" },
         { id: "calculator", sel: ".calculator" },
@@ -23447,25 +23932,29 @@ window.setDesktopBackground = setDesktopBackground;
         { id: "finder", sel: "#finder-window, .finder-window" }
       ];
       var ICON_FALLBACK = {
-        tiktok: "https://s3-new.macosicons.com/macosicons/parse/TikTok_GegK37qUrB_lowResPng-97cb4a3ee3.png",
-        youtube: "https://s3-new.macosicons.com/macosicons/parse/low_res_YouTube_VnDNflASuV-1ebde983a6.png",
-        gdash: "https://s3-new.macosicons.com/macosicons/parse/Geometry_Dash_bzAPv60BiU_lowResPng-e9bd2ab8f7.png",
-        terminal: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png",
-        notes: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/notes.png",
-        calculator: "https://macos-web.app/app-icons/calculator/512.png",
-        vscode: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg",
-        maps: "https://macos-web.app/app-icons/maps/512.png",
-        steam: "https://cdn.jsdelivr.net/gh/NaoTomori1/yukios@main/static/icons/steam.webp",
-        safari: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/Launchpad/safari.png",
-        settings: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/preferences.png",
-        appletv: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png",
-        appstore: "https://macos-web.app/app-icons/appstore/512.png",
-        finder: "https://macos-web.app/app-icons/finder/512.png"
+        tiktok: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/TikTok.png",
+        youtube: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/YouTube.png",
+        gdash: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/GeometryDash.png",
+        twitch: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Twitch.png",
+        gfn: "https://cdn.jsdelivr.net/gh/mathissofun137/Lumaicons/geforcenow.png",
+        snapchat: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/snapchat.png",
+        instagram: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png",
+        terminal: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png",
+        notes: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Notes.png",
+        calculator: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calculator.png",
+        vscode: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/VSCode.svg",
+        maps: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Maps.png",
+        steam: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Steam.webp",
+        safari: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Safari.png",
+        settings: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/SystemSettings.png",
+        appletv: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/netflix.png",
+        appstore: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/AppStore.png",
+        finder: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Finder.png"
       };
       var TITLE_FALLBACK = {
-        tiktok: "TikTok", youtube: "YouTube", gdash: "Geometry Dash", terminal: "Terminal",
+        tiktok: "TikTok", youtube: "YouTube", gdash: "Geometry Dash", twitch: "Twitch", gfn: "GeForce Now", snapchat: "Snapchat", instagram: "Instagram", terminal: "Terminal",
         notes: "Notes", calculator: "Calculator", vscode: "VS Code", maps: "Maps", steam: "Steam",
-        safari: "Safari", settings: "System Settings", appletv: "Apple TV", appstore: "App Store", finder: "Finder"
+        safari: "Safari", settings: "System Settings", appletv: "Netflix", appstore: "App Store", finder: "Finder"
       };
 
       function dockEl() { return document.getElementById("macos-dock"); }
@@ -23751,7 +24240,7 @@ window.setDesktopBackground = setDesktopBackground;
           wrapped.__nyxDockWrapped = true;
           window[name] = wrapped;
         }
-        ["openSettings", "openSafari", "openVSCode", "openTikTok", "openYoutube", "openGdash", "openDevHub", "openIMovie", "openFinder", "openAppStore"].forEach(wrap);
+        ["openSettings", "openSafari", "openVSCode", "openTikTok", "openYoutube", "openGdash", "openTwitch", "openGfn", "openSnapchat", "openInstagram", "openDevHub", "openIMovie", "openFinder", "openAppStore"].forEach(wrap);
         if (typeof window.open_window === "function" && !window.open_window.__nyxDockWrapped) {
           // open_window is local, already calls nyxSetDockOpen
         }
@@ -24059,11 +24548,11 @@ window.setDesktopBackground = setDesktopBackground;
             win
           };
         }
-        // Apple TV
-        if (btn.classList.contains("open_imovie") || (btn.getAttribute("title") || "") === "Apple TV") {
+        // Netflix
+        if (btn.classList.contains("open_imovie") || (btn.getAttribute("title") || "") === "Netflix" || (btn.getAttribute("title") || "") === "Apple TV") {
           const win = document.querySelector(".imovie-window") || document.getElementById("imovie-window");
           return {
-            name: "Apple TV",
+            name: "Netflix",
             close: () => {
               if (win) {
                 win.style.display = "none";
@@ -24796,16 +25285,16 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
       }
 
       function appMeta(el) {
-        if (el.classList.contains("terminal")) return { name: "Terminal", icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png" };
-        if (el.classList.contains("note")) return { name: "Notes", icon: "https://macos-web.app/app-icons/notes/512.png" };
-        if (el.classList.contains("calculator")) return { name: "Calculator", icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/calculator.png" };
-        if (el.classList.contains("Vscode")) return { name: "VS Code", icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg" };
-        if (el.classList.contains("maps")) return { name: "Maps", icon: "https://macos-web.app/app-icons/maps/512.png" };
-        if (el.classList.contains("steam")) return { name: "Steam", icon: "https://cdn.jsdelivr.net/gh/NaoTomori1/yukios@main/static/icons/steam.webp" };
-        if (el.classList.contains("safari")) return { name: "Safari", icon: "https://macos-web.app/app-icons/safari/512.png" };
-        if (el.classList.contains("settings-window")) return { name: "System Settings", icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/preferences.png" };
-        if (el.classList.contains("imovie-window")) return { name: "Apple TV", icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone@HEAD/icon/dock/appletv.png" };
-        if (el.classList.contains("devhub-window")) return { name: "Dev Hub", icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png" };
+        if (el.classList.contains("terminal")) return { name: "Terminal", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png" };
+        if (el.classList.contains("note")) return { name: "Notes", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Notes.png" };
+        if (el.classList.contains("calculator")) return { name: "Calculator", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calculator.png" };
+        if (el.classList.contains("Vscode")) return { name: "VS Code", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/VSCode.svg" };
+        if (el.classList.contains("maps")) return { name: "Maps", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Maps.png" };
+        if (el.classList.contains("steam")) return { name: "Steam", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Steam.webp" };
+        if (el.classList.contains("safari")) return { name: "Safari", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Safari.png" };
+        if (el.classList.contains("settings-window")) return { name: "System Settings", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/SystemSettings.png" };
+        if (el.classList.contains("imovie-window")) return { name: "Netflix", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/netflix.png" };
+        if (el.classList.contains("devhub-window")) return { name: "Dev Hub", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png" };
         if (el.classList.contains("game-app")) return { name: el.querySelector("h2") ? el.querySelector("h2").textContent : "Game", icon: "" };
         return { name: "Window", icon: "" };
       }
@@ -26474,24 +26963,32 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
 /* ===== App Store + install state ===== */
 (function () {
   var KEY = "nyx_installed_apps";
-  var CODE_ICON = "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/vscode.svg";
+  var CODE_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/VSCode.svg";
   // Code is installable; the rest are built in and simply open.
-  var TIKTOK_ICON = "https://s3-new.macosicons.com/macosicons/parse/TikTok_GegK37qUrB_lowResPng-97cb4a3ee3.png";
-  var YOUTUBE_ICON = "https://s3-new.macosicons.com/macosicons/parse/low_res_YouTube_VnDNflASuV-1ebde983a6.png";
-  var GDASH_ICON = "https://s3-new.macosicons.com/macosicons/parse/Geometry_Dash_bzAPv60BiU_lowResPng-e9bd2ab8f7.png";
+  var TIKTOK_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/TikTok.png";
+  var YOUTUBE_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/YouTube.png";
+  var GDASH_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/GeometryDash.png";
+  var TWITCH_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Twitch.png";
+  var GFN_ICON = "https://cdn.jsdelivr.net/gh/mathissofun137/Lumaicons/geforcenow.png";
+  var SNAPCHAT_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/snapchat.png";
+  var INSTAGRAM_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png";
   var APPS = [
     { id: "vscode", name: "Code", sub: "Code editor", cats: ["develop", "create", "work"], icon: CODE_ICON, code: true, inst: true, win: ".Vscode", badge: true },
-    { id: "terminal", name: "Terminal", sub: "Command line", cats: ["develop", "work"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/terminal.png", dock: "terminal", inst: true, win: ".terminal", lp: "" },
-    { id: "calculator", name: "Calculator", sub: "Math made easy", cats: ["work"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/calculator.png", dock: "calculator", inst: true, win: ".calculator", lp: "Calculator" },
-    { id: "calendar", name: "Calendar", sub: "Organize your day", cats: ["work"], icon: "https://macos-web.app/app-icons/calendar/512.png", dock: "calendar", inst: true, lp: "Calendar" },
-    { id: "notes", name: "Notes", sub: "Capture quick thoughts", cats: ["create", "work"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/notes.png", inst: true, win: ".note" },
-    { id: "maps", name: "Maps", sub: "Find your way", cats: ["work", "play"], icon: "https://cdn.jsdelivr.net/gh/chachereben29-stack/Mac-OS-clone/icon/dock/maps.png", inst: true, win: ".maps" },
+    { id: "terminal", name: "Terminal", sub: "Command line", cats: ["develop", "work"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png", dock: "terminal", inst: true, win: ".terminal", lp: "" },
+    { id: "calculator", name: "Calculator", sub: "Math made easy", cats: ["work"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calculator.png", dock: "calculator", inst: true, win: ".calculator", lp: "Calculator" },
+    { id: "calendar", name: "Calendar", sub: "Organize your day", cats: ["work"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calendar.png", dock: "calendar", inst: true, lp: "Calendar" },
+    { id: "notes", name: "Notes", sub: "Capture quick thoughts", cats: ["create", "work"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Notes.png", inst: true, win: ".note" },
+    { id: "maps", name: "Maps", sub: "Find your way", cats: ["work", "play"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Maps.png", inst: true, win: ".maps" },
     { id: "tiktok", name: "TikTok", sub: "Watch short videos", cats: ["play", "create"], icon: TIKTOK_ICON, dock: "tiktok", inst: true, win: "#tiktok-window,.tiktok-app" },
     { id: "youtube", name: "YouTube", sub: "Watch videos online", cats: ["play"], icon: YOUTUBE_ICON, dock: "youtube", inst: true, win: "#youtube-window,.youtube-app" },
     { id: "gdash", name: "Geometry Dash", sub: "Rhythm platformer", cats: ["arcade", "play"], icon: GDASH_ICON, dock: "gdash", inst: true, win: "#gdash-window,.gdash-app" },
+    { id: "twitch", name: "Twitch", sub: "Live streaming", cats: ["play"], icon: TWITCH_ICON, dock: "twitch", inst: true, win: "#twitch-window,.twitch-app" },
+    { id: "gfn", name: "GeForce Now", sub: "Cloud gaming by NVIDIA", cats: ["play", "arcade"], icon: GFN_ICON, dock: "gfn", inst: true, win: "#gfn-window,.gfn-app" },
+    { id: "snapchat", name: "Snapchat", sub: "Share snaps with friends", cats: ["play", "create"], icon: SNAPCHAT_ICON, dock: "snapchat", inst: true, win: "#snapchat-window,.snapchat-app" },
+    { id: "instagram", name: "Instagram", sub: "Photos, reels & stories", cats: ["play", "create"], icon: INSTAGRAM_ICON, dock: "instagram", inst: true, win: "#instagram-window,.instagram-app" },
     { id: "safari", name: "Safari", sub: "Web browser", cats: ["work"], dock: "safari" },
     { id: "steam", name: "Steam", sub: "Games & community", cats: ["arcade", "play"], dock: "steam" },
-    { id: "appletv", name: "Apple TV", sub: "Movies & shows", cats: ["play"], dock: "appletv" },
+    { id: "appletv", name: "Netflix", sub: "Movies & TV shows", cats: ["play"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/netflix.png", dock: "appletv", win: ".imovie-window,#imovie-window" },
     { id: "settings", name: "System Settings", sub: "Customize your Mac", cats: ["work"], dock: "settings" }
   ];
 
@@ -26620,6 +27117,11 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     if (id === "tiktok") { if (typeof window.openTikTok === "function") window.openTikTok(); else { var tb = dockBtn("tiktok"); if (tb) tb.click(); } return; }
     if (id === "youtube") { if (typeof window.openYoutube === "function") window.openYoutube(); else { var yb = dockBtn("youtube"); if (yb) yb.click(); } return; }
     if (id === "gdash") { if (typeof window.openGdash === "function") window.openGdash(); else { var gb = dockBtn("gdash"); if (gb) gb.click(); } return; }
+    if (id === "twitch") { if (typeof window.openTwitch === "function") window.openTwitch(); else { var twb = dockBtn("twitch"); if (twb) twb.click(); } return; }
+    if (id === "gfn") { if (typeof window.openGfn === "function") window.openGfn(); else { var gfnb = dockBtn("gfn"); if (gfnb) gfnb.click(); } return; }
+    if (id === "snapchat") { if (typeof window.openSnapchat === "function") window.openSnapchat(); else { var scb = dockBtn("snapchat"); if (scb) scb.click(); } return; }
+    if (id === "instagram") { if (typeof window.openInstagram === "function") window.openInstagram(); else { var igb = dockBtn("instagram"); if (igb) igb.click(); } return; }
+    if (id === "appletv") { if (typeof window.openIMovie === "function") window.openIMovie(); else { var nfb = dockBtn("appletv"); if (nfb) nfb.click(); } return; }
     try {
       if (id === "notes" && typeof note !== "undefined") { open_window(note, point_note, app_name_notes); return; }
       if (id === "maps" && typeof maps_window !== "undefined") { open_window(maps_window, document.getElementById("point-maps"), app_name_maps); return; }
@@ -26695,8 +27197,8 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   var NAMES = [
     [".appstore-window", "App Store"], [".devhub-window", "Dev Hub"], [".Vscode", "Code"], [".terminal", "Terminal"],
     [".note", "Notes"], [".calculator", "Calculator"], [".maps", "Maps"], [".steam", "Steam"],
-    [".tiktok-app", "TikTok"], [".youtube-app", "YouTube"], [".gdash-app", "Geometry Dash"],
-    [".settings-window", "System Settings"], [".imovie-window", "Apple TV"], [".safari", "Safari"], [".finder-window", "Finder"]
+    [".tiktok-app", "TikTok"], [".youtube-app", "YouTube"], [".gdash-app", "Geometry Dash"], [".twitch-app", "Twitch"], [".gfn-app", "GeForce Now"], [".snapchat-app", "Snapchat"], [".instagram-app", "Instagram"],
+    [".settings-window", "System Settings"], [".imovie-window", "Netflix"], [".safari", "Safari"], [".finder-window", "Finder"]
   ];
   function visible(el) {
     if (!el || el.classList.contains("minimized")) return false;
@@ -26843,6 +27345,34 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
             else {
               var gdb = document.querySelector('.dock-open-app-button[data-dock-id="gdash"], .open_gdash');
               if (gdb) gdb.click();
+            }
+            break;
+          case "twitch":
+            if (typeof window.openTwitch === "function") window.openTwitch();
+            else {
+              var twb = document.querySelector('.dock-open-app-button[data-dock-id="twitch"], .open_twitch');
+              if (twb) twb.click();
+            }
+            break;
+          case "gfn":
+            if (typeof window.openGfn === "function") window.openGfn();
+            else {
+              var gfnb = document.querySelector('.dock-open-app-button[data-dock-id="gfn"], .open_gfn');
+              if (gfnb) gfnb.click();
+            }
+            break;
+          case "snapchat":
+            if (typeof window.openSnapchat === "function") window.openSnapchat();
+            else {
+              var scb = document.querySelector('.dock-open-app-button[data-dock-id="snapchat"], .open_snapchat');
+              if (scb) scb.click();
+            }
+            break;
+          case "instagram":
+            if (typeof window.openInstagram === "function") window.openInstagram();
+            else {
+              var igb = document.querySelector('.dock-open-app-button[data-dock-id="instagram"], .open_instagram');
+              if (igb) igb.click();
             }
             break;
           case "settings":

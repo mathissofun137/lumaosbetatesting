@@ -5,6 +5,7 @@
 
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>/* nyx-v2: Chromebook defaults */(function(){try{var ua=navigator.userAgent||"";var cros=/\bCrOS\b/.test(ua);var low=(navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4);if((cros||low)&&localStorage.getItem("nyx_lite")===null){document.documentElement.classList.add("nyx-lite");if(!localStorage.getItem("nyx_performance_mode"))localStorage.setItem("nyx_performance_mode","performance");}else if(localStorage.getItem("nyx_lite")==="1"){document.documentElement.classList.add("nyx-lite");}}catch(e){}})();</script>
   <title>Mac OS in web!</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 
@@ -41,8 +42,8 @@
   <link rel="preconnect" href="https://vscode.dev" crossorigin>
 
 
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 
   <style>
     :root {
@@ -697,6 +698,212 @@
     }
     .window.tiktok-app iframe,
     .window.youtube-app iframe,
+
+    /* ===== Spotify native player ===== */
+    .window.spotify-app {
+      background: #000 !important;
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+    }
+    .window.spotify-app .window__taskbar {
+      flex-shrink: 0;
+    }
+    .spotify-shell {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      grid-template-rows: 1fr 90px;
+      grid-template-areas:
+        "side main"
+        "player player";
+      height: calc(100% - 40px);
+      min-height: 0;
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .sp-side {
+      grid-area: side;
+      background: #000;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-right: 1px solid #181818;
+      overflow: auto;
+    }
+    .sp-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      padding: 6px 8px 10px;
+    }
+    .sp-nav { display: flex; flex-direction: column; gap: 4px; }
+    .sp-nav-btn {
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: #b3b3b3;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .sp-nav-btn:hover { color: #fff; }
+    .sp-nav-btn.on { background: #282828; color: #fff; }
+    .sp-playlists { display: flex; flex-direction: column; gap: 2px; margin-top: 8px; }
+    .sp-pl {
+      text-align: left;
+      border: none;
+      background: transparent;
+      color: #b3b3b3;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sp-pl:hover, .sp-pl.on { color: #fff; background: #1a1a1a; }
+    .sp-main {
+      grid-area: main;
+      background: linear-gradient(180deg, #1f3d2b 0%, #121212 180px);
+      overflow: auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .sp-topbar { padding: 14px 20px 8px; position: sticky; top: 0; z-index: 2; background: linear-gradient(180deg, rgba(0,0,0,0.35), transparent); }
+    .sp-search-wrap input {
+      width: min(360px, 100%);
+      height: 36px;
+      border-radius: 500px;
+      border: none;
+      padding: 0 16px;
+      background: #242424;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    .sp-search-wrap input:focus { box-shadow: 0 0 0 2px #fff; }
+    .sp-content { padding: 8px 20px 24px; }
+    .sp-section-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 8px 0 14px;
+    }
+    .sp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+    }
+    .sp-card {
+      background: #181818;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      border: none;
+      color: #fff;
+      text-align: left;
+      transition: background 0.15s;
+    }
+    .sp-card:hover { background: #282828; }
+    .sp-card-art {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 6px;
+      background: #333;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      overflow: hidden;
+    }
+    .sp-card-art img { width: 100%; height: 100%; object-fit: cover; }
+    .sp-card-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+    .sp-card-sub { font-size: 12px; color: #b3b3b3; line-height: 1.3; }
+    .sp-track-table { width: 100%; border-collapse: collapse; }
+    .sp-track-table th {
+      text-align: left;
+      font-size: 12px;
+      color: #b3b3b3;
+      font-weight: 500;
+      border-bottom: 1px solid #282828;
+      padding: 8px 10px;
+    }
+    .sp-track-table td {
+      padding: 10px;
+      font-size: 13px;
+      border-bottom: 1px solid transparent;
+      color: #fff;
+    }
+    .sp-track-table tr { cursor: pointer; border-radius: 4px; }
+    .sp-track-table tbody tr:hover { background: rgba(255,255,255,0.08); }
+    .sp-track-table tr.playing td { color: #1DB954; }
+    .sp-track-table .sp-num { width: 28px; color: #b3b3b3; }
+    .sp-player {
+      grid-area: player;
+      background: #181818;
+      border-top: 1px solid #282828;
+      display: grid;
+      grid-template-columns: 1fr 1.4fr 1fr;
+      align-items: center;
+      gap: 12px;
+      padding: 0 16px;
+      min-height: 90px;
+    }
+    .sp-now { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .sp-cover {
+      width: 56px; height: 56px; border-radius: 4px;
+      background: #333; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; font-size: 22px;
+    }
+    .sp-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .sp-meta { min-width: 0; }
+    .sp-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sp-artist { font-size: 12px; color: #b3b3b3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sp-controls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .sp-btns { display: flex; align-items: center; gap: 14px; }
+    .sp-btns button {
+      border: none; background: transparent; color: #b3b3b3;
+      cursor: pointer; font-size: 16px; line-height: 1; padding: 4px;
+    }
+    .sp-btns button:hover { color: #fff; }
+    .sp-btns button.on { color: #1DB954; }
+    .sp-play {
+      width: 36px; height: 36px; border-radius: 50% !important;
+      background: #fff !important; color: #000 !important;
+      font-size: 14px !important; display: flex; align-items: center; justify-content: center;
+    }
+    .sp-play:hover { transform: scale(1.06); }
+    .sp-progress-row {
+      display: flex; align-items: center; gap: 8px; width: 100%;
+      max-width: 520px; font-size: 11px; color: #b3b3b3;
+    }
+    .sp-progress-row input[type=range], .sp-volume input[type=range] {
+      -webkit-appearance: none; appearance: none;
+      height: 4px; border-radius: 2px; background: #4d4d4d; outline: none; flex: 1;
+    }
+    .sp-progress-row input[type=range]::-webkit-slider-thumb,
+    .sp-volume input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%;
+      background: #fff; cursor: pointer;
+    }
+    .sp-volume { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+    .sp-volume input { width: 100px; }
+    @media (max-width: 820px) {
+      .spotify-shell { grid-template-columns: 64px 1fr; }
+      .sp-brand span, .sp-pl, .sp-nav-btn { font-size: 0; }
+      .sp-nav-btn { padding: 12px; }
+    }
+
+    .window.spotify-app iframe,
     .window.gdash-app iframe,
     .window.twitch-app iframe,
     .window.gfn-app iframe,
@@ -11522,6 +11729,74 @@ html[data-theme] .window-header.steam-popup-header,
   <div id="desktop-bg"></div>
   <video id="desktop-bg-video" muted loop playsinline autoplay preload="metadata"></video>
   
+  <!-- Vibe music app (installed via: sudo apt beta test spotify) -->
+  <div class="window vibe-window" id="vibe-window">
+    <div class="window__taskbar vibe-bar">
+      <div class="window__taskbar--actions">
+        <button type="button" class="vibe-close" title="Close"></button>
+        <button type="button" class="vibe-min" title="Minimize"></button>
+        <button type="button" class="vibe-full" title="Maximize"></button>
+      </div>
+      <h2>Vibe</h2>
+    </div>
+    <div class="vibe-app" id="vibe-app">
+      <aside class="vibe-side">
+        <div class="vibe-panel vibe-nav">
+          <button type="button" data-v="home" class="on"><svg viewBox="0 0 24 24"><path d="M12.5 3.2a1 1 0 0 0-1 0L3 8.1a1 1 0 0 0-.5.9V21h7v-6.5h5V21h7V9a1 1 0 0 0-.5-.9z"/></svg><em>Home</em></button>
+          <button type="button" data-v="search"><svg viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 1 0 4.6 13.4l4.6 4.6 1.4-1.4-4.6-4.6A7.5 7.5 0 0 0 10.5 3zm0 2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11z"/></svg><em>Search</em></button>
+        </div>
+        <div class="vibe-panel vibe-lib">
+          <div class="vibe-lib-head">
+            <span><svg viewBox="0 0 24 24"><path d="M3 22V2h2v20zm5 0V2h2v20zm5.5-19.7 1.9-.5 5.2 19.4-1.9.5z"/></svg><em>Your Library</em></span>
+            <button type="button" id="vibe-new-pl" title="Create playlist"><svg viewBox="0 0 24 24" style="width:16px;height:16px"><path d="M11 11V2h2v9h9v2h-9v9h-2v-9H2v-2z"/></svg></button>
+          </div>
+          <div class="vibe-chips"><button type="button" class="vibe-chip on" data-f="all">Playlists</button><button type="button" class="vibe-chip" data-f="recent">Recents</button></div>
+          <div class="vibe-lib-list" id="vibe-lib-list"></div>
+        </div>
+      </aside>
+      <main class="vibe-main" id="vibe-main">
+        <div class="vibe-top" id="vibe-top">
+          <button type="button" class="vibe-round" id="vibe-back" title="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <button type="button" class="vibe-round" id="vibe-fwd" title="Forward"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+          <label class="vibe-search"><svg viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 1 0 4.6 13.4l4.6 4.6 1.4-1.4-4.6-4.6A7.5 7.5 0 0 0 10.5 3zm0 2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11z"/></svg><input id="vibe-q" type="text" placeholder="What do you want to play?" autocomplete="off" spellcheck="false"></label>
+          <span class="vibe-spacer"></span>
+          <span class="vibe-user" title="Nyx">N</span>
+        </div>
+        <div class="vibe-view" id="vibe-view"></div>
+      </main>
+      <aside class="vibe-right" id="vibe-right">
+        <h4 id="vibe-np-head">Now playing</h4>
+        <div class="vibe-yt"><div id="vibe-yt-host"></div></div>
+        <div class="vibe-np-title" id="vibe-np-title">Nothing playing</div>
+        <div class="vibe-np-artist" id="vibe-np-artist">Pick a song to start</div>
+        <div class="vibe-q-head">Next in queue</div>
+        <div id="vibe-queue"></div>
+      </aside>
+    </div>
+    <footer class="vibe-player">
+      <div class="vibe-now">
+        <img id="vibe-cover" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+        <div><b id="vibe-t">—</b><small id="vibe-a"></small></div>
+        <button type="button" class="like" id="vibe-like" title="Save to Liked Songs"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z" /></svg></button>
+      </div>
+      <div class="vibe-center">
+        <div class="vibe-ctrls">
+          <button type="button" class="vibe-icon" id="vibe-shuf" title="Shuffle"><svg viewBox="0 0 24 24"><path d="M17 3l4 4-4 4V8h-2.6l-3 4 3 4H17v-3l4 4-4 4v-3h-3.6l-3.4-4.5L6.5 17H3v-2h2.5l3.1-3L5.5 9H3V7h3.5l3.5 4.7L13.4 7H17z"/></svg></button>
+          <button type="button" class="vibe-icon" id="vibe-prev" title="Previous"><svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zm3 7 10-7v14z"/></svg></button>
+          <button type="button" class="vibe-play" id="vibe-pp" title="Play"><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></button>
+          <button type="button" class="vibe-icon" id="vibe-next" title="Next"><svg viewBox="0 0 24 24"><path d="M16 5h2v14h-2zM5 19V5l10 7z"/></svg></button>
+          <button type="button" class="vibe-icon" id="vibe-rep" title="Repeat"><svg viewBox="0 0 24 24"><path d="M17 2l4 4-4 4V7H5v4H3V5h14zM7 22l-4-4 4-4v3h12v-4h2v6H7z"/></svg></button>
+        </div>
+        <div class="vibe-prog"><span id="vibe-cur">0:00</span><div class="vibe-bar-track" id="vibe-seek"><div class="vibe-bar-fill" id="vibe-fill"></div></div><span id="vibe-dur">0:00</span></div>
+      </div>
+      <div class="vibe-extra">
+        <button type="button" class="vibe-icon" id="vibe-toggle-right" title="Now playing view"><svg viewBox="0 0 24 24"><path d="M3 4h18v16H3zm2 2v12h9V6zm11 0v12h3V6z"/></svg></button>
+        <button type="button" class="vibe-icon" id="vibe-mute" title="Mute"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button>
+        <div class="vibe-bar-track vibe-vol" id="vibe-vol"><div class="vibe-bar-fill" id="vibe-volfill" style="width:80%"></div></div>
+      </div>
+    </footer>
+  </div>
+
   <!-- Dev Hub (appears after: sudo apt install dev) -->
   <div class="window devhub-window" id="devhub-window">
     <div class="window__taskbar">
@@ -11612,6 +11887,14 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-youtube" style="display:none"></div>
       </button>
+      <button type="button" class="dock-open-app-button icon open_spotify" data-dock-id="spotify" title="Spotify" aria-label="Launch Spotify">
+        <span class="dock-icon-wrap" style="background:#191414;border-radius:22%;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 24 24" width="70%" height="70%" aria-hidden="true"><path fill="#1DB954" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-spotify" style="display:none"></div>
+      </button>
+
       <button type="button" class="dock-open-app-button icon open_gdash" data-dock-id="gdash" title="Geometry Dash" aria-label="Launch Geometry Dash" >
         <p class="tooltip">Geometry Dash</p>
         <span class="dock-icon-wrap">
@@ -12225,7 +12508,69 @@ html[data-theme] .window-header.steam-popup-header,
       <iframe id="youtube-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/Luma-os-apps@main/index.svg#/embed?u=https%3A%2F%2Fyoutube.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#0f0f0f;display:block"></iframe>
     </div>
 
-    <!-- Geometry Dash app (iframe) -->
+    <!-- Spotify — native music player -->
+    <div class="window spotify-app" id="spotify-window" style="display:none;min-width:720px;max-width:96%;width:980px;height:640px">
+      <div class="window__taskbar" style="background:#000;border-bottom:1px solid #282828">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-spotify" title="Close"></button>
+          <button type="button" class="backfull-spotify" title="Minimize"></button>
+          <button type="button" class="full-spotify" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2 style="color:#fff">Spotify</h2></div>
+      </div>
+      <div class="spotify-shell" id="spotify-shell">
+        <aside class="sp-side">
+          <div class="sp-brand">
+            <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="#1DB954" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
+            <span>Spotify</span>
+          </div>
+          <nav class="sp-nav">
+            <button type="button" class="sp-nav-btn on" data-sp-view="home">Home</button>
+            <button type="button" class="sp-nav-btn" data-sp-view="search">Search</button>
+            <button type="button" class="sp-nav-btn" data-sp-view="library">Your Library</button>
+          </nav>
+          <div class="sp-playlists" id="sp-playlists"></div>
+        </aside>
+        <main class="sp-main">
+          <div class="sp-topbar">
+            <div class="sp-search-wrap">
+              <input type="search" id="sp-search" placeholder="What do you want to play?" autocomplete="off" spellcheck="false" />
+            </div>
+          </div>
+          <div class="sp-content" id="sp-content"></div>
+        </main>
+        <footer class="sp-player">
+          <div class="sp-now">
+            <div class="sp-cover" id="sp-cover"></div>
+            <div class="sp-meta">
+              <div class="sp-title" id="sp-title">Not playing</div>
+              <div class="sp-artist" id="sp-artist">—</div>
+            </div>
+          </div>
+          <div class="sp-controls">
+            <div class="sp-btns">
+              <button type="button" id="sp-shuffle" title="Shuffle" aria-label="Shuffle">⇄</button>
+              <button type="button" id="sp-prev" title="Previous" aria-label="Previous">⏮</button>
+              <button type="button" id="sp-play" class="sp-play" title="Play" aria-label="Play">▶</button>
+              <button type="button" id="sp-next" title="Next" aria-label="Next">⏭</button>
+              <button type="button" id="sp-repeat" title="Repeat" aria-label="Repeat">↻</button>
+            </div>
+            <div class="sp-progress-row">
+              <span id="sp-cur">0:00</span>
+              <input type="range" id="sp-seek" min="0" max="1000" value="0" step="1" />
+              <span id="sp-dur">0:00</span>
+            </div>
+          </div>
+          <div class="sp-volume">
+            <span>🔊</span>
+            <input type="range" id="sp-vol" min="0" max="100" value="80" />
+          </div>
+          <audio id="sp-audio" preload="metadata" crossorigin="anonymous"></audio>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Geometry Dash    <!-- Geometry Dash app (iframe) -->
     <div class="window gdash-app" id="gdash-window" style="display:none;min-width:50%;max-width:90%;width:960px;height:640px">
       <div class="window__taskbar">
         <div class="window__taskbar--actions">
@@ -14092,6 +14437,7 @@ html[data-theme] .window-header.steam-popup-header,
         win.id === "vscode-window" ||
         win.id === "tiktok-window" ||
         win.id === "youtube-window" ||
+        win.id === "spotify-window" ||
         win.id === "gdash-window" ||
         win.id === "twitch-window" ||
         win.id === "gfn-window" ||
@@ -14165,6 +14511,7 @@ html[data-theme] .window-header.steam-popup-header,
       }
       if (win.classList.contains("tiktok-app") || win.id === "tiktok-window") return "TikTok";
       if (win.classList.contains("youtube-app") || win.id === "youtube-window") return "YouTube";
+      if (win.classList.contains("spotify-app") || win.id === "spotify-window") return "Spotify";
       if (win.classList.contains("gdash-app") || win.id === "gdash-window") return "Geometry Dash";
       if (win.classList.contains("twitch-app") || win.id === "twitch-window") return "Twitch";
       if (win.classList.contains("gfn-app") || win.id === "gfn-window") return "GeForce Now";
@@ -14349,6 +14696,7 @@ html[data-theme] .window-header.steam-popup-header,
       var APPS = [
         { name: "TikTok", winId: "tiktok-window", pointId: "point-tiktok", frameId: "tiktok-frame", openSel: ".open_tiktok, [data-dock-id='tiktok'], .child-launchpad[data-lp-app='tiktok']", title: "TikTok" },
         { name: "Youtube", winId: "youtube-window", pointId: "point-youtube", frameId: "youtube-frame", openSel: ".open_youtube, [data-dock-id='youtube'], .child-launchpad[data-lp-app='youtube']", title: "YouTube" },
+        { name: "Spotify", winId: "spotify-window", pointId: "point-spotify", frameId: null, openSel: ".open_spotify, [data-dock-id='spotify'], .child-launchpad[data-lp-app='spotify']", title: "Spotify" },
         { name: "Gdash", winId: "gdash-window", pointId: "point-gdash", frameId: "gdash-frame", openSel: ".open_gdash, [data-dock-id='gdash'], .child-launchpad[data-lp-app='gdash']", title: "Geometry Dash" },
         { name: "Twitch", winId: "twitch-window", pointId: "point-twitch", frameId: "twitch-frame", openSel: ".open_twitch, [data-dock-id='twitch'], .child-launchpad[data-lp-app='twitch']", title: "Twitch" },
         { name: "Gfn", winId: "gfn-window", pointId: "point-gfn", frameId: "gfn-frame", openSel: ".open_gfn, [data-dock-id='gfn'], .child-launchpad[data-lp-app='gfn']", title: "GeForce Now" },
@@ -14457,6 +14805,9 @@ html[data-theme] .window-header.steam-popup-header,
         var point = document.getElementById(opts.pointId);
         if (!win) return;
         muteApp(opts);
+        try {
+          if (opts.winId === "spotify-window" && typeof window.nyxSpotifyStop === "function") window.nyxSpotifyStop();
+        } catch (e) {}
         hideHard(win);
         if (point) point.style.display = "none";
         try {
@@ -14531,6 +14882,7 @@ html[data-theme] .window-header.steam-popup-header,
         var btn = t.closest(
           ".close-tiktok, .backfull-tiktok, .full-tiktok, " +
           ".close-youtube, .backfull-youtube, .full-youtube, " +
+          ".close-spotify, .backfull-spotify, .full-spotify, " +
           ".close-gdash, .backfull-gdash, .full-gdash, " +
           ".close-twitch, .backfull-twitch, .full-twitch, " +
           ".close-gfn, .backfull-gfn, .full-gfn, " +
@@ -14538,19 +14890,16 @@ html[data-theme] .window-header.steam-popup-header,
           ".close-instagram, .backfull-instagram, .full-instagram"
         );
         if (!btn) return null;
-        var cls = btn.className || "";
+        var cls = (btn.className || "") + " " + (btn.getAttribute("class") || "");
         var app = null;
-        if (cls.indexOf("tiktok") >= 0) app = APPS[0];
-        else if (cls.indexOf("youtube") >= 0) app = APPS[1];
-        else if (cls.indexOf("gdash") >= 0) app = APPS[2];
-        else if (cls.indexOf("twitch") >= 0) app = APPS[3];
-        else if (cls.indexOf("gfn") >= 0) app = APPS[4];
-        else if (cls.indexOf("snapchat") >= 0) app = APPS[5];
-        else if (cls.indexOf("instagram") >= 0) app = APPS[6];
+        for (var i = 0; i < APPS.length; i++) {
+          var key = (APPS[i].name || "").toLowerCase();
+          if (key && cls.indexOf(key) >= 0) { app = APPS[i]; break; }
+        }
         if (!app) return null;
         var action = "close";
         if (cls.indexOf("backfull") >= 0 || cls.indexOf("min-") >= 0) action = "min";
-        else if (cls.indexOf("full-") >= 0) action = "full";
+        else if (/\bfull-/.test(cls) || cls.indexOf("full-") >= 0) action = "full";
         return { app: app, action: action, btn: btn };
       }
 
@@ -14588,7 +14937,7 @@ html[data-theme] .window-header.steam-popup-header,
     const MAXIMIZE_BTN_SEL = ".full, .full-note, .full-Vscode, .full-map, .full-settings, .full-safari, .full-steam, .full-imovie, .full-devhub, .full-cal, .full-game-app, .full-tiktok, .full-youtube, .full-gdash, .full-twitch, .full-gfn, .full-snapchat, .full-instagram";
     function findWindowFrom(el) {
       if (!el) return null;
-      return el.closest(".window, .settings-window, .safari, .steam, .Vscode, .calculator, .imovie-window, .devhub-window, .game-app, .tiktok-app, .youtube-app, .gdash-app, .twitch-app, .gfn-app, .snapchat-app, .instagram-app, #vscode-window, #settings-window, #safari-window, #imovie-window, #devhub-window, #tiktok-window, #youtube-window, #gdash-window, #twitch-window, #gfn-window, #snapchat-window, #instagram-window");
+      return el.closest(".window, .settings-window, .safari, .steam, .Vscode, .calculator, .imovie-window, .devhub-window, .game-app, .tiktok-app, .youtube-app, .spotify-app, .gdash-app, .twitch-app, .gfn-app, .snapchat-app, .instagram-app, #vscode-window, #settings-window, #safari-window, #imovie-window, #devhub-window, #tiktok-window, #youtube-window, #spotify-window, #gdash-window, #twitch-window, #gfn-window, #snapchat-window, #instagram-window");
     }
     document.addEventListener("click", function(e) {
       const btn = e.target && e.target.closest && e.target.closest(MAXIMIZE_BTN_SEL);
@@ -15662,6 +16011,11 @@ html[data-theme] .window-header.steam-popup-header,
             } else {
               output = "wisp: unknown subcommand '" + sub.replace(/</g,"&lt;") + "' — try <span class='color_blue'>wisp help</span><br>";
             }
+          }
+
+          else if (/^sudo\s+apt(?:-get)?\s+beta\s+(test|install|remove|purge)\s+spotify\s*$/i.test(command)) {
+            const bAct = /(remove|purge)/i.test(command) ? "remove" : "install";
+            output = (window.nyxVibe ? window.nyxVibe.apt(bAct) : "E: spotify-beta is unavailable right now<br>");
           }
 
           else if (/^sudo\s+apt(?:-get)?\s+(install|remove|purge)\b/i.test(command)) {
@@ -24281,6 +24635,7 @@ window.setDesktopBackground = setDesktopBackground;
       var WIN_MAP = [
         { id: "tiktok", sel: "#tiktok-window, .tiktok-app" },
         { id: "youtube", sel: "#youtube-window, .youtube-app" },
+        { id: "spotify", sel: "#spotify-window, .spotify-app" },
         { id: "gdash", sel: "#gdash-window, .gdash-app" },
         { id: "twitch", sel: "#twitch-window, .twitch-app" },
         { id: "gfn", sel: "#gfn-window, .gfn-app" },
@@ -27459,6 +27814,7 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     { id: "maps", name: "Maps", sub: "Find your way", cats: ["work", "play"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Maps.png", inst: true, win: ".maps" },
     { id: "tiktok", name: "TikTok", sub: "Watch short videos", cats: ["play", "create"], icon: TIKTOK_ICON, dock: "tiktok", inst: true, win: "#tiktok-window,.tiktok-app" },
     { id: "youtube", name: "YouTube", sub: "Watch videos online", cats: ["play"], icon: YOUTUBE_ICON, dock: "youtube", inst: true, win: "#youtube-window,.youtube-app" },
+    { id: "spotify", name: "Spotify", sub: "Music & podcasts", cats: ["play", "create"], icon: "https://cdn.simpleicons.org/spotify/1DB954", dock: "spotify", inst: true, win: "#spotify-window,.spotify-app" },
     { id: "gdash", name: "Geometry Dash", sub: "Rhythm platformer", cats: ["arcade", "play"], icon: GDASH_ICON, dock: "gdash", inst: true, win: "#gdash-window,.gdash-app" },
     { id: "twitch", name: "Twitch", sub: "Live streaming", cats: ["play"], icon: TWITCH_ICON, dock: "twitch", inst: true, win: "#twitch-window,.twitch-app" },
     { id: "gfn", name: "GeForce Now", sub: "Cloud gaming by NVIDIA", cats: ["play", "arcade"], icon: GFN_ICON, dock: "gfn", inst: true, win: "#gfn-window,.gfn-app" },
@@ -30010,6 +30366,7 @@ body[data-os-style="kali"] .safari .safari-tab {
     var map = {
       tiktok: "tiktok-frame",
       youtube: "youtube-frame",
+      spotify: "spotify-frame",
       gdash: "gdash-frame",
       twitch: "twitch-frame",
       gfn: "gfn-frame",
@@ -30061,7 +30418,7 @@ body[data-os-style="kali"] .safari .safari-tab {
     }, true);
     // Also on mouseover of launchpad tiles
     document.addEventListener("pointerenter", function (e) {
-      var t = e.target && e.target.closest && e.target.closest("[data-lp-app], .open_tiktok, .open_youtube, .open_gdash, .open_twitch, .open_gfn, .open_snapchat, .open_instagram, .open_safari");
+      var t = e.target && e.target.closest && e.target.closest("[data-lp-app], .open_tiktok, .open_youtube, .open_gdash, .open_twitch, .open_gfn, .open_snapchat, .open_instagram, .open_spotify, .open_safari");
       if (!t) return;
       var id = t.getAttribute("data-lp-app") || t.getAttribute("data-dock-id");
       if (!id) {
@@ -30097,5 +30454,1418 @@ body[data-os-style="kali"] .safari .safari-tab {
 })();
 </script>
 
+
+<script>
+/* ===== Native Spotify-style music player ===== */
+(function initNyxSpotify() {
+  var TRACKS = [
+    { id: "1", title: "SoundHelix Song 1", artist: "T. Schürger", album: "SoundHelix", emoji: "🎧",
+      src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", color: "#1DB954" },
+    { id: "2", title: "SoundHelix Song 2", artist: "T. Schürger", album: "SoundHelix", emoji: "🌃",
+      src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", color: "#1a2744" },
+    { id: "3", title: "SoundHelix Song 3", artist: "T. Schürger", album: "SoundHelix", emoji: "🎹",
+      src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", color: "#2a3340" },
+    { id: "4", title: "SoundHelix Song 4", artist: "T. Schürger", album: "SoundHelix", emoji: "⚡",
+      src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3", color: "#3a2a12" },
+    { id: "5", title: "SoundHelix Song 5", artist: "T. Schürger", album: "SoundHelix", emoji: "🌧",
+      src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3", color: "#1e2f3a" },
+    { id: "6", title: "SoundHelix Song 6", artist: "T. Schürger", album: "SoundHelix", emoji: "🎸",
+      src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3", color: "#3b2e1e" },
+    { id: "7", title: "SoundHelix Song 7", artist: "T. Schürger", album: "SoundHelix", emoji: "🧠",
+      src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3", color: "#222033" },
+    { id: "8", title: "SoundHelix Song 8", artist: "T. Schürger", album: "SoundHelix", emoji: "🌴",
+      src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3", color: "#1f3d3a" },
+    { id: "9", title: "SoundHelix Song 9", artist: "T. Schürger", album: "SoundHelix", emoji: "✨",
+      src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3", color: "#402040" },
+    { id: "10", title: "SoundHelix Song 10", artist: "T. Schürger", album: "SoundHelix", emoji: "🚀",
+      src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3", color: "#203040" }
+  ];
+
+  var PLAYLISTS = [
+    { id: "liked", name: "Liked Songs", tracks: TRACKS.map(function (t) { return t.id; }) },
+    { id: "focus", name: "Focus Flow", tracks: ["1", "3", "7"] },
+    { id: "night", name: "Late Night", tracks: ["2", "5", "7"] },
+    { id: "chill", name: "Chill Mix", tracks: ["1", "6", "8", "3"] }
+  ];
+
+  var state = {
+    view: "home",
+    queue: TRACKS.slice(),
+    index: -1,
+    playing: false,
+    shuffle: false,
+    repeat: false, // off | all | one
+    playlistId: null
+  };
+
+  function $(id) { return document.getElementById(id); }
+  function fmt(sec) {
+    if (!isFinite(sec) || sec < 0) sec = 0;
+    sec = Math.floor(sec);
+    var m = Math.floor(sec / 60), s = sec % 60;
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  function current() {
+    if (state.index < 0 || state.index >= state.queue.length) return null;
+    return state.queue[state.index];
+  }
+
+  function renderPlaylists() {
+    var el = $("sp-playlists");
+    if (!el) return;
+    el.innerHTML = PLAYLISTS.map(function (p) {
+      return '<button type="button" class="sp-pl' + (state.playlistId === p.id ? " on" : "") + '" data-pl="' + p.id + '">' + p.name + "</button>";
+    }).join("");
+  }
+
+  function tracksForPlaylist(id) {
+    var pl = PLAYLISTS.find(function (p) { return p.id === id; });
+    if (!pl) return TRACKS.slice();
+    return pl.tracks.map(function (tid) {
+      return TRACKS.find(function (t) { return t.id === tid; });
+    }).filter(Boolean);
+  }
+
+  function renderContent() {
+    var el = $("sp-content");
+    if (!el) return;
+    var q = ($("sp-search") && $("sp-search").value || "").trim().toLowerCase();
+    var list = state.playlistId ? tracksForPlaylist(state.playlistId) : TRACKS.slice();
+    if (q) {
+      list = TRACKS.filter(function (t) {
+        return (t.title + " " + t.artist + " " + t.album).toLowerCase().indexOf(q) >= 0;
+      });
+    }
+
+    if (state.view === "search" && !q) {
+      el.innerHTML = '<div class="sp-section-title">Search</div><p style="color:#b3b3b3">Find songs, artists, or albums.</p>';
+      return;
+    }
+
+    if (state.view === "home" && !q && !state.playlistId) {
+      el.innerHTML =
+        '<div class="sp-section-title">Good evening</div>' +
+        '<div class="sp-grid">' +
+        PLAYLISTS.map(function (p) {
+          return '<button type="button" class="sp-card" data-open-pl="' + p.id + '">' +
+            '<div class="sp-card-art">🎵</div>' +
+            '<div class="sp-card-name">' + p.name + '</div>' +
+            '<div class="sp-card-sub">' + p.tracks.length + ' songs</div></button>';
+        }).join("") +
+        "</div>" +
+        '<div class="sp-section-title" style="margin-top:28px">Made for you</div>' +
+        '<div class="sp-grid">' +
+        TRACKS.slice(0, 6).map(function (t) {
+          return '<button type="button" class="sp-card" data-play-id="' + t.id + '">' +
+            '<div class="sp-card-art" style="background:' + t.color + '">' + t.emoji + '</div>' +
+            '<div class="sp-card-name">' + t.title + '</div>' +
+            '<div class="sp-card-sub">' + t.artist + '</div></button>';
+        }).join("") +
+        "</div>";
+      return;
+    }
+
+    var title = state.playlistId
+      ? (PLAYLISTS.find(function (p) { return p.id === state.playlistId; }) || {}).name || "Playlist"
+      : (q ? "Search results" : "Your Library");
+    var cur = current();
+    el.innerHTML =
+      '<div class="sp-section-title">' + title + '</div>' +
+      '<table class="sp-track-table"><thead><tr><th class="sp-num">#</th><th>Title</th><th>Album</th></tr></thead><tbody>' +
+      list.map(function (t, i) {
+        var on = cur && cur.id === t.id;
+        return '<tr class="' + (on ? "playing" : "") + '" data-play-id="' + t.id + '">' +
+          '<td class="sp-num">' + (i + 1) + '</td>' +
+          '<td><strong>' + t.title + '</strong><div style="color:#b3b3b3;font-size:12px">' + t.artist + '</div></td>' +
+          '<td style="color:#b3b3b3">' + t.album + '</td></tr>';
+      }).join("") +
+      "</tbody></table>";
+  }
+
+  function updateNow() {
+    var t = current();
+    var title = $("sp-title");
+    var artist = $("sp-artist");
+    var cover = $("sp-cover");
+    var playBtn = $("sp-play");
+    if (!t) {
+      if (title) title.textContent = "Not playing";
+      if (artist) artist.textContent = "—";
+      if (cover) cover.innerHTML = "";
+      if (playBtn) playBtn.textContent = "▶";
+      return;
+    }
+    if (title) title.textContent = t.title;
+    if (artist) artist.textContent = t.artist;
+    if (cover) {
+      cover.style.background = t.color || "#333";
+      cover.innerHTML = '<span style="font-size:26px">' + (t.emoji || "🎵") + "</span>";
+    }
+    if (playBtn) playBtn.textContent = state.playing ? "⏸" : "▶";
+  }
+
+  function playIndex(i, list) {
+    if (list) state.queue = list.slice();
+    if (i < 0 || i >= state.queue.length) return;
+    state.index = i;
+    var t = state.queue[i];
+    var audio = $("sp-audio");
+    if (!audio) return;
+    audio.src = t.src;
+    audio.play().then(function () {
+      state.playing = true;
+      updateNow();
+      renderContent();
+    }).catch(function () {
+      state.playing = false;
+      updateNow();
+    });
+  }
+
+  function playById(id) {
+    var list = state.playlistId ? tracksForPlaylist(state.playlistId) : TRACKS.slice();
+    var i = list.findIndex(function (t) { return t.id === id; });
+    if (i < 0) {
+      list = TRACKS.slice();
+      i = list.findIndex(function (t) { return t.id === id; });
+    }
+    if (i >= 0) playIndex(i, list);
+  }
+
+  function togglePlay() {
+    var audio = $("sp-audio");
+    if (!audio) return;
+    if (state.index < 0) {
+      playIndex(0, TRACKS.slice());
+      return;
+    }
+    if (audio.paused) {
+      audio.play().then(function () { state.playing = true; updateNow(); }).catch(function () {});
+    } else {
+      audio.pause();
+      state.playing = false;
+      updateNow();
+    }
+  }
+
+  function nextTrack(fromEnded) {
+    if (!state.queue.length) return;
+    if (state.repeat === "one" && fromEnded) {
+      playIndex(state.index);
+      return;
+    }
+    var n = state.index + 1;
+    if (n >= state.queue.length) {
+      if (state.repeat === "all") n = 0;
+      else {
+        state.playing = false;
+        updateNow();
+        return;
+      }
+    }
+    if (state.shuffle) n = Math.floor(Math.random() * state.queue.length);
+    playIndex(n);
+  }
+
+  function prevTrack() {
+    var audio = $("sp-audio");
+    if (audio && audio.currentTime > 3) {
+      audio.currentTime = 0;
+      return;
+    }
+    var n = state.index - 1;
+    if (n < 0) n = state.queue.length - 1;
+    playIndex(n);
+  }
+
+  function stopAll() {
+    var audio = $("sp-audio");
+    if (audio) {
+      try { audio.pause(); } catch (e) {}
+      try { audio.removeAttribute("src"); audio.load(); } catch (e) {}
+    }
+    state.playing = false;
+    updateNow();
+  }
+
+  function bind() {
+    var shell = $("spotify-shell");
+    if (!shell || shell.__nyxBound) return;
+    shell.__nyxBound = true;
+
+    renderPlaylists();
+    renderContent();
+    updateNow();
+
+    shell.addEventListener("click", function (e) {
+      var nav = e.target.closest("[data-sp-view]");
+      if (nav) {
+        state.view = nav.getAttribute("data-sp-view");
+        state.playlistId = null;
+        shell.querySelectorAll(".sp-nav-btn").forEach(function (b) {
+          b.classList.toggle("on", b.getAttribute("data-sp-view") === state.view);
+        });
+        shell.querySelectorAll(".sp-pl").forEach(function (b) { b.classList.remove("on"); });
+        renderContent();
+        return;
+      }
+      var pl = e.target.closest("[data-pl]");
+      if (pl) {
+        state.playlistId = pl.getAttribute("data-pl");
+        state.view = "library";
+        renderPlaylists();
+        renderContent();
+        return;
+      }
+      var openPl = e.target.closest("[data-open-pl]");
+      if (openPl) {
+        state.playlistId = openPl.getAttribute("data-open-pl");
+        state.view = "library";
+        renderPlaylists();
+        renderContent();
+        return;
+      }
+      var play = e.target.closest("[data-play-id]");
+      if (play) {
+        playById(play.getAttribute("data-play-id"));
+      }
+    });
+
+    var search = $("sp-search");
+    if (search) {
+      search.addEventListener("input", function () {
+        state.view = "search";
+        shell.querySelectorAll(".sp-nav-btn").forEach(function (b) {
+          b.classList.toggle("on", b.getAttribute("data-sp-view") === "search");
+        });
+        renderContent();
+      });
+    }
+
+    $("sp-play") && $("sp-play").addEventListener("click", togglePlay);
+    $("sp-next") && $("sp-next").addEventListener("click", function () { nextTrack(false); });
+    $("sp-prev") && $("sp-prev").addEventListener("click", prevTrack);
+    $("sp-shuffle") && $("sp-shuffle").addEventListener("click", function () {
+      state.shuffle = !state.shuffle;
+      this.classList.toggle("on", state.shuffle);
+    });
+    $("sp-repeat") && $("sp-repeat").addEventListener("click", function () {
+      if (!state.repeat) state.repeat = "all";
+      else if (state.repeat === "all") state.repeat = "one";
+      else state.repeat = false;
+      this.classList.toggle("on", !!state.repeat);
+      this.title = state.repeat === "one" ? "Repeat one" : state.repeat === "all" ? "Repeat all" : "Repeat";
+    });
+
+    var audio = $("sp-audio");
+    var seek = $("sp-seek");
+    var vol = $("sp-vol");
+    if (audio) {
+      audio.addEventListener("timeupdate", function () {
+        if (!seek || seek._dragging) return;
+        var d = audio.duration || 0;
+        seek.value = d ? Math.floor((audio.currentTime / d) * 1000) : 0;
+        var cur = $("sp-cur");
+        var dur = $("sp-dur");
+        if (cur) cur.textContent = fmt(audio.currentTime);
+        if (dur) dur.textContent = fmt(d);
+      });
+      audio.addEventListener("ended", function () { nextTrack(true); });
+      audio.addEventListener("play", function () { state.playing = true; updateNow(); });
+      audio.addEventListener("pause", function () { state.playing = false; updateNow(); });
+    }
+    if (seek) {
+      seek.addEventListener("input", function () {
+        seek._dragging = true;
+        var audio = $("sp-audio");
+        if (audio && audio.duration) {
+          audio.currentTime = (seek.value / 1000) * audio.duration;
+        }
+      });
+      seek.addEventListener("change", function () { seek._dragging = false; });
+    }
+    if (vol && audio) {
+      audio.volume = vol.value / 100;
+      vol.addEventListener("input", function () { audio.volume = vol.value / 100; });
+    }
+
+    // Stop audio when Spotify window closes
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest && e.target.closest(".close-spotify");
+      if (btn) setTimeout(stopAll, 30);
+    }, true);
+  }
+
+  // Hook muteApp path: when Spotify closes via doClose, also stop audio
+  var _prevClose = window.closeSpotify;
+  window.nyxSpotifyStop = stopAll;
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bind);
+  else bind();
+  setTimeout(bind, 500);
+
+  // When openSpotify is called, ensure UI is bound
+  var tries = 0;
+  var iv = setInterval(function () {
+    tries++;
+    if ($("spotify-shell")) { bind(); clearInterval(iv); }
+    if (tries > 40) clearInterval(iv);
+  }, 250);
+})();
+</script>
+
+<style id="nyx-v2-css">
+/* ===================================================================
+   NYX v2 ADD-ON: Chromebook lite mode, macOS menu bar, Settings polish,
+   Vibe (music app)
+   =================================================================== */
+
+/* ---------- 0. General robustness (all devices) ---------- */
+html, body { overscroll-behavior: none; }
+.window__taskbar, .safari-chrome-top, .steam-top-bar { touch-action: none; }
+.window, .settings-window { max-height: calc(100dvh - 28px); }
+@media (prefers-reduced-motion: reduce) {
+  .navbar *, .window, .dock-el * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* ---------- 1. Chromebook / low-end "lite" mode ---------- */
+/* Backdrop blur is the #1 GPU cost on ChromeOS. Replace with solid translucency. */
+html.nyx-lite .navbar,
+html.nyx-lite .dock-el,
+html.nyx-lite .window__taskbar,
+html.nyx-lite .settings-sidebar,
+html.nyx-lite .launchpad,
+html.nyx-lite .calculator,
+html.nyx-lite .safari-chrome,
+html.nyx-lite .spotlight_serach,
+html.nyx-lite #spotlight,
+html.nyx-lite .context-menu,
+html.nyx-lite #dockContextMenu,
+html.nyx-lite .navbar li > ul,
+html.nyx-lite .navbar .leftLi > ul {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html.nyx-lite .navbar { background: rgba(32, 32, 36, .78) !important; box-shadow: none !important; }
+html.nyx-lite .dock-el { background: rgba(60, 60, 66, .72) !important; }
+html.nyx-lite .navbar .leftLi > ul,
+html.nyx-lite .navbar li > ul { background: rgba(44, 44, 48, .97) !important; }
+html.nyx-lite .window, html.nyx-lite .settings-window, html.nyx-lite .safari, html.nyx-lite .steam {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .38) !important;
+}
+html.nyx-lite .window *, html.nyx-lite .dock-el * { text-shadow: none !important; }
+html.nyx-lite .launchpad .child-launchpad { content-visibility: auto; contain-intrinsic-size: 96px 110px; }
+html.nyx-lite .settings-content > [id^="settings-panel-"] { content-visibility: auto; contain-intrinsic-size: 600px; }
+html.nyx-lite .win-anim-in, html.nyx-lite .win-anim-out { animation-duration: .12s !important; filter: none !important; }
+html.nyx-lite .dock-el .dock-open-app-button img { transition: none !important; }
+
+/* ---------- 2. macOS-style menu bar ---------- */
+.navbar {
+  height: 28px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+  letter-spacing: -.01em;
+}
+body .navbar__left, body .navbar__right { gap: 1px; }
+/* rounded hover pill inside the bar, like macOS Tahoe */
+body .navbar .leftLi,
+body .navbar__right > li {
+  height: 22px !important;
+  margin: 0 1px !important;
+  padding: 0 9px !important;
+  border-radius: 6px !important;
+  transition: background-color .12s ease, box-shadow .12s ease;
+  position: relative;
+}
+body .navbar .leftLi.logo { padding: 0 9px !important; }
+body .navbar .leftLi.logo img { transition: transform .15s ease, opacity .15s ease; }
+body .navbar .leftLi.logo:hover img { transform: scale(1.08); opacity: 1; }
+body .navbar .leftLi:hover,
+body .navbar__right > li:hover {
+  background: rgba(255, 255, 255, .17) !important;
+  box-shadow: 0 0 0 .5px rgba(255, 255, 255, .08) inset;
+}
+body .navbar .leftLi:active,
+body .navbar__right > li:active { background: rgba(255, 255, 255, .26) !important; }
+body .navbar .leftLi.open,
+body .navbar.menus-open .leftLi:hover {
+  background: rgba(255, 255, 255, .24) !important;
+}
+body .navbar #menu-app-name p { letter-spacing: -.005em; }
+body .navbar .leftLi:hover > p, body .navbar .leftLi.open > p { color: #fff; }
+
+/* dropdown: animated, with a short grace period before closing */
+body .navbar .leftLi > ul {
+  display: flex !important;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px) scale(.985);
+  transform-origin: 14px 0;
+  transition: opacity .13s ease, transform .13s ease, visibility 0s linear .16s;
+  top: calc(100% + 4px) !important;
+  min-width: 232px !important;
+  padding: 5px !important;
+  border-radius: 10px !important;
+  background: rgba(46, 46, 50, .78) !important;
+  backdrop-filter: blur(34px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(34px) saturate(190%) !important;
+  border: .5px solid rgba(255, 255, 255, .18) !important;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .5), 0 0 0 .5px rgba(0, 0, 0, .45) !important;
+  animation: none !important;
+}
+/* invisible bridge so the menu doesn't close while the pointer crosses the gap */
+body .navbar .leftLi > ul::before {
+  content: "" !important; display: block !important;
+  position: absolute; left: 0; right: 0; top: -8px; height: 8px;
+}
+body .navbar .leftLi:hover > ul,
+body .navbar .leftLi.open > ul,
+body .navbar.menus-open .leftLi:hover > ul {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  transition: opacity .13s ease, transform .13s ease, visibility 0s;
+}
+body .navbar.menus-open .leftLi:not(.open):not(:hover) > ul { visibility: hidden; opacity: 0; }
+body .navbar .leftLi > ul > li > button {
+  display: flex; align-items: center; justify-content: space-between;
+  color: rgba(255, 255, 255, .96) !important;
+  font-size: 13px; line-height: 18px;
+  padding: 3px 10px !important;
+  border-radius: 5px !important;
+  transition: none;
+}
+body .navbar .leftLi > ul > li > button:hover:not(:disabled) {
+  background: #0a84ff !important;
+  color: #fff !important;
+}
+body .navbar .leftLi > ul > li > button:disabled { color: rgba(255, 255, 255, .32) !important; cursor: default; }
+body .navbar .leftLi > ul > li.menu-sep {
+  height: 1px !important; margin: 5px 9px !important; background: rgba(255, 255, 255, .14) !important;
+}
+html:not(.nyx-lite) body .navbar { background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.05)), rgba(24,24,28,.38) !important; }
+
+/* ---------- 3. System Settings polish ---------- */
+.settings-window {
+  --st-accent: #0a84ff;
+  border-radius: 16px !important;
+}
+.settings-sidebar { padding-top: 56px !important; }
+.settings-sidebar .settings-nav-label {
+  text-transform: none; letter-spacing: .01em; font-size: 11.5px !important; opacity: .85;
+  padding: 14px 12px 5px !important;
+}
+.settings-sidebar button.settings-nav {
+  position: relative; margin: 1px 0 !important; border-radius: 9px !important;
+  font-size: 13px !important; font-weight: 500 !important;
+  transition: background-color .12s ease, transform .12s ease;
+}
+.settings-sidebar button.settings-nav:active { transform: scale(.985); }
+.settings-sidebar button.settings-nav.active {
+  background: var(--st-accent) !important;
+  box-shadow: 0 1px 6px rgba(10, 132, 255, .35);
+}
+.settings-sidebar button.settings-nav .nav-icon {
+  width: 26px !important; height: 26px !important; border-radius: 7px !important;
+  box-shadow: inset 0 0 0 .5px rgba(0,0,0,.18), 0 1px 2px rgba(0,0,0,.18);
+}
+.settings-profile {
+  margin: 0 2px 10px !important; padding: 10px 10px !important;
+  background: rgba(255, 255, 255, .55); border-radius: 12px !important;
+  box-shadow: 0 0 0 .5px rgba(0, 0, 0, .07);
+}
+.settings-profile-avatar { background: linear-gradient(135deg, #5ac8fa, #0a84ff) !important; color: #fff !important; box-shadow: 0 2px 6px rgba(10,132,255,.4); }
+.settings-content { padding: 60px 32px 36px !important; scroll-behavior: smooth; }
+.settings-content::-webkit-scrollbar, .settings-sidebar::-webkit-scrollbar { width: 10px; }
+.settings-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,.22); border-radius: 10px; border: 3px solid transparent; background-clip: content-box; }
+.settings-content > [id^="settings-panel-"] { max-width: 680px; margin: 0 auto; animation: stPanelIn .22s ease; }
+@keyframes stPanelIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.settings-content h3 { font-size: 28px !important; margin: 0 0 4px !important; }
+.settings-content p.sub { font-size: 13px !important; margin: 0 0 20px !important; }
+.settings-group {
+  border-radius: 14px !important; margin-bottom: 20px !important; overflow: hidden;
+  box-shadow: 0 0 0 .5px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04) !important;
+}
+.settings-row {
+  min-height: 52px !important; padding: 10px 18px !important; gap: 16px;
+  transition: background-color .12s ease;
+}
+.settings-row:hover { background: rgba(0, 0, 0, .022) !important; }
+.settings-row .row-label strong { font-size: 13.5px !important; font-weight: 500 !important; }
+.settings-row .row-label span { font-size: 12px !important; margin-top: 1px; display: block; }
+/* iOS-style switch */
+.settings-toggle {
+  position: relative; width: 42px !important; height: 25px !important; border-radius: 99px !important;
+  border: 0 !important; background: rgba(120, 120, 128, .32) !important; cursor: pointer; flex: none;
+  transition: background-color .2s ease; padding: 0 !important;
+}
+.settings-toggle::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 21px; height: 21px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.28); transition: transform .2s cubic-bezier(.3,.7,.4,1);
+}
+.settings-toggle.on { background: #34c759 !important; }
+.settings-toggle.on::after { transform: translateX(17px); }
+.settings-toggle:focus-visible { outline: 2px solid var(--st-accent); outline-offset: 2px; }
+.settings-content input[type="range"] {
+  -webkit-appearance: none; appearance: none; height: 4px; border-radius: 4px; background: rgba(120,120,128,.3); outline: none;
+}
+.settings-content input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.35), 0 0 0 .5px rgba(0,0,0,.12); cursor: pointer;
+}
+.settings-content select {
+  padding: 0 26px 0 10px !important; border: 0 !important; font-size: 13px !important;
+  -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='12' fill='none' stroke='%236e6e73' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 4.5 5 1.5l3 3M2 7.5l3 3 3-3'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important; background-position: right 8px center !important;
+}
+.perf-mode-card { border-radius: 12px !important; transition: box-shadow .15s ease, transform .15s ease; }
+.perf-mode-card:hover { transform: translateY(-1px); }
+.perf-mode-card.on { box-shadow: 0 0 0 2.5px var(--st-accent) !important; }
+.settings-window .window__taskbar--content h2 { font-weight: 600; opacity: .85; }
+
+/* ===================================================================
+   4. Vibe — music app
+   =================================================================== */
+.vibe-window {
+  display: none; position: absolute; top: 5%; left: 6%;
+  width: min(1180px, 94vw); height: min(740px, calc(100dvh - 90px));
+  min-width: 340px; background: #000; color: #fff; border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, .12); box-shadow: 0 26px 70px rgba(0, 0, 0, .55);
+  z-index: 75; flex-direction: column; overflow: hidden;
+  font-family: "Circular Std", "Inter", "Helvetica Neue", Arial, sans-serif;
+  --vb-green: #1fdf64; --vb-bg: #121212; --vb-card: #181818; --vb-hover: #2a2a2a; --vb-sub: #b3b3b3;
+}
+.vibe-window.is-maximized { top: 28px !important; left: 0 !important; width: 100vw !important; height: calc(100dvh - 28px) !important; border-radius: 0; }
+.vibe-bar { height: 38px; flex: none; display: flex; align-items: center; padding: 0 14px; background: #000; position: relative; }
+.vibe-bar .window__taskbar--actions { display: flex; gap: 8px; z-index: 2; }
+.vibe-bar .window__taskbar--actions button { width: 12px; height: 12px; border-radius: 50%; border: 0; padding: 0; cursor: pointer; }
+.vibe-bar .window__taskbar--actions button:nth-child(1) { background: #ff5f56; }
+.vibe-bar .window__taskbar--actions button:nth-child(2) { background: #ffbd2e; }
+.vibe-bar .window__taskbar--actions button:nth-child(3) { background: #27c93f; }
+.vibe-bar h2 { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #b3b3b3; pointer-events: none; margin: 0; }
+.vibe-app { flex: 1; min-height: 0; display: grid; grid-template-columns: 300px minmax(0, 1fr) 320px; gap: 8px; padding: 0 8px; container-type: inline-size; }
+.vibe-app.no-right { grid-template-columns: 300px minmax(0, 1fr) 0; }
+.vibe-app.no-right .vibe-right { display: none; }
+.vibe-side { display: flex; flex-direction: column; gap: 8px; min-height: 0; }
+.vibe-panel { background: var(--vb-bg); border-radius: 8px; }
+.vibe-nav { padding: 8px 12px; }
+.vibe-nav button { display: flex; align-items: center; gap: 18px; width: 100%; background: none; border: 0; color: var(--vb-sub); font: 700 15px/1 inherit; font-family: inherit; padding: 12px 8px; cursor: pointer; border-radius: 6px; transition: color .15s; }
+.vibe-nav button:hover, .vibe-nav button.on { color: #fff; }
+.vibe-nav svg, .vibe-lib-head svg { width: 24px; height: 24px; fill: currentColor; flex: none; }
+.vibe-lib { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+.vibe-lib-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 8px; color: var(--vb-sub); font-weight: 700; font-size: 15px; }
+.vibe-lib-head span { display: flex; align-items: center; gap: 12px; }
+.vibe-lib-head button { background: none; border: 0; color: var(--vb-sub); cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; }
+.vibe-lib-head button:hover { background: var(--vb-hover); color: #fff; }
+.vibe-chips { display: flex; gap: 8px; padding: 4px 16px 10px; }
+.vibe-chip { background: #2a2a2a; color: #fff; border: 0; border-radius: 99px; padding: 6px 12px; font: 500 13px inherit; font-family: inherit; cursor: pointer; }
+.vibe-chip:hover { background: #333; }
+.vibe-chip.on { background: #fff; color: #000; }
+.vibe-lib-list { overflow-y: auto; padding: 0 8px 8px; flex: 1; }
+.vibe-lib-item { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 6px; cursor: pointer; }
+.vibe-lib-item:hover { background: #1a1a1a; }
+.vibe-lib-item.on { background: #232323; }
+.vibe-lib-art { width: 48px; height: 48px; border-radius: 4px; flex: none; background: #333 center/cover; display: grid; place-items: center; }
+.vibe-lib-art.liked { background: linear-gradient(135deg, #450af5, #c4efd9); }
+.vibe-lib-art svg { width: 20px; height: 20px; fill: #fff; }
+.vibe-lib-item b { display: block; font-weight: 500; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vibe-lib-item small { color: var(--vb-sub); font-size: 13px; }
+.vibe-lib-item div { min-width: 0; }
+.vibe-lib-item.playing b { color: var(--vb-green); }
+
+.vibe-main { background: linear-gradient(180deg, var(--vb-tint, #2a3a5a) 0, var(--vb-bg) 320px); border-radius: 8px; overflow-y: auto; position: relative; min-width: 0; transition: background .4s; }
+.vibe-top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 10px; padding: 14px 20px; background: rgba(18, 18, 18, 0); }
+.vibe-top.scrolled { background: rgba(18, 18, 18, .96); }
+.vibe-round { width: 32px; height: 32px; border-radius: 50%; background: rgba(0, 0, 0, .7); border: 0; color: #fff; display: grid; place-items: center; cursor: pointer; flex: none; }
+.vibe-round:disabled { opacity: .4; cursor: default; }
+.vibe-round svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.vibe-search { display: none; align-items: center; gap: 10px; background: #242424; border-radius: 99px; padding: 0 14px; height: 44px; width: min(364px, 100%); border: 2px solid transparent; transition: border-color .15s, background .15s; }
+.vibe-search:hover { background: #2a2a2a; }
+.vibe-search:focus-within { border-color: #fff; }
+.vibe-search svg { width: 22px; height: 22px; fill: var(--vb-sub); flex: none; }
+.vibe-search input { background: none; border: 0; outline: 0; color: #fff; font: 400 14px inherit; font-family: inherit; flex: 1; min-width: 0; }
+.vibe-top.searching .vibe-search { display: flex; }
+.vibe-top .vibe-spacer { flex: 1; }
+.vibe-user { width: 32px; height: 32px; border-radius: 50%; background: #1f1f1f; border: 4px solid #000; display: grid; place-items: center; font-weight: 700; font-size: 12px; color: #fff; box-sizing: content-box; }
+.vibe-view { padding: 0 24px 40px; }
+.vibe-view h1.vibe-greet { font-size: 30px; font-weight: 800; letter-spacing: -.02em; margin: 6px 0 18px; }
+.vibe-quick { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 8px; }
+.vibe-qp { display: flex; align-items: center; gap: 0; background: rgba(255, 255, 255, .08); border-radius: 5px; overflow: hidden; cursor: pointer; height: 56px; position: relative; transition: background .2s; }
+.vibe-qp:hover { background: rgba(255, 255, 255, .18); }
+.vibe-qp img { width: 56px; height: 56px; object-fit: cover; flex: none; }
+.vibe-qp b { padding: 0 14px; font-size: 14px; font-weight: 700; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; flex: 1; }
+.vibe-qp .vibe-fab { right: 10px; bottom: 10px; width: 36px; height: 36px; }
+.vibe-qp:hover .vibe-fab, .vibe-card:hover .vibe-fab { opacity: 1; transform: none; }
+.vibe-fab { position: absolute; width: 48px; height: 48px; border-radius: 50%; background: var(--vb-green); border: 0; display: grid; place-items: center; cursor: pointer; opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s, background .1s; box-shadow: 0 8px 8px rgba(0, 0, 0, .3); }
+.vibe-fab:hover { transform: scale(1.06) !important; background: #3be477; }
+.vibe-fab svg { width: 20px; height: 20px; fill: #000; }
+.vibe-shelf { margin-top: 26px; }
+.vibe-shelf-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.vibe-shelf-head h2 { font-size: 22px; font-weight: 800; margin: 0; letter-spacing: -.01em; }
+.vibe-shelf-head a { color: var(--vb-sub); font-size: 13px; font-weight: 700; cursor: pointer; }
+.vibe-shelf-head a:hover { text-decoration: underline; }
+.vibe-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(164px, 1fr)); gap: 16px; }
+.vibe-cards.single-row { grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: minmax(164px, 1fr); overflow: hidden; }
+.vibe-card { background: var(--vb-card); border-radius: 8px; padding: 14px; cursor: pointer; position: relative; transition: background .25s; min-width: 0; }
+.vibe-card:hover { background: #292929; }
+.vibe-card .art { position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0, 0, 0, .5); background: #333; }
+.vibe-card .art img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.34); }
+.vibe-card .vibe-fab { right: 8px; bottom: 8px; }
+.vibe-card b { display: block; font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+.vibe-card small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: var(--vb-sub); font-size: 13px; line-height: 1.35; }
+.vibe-card.playing b { color: var(--vb-green); }
+.vibe-skel { background: linear-gradient(90deg, #1c1c1c, #262626, #1c1c1c); background-size: 200% 100%; animation: vibeSkel 1.2s linear infinite; border-radius: 8px; aspect-ratio: .78; }
+@keyframes vibeSkel { to { background-position: -200% 0; } }
+
+.vibe-hero { display: flex; align-items: flex-end; gap: 24px; padding: 8px 0 24px; }
+.vibe-hero .cover { width: 200px; height: 200px; border-radius: 6px; box-shadow: 0 8px 40px rgba(0, 0, 0, .55); background: #333 center/cover; flex: none; display: grid; place-items: center; }
+.vibe-hero .cover.liked { background: linear-gradient(135deg, #450af5, #c4efd9); }
+.vibe-hero .cover svg { width: 80px; height: 80px; fill: #fff; }
+.vibe-hero small { font-size: 13px; font-weight: 700; }
+.vibe-hero h1 { font-size: clamp(32px, 6vw, 72px); font-weight: 900; letter-spacing: -.03em; margin: 6px 0 10px; line-height: 1.05; }
+.vibe-hero p { margin: 0; font-size: 14px; color: #ddd; }
+.vibe-actions { display: flex; align-items: center; gap: 24px; margin: 0 0 18px; }
+.vibe-actions .vibe-fab { position: static; opacity: 1; transform: none; width: 56px; height: 56px; }
+.vibe-actions .vibe-fab svg { width: 24px; height: 24px; }
+.vibe-icon { background: none; border: 0; color: var(--vb-sub); cursor: pointer; padding: 6px; display: grid; place-items: center; border-radius: 50%; }
+.vibe-icon:hover { color: #fff; }
+.vibe-icon.on { color: var(--vb-green); }
+.vibe-icon svg { width: 22px; height: 22px; fill: currentColor; }
+.vibe-trow { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px 60px 36px; align-items: center; gap: 12px; padding: 6px 12px; border-radius: 4px; color: var(--vb-sub); font-size: 14px; cursor: default; }
+.vibe-trow.head { border-bottom: 1px solid #2a2a2a; border-radius: 0; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; padding-bottom: 8px; }
+.vibe-trow:not(.head):hover { background: rgba(255, 255, 255, .1); }
+.vibe-trow .num { text-align: center; position: relative; }
+.vibe-trow .num svg { width: 16px; height: 16px; fill: #fff; display: none; margin: auto; }
+.vibe-trow:hover .num span { display: none; }
+.vibe-trow:hover .num svg.p { display: block; }
+.vibe-trow.playing .num span { color: var(--vb-green); }
+.vibe-trow.playing .t b { color: var(--vb-green); }
+.vibe-trow .t { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.vibe-trow .t img { width: 40px; height: 40px; border-radius: 4px; object-fit: cover; flex: none; }
+.vibe-trow .t div { min-width: 0; }
+.vibe-trow .t b { display: block; color: #fff; font-weight: 400; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vibe-trow .t small { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.vibe-trow:hover .t small { color: #fff; }
+.vibe-trow .like { opacity: 0; background: none; border: 0; color: var(--vb-sub); cursor: pointer; display: grid; place-items: center; }
+.vibe-trow:hover .like, .vibe-trow .like.on { opacity: 1; }
+.vibe-trow .like.on { color: var(--vb-green); }
+.vibe-trow .like svg, .vibe-trow .more svg { width: 18px; height: 18px; fill: currentColor; }
+.vibe-trow .more { opacity: 0; background: none; border: 0; color: var(--vb-sub); cursor: pointer; }
+.vibe-trow:hover .more { opacity: 1; }
+.vibe-trow .d { text-align: right; font-variant-numeric: tabular-nums; }
+.vibe-sr-grid { display: grid; grid-template-columns: minmax(280px, 1fr) 2fr; gap: 24px; margin-bottom: 20px; }
+.vibe-top-result { background: #181818; border-radius: 8px; padding: 20px; position: relative; cursor: pointer; transition: background .25s; }
+.vibe-top-result:hover { background: #282828; }
+.vibe-top-result:hover .vibe-fab { opacity: 1; transform: none; }
+.vibe-top-result img { width: 92px; height: 92px; border-radius: 6px; object-fit: cover; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
+.vibe-top-result b { display: block; font-size: 30px; font-weight: 800; margin: 18px 0 6px; line-height: 1.1; }
+.vibe-top-result small { color: var(--vb-sub); font-size: 14px; }
+.vibe-top-result .vibe-fab { right: 20px; bottom: 20px; }
+.vibe-browse { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 20px; }
+.vibe-cat { aspect-ratio: 1.8; border-radius: 8px; padding: 14px; font-size: 20px; font-weight: 800; position: relative; overflow: hidden; cursor: pointer; transition: transform .15s; }
+.vibe-cat:hover { transform: scale(1.02); }
+.vibe-cat::after { content: ""; position: absolute; right: -14px; bottom: -6px; width: 84px; height: 84px; background: rgba(0, 0, 0, .22); border-radius: 8px; transform: rotate(25deg); }
+.vibe-note { background: #1a1a1a; border: 1px solid #2f2f2f; border-radius: 10px; padding: 18px; color: #ddd; font-size: 14px; line-height: 1.5; margin: 16px 0; }
+.vibe-note b { color: #fff; }
+.vibe-note button { margin-top: 10px; background: #fff; color: #000; border: 0; border-radius: 99px; padding: 8px 18px; font-weight: 700; cursor: pointer; }
+.vibe-note input { margin-top: 10px; width: 100%; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 8px; padding: 9px 12px; font-family: inherit; }
+
+.vibe-right { background: var(--vb-bg); border-radius: 8px; overflow-y: auto; padding: 16px; min-height: 0; }
+.vibe-right h4 { margin: 0 0 14px; font-size: 16px; font-weight: 700; }
+.vibe-yt { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 18px; }
+.vibe-yt iframe, .vibe-yt > div { position: absolute; inset: 0; width: 100%; height: 100%; }
+.vibe-np-title { font-size: 22px; font-weight: 800; margin: 4px 0 4px; line-height: 1.15; }
+.vibe-np-artist { color: var(--vb-sub); font-size: 14px; }
+.vibe-q-head { margin: 24px 0 6px; font-weight: 700; font-size: 15px; }
+.vibe-q-item { display: flex; align-items: center; gap: 10px; padding: 6px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.vibe-q-item:hover { background: #222; }
+.vibe-q-item img { width: 40px; height: 40px; border-radius: 4px; object-fit: cover; }
+.vibe-q-item b { display: block; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+.vibe-q-item small { color: var(--vb-sub); }
+.vibe-q-item div { min-width: 0; }
+.vibe-q-item.playing b { color: var(--vb-green); }
+
+.vibe-player { flex: none; height: 80px; display: grid; grid-template-columns: minmax(180px, 30%) minmax(0, 40%) minmax(140px, 30%); align-items: center; padding: 0 16px; background: #000; gap: 12px; }
+.vibe-now { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.vibe-now img { width: 56px; height: 56px; border-radius: 4px; object-fit: cover; background: #222; flex: none; }
+.vibe-now div { min-width: 0; }
+.vibe-now b { display: block; font-size: 14px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vibe-now small { color: var(--vb-sub); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.vibe-now .like { background: none; border: 0; color: var(--vb-sub); cursor: pointer; flex: none; }
+.vibe-now .like.on { color: var(--vb-green); }
+.vibe-now .like svg { width: 18px; height: 18px; fill: currentColor; }
+.vibe-center { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; }
+.vibe-ctrls { display: flex; align-items: center; gap: 16px; }
+.vibe-ctrls .vibe-icon svg { width: 20px; height: 20px; }
+.vibe-play { width: 34px; height: 34px; border-radius: 50%; background: #fff; border: 0; display: grid; place-items: center; cursor: pointer; transition: transform .1s; }
+.vibe-play:hover { transform: scale(1.06); }
+.vibe-play svg { width: 16px; height: 16px; fill: #000; }
+.vibe-prog { display: flex; align-items: center; gap: 8px; width: 100%; font-size: 11px; color: var(--vb-sub); font-variant-numeric: tabular-nums; }
+.vibe-prog span { min-width: 36px; text-align: center; }
+.vibe-bar-track { flex: 1; height: 4px; background: #4d4d4d; border-radius: 4px; position: relative; cursor: pointer; padding: 6px 0; background-clip: content-box; }
+.vibe-bar-fill { position: absolute; left: 0; top: 6px; height: 4px; background: #fff; border-radius: 4px; width: 0; pointer-events: none; }
+.vibe-bar-track::after { content: ""; position: absolute; top: 50%; left: var(--p, 0%); width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: #fff; opacity: 0; transition: opacity .1s; }
+.vibe-bar-track:hover .vibe-bar-fill { background: var(--vb-green); }
+.vibe-bar-track:hover::after { opacity: 1; }
+.vibe-extra { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.vibe-extra .vibe-vol { width: 96px; flex: none; }
+.vibe-spin { width: 20px; height: 20px; border: 2px solid #444; border-top-color: var(--vb-green); border-radius: 50%; animation: vibeSpin .7s linear infinite; margin: 30px auto; }
+@keyframes vibeSpin { to { transform: rotate(360deg); } }
+.vibe-menu { position: fixed; z-index: 100000; min-width: 190px; background: #282828; border-radius: 6px; padding: 4px; box-shadow: 0 16px 24px rgba(0, 0, 0, .5); font-family: "Inter", sans-serif; }
+.vibe-menu button { display: block; width: 100%; text-align: left; background: none; border: 0; color: #eee; padding: 10px 12px; font-size: 14px; border-radius: 3px; cursor: pointer; }
+.vibe-menu button:hover { background: #3e3e3e; }
+.vibe-menu hr { border: 0; border-top: 1px solid #3e3e3e; margin: 4px 0; }
+.vibe-toast { position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%); background: #fff; color: #000; font-weight: 600; font-size: 14px; padding: 10px 18px; border-radius: 99px; z-index: 50; pointer-events: none; animation: vibeToast 2.2s ease forwards; }
+@keyframes vibeToast { 0% { opacity: 0; transform: translate(-50%, 10px); } 10%, 85% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; } }
+.vibe-main::-webkit-scrollbar, .vibe-lib-list::-webkit-scrollbar, .vibe-right::-webkit-scrollbar { width: 12px; }
+.vibe-main::-webkit-scrollbar-thumb, .vibe-lib-list::-webkit-scrollbar-thumb, .vibe-right::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .28); border-radius: 8px; border: 3px solid transparent; background-clip: content-box; }
+.vibe-dock-icon img { border-radius: 22%; }
+
+@container (max-width: 980px) { .vibe-app { grid-template-columns: 76px minmax(0, 1fr) 0 !important; } .vibe-right { display: none; } .vibe-lib-item div, .vibe-lib-head span em, .vibe-nav button em, .vibe-chips { display: none; } .vibe-nav button { justify-content: center; } .vibe-lib-head { justify-content: center; } .vibe-lib-item { justify-content: center; } }
+@container (max-width: 620px) { .vibe-app { grid-template-columns: 0 minmax(0, 1fr) 0 !important; padding: 0 4px; } .vibe-side { display: none; } .vibe-trow { grid-template-columns: 28px minmax(0, 1fr) 36px 46px; } .vibe-trow .more { display: none; } .vibe-hero .cover { width: 120px; height: 120px; } .vibe-sr-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .vibe-player { grid-template-columns: minmax(0, 1fr) auto; } .vibe-extra { display: none; } .vibe-center .vibe-prog { position: absolute; left: 0; right: 0; bottom: 0; } }
+
+/* Vibe fixes */
+.vibe-window .window__taskbar.vibe-bar { background: #000 !important; border: 0 !important; }
+.vibe-window em { font-style: normal; }
+/* keep the menu bar (and its dropdowns) above every app window */
+body .navbar { z-index: 3000 !important; }
+.settings-sidebar .settings-search { flex: none !important; height: 30px !important; min-height: 30px !important; padding-left: 28px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='6' cy='6' r='4.5'/%3E%3Cpath d='m9.5 9.5 3.5 3.5'/%3E%3C/svg%3E") !important; background-repeat: no-repeat !important; background-position: 9px center !important; }
+.vibe-sr-grid { grid-template-columns: 1fr !important; gap: 8px; }
+.vibe-top-result { display: flex; align-items: center; gap: 18px; padding: 16px; }
+.vibe-top-result b { font-size: 22px; margin: 0 0 4px; }
+.vibe-top-result img { width: 84px; height: 84px; }
+.vibe-app { grid-template-columns: 280px minmax(0, 1fr) 300px; }
+.vibe-app.no-right { grid-template-columns: 280px minmax(0, 1fr) 0; }
+
+</style>
+<script id="nyx-v2-js">
+/* ===================================================================
+   NYX v2 ADD-ON JS
+   1) Chromebook lite mode + touch dragging
+   2) Vibe music app (YouTube playback, public search instances)
+   3) sudo apt beta test spotify
+   =================================================================== */
+(function () {
+  "use strict";
+  function ls(k, v) {
+    try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {}
+    return null;
+  }
+  function $(id) { return document.getElementById(id); }
+
+  /* ------------------------------------------------------------------
+     1) Chromebook / low-end mode
+     ------------------------------------------------------------------ */
+  var ua = navigator.userAgent || "";
+  var isCros = /\bCrOS\b/.test(ua);
+  var lowEnd = (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+  var liteMode = ls("nyx_lite");
+  var lite = liteMode === "1" || (liteMode === null && (isCros || lowEnd));
+  function applyLite(on) {
+    document.documentElement.classList.toggle("nyx-lite", !!on);
+    var v = $("desktop-bg-video");
+    if (v) { try { if (on) v.pause(); else if (v.paused && v.src) v.play().catch(function () {}); } catch (e) {} }
+  }
+  applyLite(lite);
+  window.nyxSetLite = function (on) { ls("nyx_lite", on ? "1" : "0"); applyLite(on); };
+
+  // pause the live wallpaper when the tab is hidden (saves CPU/battery)
+  document.addEventListener("visibilitychange", function () {
+    var v = $("desktop-bg-video");
+    if (!v || document.documentElement.classList.contains("nyx-lite")) return;
+    try { if (document.hidden) v.pause(); else if (v.src) v.play().catch(function () {}); } catch (e) {}
+  });
+
+  // Touch-screen dragging for jQuery UI windows (Chromebook touchscreens)
+  if ("ontouchstart" in window) {
+    var tActive = false;
+    var sim = function (e, type) {
+      var t = e.changedTouches[0];
+      var ev = new MouseEvent(type, { bubbles: true, cancelable: true, view: window, clientX: t.clientX, clientY: t.clientY, screenX: t.screenX, screenY: t.screenY, button: 0 });
+      (type === "mousedown" ? e.target : (document.elementFromPoint(t.clientX, t.clientY) || e.target)).dispatchEvent(ev);
+    };
+    document.addEventListener("touchstart", function (e) {
+      if (e.touches.length > 1) return;
+      if (!e.target.closest || !e.target.closest(".window__taskbar, .safari-chrome-top, .steam-top-bar")) return;
+      if (e.target.closest("button, input, a")) return;
+      tActive = true; sim(e, "mousemove"); sim(e, "mousedown");
+    }, { passive: true });
+    document.addEventListener("touchmove", function (e) { if (!tActive) return; sim(e, "mousemove"); if (e.cancelable) e.preventDefault(); }, { passive: false });
+    document.addEventListener("touchend", function (e) { if (!tActive) return; tActive = false; sim(e, "mouseup"); }, { passive: true });
+  }
+
+  /* ------------------------------------------------------------------
+     2) Vibe — music app
+     ------------------------------------------------------------------ */
+  var KEY_INST = "nyx_vibe_installed";
+  var win, built = false;
+
+  var ICON = "data:image/svg+xml;utf8," + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs>' +
+    '<rect width="128" height="128" rx="29" fill="url(#g)"/><g fill="#fff"><rect x="30" y="52" width="10" height="24" rx="5"/><rect x="48" y="38" width="10" height="52" rx="5"/><rect x="66" y="26" width="10" height="76" rx="5"/><rect x="84" y="44" width="10" height="40" rx="5"/></g></svg>');
+
+  /* ---- state ---- */
+  var S = {
+    view: "home", arg: null, hist: [], fwd: [],
+    queue: [], idx: -1, playing: false, shuffle: false, repeat: 0, vol: 80, muted: false,
+    liked: JSON.parse(ls("vibe_liked") || "[]"),
+    lists: JSON.parse(ls("vibe_lists") || "{}"),
+    recent: JSON.parse(ls("vibe_recent") || "[]"),
+    cache: {}
+  };
+  function save() { ls("vibe_liked", JSON.stringify(S.liked)); ls("vibe_lists", JSON.stringify(S.lists)); ls("vibe_recent", JSON.stringify(S.recent.slice(0, 40))); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function thumb(id) { return "https://i.ytimg.com/vi/" + id + "/mqdefault.jpg"; }
+  function fmt(s) { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); }
+  function cleanTitle(t) { return String(t || "").replace(/\s*[\(\[](official|lyrics?|audio|video|music video|hd|hq|visualizer)[^\)\]]*[\)\]]/ig, "").trim(); }
+  function isLiked(id) { return S.liked.some(function (t) { return t.id === id; }); }
+  function cur() { return S.queue[S.idx] || null; }
+  function toast(m) {
+    var el = document.createElement("div"); el.className = "vibe-toast"; el.textContent = m;
+    win.appendChild(el); setTimeout(function () { el.remove(); }, 2300);
+  }
+
+  /* ---- search over public Invidious / Piped instances ---- */
+  var INV = ["https://inv.nadeko.net", "https://yewtu.be", "https://invidious.nerdvpn.de", "https://invidious.privacyredirect.com", "https://invidious.f5.si"];
+  var PIPED = ["https://pipedapi.kavin.rocks", "https://pipedapi.adminforge.de", "https://api.piped.private.coffee", "https://pipedapi.leptons.xyz"];
+  var instP = null;
+  function withTimeout(p, ms) {
+    return new Promise(function (res, rej) { var t = setTimeout(function () { rej(new Error("timeout")); }, ms); p.then(function (v) { clearTimeout(t); res(v); }, function (e) { clearTimeout(t); rej(e); }); });
+  }
+  function getJSON(url, ms) {
+    var ctl = ("AbortController" in window) ? new AbortController() : null;
+    return withTimeout(fetch(url, ctl ? { signal: ctl.signal } : {}).then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); }), ms || 6000)
+      .catch(function (e) { if (ctl) ctl.abort(); throw e; });
+  }
+  function anyOf(ps) {
+    return new Promise(function (res, rej) {
+      var n = ps.length, errs = [];
+      if (!n) return rej(new Error("none"));
+      ps.forEach(function (p) { p.then(res, function (e) { errs.push(e); if (--n === 0) rej(errs[0]); }); });
+    });
+  }
+  function instances() {
+    if (instP) return instP;
+    instP = withTimeout(fetch("https://api.invidious.io/instances.json?sort_by=health").then(function (r) { return r.json(); }), 4000)
+      .then(function (j) {
+        var live = j.filter(function (x) { return x[1] && x[1].api && x[1].type === "https" && x[1].uri; }).map(function (x) { return x[1].uri.replace(/\/$/, ""); }).slice(0, 5);
+        return { inv: live.concat(INV.filter(function (u) { return live.indexOf(u) < 0; })).slice(0, 8), piped: PIPED };
+      }).catch(function () { return { inv: INV, piped: PIPED }; });
+    return instP;
+  }
+  function idFromPiped(u) { var m = /[?&]v=([\w-]{11})/.exec(u || ""); return m && m[1]; }
+  function search(q) {
+    q = q.trim();
+    if (S.cache[q]) return Promise.resolve(S.cache[q]);
+    return instances().then(function (I) {
+      var tasks = [];
+      I.piped.forEach(function (b) {
+        tasks.push(getJSON(b + "/search?q=" + encodeURIComponent(q) + "&filter=music_songs", 6500).then(function (j) {
+          var out = (j.items || []).map(function (x) { var id = idFromPiped(x.url); return id && { id: id, title: cleanTitle(x.title), artist: (x.uploaderName || "").replace(/ - Topic$/, ""), dur: x.duration || 0 }; }).filter(Boolean);
+          if (!out.length) throw new Error("empty"); return out;
+        }));
+      });
+      I.inv.forEach(function (b) {
+        tasks.push(getJSON(b + "/api/v1/search?q=" + encodeURIComponent(q) + "&type=video&fields=videoId,title,author,lengthSeconds", 6500).then(function (j) {
+          var out = (j || []).filter(function (x) { return x.videoId && x.lengthSeconds > 45 && x.lengthSeconds < 1200; }).map(function (x) { return { id: x.videoId, title: cleanTitle(x.title), artist: (x.author || "").replace(/ - Topic$/, ""), dur: x.lengthSeconds }; });
+          if (!out.length) throw new Error("empty"); return out;
+        }));
+      });
+      return anyOf(tasks);
+    }).then(function (r) { S.cache[q] = r; return r; });
+  }
+  function fromLink(txt) {
+    var m = /(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/)([\w-]{11})/.exec(txt) || /^([\w-]{11})$/.exec(txt.trim());
+    if (!m) return Promise.reject(new Error("no id"));
+    var id = m[1];
+    return getJSON("https://www.youtube.com/oembed?format=json&url=" + encodeURIComponent("https://www.youtube.com/watch?v=" + id), 6000)
+      .then(function (j) { return { id: id, title: cleanTitle(j.title), artist: (j.author_name || "").replace(/ - Topic$/, ""), dur: 0 }; })
+      .catch(function () { return { id: id, title: "YouTube video " + id, artist: "YouTube", dur: 0 }; });
+  }
+
+  /* ---- YouTube player ---- */
+  var yt = null, ytReady = false, pending = null, tick = null;
+  function loadYT() {
+    return new Promise(function (res) {
+      if (window.YT && window.YT.Player) return res();
+      var prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = function () { try { prev && prev(); } catch (e) {} res(); };
+      var s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; s.async = true; document.head.appendChild(s);
+    });
+  }
+  function ensurePlayer() {
+    if (yt) return Promise.resolve();
+    return loadYT().then(function () {
+      return new Promise(function (res) {
+        yt = new YT.Player("vibe-yt-host", {
+          width: "100%", height: "100%",
+          playerVars: { playsinline: 1, rel: 0, modestbranding: 1, controls: 1, fs: 0, origin: location.origin && location.origin !== "null" ? location.origin : undefined },
+          events: {
+            onReady: function () { ytReady = true; yt.setVolume(S.vol); res(); if (pending) { var p = pending; pending = null; yt.loadVideoById(p); } },
+            onStateChange: onState,
+            onError: function () { toast("That track can't be played here, skipping…"); setTimeout(function () { next(true); }, 700); }
+          }
+        });
+      });
+    });
+  }
+  function onState(e) {
+    var st = e.data; // 0 ended, 1 playing, 2 paused
+    S.playing = st === 1 || st === 3;
+    if (st === 0) next(true);
+    renderPlayState();
+  }
+  function setPlaying(on) { S.playing = on; renderPlayState(); }
+  function startTick() {
+    if (tick) return;
+    tick = setInterval(function () {
+      if (!ytReady || !yt || !yt.getCurrentTime) return;
+      var c = yt.getCurrentTime(), d = yt.getDuration() || (cur() && cur().dur) || 0;
+      $("vibe-cur").textContent = fmt(c); $("vibe-dur").textContent = fmt(d);
+      var p = d ? Math.min(100, c / d * 100) : 0;
+      $("vibe-fill").style.width = p + "%"; $("vibe-seek").style.setProperty("--p", p + "%");
+    }, 400);
+  }
+
+  function playQueue(list, i) {
+    S.queue = list.slice(); S.idx = i; startTrack();
+  }
+  function startTrack() {
+    var t = cur(); if (!t) return;
+    S.recent = [t].concat(S.recent.filter(function (r) { return r.id !== t.id; })); save();
+    renderNow(); renderQueue(); markPlaying();
+    $("vibe-fill").style.width = "0"; $("vibe-cur").textContent = "0:00";
+    ensurePlayer().then(function () {
+      if (ytReady) yt.loadVideoById(t.id); else pending = t.id;
+      startTick();
+    });
+    if ("mediaSession" in navigator) {
+      try { navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist, artwork: [{ src: thumb(t.id), sizes: "320x180", type: "image/jpeg" }] }); } catch (e) {}
+    }
+    var th = $("vibe-main"); if (th) th.style.setProperty("--vb-tint", tintFor(t.id));
+  }
+  function tintFor(id) { var h = 0; for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 360; return "hsl(" + h + ",38%,28%)"; }
+  function toggle() {
+    if (!cur()) return;
+    if (!ytReady) return;
+    var st = yt.getPlayerState();
+    if (st === 1 || st === 3) { yt.pauseVideo(); setPlaying(false); } else { yt.playVideo(); setPlaying(true); }
+  }
+  function next(auto) {
+    if (!S.queue.length) return;
+    if (auto && S.repeat === 2) { return startTrack(); }
+    var n;
+    if (S.shuffle && S.queue.length > 1) { do { n = Math.floor(Math.random() * S.queue.length); } while (n === S.idx); }
+    else n = S.idx + 1;
+    if (n >= S.queue.length) {
+      if (S.repeat === 1) n = 0;
+      else if (auto && cur()) { // autoplay more from this artist
+        var a = cur().artist;
+        search(a + " songs").then(function (r) {
+          var seen = {}; S.queue.forEach(function (t) { seen[t.id] = 1; });
+          var more = r.filter(function (t) { return !seen[t.id]; });
+          if (!more.length) { setPlaying(false); return; }
+          S.queue = S.queue.concat(more); S.idx = S.idx + 1; startTrack();
+        }).catch(function () { setPlaying(false); });
+        return;
+      } else return;
+    }
+    S.idx = n; startTrack();
+  }
+  function prev() {
+    if (ytReady && yt.getCurrentTime && yt.getCurrentTime() > 4) { yt.seekTo(0, true); return; }
+    if (S.idx > 0) { S.idx--; startTrack(); } else if (ytReady) yt.seekTo(0, true);
+  }
+
+  /* ---- rendering ---- */
+  var PLAY = '<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>';
+  var PAUSE = '<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg>';
+  var HEART = '<svg viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z"/></svg>';
+  var DOTS = '<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>';
+  var NOTE = '<svg viewBox="0 0 24 24"><path d="M9 3v12.3A3.5 3.5 0 1 0 11 18.5V7h8V3z"/></svg>';
+
+  function renderPlayState() {
+    var b = $("vibe-pp"); if (b) { b.innerHTML = S.playing ? PAUSE : PLAY; b.title = S.playing ? "Pause" : "Play"; }
+    markPlaying();
+  }
+  function renderNow() {
+    var t = cur(); if (!t) return;
+    $("vibe-cover").src = thumb(t.id); $("vibe-t").textContent = t.title; $("vibe-a").textContent = t.artist;
+    $("vibe-np-title").textContent = t.title; $("vibe-np-artist").textContent = t.artist;
+    $("vibe-like").classList.toggle("on", isLiked(t.id));
+  }
+  function renderQueue() {
+    var q = S.queue.slice(S.idx + 1, S.idx + 9);
+    $("vibe-queue").innerHTML = q.map(function (t, i) {
+      return '<div class="vibe-q-item" data-qi="' + (S.idx + 1 + i) + '"><img src="' + thumb(t.id) + '" alt=""><div><b>' + esc(t.title) + '</b><small>' + esc(t.artist) + '</small></div></div>';
+    }).join("") || '<div style="color:#777;font-size:13px">Queue is empty</div>';
+  }
+  function markPlaying() {
+    var t = cur(), id = t && t.id;
+    win.querySelectorAll("[data-id]").forEach(function (el) { el.classList.toggle("playing", !!id && el.getAttribute("data-id") === id && S.playing); });
+  }
+
+  function trackRow(t, i, ctx) {
+    return '<div class="vibe-trow" data-id="' + t.id + '" data-i="' + i + '" data-ctx="' + ctx + '">' +
+      '<div class="num"><span>' + (i + 1) + '</span><svg class="p" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></div>' +
+      '<div class="t"><img src="' + thumb(t.id) + '" alt="" loading="lazy"><div><b>' + esc(t.title) + '</b><small>' + esc(t.artist) + '</small></div></div>' +
+      '<button type="button" class="like' + (isLiked(t.id) ? " on" : "") + '" data-act="like">' + HEART + '</button>' +
+      '<div class="d">' + (t.dur ? fmt(t.dur) : "") + '</div>' +
+      '<button type="button" class="more" data-act="more">' + DOTS + '</button></div>';
+  }
+  function cardHtml(t, i, ctx, sub) {
+    return '<div class="vibe-card" data-id="' + t.id + '" data-i="' + i + '" data-ctx="' + ctx + '"><div class="art"><img src="' + thumb(t.id) + '" alt="" loading="lazy"><button type="button" class="vibe-fab" data-act="play">' + PLAY + '</button></div><b>' + esc(t.title) + '</b><small>' + esc(sub || t.artist) + '</small></div>';
+  }
+
+  var lists = {}; // ctx -> tracks, so clicks can resolve a queue
+  function ctxPlay(ctx, i) { var l = lists[ctx]; if (l && l[i]) playQueue(l, i); }
+
+  var SHELVES = [
+    { title: "Today's top hits", q: "top hits 2026" },
+    { title: "Pop favorites", q: "best pop songs" },
+    { title: "Hip-Hop essentials", q: "best hip hop songs" },
+    { title: "Chill vibes", q: "chill songs playlist" },
+    { title: "Rock classics", q: "classic rock hits" },
+    { title: "Throwback jams", q: "2000s throwback hits" },
+    { title: "Workout energy", q: "workout music" }
+  ];
+  var CATS = [["Pop", "#8d67ab"], ["Hip-Hop", "#ba5d07"], ["Rock", "#e91429"], ["Latin", "#e8115b"], ["Chill", "#477d95"], ["Workout", "#777777"], ["Party", "#1e3264"], ["Indie", "#608108"], ["Country", "#bc5900"], ["R&B", "#dc148c"], ["Jazz", "#503750"], ["Focus", "#503750"], ["Sleep", "#1e3264"], ["Dance", "#d84000"], ["Gaming", "#af2896"], ["Throwback", "#8d67ab"]];
+
+  function greet() { var h = new Date().getHours(); return h < 5 ? "Good night" : h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; }
+  function offlineNote(retry) {
+    return '<div class="vibe-note"><b>Couldn\'t reach a music search server.</b><br>Vibe finds songs through public YouTube search mirrors, and they\'re all busy or blocked on this network right now. You can still play anything by pasting a YouTube link below.' +
+      '<input id="vibe-paste" placeholder="Paste a YouTube link or video ID and press Enter"><br><button type="button" id="vibe-retry">Try again</button></div>';
+  }
+
+  function renderHome() {
+    var v = $("vibe-view");
+    var quickSrc = S.recent.length ? S.recent.slice(0, 8) : [];
+    lists.quick = quickSrc;
+    v.innerHTML = '<h1 class="vibe-greet">' + greet() + '</h1>' +
+      '<div class="vibe-quick" id="vibe-quick">' + quickSrc.map(function (t, i) { return '<div class="vibe-qp" data-id="' + t.id + '" data-i="' + i + '" data-ctx="quick"><img src="' + thumb(t.id) + '" alt=""><b>' + esc(t.title) + '</b><button type="button" class="vibe-fab" data-act="play">' + PLAY + '</button></div>'; }).join("") + '</div>' +
+      '<div id="vibe-shelves"></div>';
+    var box = $("vibe-shelves");
+    var failed = 0, loaded = 0;
+    SHELVES.forEach(function (sh, si) {
+      var d = document.createElement("section"); d.className = "vibe-shelf";
+      d.innerHTML = '<div class="vibe-shelf-head"><h2>' + esc(sh.title) + '</h2><a data-q="' + esc(sh.q) + '">Show all</a></div><div class="vibe-cards single-row">' + new Array(7).join('<div class="vibe-skel"></div>') + '</div>';
+      box.appendChild(d);
+      setTimeout(function () {
+        if (S.view !== "home") return;
+        search(sh.q).then(function (r) {
+          loaded++;
+          var ctx = "sh" + si; lists[ctx] = r;
+          d.querySelector(".vibe-cards").innerHTML = r.slice(0, 12).map(function (t, i) { return cardHtml(t, i, ctx); }).join("");
+          if (!S.recent.length && si === 0) {
+            lists.quick = r.slice(0, 8);
+            $("vibe-quick").innerHTML = r.slice(0, 8).map(function (t, i) { return '<div class="vibe-qp" data-id="' + t.id + '" data-i="' + i + '" data-ctx="quick"><img src="' + thumb(t.id) + '" alt=""><b>' + esc(t.title) + '</b><button type="button" class="vibe-fab" data-act="play">' + PLAY + '</button></div>'; }).join("");
+          }
+          markPlaying();
+        }).catch(function () {
+          failed++; d.remove();
+          if (failed === SHELVES.length && !loaded && S.view === "home") box.innerHTML = offlineNote();
+        });
+      }, si * 250);
+    });
+  }
+
+  function renderSearch(q) {
+    var v = $("vibe-view");
+    if (!q) {
+      v.innerHTML = '<div class="vibe-shelf" style="margin-top:6px"><div class="vibe-shelf-head"><h2>Browse all</h2></div><div class="vibe-browse">' +
+        CATS.map(function (c) { return '<div class="vibe-cat" style="background:' + c[1] + '" data-q="' + esc(c[0] + " music") + '">' + esc(c[0]) + '</div>'; }).join("") + '</div></div>';
+      return;
+    }
+    v.innerHTML = '<div class="vibe-spin"></div>';
+    var reqQ = q;
+    var p = /youtu\.?be|^[\w-]{11}$/.test(q.trim()) ? fromLink(q).then(function (t) { return [t]; }) : search(q);
+    p.then(function (r) {
+      if ($("vibe-q").value.trim() !== reqQ) return;
+      lists.sr = r;
+      var top = r[0];
+      v.innerHTML = '<div class="vibe-sr-grid"><div><h2 style="margin:0 0 12px;font-size:22px;font-weight:800">Top result</h2>' +
+        '<div class="vibe-top-result" data-id="' + top.id + '" data-i="0" data-ctx="sr"><img src="' + thumb(top.id) + '" alt=""><b>' + esc(top.title) + '</b><small>Song • ' + esc(top.artist) + '</small><button type="button" class="vibe-fab" data-act="play">' + PLAY + '</button></div></div>' +
+        '<div><h2 style="margin:0 0 12px;font-size:22px;font-weight:800">Songs</h2>' + r.slice(0, 5).map(function (t, i) { return trackRow(t, i, "sr"); }).join("") + '</div></div>' +
+        (r.length > 5 ? '<h2 style="font-size:22px;font-weight:800;margin:24px 0 12px">More results</h2><div>' + r.slice(5).map(function (t, i) { return trackRow(t, i + 5, "sr"); }).join("") + '</div>' : "");
+      markPlaying();
+    }).catch(function () {
+      if ($("vibe-q").value.trim() !== reqQ) return;
+      v.innerHTML = offlineNote();
+    });
+  }
+
+  function listHero(kind, title, tracks) {
+    var cover = kind === "liked" ? '<div class="cover liked">' + HEART + '</div>' : (tracks[0] ? '<div class="cover" style="background-image:url(' + thumb(tracks[0].id) + ')"></div>' : '<div class="cover">' + NOTE + '</div>');
+    return '<div class="vibe-hero">' + cover + '<div><small>Playlist</small><h1>' + esc(title) + '</h1><p>Nyx • ' + tracks.length + ' song' + (tracks.length === 1 ? "" : "s") + '</p></div></div>' +
+      '<div class="vibe-actions"><button type="button" class="vibe-fab" data-act="playall">' + PLAY + '</button>' +
+      (kind === "list" ? '<button type="button" class="vibe-icon" data-act="delpl" title="Delete playlist">' + DOTS + '</button>' : "") + '</div>';
+  }
+  function renderList(kind, name) {
+    var tracks = kind === "liked" ? S.liked : kind === "recent" ? S.recent : (S.lists[name] || []);
+    var title = kind === "liked" ? "Liked Songs" : kind === "recent" ? "Recently played" : name;
+    var ctx = "pl"; lists.pl = tracks;
+    $("vibe-view").innerHTML = listHero(kind, title, tracks) +
+      (tracks.length ? '<div class="vibe-trow head"><div class="num">#</div><div>Title</div><div></div><div class="d">Time</div><div></div></div>' + tracks.map(function (t, i) { return trackRow(t, i, ctx); }).join("") :
+        '<div class="vibe-note">Nothing here yet. Search for songs and tap the heart or “⋯” to add them.</div>');
+    markPlaying();
+  }
+  function renderSearchTitle(q) { return q; }
+
+  function renderLib() {
+    var f = (win.querySelector(".vibe-chip.on") || {}).dataset ? win.querySelector(".vibe-chip.on").dataset.f : "all";
+    var h = "";
+    if (f === "recent") {
+      h = S.recent.slice(0, 20).map(function (t, i) { return '<div class="vibe-lib-item" data-id="' + t.id + '" data-i="' + i + '" data-ctx="rlib"><div class="vibe-lib-art" style="background-image:url(' + thumb(t.id) + ')"></div><div><b>' + esc(t.title) + '</b><small>' + esc(t.artist) + '</small></div></div>'; }).join("");
+      lists.rlib = S.recent;
+    } else {
+      h = '<div class="vibe-lib-item" data-open="liked"><div class="vibe-lib-art liked">' + HEART + '</div><div><b>Liked Songs</b><small>Playlist • ' + S.liked.length + ' songs</small></div></div>';
+      Object.keys(S.lists).forEach(function (n) {
+        var l = S.lists[n];
+        h += '<div class="vibe-lib-item" data-open="list" data-name="' + esc(n) + '"><div class="vibe-lib-art"' + (l[0] ? ' style="background-image:url(' + thumb(l[0].id) + ')"' : "") + '>' + (l[0] ? "" : NOTE) + '</div><div><b>' + esc(n) + '</b><small>Playlist • Nyx</small></div></div>';
+      });
+    }
+    $("vibe-lib-list").innerHTML = h;
+  }
+
+  function go(view, arg, noHist) {
+    if (!noHist) { S.hist.push({ v: S.view, a: S.arg }); S.fwd = []; }
+    S.view = view; S.arg = arg;
+    var top = $("vibe-top");
+    top.classList.toggle("searching", view === "search");
+    win.querySelectorAll(".vibe-nav button").forEach(function (b) { b.classList.toggle("on", b.dataset.v === view); });
+    $("vibe-main").scrollTop = 0;
+    if (view === "home") renderHome();
+    else if (view === "search") { if ($("vibe-q").value.trim() !== (arg || "")) $("vibe-q").value = arg || ""; renderSearch(arg || ""); if (!arg) $("vibe-q").focus(); }
+    else if (view === "liked") renderList("liked");
+    else if (view === "recent") renderList("recent");
+    else if (view === "list") renderList("list", arg);
+    $("vibe-back").disabled = !S.hist.length; $("vibe-fwd").disabled = !S.fwd.length;
+    renderLib();
+  }
+
+  /* ---- menus ---- */
+  function menu(x, y, items) {
+    var old = document.querySelector(".vibe-menu"); if (old) old.remove();
+    var m = document.createElement("div"); m.className = "vibe-menu";
+    m.innerHTML = items.map(function (it, i) { return it === "-" ? "<hr>" : '<button type="button" data-mi="' + i + '">' + esc(it.label) + '</button>'; }).join("");
+    document.body.appendChild(m);
+    var r = m.getBoundingClientRect();
+    m.style.left = Math.min(x, innerWidth - r.width - 8) + "px"; m.style.top = Math.min(y, innerHeight - r.height - 8) + "px";
+    m.addEventListener("click", function (e) { var b = e.target.closest("button"); if (!b) return; var it = items[+b.dataset.mi]; m.remove(); it.fn(); });
+    setTimeout(function () { document.addEventListener("click", function once() { m.remove(); document.removeEventListener("click", once, true); }, true); }, 0);
+  }
+  function addTo(t, name) {
+    var l = S.lists[name] = S.lists[name] || [];
+    if (l.some(function (x) { return x.id === t.id; })) return toast("Already in " + name);
+    l.push(t); save(); toast("Added to " + name); renderLib();
+  }
+  function toggleLike(t) {
+    if (isLiked(t.id)) { S.liked = S.liked.filter(function (x) { return x.id !== t.id; }); toast("Removed from Liked Songs"); }
+    else { S.liked.unshift(t); toast("Added to Liked Songs"); }
+    save(); renderLib();
+    win.querySelectorAll('.vibe-trow[data-id="' + t.id + '"] .like').forEach(function (b) { b.classList.toggle("on", isLiked(t.id)); });
+    var c = cur(); if (c && c.id === t.id) $("vibe-like").classList.toggle("on", isLiked(t.id));
+    if (S.view === "liked") renderList("liked");
+  }
+  function trackMenu(e, t) {
+    var items = [{ label: "Add to queue", fn: function () { S.queue.splice(S.idx + 1, 0, t); renderQueue(); toast("Added to queue"); } },
+      { label: isLiked(t.id) ? "Remove from Liked Songs" : "Save to Liked Songs", fn: function () { toggleLike(t); } }, "-"];
+    Object.keys(S.lists).forEach(function (n) { items.push({ label: "Add to " + n, fn: function () { addTo(t, n); } }); });
+    items.push({ label: "New playlist with this song", fn: function () { var n = newPlaylist(); addTo(t, n); } });
+    if (S.view === "list") items.push("-", { label: "Remove from this playlist", fn: function () { S.lists[S.arg] = S.lists[S.arg].filter(function (x) { return x.id !== t.id; }); save(); renderList("list", S.arg); renderLib(); } });
+    menu(e.clientX, e.clientY, items);
+  }
+  function newPlaylist() {
+    var i = 1; while (S.lists["My playlist #" + i]) i++;
+    var n = "My playlist #" + i; S.lists[n] = []; save(); renderLib(); return n;
+  }
+
+  /* ---- build + wire ---- */
+  function wire() {
+    win.addEventListener("click", function (e) {
+      var t = e.target;
+      var q = t.closest("[data-q]");
+      if (q && !t.closest(".vibe-trow, .vibe-card")) { $("vibe-q").value = q.dataset.q; go("search", q.dataset.q); return; }
+      var nav = t.closest(".vibe-nav button"); if (nav) { go(nav.dataset.v, nav.dataset.v === "search" ? "" : null); return; }
+      var op = t.closest("[data-open]");
+      if (op) { go(op.dataset.open, op.dataset.name); return; }
+      var chip = t.closest(".vibe-chip"); if (chip) { win.querySelectorAll(".vibe-chip").forEach(function (c) { c.classList.toggle("on", c === chip); }); renderLib(); return; }
+      var qi = t.closest(".vibe-q-item"); if (qi) { S.idx = +qi.dataset.qi; startTrack(); return; }
+      var el = t.closest("[data-ctx]");
+      if (el && el.dataset.id) {
+        var ctx = el.dataset.ctx, i = +el.dataset.i, track = (lists[ctx] || [])[i];
+        var act = (t.closest("[data-act]") || {}).dataset;
+        if (act && act.act === "like" && track) return toggleLike(track);
+        if (act && act.act === "more" && track) return trackMenu(e, track);
+        if (act && act.act === "play" && cur() && track && cur().id === track.id && S.playing) return toggle();
+        if (track) { if (cur() && cur().id === track.id && ytReady) { toggle(); } else ctxPlay(ctx, i); }
+        return;
+      }
+      var a = t.closest("[data-act]");
+      if (a) {
+        if (a.dataset.act === "playall") { var l = lists.pl || []; if (l.length) playQueue(l, 0); }
+        if (a.dataset.act === "delpl") { var n = S.arg; delete S.lists[n]; save(); go("home"); }
+      }
+      if (t.id === "vibe-retry") { S.cache = {}; instP = null; go(S.view, S.arg, true); }
+    });
+    win.addEventListener("keydown", function (e) {
+      if (e.target.id === "vibe-paste" && e.key === "Enter") {
+        fromLink(e.target.value).then(function (t) { lists.paste = [t]; playQueue([t], 0); toast("Playing " + t.title); }).catch(function () { toast("That doesn't look like a YouTube link"); });
+      }
+    });
+    var qIn = $("vibe-q"), deb;
+    qIn.addEventListener("input", function () { clearTimeout(deb); deb = setTimeout(function () { S.arg = qIn.value.trim(); renderSearch(S.arg); }, 380); });
+    qIn.addEventListener("keydown", function (e) { if (e.key === "Enter") { clearTimeout(deb); S.arg = qIn.value.trim(); renderSearch(S.arg); } });
+    $("vibe-main").addEventListener("scroll", function () { $("vibe-top").classList.toggle("scrolled", this.scrollTop > 40); }, { passive: true });
+    $("vibe-back").addEventListener("click", function () { var h = S.hist.pop(); if (!h) return; S.fwd.push({ v: S.view, a: S.arg }); go(h.v, h.a, true); });
+    $("vibe-fwd").addEventListener("click", function () { var h = S.fwd.pop(); if (!h) return; S.hist.push({ v: S.view, a: S.arg }); go(h.v, h.a, true); });
+    $("vibe-new-pl").addEventListener("click", function () { var n = newPlaylist(); go("list", n); });
+    $("vibe-pp").addEventListener("click", function () { if (!cur()) { var l = lists.sh0 || lists.sr; if (l && l.length) playQueue(l, 0); } else toggle(); });
+    $("vibe-next").addEventListener("click", function () { next(false); });
+    $("vibe-prev").addEventListener("click", prev);
+    $("vibe-shuf").addEventListener("click", function () { S.shuffle = !S.shuffle; this.classList.toggle("on", S.shuffle); });
+    $("vibe-rep").addEventListener("click", function () { S.repeat = (S.repeat + 1) % 3; this.classList.toggle("on", S.repeat > 0); this.title = ["Repeat", "Repeat all", "Repeat one"][S.repeat]; this.style.opacity = S.repeat === 2 ? .7 : 1; });
+    $("vibe-like").addEventListener("click", function () { if (cur()) toggleLike(cur()); });
+    $("vibe-toggle-right").addEventListener("click", function () { $("vibe-app").classList.toggle("no-right"); });
+    function seekFrom(el, ev, cb) {
+      function f(e) { var r = el.getBoundingClientRect(); cb(Math.max(0, Math.min(1, (e.clientX - r.left) / r.width))); }
+      f(ev); function mv(e) { f(e); } function up() { document.removeEventListener("mousemove", mv); document.removeEventListener("mouseup", up); }
+      document.addEventListener("mousemove", mv); document.addEventListener("mouseup", up);
+    }
+    $("vibe-seek").addEventListener("mousedown", function (e) { e.stopPropagation(); if (!ytReady || !cur()) return; var d = yt.getDuration(); seekFrom(this, e, function (p) { yt.seekTo(p * d, true); $("vibe-fill").style.width = p * 100 + "%"; }); });
+    $("vibe-vol").addEventListener("mousedown", function (e) { e.stopPropagation(); seekFrom(this, e, function (p) { S.vol = Math.round(p * 100); S.muted = false; $("vibe-volfill").style.width = S.vol + "%"; if (ytReady) { yt.unMute(); yt.setVolume(S.vol); } }); });
+    $("vibe-mute").addEventListener("click", function () { S.muted = !S.muted; if (ytReady) { S.muted ? yt.mute() : yt.unMute(); } this.style.opacity = S.muted ? .5 : 1; });
+    win.addEventListener("keydown", function (e) {
+      if (/input|textarea/i.test(e.target.tagName)) return;
+      if (e.code === "Space") { e.preventDefault(); toggle(); }
+      else if (e.code === "ArrowRight" && e.shiftKey) next(false);
+      else if (e.code === "ArrowLeft" && e.shiftKey) prev();
+    });
+    win.tabIndex = -1;
+    if ("mediaSession" in navigator) {
+      try {
+        navigator.mediaSession.setActionHandler("play", toggle); navigator.mediaSession.setActionHandler("pause", toggle);
+        navigator.mediaSession.setActionHandler("nexttrack", function () { next(false); }); navigator.mediaSession.setActionHandler("previoustrack", prev);
+      } catch (e) {}
+    }
+    // window controls
+    win.querySelector(".vibe-close").addEventListener("click", closeVibe);
+    win.querySelector(".vibe-min").addEventListener("click", function () { win.style.display = "none"; });
+    win.querySelector(".vibe-full").addEventListener("click", function () { win.classList.toggle("is-maximized"); });
+    win.addEventListener("mousedown", function () { try { window.nyxBumpZ(win); } catch (e) { win.style.zIndex = 90; } }, true);
+    try { if (window.jQuery) window.jQuery(win).draggable({ handle: ".vibe-bar", cancel: "button", containment: "window" }); } catch (e) {}
+  }
+
+  function build() {
+    if (built) return; win = $("vibe-window"); if (!win) return; built = true;
+    wire(); renderPlayState(); renderLib();
+    $("vibe-back").disabled = true; $("vibe-fwd").disabled = true;
+    $("vibe-main").style.setProperty("--vb-tint", "#2d3a63");
+    go("home", null, true);
+  }
+  function openVibe() {
+    win = $("vibe-window"); if (!win) return;
+    var first = !built;
+    build();
+    win.style.display = "flex";
+    if (first && win.offsetWidth < 1120) $("vibe-app").classList.add("no-right"); win.style.visibility = "visible"; win.style.opacity = "1";
+    win.classList.remove("minimized");
+    try { window.nyxBumpZ(win); } catch (e) { win.style.zIndex = 90; }
+    var pt = document.getElementById("point-vibe"); if (pt) pt.style.display = "block";
+    try { if (typeof window.setMenuAppName === "function") window.setMenuAppName("Vibe"); } catch (e) {}
+  }
+  function closeVibe() {
+    if (!win) return;
+    try { if (ytReady) yt.pauseVideo(); } catch (e) {}
+    S.playing = false; renderPlayState();
+    win.style.display = "none"; win.classList.remove("is-maximized");
+    var pt = document.getElementById("point-vibe"); if (pt) pt.style.display = "none";
+    try { if (typeof window.setMenuAppName === "function") window.setMenuAppName("Finder"); } catch (e) {}
+  }
+
+  /* ---- dock + launchpad ---- */
+  function ensureDock(show) {
+    var dock = $("macos-dock") || document.querySelector(".dock-el") || document.querySelector(".dock");
+    if (!dock) return;
+    var btn = $("dock-vibe");
+    if (show && !btn) {
+      btn = document.createElement("button"); btn.type = "button"; btn.id = "dock-vibe";
+      btn.className = "dock-open-app-button icon open_vibe vibe-dock-icon"; btn.title = "Vibe"; btn.setAttribute("data-dock-id", "vibe"); btn.setAttribute("aria-label", "Launch Vibe");
+      btn.innerHTML = '<p class="tooltip">Vibe</p><span class="dock-icon-wrap"><img src="' + ICON + '" alt="Vibe" draggable="false" style="width:3.6rem;height:auto;aspect-ratio:1"></span><div class="dot" data-open-dot></div><div class="point" id="point-vibe" style="display:none"></div>';
+      btn.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); openVibe(); });
+      var divider = dock.querySelector('.divider[data-dock-id="__divider__"]') || dock.querySelector(".divider");
+      if (divider) dock.insertBefore(btn, divider); else dock.appendChild(btn);
+      try { var d = $("macos-dock"); if (d) d.__mwDock = false; } catch (e) {}
+    } else if (!show && btn) { btn.remove(); }
+  }
+  function ensureLaunchpad(show) {
+    var grid = document.querySelector(".Apps-container") || document.querySelector(".launchpad .Apps-container");
+    if (!grid) return;
+    var el = $("lp-vibe");
+    if (show && !el) {
+      el = document.createElement("div"); el.className = "child-launchpad"; el.id = "lp-vibe"; el.setAttribute("data-keywords", "Vibe music spotify songs player");
+      el.innerHTML = '<img src="' + ICON + '" alt="Vibe"><strong>Vibe</strong>';
+      el.addEventListener("click", function () { var lp = $("launchpad"); if (lp) lp.style.display = "none"; openVibe(); });
+      grid.appendChild(el);
+    } else if (!show && el) el.remove();
+  }
+  function setInstalled(on) {
+    ls(KEY_INST, on ? "1" : "0");
+    ensureDock(on); ensureLaunchpad(on);
+    if (!on) { closeVibe(); try { if (ytReady) yt.stopVideo(); } catch (e) {} }
+  }
+
+  /* ---- terminal: sudo apt beta test spotify ---- */
+  window.nyxVibe = {
+    open: openVibe,
+    apt: function (action) {
+      var installed = ls(KEY_INST) === "1";
+      var L = [];
+      if (action === "remove") {
+        if (!installed) return "E: Package 'spotify' is not installed, so not removed<br>";
+        setInstalled(false);
+        return ["Reading package lists... Done", "The following packages will be REMOVED:", "  spotify-beta", "Removing spotify-beta (1.0.0~beta1) ...",
+          "<span class='color_green'>[vibe]</span> removed from Dock &amp; Launchpad."].join("<br>") + "<br>";
+      }
+      L = ["Reading package lists... Done", "Building dependency tree... Done", "Reading state information... Done",
+        "Get:1 https://beta.apt.local/universe spotify-beta 1.0.0~beta1 [18.4 MB]", "Fetched 18.4 MB in 1s (18.4 MB/s)",
+        "Selecting previously unselected package spotify-beta.", "Unpacking spotify-beta (1.0.0~beta1) ...",
+        "Setting up spotify-beta (1.0.0~beta1) ...", "Processing triggers for desktop-file-utils ...",
+        "<span class='color_green'>[vibe]</span> " + (installed ? "already installed — launching." : "installed to Dock &amp; Launchpad.") + " Starting beta test…",
+        "Run <span class='color_blue'>sudo apt beta remove spotify</span> to uninstall."];
+      setInstalled(true);
+      setTimeout(openVibe, 450);
+      return L.join("<br>") + "<br>";
+    }
+  };
+
+  function boot() {
+    if (ls(KEY_INST) === "1") { ensureDock(true); ensureLaunchpad(true); setTimeout(function () { ensureDock(true); ensureLaunchpad(true); }, 1500); }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+  setTimeout(boot, 900);
+
+  /* ------------------------------------------------------------------
+     Settings: Chromebook / Lite mode switch (injected into Performance panel)
+     ------------------------------------------------------------------ */
+  function addLiteRow() {
+    var panel = document.querySelector('[data-perf-mode]'); if (!panel || $("nyx-lite-row")) return;
+    var host = panel.closest(".settings-group") || panel.parentElement; if (!host) return;
+    var row = document.createElement("div"); row.className = "settings-row"; row.id = "nyx-lite-row";
+    row.innerHTML = '<div class="row-label"><strong>Chromebook mode</strong><span>Removes blur effects and heavy shadows. Turned on automatically on ChromeOS and low-memory devices.</span></div><button type="button" class="settings-toggle' + (document.documentElement.classList.contains("nyx-lite") ? " on" : "") + '" aria-pressed="false"></button>';
+    var b = row.querySelector("button");
+    b.addEventListener("click", function () { var on = !b.classList.contains("on"); b.classList.toggle("on", on); window.nyxSetLite(on); });
+    var grp = document.createElement("div"); grp.className = "settings-group"; grp.appendChild(row);
+    host.parentNode.insertBefore(grp, host.nextSibling);
+  }
+  setTimeout(addLiteRow, 1200); setTimeout(addLiteRow, 4000);
+  document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".settings-nav")) setTimeout(addLiteRow, 60); }, true);
+})();
+
+</script>
 </body>
 </html>

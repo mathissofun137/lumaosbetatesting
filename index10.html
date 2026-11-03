@@ -5,6 +5,11 @@
 
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>/* nyx-v3 perf (look-neutral): decode images off the main thread and defer images in hidden windows */(function(){try{
+var d=Object.getOwnPropertyDescriptor(Element.prototype,"innerHTML");
+if(d&&d.set){Object.defineProperty(Element.prototype,"innerHTML",{configurable:true,enumerable:d.enumerable,get:d.get,set:function(v){if(typeof v==="string"&&v.indexOf("<img")>=0){v=v.replace(/<img(?![^>]*\b(?:loading|decoding)=)/gi,'<img loading="lazy" decoding="async"');}d.set.call(this,v);}});}
+var ce=Document.prototype.createElement;Document.prototype.createElement=function(t,o){var e=ce.call(this,t,o);if(typeof t==="string"&&t.toLowerCase()==="img"){e.decoding="async";}return e;};
+}catch(e){}})();</script>
 <script>/* nyx-v2: Chromebook defaults */(function(){try{var ua=navigator.userAgent||"";var cros=/\bCrOS\b/.test(ua);var low=(navigator.deviceMemory&&navigator.deviceMemory<=4)||(navigator.hardwareConcurrency&&navigator.hardwareConcurrency<=4);if((cros||low)&&localStorage.getItem("nyx_lite")===null){document.documentElement.classList.add("nyx-lite");if(!localStorage.getItem("nyx_performance_mode"))localStorage.setItem("nyx_performance_mode","performance");}else if(localStorage.getItem("nyx_lite")==="1"){document.documentElement.classList.add("nyx-lite");}}catch(e){}})();</script>
   <title>Mac OS in web!</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -552,6 +557,148 @@
       line-height: 1.4;
     }
 
+    /* ===== Iframe app loading screen (console-style, per-app) ===== */
+    .iframe-app-loading {
+      position: absolute;
+      inset: 0;
+      top: 0;
+      z-index: 80;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      background: #000;
+      color: #ececec;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", "Helvetica Neue", sans-serif;
+      text-align: center;
+      pointer-events: all;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .iframe-app-loading.is-visible { display: flex !important; }
+    .iframe-app-loading .ial-logo-wrap {
+      width: 120px;
+      height: 120px;
+      border-radius: 26%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: ial-logo-in 0.55s cubic-bezier(0.16, 0.84, 0.24, 1) both;
+    }
+    /* layered brand glow behind icon (matches Twitch-style soft purple bloom) */
+    .iframe-app-loading .ial-logo-wrap::before {
+      content: "";
+      position: absolute;
+      inset: -18%;
+      border-radius: 28%;
+      background: rgba(var(--ial-accent, 145, 70, 255), 0.55);
+      filter: blur(28px);
+      opacity: 0.85;
+      z-index: 0;
+      pointer-events: none;
+      animation: ial-glow-pulse 2.4s ease-in-out infinite;
+    }
+    .iframe-app-loading .ial-logo-wrap::after {
+      content: "";
+      position: absolute;
+      inset: -6%;
+      border-radius: 26%;
+      background: rgba(var(--ial-accent, 145, 70, 255), 0.35);
+      filter: blur(10px);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .iframe-app-loading .ial-logo {
+      position: relative;
+      z-index: 1;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      display: block;
+      border-radius: 26%;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.06),
+        0 12px 32px rgba(0,0,0,0.55);
+    }
+    .iframe-app-loading .ial-title {
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      margin: 28px 0 0;
+      color: rgba(255,255,255,0.88);
+      animation: ial-fade-up 0.5s ease 0.08s both;
+    }
+    .iframe-app-loading .ial-bar {
+      position: relative;
+      width: 200px;
+      height: 2px;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.18);
+      overflow: hidden;
+      margin-top: 22px;
+      animation: ial-fade-up 0.5s ease 0.14s both;
+    }
+    /* determinate-style fill that slowly grows, then a bright tip */
+    .iframe-app-loading .ial-bar-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      border-radius: 99px;
+      background: #fff;
+      box-shadow: 0 0 6px rgba(255,255,255,0.65);
+    }
+    .iframe-app-loading.is-visible .ial-bar-fill {
+      animation: ial-progress 3.2s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+    }
+    .iframe-app-loading.is-done .ial-bar-fill {
+      animation: none !important;
+      width: 100% !important;
+      transition: width 0.25s ease;
+    }
+    .iframe-app-loading.is-hiding {
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+    @keyframes ial-logo-in {
+      from { opacity: 0; transform: scale(0.86); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes ial-fade-up {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes ial-glow-pulse {
+      0%, 100% { opacity: 0.75; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.06); }
+    }
+    @keyframes ial-progress {
+      0%   { width: 0%; }
+      12%  { width: 14%; }
+      35%  { width: 38%; }
+      55%  { width: 58%; }
+      72%  { width: 74%; }
+      88%  { width: 88%; }
+      100% { width: 94%; }
+    }
+    /* Keep iframe under the overlay while loading */
+    .window.tiktok-app,
+    .window.youtube-app,
+    .window.gdash-app,
+    .window.twitch-app,
+    .window.gfn-app,
+    .window.snapchat-app,
+    .window.instagram-app,
+    .window.google-app,
+    .window.duckduckgo-app,
+    .window.ai-app {
+      position: absolute !important;
+    }
+
     /* ===== WINDOWS ===== */
     .container__Window {
       width: 100%; height: 90%; justify-content: space-around; align-items: center; display: none;
@@ -642,7 +789,10 @@
     .window.twitch-app,
     .window.gfn-app,
     .window.snapchat-app,
-    .window.instagram-app {
+    .window.instagram-app,
+    .window.google-app,
+    .window.duckduckgo-app,
+    .window.ai-app {
       display: none !important;
       flex-direction: column;
       overflow: hidden;
@@ -655,7 +805,10 @@
     .window.twitch-app.is-open,
     .window.gfn-app.is-open,
     .window.snapchat-app.is-open,
-    .window.instagram-app.is-open {
+    .window.instagram-app.is-open,
+    .window.google-app.is-open,
+    .window.duckduckgo-app.is-open,
+    .window.ai-app.is-open {
       display: flex !important;
       visibility: visible !important;
       opacity: 1;
@@ -667,7 +820,10 @@
     .window.twitch-app .window__taskbar,
     .window.gfn-app .window__taskbar,
     .window.snapchat-app .window__taskbar,
-    .window.instagram-app .window__taskbar {
+    .window.instagram-app .window__taskbar,
+    .window.google-app .window__taskbar,
+    .window.duckduckgo-app .window__taskbar,
+    .window.ai-app .window__taskbar {
       position: relative;
       z-index: 20;
       flex: 0 0 40px;
@@ -679,7 +835,10 @@
     .window.twitch-app .window__taskbar--actions,
     .window.gfn-app .window__taskbar--actions,
     .window.snapchat-app .window__taskbar--actions,
-    .window.instagram-app .window__taskbar--actions {
+    .window.instagram-app .window__taskbar--actions,
+    .window.google-app .window__taskbar--actions,
+    .window.duckduckgo-app .window__taskbar--actions,
+    .window.ai-app .window__taskbar--actions {
       pointer-events: auto !important;
       z-index: 21;
       position: relative;
@@ -690,15 +849,15 @@
     .window.twitch-app .window__taskbar--actions button,
     .window.gfn-app .window__taskbar--actions button,
     .window.snapchat-app .window__taskbar--actions button,
-    .window.instagram-app .window__taskbar--actions button {
+    .window.instagram-app .window__taskbar--actions button,
+    .window.google-app .window__taskbar--actions button,
+    .window.duckduckgo-app .window__taskbar--actions button,
+    .window.ai-app .window__taskbar--actions button {
       pointer-events: auto !important;
       z-index: 22;
       position: relative;
       cursor: pointer !important;
     }
-    .window.tiktok-app iframe,
-    .window.youtube-app iframe,
-
     /* ===== Spotify native player ===== */
     .window.spotify-app {
       background: #000 !important;
@@ -903,18 +1062,122 @@
       .sp-nav-btn { padding: 12px; }
     }
 
+    .window.tiktok-app iframe,
+    .window.youtube-app iframe,
     .window.spotify-app iframe,
     .window.gdash-app iframe,
     .window.twitch-app iframe,
     .window.gfn-app iframe,
     .window.snapchat-app iframe,
-    .window.instagram-app iframe {
-      flex: 1 1 auto;
-      min-height: 0;
-      width: 100%;
+    .window.instagram-app iframe,
+    .window.google-app iframe,
+    .window.duckduckgo-app iframe,
+    .window.ai-app iframe {
+      flex: 1 1 auto !important;
+      min-height: 0 !important;
+      width: 100% !important;
+      height: auto !important;
       border: 0;
       position: relative;
       z-index: 1;
+      background: #000;
+    }
+    /* When the window is maximized, iframe fills everything under the title bar */
+    .window.tiktok-app.is-maximized iframe,
+    .window.youtube-app.is-maximized iframe,
+    .window.gdash-app.is-maximized iframe,
+    .window.twitch-app.is-maximized iframe,
+    .window.gfn-app.is-maximized iframe,
+    .window.snapchat-app.is-maximized iframe,
+    .window.instagram-app.is-maximized iframe,
+    .window.google-app.is-maximized iframe,
+    .window.duckduckgo-app.is-maximized iframe,
+    .window.ai-app.is-maximized iframe {
+      flex: 1 1 auto !important;
+      width: 100% !important;
+      height: auto !important;
+      min-height: 0 !important;
+    }
+    /* Browser Fullscreen API — hide chrome, iframe fills the screen */
+    .window.tiktok-app:fullscreen,
+    .window.youtube-app:fullscreen,
+    .window.gdash-app:fullscreen,
+    .window.twitch-app:fullscreen,
+    .window.gfn-app:fullscreen,
+    .window.snapchat-app:fullscreen,
+    .window.instagram-app:fullscreen,
+    .window.google-app:fullscreen,
+    .window.duckduckgo-app:fullscreen,
+    .window.ai-app:fullscreen,
+    .window.tiktok-app:-webkit-full-screen,
+    .window.youtube-app:-webkit-full-screen,
+    .window.gdash-app:-webkit-full-screen,
+    .window.twitch-app:-webkit-full-screen,
+    .window.gfn-app:-webkit-full-screen,
+    .window.snapchat-app:-webkit-full-screen,
+    .window.instagram-app:-webkit-full-screen,
+    .window.google-app:-webkit-full-screen,
+    .window.duckduckgo-app:-webkit-full-screen,
+    .window.ai-app:-webkit-full-screen {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      max-height: none !important;
+      border-radius: 0 !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      background: #000 !important;
+    }
+    .window.tiktok-app:fullscreen .window__taskbar,
+    .window.youtube-app:fullscreen .window__taskbar,
+    .window.gdash-app:fullscreen .window__taskbar,
+    .window.twitch-app:fullscreen .window__taskbar,
+    .window.gfn-app:fullscreen .window__taskbar,
+    .window.snapchat-app:fullscreen .window__taskbar,
+    .window.instagram-app:fullscreen .window__taskbar,
+    .window.google-app:fullscreen .window__taskbar,
+    .window.duckduckgo-app:fullscreen .window__taskbar,
+    .window.ai-app:fullscreen .window__taskbar,
+    .window.tiktok-app:-webkit-full-screen .window__taskbar,
+    .window.youtube-app:-webkit-full-screen .window__taskbar,
+    .window.gdash-app:-webkit-full-screen .window__taskbar,
+    .window.twitch-app:-webkit-full-screen .window__taskbar,
+    .window.gfn-app:-webkit-full-screen .window__taskbar,
+    .window.snapchat-app:-webkit-full-screen .window__taskbar,
+    .window.instagram-app:-webkit-full-screen .window__taskbar,
+    .window.google-app:-webkit-full-screen .window__taskbar,
+    .window.duckduckgo-app:-webkit-full-screen .window__taskbar,
+    .window.ai-app:-webkit-full-screen .window__taskbar {
+      display: none !important;
+    }
+    .window.tiktok-app:fullscreen iframe,
+    .window.youtube-app:fullscreen iframe,
+    .window.gdash-app:fullscreen iframe,
+    .window.twitch-app:fullscreen iframe,
+    .window.gfn-app:fullscreen iframe,
+    .window.snapchat-app:fullscreen iframe,
+    .window.instagram-app:fullscreen iframe,
+    .window.google-app:fullscreen iframe,
+    .window.duckduckgo-app:fullscreen iframe,
+    .window.ai-app:fullscreen iframe,
+    .window.tiktok-app:-webkit-full-screen iframe,
+    .window.youtube-app:-webkit-full-screen iframe,
+    .window.gdash-app:-webkit-full-screen iframe,
+    .window.twitch-app:-webkit-full-screen iframe,
+    .window.gfn-app:-webkit-full-screen iframe,
+    .window.snapchat-app:-webkit-full-screen iframe,
+    .window.instagram-app:-webkit-full-screen iframe,
+    .window.google-app:-webkit-full-screen iframe,
+    .window.duckduckgo-app:-webkit-full-screen iframe,
+    .window.ai-app:-webkit-full-screen iframe {
+      flex: 1 1 auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
     }
 
     /* Proper maximize — fills desktop under menu bar */
@@ -933,7 +1196,11 @@
     .twitch-app.is-maximized,
     .gfn-app.is-maximized,
     .snapchat-app.is-maximized,
-    .instagram-app.is-maximized {
+    .instagram-app.is-maximized,
+    .google-app.is-maximized,
+    .duckduckgo-app.is-maximized,
+    .ai-app.is-maximized,
+    .ai-app.is-maximized {
       position: fixed !important;
       top: 28px !important;
       left: 0 !important;
@@ -10732,6 +10999,69 @@ html[data-theme] .window-header.steam-popup-header,
       display: block !important;
       background: #0b0b0f !important;
     }
+    /* True browser fullscreen for Safari (green button) */
+    #safari-window:fullscreen,
+    #safari-window:-webkit-full-screen,
+    .safari:fullscreen,
+    .safari:-webkit-full-screen {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      max-height: none !important;
+      border-radius: 0 !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      margin: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      background: #000 !important;
+      z-index: 2147483647 !important;
+    }
+    #safari-window:fullscreen .safari-chrome,
+    #safari-window:-webkit-full-screen .safari-chrome,
+    .safari:fullscreen .safari-chrome,
+    .safari:-webkit-full-screen .safari-chrome,
+    #safari-window:fullscreen .safari-chrome-top,
+    #safari-window:-webkit-full-screen .safari-chrome-top,
+    #safari-window:fullscreen .safari-tabstrip,
+    #safari-window:-webkit-full-screen .safari-tabstrip,
+    #safari-window:fullscreen .safari-bookmarks-bar,
+    #safari-window:-webkit-full-screen .safari-bookmarks-bar {
+      display: none !important;
+    }
+    #safari-window:fullscreen #safari-frames,
+    #safari-window:-webkit-full-screen #safari-frames,
+    #safari-window:fullscreen .safari-frames,
+    #safari-window:-webkit-full-screen .safari-frames,
+    #safari-window:fullscreen #safari-frame,
+    #safari-window:-webkit-full-screen #safari-frame,
+    #safari-window:fullscreen iframe,
+    #safari-window:-webkit-full-screen iframe,
+    .safari:fullscreen iframe,
+    .safari:-webkit-full-screen iframe,
+    iframe#safari-frame:fullscreen,
+    iframe#safari-frame:-webkit-full-screen {
+      flex: 1 1 auto !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 0 !important;
+      border: 0 !important;
+      display: block !important;
+      background: #000 !important;
+    }
+    iframe#safari-frame:fullscreen,
+    iframe#safari-frame:-webkit-full-screen,
+    .safari-frame-pane:fullscreen,
+    .safari-frame-pane:-webkit-full-screen {
+      width: 100vw !important;
+      height: 100vh !important;
+      position: fixed !important;
+      inset: 0 !important;
+      border: 0 !important;
+      background: #000 !important;
+    }
     /* Visible when open; hideable when closed */
     #safari-window.safari.active,
     #safari-window.active,
@@ -11729,7 +12059,7 @@ html[data-theme] .window-header.steam-popup-header,
   <div id="desktop-bg"></div>
   <video id="desktop-bg-video" muted loop playsinline autoplay preload="metadata"></video>
   
-  <!-- Vibe music app (installed via: sudo apt beta test spotify) -->
+  <!-- Spotify music app (available by default; terminal: sudo apt beta test spotify still works) -->
   <div class="window vibe-window" id="vibe-window">
     <div class="window__taskbar vibe-bar">
       <div class="window__taskbar--actions">
@@ -11737,7 +12067,7 @@ html[data-theme] .window-header.steam-popup-header,
         <button type="button" class="vibe-min" title="Minimize"></button>
         <button type="button" class="vibe-full" title="Maximize"></button>
       </div>
-      <h2>Vibe</h2>
+      <h2>Spotify</h2>
     </div>
     <div class="vibe-app" id="vibe-app">
       <aside class="vibe-side">
@@ -11766,9 +12096,10 @@ html[data-theme] .window-header.steam-popup-header,
       </main>
       <aside class="vibe-right" id="vibe-right">
         <h4 id="vibe-np-head">Now playing</h4>
-        <div class="vibe-yt"><div id="vibe-yt-host"></div></div>
+        <div class="vibe-yt audio"><img id="vibe-np-art" alt=""><div id="vibe-yt-host"></div></div>
         <div class="vibe-np-title" id="vibe-np-title">Nothing playing</div>
         <div class="vibe-np-artist" id="vibe-np-artist">Pick a song to start</div>
+        <div class="vibe-srcbadge" id="vibe-np-src"></div>
         <div class="vibe-q-head">Next in queue</div>
         <div id="vibe-queue"></div>
       </aside>
@@ -11776,7 +12107,7 @@ html[data-theme] .window-header.steam-popup-header,
     <footer class="vibe-player">
       <div class="vibe-now">
         <img id="vibe-cover" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
-        <div><b id="vibe-t">—</b><small id="vibe-a"></small></div>
+        <div><b id="vibe-t">—</b><small id="vibe-a"></small><small id="vibe-src" class="vibe-srcbadge"></small></div>
         <button type="button" class="like" id="vibe-like" title="Save to Liked Songs"><svg viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-11a4.6 4.6 0 0 1 8-3 4.6 4.6 0 0 1 8 3c0 5.8-8 11-8 11z" /></svg></button>
       </div>
       <div class="vibe-center">
@@ -11794,6 +12125,7 @@ html[data-theme] .window-header.steam-popup-header,
         <button type="button" class="vibe-icon" id="vibe-mute" title="Mute"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button>
         <div class="vibe-bar-track vibe-vol" id="vibe-vol"><div class="vibe-bar-fill" id="vibe-volfill" style="width:80%"></div></div>
       </div>
+      <audio id="vibe-audio" preload="auto"></audio>
     </footer>
   </div>
 
@@ -11934,6 +12266,30 @@ html[data-theme] .window-header.steam-popup-header,
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-instagram" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_google" data-dock-id="google" title="Google" aria-label="Launch Google" >
+        <p class="tooltip">Google</p>
+        <span class="dock-icon-wrap">
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/google.png" alt="Google" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-google" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_duckduckgo" data-dock-id="duckduckgo" title="DuckDuckGo" aria-label="Launch DuckDuckGo" >
+        <p class="tooltip">DuckDuckGo</p>
+        <span class="dock-icon-wrap">
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png" alt="DuckDuckGo" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-duckduckgo" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_ai" data-dock-id="ai" title="AI" aria-label="Launch AI" >
+        <p class="tooltip">AI</p>
+        <span class="dock-icon-wrap">
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png" alt="AI" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-ai" style="display:none"></div>
       </button>
   </div>
 
@@ -12369,6 +12725,18 @@ html[data-theme] .window-header.steam-popup-header,
         <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png" alt="Instagram" draggable="false">
         <strong>Instagram</strong>
       </div>
+      <div class="child-launchpad" data-lp-app="google" data-keywords="Google search web browser">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/google.png" alt="Google" draggable="false">
+        <strong>Google</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="duckduckgo" data-keywords="DuckDuckGo search privacy web">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png" alt="DuckDuckGo" draggable="false">
+        <strong>DuckDuckGo</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="ai" data-keywords="AI assistant chatgpt chat gpt">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png" alt="AI" draggable="false">
+        <strong>AI</strong>
+      </div>
       <div class="child-launchpad" data-lp-app="settings" data-keywords="System Settings preferences system">
         <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/SystemSettings.png" alt="System Settings" draggable="false">
         <strong>System Settings</strong>
@@ -12492,7 +12860,7 @@ html[data-theme] .window-header.steam-popup-header,
         </div>
         <div class="window__taskbar--content"><h2>TikTok</h2></div>
       </div>
-      <iframe id="tiktok-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/Luma-os-apps@main/index.svg#/embed?u=https%3A%2F%2Fwww.tiktok.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
+      <iframe id="tiktok-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg#/embed?u=https%3A%2F%2Fwww.tiktok.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
     </div>
 
     <!-- YouTube app (iframe) -->
@@ -12505,7 +12873,7 @@ html[data-theme] .window-header.steam-popup-header,
         </div>
         <div class="window__taskbar--content"><h2>YouTube</h2></div>
       </div>
-      <iframe id="youtube-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/Luma-os-apps@main/index.svg#/embed?u=https%3A%2F%2Fyoutube.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#0f0f0f;display:block"></iframe>
+      <iframe id="youtube-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg#/embed?u=https%3A%2F%2Fyoutube.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#0f0f0f;display:block"></iframe>
     </div>
 
     <!-- Spotify — native music player -->
@@ -12580,7 +12948,7 @@ html[data-theme] .window-header.steam-popup-header,
         </div>
         <div class="window__taskbar--content"><h2>Geometry Dash</h2></div>
       </div>
-      <iframe id="gdash-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/Luma-os-apps@main/index.svg#/embed?u=https%3A%2F%2Fbluetoadmaker.infinityfreeapp.com%2FGDWASM%2F%3Fi%3D2" src="about:blank" allow="fullscreen; gamepad; keyboard-map; clipboard-write; pointer-lock" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
+      <iframe id="gdash-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg#/embed?u=https%3A%2F%2Fbluetoadmaker.infinityfreeapp.com%2FGDWASM%2F%3Fi%3D2" src="about:blank" allow="fullscreen; gamepad; keyboard-map; clipboard-write; pointer-lock" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
     </div>
 
     <!-- Twitch app (iframe) -->
@@ -12593,7 +12961,7 @@ html[data-theme] .window-header.steam-popup-header,
         </div>
         <div class="window__taskbar--content"><h2>Twitch</h2></div>
       </div>
-      <iframe id="twitch-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=https%3A%2F%2Fwww.twitch.tv%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#0e0e10;display:block"></iframe>
+      <iframe id="twitch-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg#/embed?u=https%3A%2F%2Fwww.twitch.tv%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#0e0e10;display:block"></iframe>
     </div>
 
     <!-- GeForce Now app (iframe) -->
@@ -12606,7 +12974,7 @@ html[data-theme] .window-header.steam-popup-header,
         </div>
         <div class="window__taskbar--content"><h2>GeForce Now</h2></div>
       </div>
-      <iframe id="gfn-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=https%3A%2F%2Fplay.geforcenow.com%2Fmall%2F%23%2Floginwall" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; gamepad; keyboard-map" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
+      <iframe id="gfn-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg#/embed?u=https%3A%2F%2Fplay.geforcenow.com%2Fmall%2F%23%2Floginwall" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; gamepad; keyboard-map" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
     </div>
 
     <!-- Snapchat app (iframe) -->
@@ -12619,7 +12987,7 @@ html[data-theme] .window-header.steam-popup-header,
         </div>
         <div class="window__taskbar--content"><h2>Snapchat</h2></div>
       </div>
-      <iframe id="snapchat-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=https%3A%2F%2Fsnapchat.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; camera; microphone" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
+      <iframe id="snapchat-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg#/embed?u=https%3A%2F%2Fsnapchat.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; camera; microphone" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
     </div>
 
     <!-- Instagram app (iframe) -->
@@ -12632,8 +13000,48 @@ html[data-theme] .window-header.steam-popup-header,
         </div>
         <div class="window__taskbar--content"><h2>Instagram</h2></div>
       </div>
-      <iframe id="instagram-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=https%3A%2F%2Finstagram.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; camera; microphone" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
+      <iframe id="instagram-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg#/embed?u=https%3A%2F%2Finstagram.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; camera; microphone" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
     </div>
+
+    <!-- Google app (iframe) -->
+    <div class="window google-app" id="google-window" style="display:none;min-width:50%;max-width:90%;width:960px;height:640px">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-google" title="Close"></button>
+          <button type="button" class="backfull-google" title="Minimize"></button>
+          <button type="button" class="full-google" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>Google</h2></div>
+      </div>
+      <iframe id="google-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg#/embed?u=https%3A%2F%2Fwww.google.com%2F%3Fgws_rd%3Dssl%26zx%3D1793584981244" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#fff;display:block"></iframe>
+    </div>
+
+    <!-- DuckDuckGo app (iframe) -->
+    <div class="window duckduckgo-app" id="duckduckgo-window" style="display:none;min-width:50%;max-width:90%;width:960px;height:640px">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-duckduckgo" title="Close"></button>
+          <button type="button" class="backfull-duckduckgo" title="Minimize"></button>
+          <button type="button" class="full-duckduckgo" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>DuckDuckGo</h2></div>
+      </div>
+      <iframe id="duckduckgo-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg#/embed?u=https%3A%2F%2Fduckduckgo.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#fff;display:block"></iframe>
+    </div>
+
+    <!-- AI app (iframe) -->
+    <div class="window ai-app" id="ai-window" style="display:none;min-width:50%;max-width:90%;width:960px;height:640px">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-ai" title="Close"></button>
+          <button type="button" class="backfull-ai" title="Minimize"></button>
+          <button type="button" class="full-ai" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>AI</h2></div>
+      </div>
+      <iframe id="ai-frame" data-nyx-src="https://originfastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/assistant" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; microphone; camera" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#0b0b0f;display:block"></iframe>
+    </div>
+
 
     <!-- Dynamic per-game app windows are created here -->
     <div id="game-apps-host"></div>
@@ -13152,8 +13560,11 @@ html[data-theme] .window-header.steam-popup-header,
                 <button type="button" class="settings-toggle on" data-toggle="dock-bounce" id="dock-bounce-toggle" aria-pressed="true"></button>
               </div>
               <div class="settings-row">
-                <div class="row-label"><strong>Dock opacity</strong></div>
-                <input type="range" id="dock-opacity-range" min="20" max="100" value="18" style="width:140px">
+                <div class="row-label"><strong>Dock opacity</strong><span>How solid the Dock background is. Lower = more transparent. Default 18%.</span></div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <input type="range" id="dock-opacity-range" min="0" max="100" value="18" style="width:140px" aria-valuemin="0" aria-valuemax="100" aria-valuenow="18">
+                  <output id="dock-opacity-value" for="dock-opacity-range" style="min-width:40px;font-size:12.5px;opacity:.7;font-variant-numeric:tabular-nums">18%</output>
+                </div>
               </div>
             </div>
             <div class="settings-group">
@@ -13465,7 +13876,7 @@ html[data-theme] .window-header.steam-popup-header,
           <div class="window__taskbar--actions safari-traffic">
             <button type="button" class="close-safari" title="Close"></button>
             <button type="button" class="min-safari" title="Minimize"></button>
-            <button type="button" class="full-safari" title="Maximize"></button>
+            <button type="button" class="full-safari" title="Full Screen"></button>
           </div>
           <button type="button" class="safari-icon-btn safari-sidebar-btn" title="Sidebar" aria-label="Sidebar">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg>
@@ -13522,8 +13933,8 @@ html[data-theme] .window-header.steam-popup-header,
           <p class="spl-title">Loading…</p>
           <p class="spl-sub">This could take a minute. It only happens once.</p>
         </div>
-        <iframe id="safari-frame" class="safari-frame-pane active" data-tab-id="0" src="https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg" allow="fullscreen; autoplay; encrypted-media; picture-in-picture; clipboard-read; clipboard-write" allowfullscreen="true" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        <script>try{var _o=localStorage.getItem("nyx_safari_iframe");if(_o)document.getElementById("safari-frame").src=_o;}catch(e){}</script>
+        <iframe id="safari-frame" class="safari-frame-pane active" data-tab-id="0" src="https://originfastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg" allow="fullscreen; autoplay; encrypted-media; picture-in-picture; clipboard-read; clipboard-write" allowfullscreen="true" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <script>try{var _o=localStorage.getItem("nyx_safari_iframe");var _d="https://originfastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg";if(!_o||/mo9nikeypurple\/svgproxy/.test(_o)){localStorage.setItem("nyx_safari_iframe",_d);_o=_d;}document.getElementById("safari-frame").src=_o;}catch(e){}</script>
       </div>
 
 </div>
@@ -13695,6 +14106,9 @@ html[data-theme] .window-header.steam-popup-header,
         gfn: () => { try { if (typeof window.openGfn === "function") window.openGfn(); else clickDock("gfn"); } catch (e) {} },
         snapchat: () => { try { if (typeof window.openSnapchat === "function") window.openSnapchat(); else clickDock("snapchat"); } catch (e) {} },
         instagram: () => { try { if (typeof window.openInstagram === "function") window.openInstagram(); else clickDock("instagram"); } catch (e) {} },
+        google: () => { try { if (typeof window.openGoogle === "function") window.openGoogle(); else clickDock("google"); } catch (e) {} },
+        duckduckgo: () => { try { if (typeof window.openDuckduckgo === "function") window.openDuckduckgo(); else clickDock("duckduckgo"); } catch (e) {} },
+        ai: () => { try { if (typeof window.openAi === "function") window.openAi(); else clickDock("ai"); } catch (e) {} },
         devhub: () => { try { if (typeof openDevHub === "function") openDevHub(); else clickDock("devhub"); } catch (e) {} }
       };
 
@@ -13719,6 +14133,9 @@ html[data-theme] .window-header.steam-popup-header,
         gfn: dockIcon("gfn", "https://cdn.jsdelivr.net/gh/mathissofun137/Lumaicons/geforcenow.png"),
         snapchat: dockIcon("snapchat", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/snapchat.png"),
         instagram: dockIcon("instagram", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png"),
+        google: dockIcon("google", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/google.png"),
+        duckduckgo: dockIcon("duckduckgo", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png"),
+        ai: dockIcon("ai", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png"),
         messages: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Messages.png",
         music: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Music.png",
         mail: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Mail.png",
@@ -13748,6 +14165,9 @@ html[data-theme] .window-header.steam-popup-header,
         { name: "GeForce Now", kind: "Application", section: "Applications", keywords: "geforce now nvidia cloud gaming stream gfn", icon: ICON.gfn, action: openApp.gfn },
         { name: "Snapchat", kind: "Application", section: "Applications", keywords: "snapchat snap social camera chat stories", icon: ICON.snapchat, action: openApp.snapchat },
         { name: "Instagram", kind: "Application", section: "Applications", keywords: "instagram ig social photo reels stories", icon: ICON.instagram, action: openApp.instagram },
+        { name: "Google", kind: "Application", section: "Applications", keywords: "google search web", icon: ICON.google, action: openApp.google },
+        { name: "DuckDuckGo", kind: "Application", section: "Applications", keywords: "duckduckgo ddg search privacy", icon: ICON.duckduckgo, action: openApp.duckduckgo },
+        { name: "AI", kind: "Application", section: "Applications", keywords: "ai assistant chatgpt chat gpt openai", icon: ICON.ai, action: openApp.ai },
         { name: "Messages", kind: "Application", section: "Applications", keywords: "chat imessage text sms", icon: ICON.messages, action: () => { try { clickDock("messages"); } catch (e) {} } },
         { name: "Music", kind: "Application", section: "Applications", keywords: "songs apple music audio player", icon: ICON.music, action: () => { try { clickDock("music"); } catch (e) {} } },
         { name: "Mail", kind: "Application", section: "Applications", keywords: "email inbox mail", icon: ICON.mail, action: () => { try { clickDock("mail"); } catch (e) {} } },
@@ -14152,12 +14572,33 @@ html[data-theme] .window-header.steam-popup-header,
           el.classList.contains("safari") || el.classList.contains("settings-window") ||
           el.classList.contains("imovie-window") || el.classList.contains("devhub-window") ||
           el.classList.contains("game-app") || el.classList.contains("window") ||
+          el.classList.contains("tiktok-app") || el.classList.contains("youtube-app") ||
+          el.classList.contains("gdash-app") || el.classList.contains("twitch-app") ||
+          el.classList.contains("gfn-app") || el.classList.contains("snapchat-app") ||
+          el.classList.contains("instagram-app") || el.classList.contains("google-app") ||
+          el.classList.contains("duckduckgo-app") || el.classList.contains("ai-app") || el.classList.contains("spotify-app") ||
           el.id === "imovie-window" || el.id === "devhub-window" || el.id === "safari-window" ||
           (el.id && el.id.indexOf("game-app-") === 0)) {
         el.style.setProperty("display", "flex", "important");
+        el.style.setProperty("flex-direction", "column", "important");
       } else {
         el.style.setProperty("display", "block", "important");
       }
+      // Stretch iframe to fill maximized window
+      try {
+        var ifr = el.querySelector("iframe");
+        if (ifr && (el.classList.contains("tiktok-app") || el.classList.contains("youtube-app") ||
+            el.classList.contains("gdash-app") || el.classList.contains("twitch-app") ||
+            el.classList.contains("gfn-app") || el.classList.contains("snapchat-app") ||
+            el.classList.contains("instagram-app") || el.classList.contains("google-app") ||
+            el.classList.contains("duckduckgo-app") || el.classList.contains("ai-app") || el.classList.contains("safari") ||
+            el.id === "safari-window")) {
+          ifr.style.setProperty("flex", "1 1 auto", "important");
+          ifr.style.setProperty("width", "100%", "important");
+          ifr.style.setProperty("height", "auto", "important");
+          ifr.style.setProperty("min-height", "0", "important");
+        }
+      } catch (e) {}
       // NEVER reparent on maximize — moving a node reloads nested iframes (Safari, games, VS Code, etc.)
     }
 
@@ -14432,6 +14873,8 @@ html[data-theme] .window-header.steam-popup-header,
         win.classList.contains("gfn-app") ||
         win.classList.contains("snapchat-app") ||
         win.classList.contains("instagram-app") ||
+        win.classList.contains("google-app") ||
+        win.classList.contains("duckduckgo-app") || win.classList.contains("ai-app") ||
         win.id === "safari-window" ||
         win.id === "settings-window" ||
         win.id === "vscode-window" ||
@@ -14442,7 +14885,9 @@ html[data-theme] .window-header.steam-popup-header,
         win.id === "twitch-window" ||
         win.id === "gfn-window" ||
         win.id === "snapchat-window" ||
-        win.id === "instagram-window";
+        win.id === "instagram-window" ||
+        win.id === "google-window" ||
+        win.id === "duckduckgo-window" || win.id === "ai-window";
 
       // If already visible (not minimized), just focus — don't re-animate
       var alreadyOpen = false;
@@ -14517,6 +14962,9 @@ html[data-theme] .window-header.steam-popup-header,
       if (win.classList.contains("gfn-app") || win.id === "gfn-window") return "GeForce Now";
       if (win.classList.contains("snapchat-app") || win.id === "snapchat-window") return "Snapchat";
       if (win.classList.contains("instagram-app") || win.id === "instagram-window") return "Instagram";
+      if (win.classList.contains("google-app") || win.id === "google-window") return "Google";
+      if (win.classList.contains("ai-app") || win.id === "ai-window") return "AI";
+      if (win.classList.contains("duckduckgo-app") || win.id === "duckduckgo-window") return "DuckDuckGo";
       return "Finder";
     }
 
@@ -14694,19 +15142,131 @@ html[data-theme] .window-header.steam-popup-header,
     /* ===== TikTok + YouTube + Geometry Dash iframe apps ===== */
     (function initIframeApps() {
       var APPS = [
-        { name: "TikTok", winId: "tiktok-window", pointId: "point-tiktok", frameId: "tiktok-frame", openSel: ".open_tiktok, [data-dock-id='tiktok'], .child-launchpad[data-lp-app='tiktok']", title: "TikTok" },
-        { name: "Youtube", winId: "youtube-window", pointId: "point-youtube", frameId: "youtube-frame", openSel: ".open_youtube, [data-dock-id='youtube'], .child-launchpad[data-lp-app='youtube']", title: "YouTube" },
-        { name: "Spotify", winId: "spotify-window", pointId: "point-spotify", frameId: null, openSel: ".open_spotify, [data-dock-id='spotify'], .child-launchpad[data-lp-app='spotify']", title: "Spotify" },
-        { name: "Gdash", winId: "gdash-window", pointId: "point-gdash", frameId: "gdash-frame", openSel: ".open_gdash, [data-dock-id='gdash'], .child-launchpad[data-lp-app='gdash']", title: "Geometry Dash" },
-        { name: "Twitch", winId: "twitch-window", pointId: "point-twitch", frameId: "twitch-frame", openSel: ".open_twitch, [data-dock-id='twitch'], .child-launchpad[data-lp-app='twitch']", title: "Twitch" },
-        { name: "Gfn", winId: "gfn-window", pointId: "point-gfn", frameId: "gfn-frame", openSel: ".open_gfn, [data-dock-id='gfn'], .child-launchpad[data-lp-app='gfn']", title: "GeForce Now" },
-        { name: "Snapchat", winId: "snapchat-window", pointId: "point-snapchat", frameId: "snapchat-frame", openSel: ".open_snapchat, [data-dock-id='snapchat'], .child-launchpad[data-lp-app='snapchat']", title: "Snapchat" },
-        { name: "Instagram", winId: "instagram-window", pointId: "point-instagram", frameId: "instagram-frame", openSel: ".open_instagram, [data-dock-id='instagram'], .child-launchpad[data-lp-app='instagram']", title: "Instagram" }
+        { name: "TikTok", winId: "tiktok-window", pointId: "point-tiktok", frameId: "tiktok-frame", openSel: ".open_tiktok, [data-dock-id='tiktok'], .child-launchpad[data-lp-app='tiktok']", title: "TikTok", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/TikTok.png", accent: "255, 0, 80" },
+        { name: "Youtube", winId: "youtube-window", pointId: "point-youtube", frameId: "youtube-frame", openSel: ".open_youtube, [data-dock-id='youtube'], .child-launchpad[data-lp-app='youtube']", title: "YouTube", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/YouTube.png", accent: "255, 0, 0" },
+        { name: "Spotify", winId: "spotify-window", pointId: "point-spotify", frameId: null, openSel: ".open_spotify, [data-dock-id='spotify'], .child-launchpad[data-lp-app='spotify']", title: "Spotify", icon: null, accent: "30, 215, 96" },
+        { name: "Gdash", winId: "gdash-window", pointId: "point-gdash", frameId: "gdash-frame", openSel: ".open_gdash, [data-dock-id='gdash'], .child-launchpad[data-lp-app='gdash']", title: "Geometry Dash", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/GeometryDash.png", accent: "0, 200, 255" },
+        { name: "Twitch", winId: "twitch-window", pointId: "point-twitch", frameId: "twitch-frame", openSel: ".open_twitch, [data-dock-id='twitch'], .child-launchpad[data-lp-app='twitch']", title: "Twitch", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Twitch.png", accent: "145, 70, 255" },
+        { name: "Gfn", winId: "gfn-window", pointId: "point-gfn", frameId: "gfn-frame", openSel: ".open_gfn, [data-dock-id='gfn'], .child-launchpad[data-lp-app='gfn']", title: "GeForce Now", icon: "https://cdn.jsdelivr.net/gh/mathissofun137/Lumaicons/geforcenow.png", accent: "118, 185, 0" },
+        { name: "Snapchat", winId: "snapchat-window", pointId: "point-snapchat", frameId: "snapchat-frame", openSel: ".open_snapchat, [data-dock-id='snapchat'], .child-launchpad[data-lp-app='snapchat']", title: "Snapchat", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/snapchat.png", accent: "255, 252, 0" },
+        { name: "Instagram", winId: "instagram-window", pointId: "point-instagram", frameId: "instagram-frame", openSel: ".open_instagram, [data-dock-id='instagram'], .child-launchpad[data-lp-app='instagram']", title: "Instagram", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png", accent: "225, 48, 108" },
+        { name: "Google", winId: "google-window", pointId: "point-google", frameId: "google-frame", openSel: ".open_google, [data-dock-id='google'], .child-launchpad[data-lp-app='google']", title: "Google", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/google.png", accent: "66, 133, 244" },
+        { name: "Duckduckgo", winId: "duckduckgo-window", pointId: "point-duckduckgo", frameId: "duckduckgo-frame", openSel: ".open_duckduckgo, [data-dock-id='duckduckgo'], .child-launchpad[data-lp-app='duckduckgo']", title: "DuckDuckGo", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png", accent: "222, 88, 51" },
+        { name: "Ai", winId: "ai-window", pointId: "point-ai", frameId: "ai-frame", openSel: ".open_ai, [data-dock-id='ai'], .child-launchpad[data-lp-app='ai']", title: "AI", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png", accent: "16, 163, 127" }
       ];
 
       function getFrame(opts) {
         var win = document.getElementById(opts.winId);
         return (opts.frameId && document.getElementById(opts.frameId)) || (win && win.querySelector("iframe"));
+      }
+
+      /* Per-app loading screen (logo + name + progress bar) */
+      function ensureLoadingOverlay(opts) {
+        if (!opts.frameId || !opts.icon) return null;
+        var win = document.getElementById(opts.winId);
+        if (!win) return null;
+        var el = win.querySelector(".iframe-app-loading");
+        if (el) {
+          if (opts.accent) el.style.setProperty("--ial-accent", opts.accent);
+          // Keep overlay on top of the iframe in DOM order
+          if (el.parentElement === win) win.appendChild(el);
+          return el;
+        }
+        el = document.createElement("div");
+        el.className = "iframe-app-loading";
+        el.setAttribute("aria-live", "polite");
+        el.setAttribute("aria-busy", "true");
+        if (opts.accent) el.style.setProperty("--ial-accent", opts.accent);
+        el.innerHTML =
+          '<div class="ial-logo-wrap">' +
+            '<img class="ial-logo" src="' + opts.icon + '" alt="" draggable="false" />' +
+          '</div>' +
+          '<p class="ial-title">' + (opts.title || opts.name) + '</p>' +
+          '<div class="ial-bar" aria-hidden="true"><div class="ial-bar-fill"></div></div>';
+        // Append last so it paints above the iframe
+        win.appendChild(el);
+        return el;
+      }
+
+      function showAppLoading(opts) {
+        if (!opts.frameId) return;
+        var el = ensureLoadingOverlay(opts);
+        if (!el) return;
+        el.__ialHiding = false;
+        el.__ialShownAt = Date.now();
+        el.classList.remove("is-hiding", "is-done");
+        var fill = el.querySelector(".ial-bar-fill");
+        if (fill) {
+          fill.style.animation = "none";
+          fill.style.width = "";
+          fill.style.transform = "";
+          fill.style.left = "";
+          void fill.offsetWidth;
+          fill.style.animation = "";
+        }
+        el.style.display = "flex";
+        el.classList.add("is-visible");
+        el.setAttribute("aria-busy", "true");
+        // Ensure on top every time we show
+        if (el.parentElement) el.parentElement.appendChild(el);
+        if (el.__ialTimer) { clearTimeout(el.__ialTimer); el.__ialTimer = null; }
+        if (el.__ialMinWait) { clearTimeout(el.__ialMinWait); el.__ialMinWait = null; }
+      }
+
+      function hideAppLoading(opts) {
+        if (!opts.frameId) return;
+        var win = document.getElementById(opts.winId);
+        if (!win) return;
+        var el = win.querySelector(".iframe-app-loading");
+        if (!el || !el.classList.contains("is-visible") || el.__ialHiding) return;
+        // Minimum time on screen so the animation is always visible
+        var shownAt = el.__ialShownAt || 0;
+        var minMs = 750;
+        var wait = Math.max(0, minMs - (Date.now() - shownAt));
+        if (wait > 0) {
+          if (el.__ialMinWait) clearTimeout(el.__ialMinWait);
+          el.__ialMinWait = setTimeout(function () { hideAppLoading(opts); }, wait);
+          return;
+        }
+        el.__ialHiding = true;
+        if (el.__ialFallback) { clearTimeout(el.__ialFallback); el.__ialFallback = null; }
+        if (el.__ialMinWait) { clearTimeout(el.__ialMinWait); el.__ialMinWait = null; }
+        el.classList.add("is-done");
+        var fill = el.querySelector(".ial-bar-fill");
+        if (fill) {
+          fill.style.animation = "none";
+          fill.style.transform = "none";
+          fill.style.left = "0";
+          fill.style.width = "100%";
+        }
+        function finish() {
+          el.classList.add("is-hiding");
+          setTimeout(function () {
+            el.classList.remove("is-visible", "is-hiding", "is-done");
+            el.style.display = "none";
+            el.setAttribute("aria-busy", "false");
+            el.__ialHiding = false;
+            if (fill) {
+              fill.style.width = "";
+              fill.style.animation = "";
+              fill.style.transform = "";
+              fill.style.left = "";
+            }
+          }, 380);
+        }
+        if (el.__ialTimer) clearTimeout(el.__ialTimer);
+        el.__ialTimer = setTimeout(finish, 220);
+      }
+
+      function wireFrameLoad(opts) {
+        var fr = getFrame(opts);
+        if (!fr || fr.__ialLoadWired) return;
+        fr.__ialLoadWired = true;
+        fr.addEventListener("load", function () {
+          var src = fr.getAttribute("src") || fr.src || "";
+          if (!src || src === "about:blank" || src.indexOf("about:blank") === 0) return;
+          hideAppLoading(opts);
+        });
       }
 
       // Mute / stop media: blank the iframe (works cross-origin). Restore on open.
@@ -14731,22 +15291,55 @@ html[data-theme] .window-header.steam-popup-header,
         } catch (e) {}
       }
 
-      function unmuteApp(opts) {
+      /* Start iframe network load. Must run after the window is visible so the
+         browser does not throttle / defer a display:none iframe. */
+      function startIframeLoad(opts) {
         var fr = getFrame(opts);
         if (!fr) return;
         try {
           var saved = fr.dataset.nyxSrc || fr.getAttribute("data-nyx-src") || "";
-          if (saved) fr.dataset.nyxSrc = saved;
+          if (!saved) return;
+          fr.dataset.nyxSrc = saved;
+          delete fr.dataset.nyxSpeculative;
+
+          fr.setAttribute("allow", "fullscreen; autoplay; clipboard-write; encrypted-media; picture-in-picture; gamepad; keyboard-map");
+          try { fr.setAttribute("loading", "eager"); } catch (e) {}
+          try { fr.muted = false; } catch (e) {}
+
           var cur = fr.getAttribute("src") || fr.src || "";
-          if (saved && (!cur || cur === "about:blank" || cur.indexOf("about:blank") === 0)) {
-            // Set src first so the network request starts immediately
+          // Always (re)assign the real URL while the splash is up so the load
+          // runs concurrent with the animation and the load event can dismiss it.
+          if (cur === saved) {
+            // Same URL already — force a reload so load event fires
+            fr.setAttribute("src", "about:blank");
+            fr.src = "about:blank";
+            requestAnimationFrame(function () {
+              try {
+                fr.setAttribute("src", saved);
+                fr.src = saved;
+              } catch (e2) {}
+            });
+          } else {
             fr.setAttribute("src", saved);
             fr.src = saved;
-            fr.setAttribute("allow", "fullscreen; autoplay; clipboard-write; encrypted-media; picture-in-picture; gamepad; keyboard-map");
-            try { fr.setAttribute("loading", "eager"); } catch (e) {}
           }
-          try { fr.muted = false; } catch (e) {}
         } catch (e) {}
+      }
+
+      function unmuteApp(opts) {
+        // Back-compat: older callers — show splash + load once window is shown by them
+        if (opts.frameId) {
+          showAppLoading(opts);
+          wireFrameLoad(opts);
+          var win = document.getElementById(opts.winId);
+          var overlay = win && win.querySelector(".iframe-app-loading");
+          if (overlay) {
+            overlay.__ialShownAt = Date.now();
+            if (overlay.__ialFallback) clearTimeout(overlay.__ialFallback);
+            overlay.__ialFallback = setTimeout(function () { hideAppLoading(opts); }, 14000);
+          }
+        }
+        startIframeLoad(opts);
       }
 
       function hideHard(win) {
@@ -14786,9 +15379,29 @@ html[data-theme] .window-header.steam-popup-header,
         try {
           if (win.parentElement !== document.body) document.body.appendChild(win);
         } catch (e) {}
-        unmuteApp(opts);
+
+        // 1) Show the window first (browsers throttle iframes inside display:none)
         showHard(win);
         try { if (typeof centerWindow === "function") centerWindow(win); } catch (e) {}
+
+        // 2) Splash on top
+        if (opts.frameId) {
+          showAppLoading(opts);
+          wireFrameLoad(opts);
+          var overlay = win.querySelector(".iframe-app-loading");
+          if (overlay) {
+            overlay.__ialShownAt = Date.now();
+            if (overlay.__ialFallback) clearTimeout(overlay.__ialFallback);
+            overlay.__ialFallback = setTimeout(function () { hideAppLoading(opts); }, 14000);
+          }
+        }
+
+        // 3) Start the iframe network request while the splash is visible
+        //    (rAF so layout is committed and the frame is in a visible document)
+        requestAnimationFrame(function () {
+          startIframeLoad(opts);
+        });
+
         if (point) point.style.display = "block";
         try {
           if (typeof setMenuAppName === "function") setMenuAppName(opts.title);
@@ -14805,6 +15418,19 @@ html[data-theme] .window-header.steam-popup-header,
         var point = document.getElementById(opts.pointId);
         if (!win) return;
         muteApp(opts);
+        // Reset loading overlay so next open shows it again
+        try {
+          var ov = win.querySelector(".iframe-app-loading");
+          if (ov) {
+            if (ov.__ialFallback) { clearTimeout(ov.__ialFallback); ov.__ialFallback = null; }
+            if (ov.__ialTimer) { clearTimeout(ov.__ialTimer); ov.__ialTimer = null; }
+            ov.classList.remove("is-visible", "is-hiding", "is-done");
+            ov.style.display = "none";
+            ov.setAttribute("aria-busy", "false");
+            var fill = ov.querySelector(".ial-bar-fill");
+            if (fill) { fill.style.width = ""; fill.style.animation = ""; fill.style.transform = ""; fill.style.left = ""; }
+          }
+        } catch (e) {}
         try {
           if (opts.winId === "spotify-window" && typeof window.nyxSpotifyStop === "function") window.nyxSpotifyStop();
         } catch (e) {}
@@ -14837,8 +15463,59 @@ html[data-theme] .window-header.steam-popup-header,
       function doFull(opts) {
         var win = document.getElementById(opts.winId);
         if (!win) return;
-        if (typeof window.toggleMaximize === "function") window.toggleMaximize(win);
-        else win.classList.toggle("is-maximized");
+        var fr = getFrame(opts);
+
+        // Prefer true browser fullscreen so the iframe fills the screen
+        var docFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+        if (docFs) {
+          var exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen;
+          if (exit) try { exit.call(document); } catch (e) {}
+          // Also restore window maximize state if we had toggled it
+          if (win.classList.contains("is-maximized") && typeof window.toggleMaximize === "function") {
+            try { window.toggleMaximize(win); } catch (e) {}
+          }
+          return;
+        }
+
+        function fallbackMaximize() {
+          if (typeof window.toggleMaximize === "function") window.toggleMaximize(win);
+          else win.classList.toggle("is-maximized");
+          // Make sure the iframe stretches under the title bar
+          if (fr) {
+            try {
+              fr.style.setProperty("flex", "1 1 auto", "important");
+              fr.style.setProperty("width", "100%", "important");
+              fr.style.setProperty("height", "auto", "important");
+              fr.style.setProperty("min-height", "0", "important");
+            } catch (e) {}
+          }
+        }
+
+        // Fullscreen the whole app window (iframe fills it; taskbar hidden via CSS)
+        var target = win;
+        var req = target.requestFullscreen || target.webkitRequestFullscreen || target.mozRequestFullScreen || target.msRequestFullscreen;
+        if (req) {
+          try {
+            var p = req.call(target);
+            if (p && typeof p.then === "function") {
+              p.then(function () {
+                // Ensure iframe fills the fullscreen stage
+                if (fr) {
+                  fr.style.setProperty("flex", "1 1 auto", "important");
+                  fr.style.setProperty("width", "100%", "important");
+                  fr.style.setProperty("height", "100%", "important");
+                  fr.style.setProperty("min-height", "0", "important");
+                }
+              }).catch(function () {
+                fallbackMaximize();
+              });
+            }
+          } catch (e) {
+            fallbackMaximize();
+          }
+        } else {
+          fallbackMaximize();
+        }
       }
 
       APPS.forEach(function (opts) {
@@ -14853,6 +15530,10 @@ html[data-theme] .window-header.steam-popup-header,
           });
         });
 
+        // Pre-build per-app loading overlay + load listener
+        ensureLoadingOverlay(opts);
+        wireFrameLoad(opts);
+
         // Always start muted / unloaded so closed apps never play audio
         muteApp(opts);
         hideHard(document.getElementById(opts.winId));
@@ -14862,7 +15543,7 @@ html[data-theme] .window-header.steam-popup-header,
           try {
             $(win).draggable({
               handle: ".window__taskbar",
-              cancel: "button, iframe, input, textarea, a",
+              cancel: "button, iframe, input, textarea, a, .iframe-app-loading",
               containment: "window",
               start: function (ev) {
                 if (this.classList.contains("is-maximized")) {
@@ -14887,7 +15568,9 @@ html[data-theme] .window-header.steam-popup-header,
           ".close-twitch, .backfull-twitch, .full-twitch, " +
           ".close-gfn, .backfull-gfn, .full-gfn, " +
           ".close-snapchat, .backfull-snapchat, .full-snapchat, " +
-          ".close-instagram, .backfull-instagram, .full-instagram"
+          ".close-instagram, .backfull-instagram, .full-instagram, " +
+          ".close-google, .backfull-google, .full-google, " +
+          ".close-duckduckgo, .backfull-duckduckgo, .full-duckduckgo, .close-ai, .backfull-ai, .full-ai"
         );
         if (!btn) return null;
         var cls = (btn.className || "") + " " + (btn.getAttribute("class") || "");
@@ -14934,10 +15617,25 @@ html[data-theme] .window-header.steam-popup-header,
     if (fullnote) fullnote.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); handleFullScreen(note); });
 
     // Capture-phase delegation — works even if other handlers stop propagation
-    const MAXIMIZE_BTN_SEL = ".full, .full-note, .full-Vscode, .full-map, .full-settings, .full-safari, .full-steam, .full-imovie, .full-devhub, .full-cal, .full-game-app, .full-tiktok, .full-youtube, .full-gdash, .full-twitch, .full-gfn, .full-snapchat, .full-instagram";
+    const MAXIMIZE_BTN_SEL = ".full, .full-note, .full-Vscode, .full-map, .full-settings, .full-safari, .full-steam, .full-imovie, .full-devhub, .full-cal, .full-game-app, .full-tiktok, .full-youtube, .full-gdash, .full-twitch, .full-gfn, .full-snapchat, .full-instagram, .full-google, .full-duckduckgo, .full-ai";
     function findWindowFrom(el) {
       if (!el) return null;
-      return el.closest(".window, .settings-window, .safari, .steam, .Vscode, .calculator, .imovie-window, .devhub-window, .game-app, .tiktok-app, .youtube-app, .spotify-app, .gdash-app, .twitch-app, .gfn-app, .snapchat-app, .instagram-app, #vscode-window, #settings-window, #safari-window, #imovie-window, #devhub-window, #tiktok-window, #youtube-window, #spotify-window, #gdash-window, #twitch-window, #gfn-window, #snapchat-window, #instagram-window");
+      return el.closest(".window, .settings-window, .safari, .steam, .Vscode, .calculator, .imovie-window, .devhub-window, .game-app, .tiktok-app, .youtube-app, .spotify-app, .gdash-app, .twitch-app, .gfn-app, .snapchat-app, .instagram-app, .google-app, .duckduckgo-app, .ai-app, #vscode-window, #settings-window, #safari-window, #imovie-window, #devhub-window, #tiktok-window, #youtube-window, #spotify-window, #gdash-window, #twitch-window, #gfn-window, #snapchat-window, #instagram-window, #google-window, #duckduckgo-window, #ai-window");
+    }
+    function nyxRequestTrueFullscreen(target) {
+      if (!target) return Promise.reject(new Error("no target"));
+      var req = target.requestFullscreen || target.webkitRequestFullscreen || target.mozRequestFullScreen || target.msRequestFullscreen;
+      if (!req) return Promise.reject(new Error("no fullscreen API"));
+      try {
+        var p = req.call(target);
+        return (p && typeof p.then === "function") ? p : Promise.resolve();
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    }
+    function nyxExitTrueFullscreen() {
+      var exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+      if (exit) try { exit.call(document); } catch (e) {}
     }
     document.addEventListener("click", function(e) {
       const btn = e.target && e.target.closest && e.target.closest(MAXIMIZE_BTN_SEL);
@@ -14946,6 +15644,39 @@ html[data-theme] .window-header.steam-popup-header,
       e.stopPropagation();
       if (e.stopImmediatePropagation) e.stopImmediatePropagation();
       const win = findWindowFrom(btn);
+      if (!win) return;
+      // Safari green button: true browser fullscreen of the iframe (or window)
+      if (btn.classList.contains("full-safari") || win.id === "safari-window" || win.classList.contains("safari")) {
+        var fsEl = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+        if (fsEl) {
+          nyxExitTrueFullscreen();
+          if (win.classList.contains("is-maximized")) toggleMaximize(win);
+          return;
+        }
+        var fr = (typeof window.getSafariActiveFrame === "function" && window.getSafariActiveFrame()) ||
+                 win.querySelector("#safari-frame.active, .safari-frame-pane.active, iframe#safari-frame, iframe") ||
+                 document.getElementById("safari-frame");
+        // Prefer fullscreen on the iframe so the page fills the display
+        var tryTargets = [fr, win].filter(Boolean);
+        (function attempt(i) {
+          if (i >= tryTargets.length) {
+            toggleMaximize(win);
+            return;
+          }
+          nyxRequestTrueFullscreen(tryTargets[i]).then(function () {
+            try {
+              if (fr) {
+                fr.style.setProperty("width", "100%", "important");
+                fr.style.setProperty("height", "100%", "important");
+                fr.style.setProperty("flex", "1 1 auto", "important");
+                fr.style.setProperty("min-height", "0", "important");
+                fr.style.setProperty("border", "0", "important");
+              }
+            } catch (err) {}
+          }).catch(function () { attempt(i + 1); });
+        })(0);
+        return;
+      }
       if (win) toggleMaximize(win);
     }, true);
     document.addEventListener("mousedown", function(e) {
@@ -21658,7 +22389,7 @@ window.setDesktopBackground = setDesktopBackground;
 
 
     // ===== Safari: Scramjet v2 stack via Wisp transport (libcurl) + DuckDuckGo =====
-    const NYX_PROXY_DEFAULT = "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg";
+    const NYX_PROXY_DEFAULT = "https://originfastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg";
     function nyxGetFrameOverride() { try { return localStorage.getItem("nyx_safari_iframe") || ""; } catch (e) { return ""; } }
     let NYX_PROXY_URL = nyxGetFrameOverride() || NYX_PROXY_DEFAULT;
     /* singlefilev3.html — loaded as Safari start page via srcdoc */
@@ -21983,7 +22714,7 @@ window.setDesktopBackground = setDesktopBackground;
 
 
 
-    const NYX_PROXY_HTML = "<!DOCTYPE html><html><head><meta charset=UTF-8><title>Lumaos</title><style>html,body{margin:0;height:100%;background:#0b0b0f;color:#eee;font:15px system-ui;display:flex;align-items:center;justify-content:center}a{color:#8cf}</style></head><body><div>Opening SVG proxy…</div><script>location.replace('https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg')<\/script></body></html>";
+    const NYX_PROXY_HTML = "<!DOCTYPE html><html><head><meta charset=UTF-8><title>Lumaos</title><style>html,body{margin:0;height:100%;background:#0b0b0f;color:#eee;font:15px system-ui;display:flex;align-items:center;justify-content:center}a{color:#8cf}</style></head><body><div>Opening SVG proxy…</div><script>location.replace('https://originfastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg')<\/script></body></html>";
 // Direct iframe navigation (no proxy)
     window.addEventListener("message", function (ev) {
       try {
@@ -23861,7 +24592,7 @@ window.setDesktopBackground = setDesktopBackground;
       var TMDB = "https://api.themoviedb.org/3";
       var IMG = "https://image.tmdb.org/t/p/w342";
       var IMG_WIDE = "https://image.tmdb.org/t/p/w1280";
-      var PROXY = "https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=";
+      var PROXY = "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg#/embed?u=";
 
       // Playback sources — all go through the luma-os-apps proxy
       var SOURCES = [
@@ -24636,11 +25367,15 @@ window.setDesktopBackground = setDesktopBackground;
         { id: "tiktok", sel: "#tiktok-window, .tiktok-app" },
         { id: "youtube", sel: "#youtube-window, .youtube-app" },
         { id: "spotify", sel: "#spotify-window, .spotify-app" },
+        { id: "vibe", sel: "#vibe-window" },
         { id: "gdash", sel: "#gdash-window, .gdash-app" },
         { id: "twitch", sel: "#twitch-window, .twitch-app" },
         { id: "gfn", sel: "#gfn-window, .gfn-app" },
         { id: "snapchat", sel: "#snapchat-window, .snapchat-app" },
         { id: "instagram", sel: "#instagram-window, .instagram-app" },
+        { id: "google", sel: "#google-window, .google-app" },
+        { id: "duckduckgo", sel: "#duckduckgo-window, .duckduckgo-app" },
+        { id: "ai", sel: "#ai-window, .ai-app" },
         { id: "terminal", sel: ".terminal" },
         { id: "notes", sel: ".note" },
         { id: "calculator", sel: ".calculator" },
@@ -24662,6 +25397,8 @@ window.setDesktopBackground = setDesktopBackground;
         gfn: "https://cdn.jsdelivr.net/gh/mathissofun137/Lumaicons/geforcenow.png",
         snapchat: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/snapchat.png",
         instagram: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png",
+        google: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/google.png",
+        duckduckgo: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png",
         terminal: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png",
         notes: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Notes.png",
         calculator: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calculator.png",
@@ -24675,7 +25412,7 @@ window.setDesktopBackground = setDesktopBackground;
         finder: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Finder.png"
       };
       var TITLE_FALLBACK = {
-        tiktok: "TikTok", youtube: "YouTube", gdash: "Geometry Dash", twitch: "Twitch", gfn: "GeForce Now", snapchat: "Snapchat", instagram: "Instagram", terminal: "Terminal",
+        tiktok: "TikTok", youtube: "YouTube", gdash: "Geometry Dash", twitch: "Twitch", gfn: "GeForce Now", snapchat: "Snapchat", instagram: "Instagram", google: "Google", duckduckgo: "DuckDuckGo", terminal: "Terminal",
         notes: "Notes", calculator: "Calculator", vscode: "VS Code", maps: "Maps", steam: "Steam",
         safari: "Safari", settings: "System Settings", appletv: "Netflix", appstore: "App Store", finder: "Finder"
       };
@@ -24963,7 +25700,7 @@ window.setDesktopBackground = setDesktopBackground;
           wrapped.__nyxDockWrapped = true;
           window[name] = wrapped;
         }
-        ["openSettings", "openSafari", "openVSCode", "openTikTok", "openYoutube", "openGdash", "openTwitch", "openGfn", "openSnapchat", "openInstagram", "openDevHub", "openIMovie", "openFinder", "openAppStore"].forEach(wrap);
+        ["openSettings", "openSafari", "openVSCode", "openTikTok", "openYoutube", "openGdash", "openTwitch", "openGfn", "openSnapchat", "openInstagram", "openGoogle", "openDuckduckgo", "openDevHub", "openIMovie", "openFinder", "openAppStore"].forEach(wrap);
         if (typeof window.open_window === "function" && !window.open_window.__nyxDockWrapped) {
           // open_window is local, already calls nyxSetDockOpen
         }
@@ -25301,6 +26038,14 @@ window.setDesktopBackground = setDesktopBackground;
             },
             open: () => { if (typeof openDevHub === "function") openDevHub(); else if (win) { win.style.display = "flex"; win.classList.add("active"); } },
             win
+          };
+        }
+        if (btn.classList.contains("open_vibe") || (btn.getAttribute("data-dock-id") || "") === "vibe") {
+          return {
+            name: "Spotify",
+            close: () => { if (window.nyxVibe && window.nyxVibe.close) window.nyxVibe.close(); },
+            open: () => { if (window.nyxVibe && window.nyxVibe.open) window.nyxVibe.open(); },
+            win: document.getElementById("vibe-window")
           };
         }
         // Generic: close any visible window resolved by title
@@ -25826,8 +26571,16 @@ window.setDesktopBackground = setDesktopBackground;
         const dock = document.getElementById("macos-dock") || document.querySelector(".dock-el");
         const container = document.getElementById("dock-container") || document.querySelector(".dock-container");
         if (dock) {
-          const o = Math.max(0.08, Math.min(1, opacity / 100));
+          const o = Math.max(0, Math.min(1, (isNaN(opacity) ? 18 : opacity) / 100));
           dock.style.backgroundColor = "hsla(240, 24%, 100%, " + o + ")";
+          // Soften glass/border when very transparent so the dock can look clear
+          if (o <= 0.05) {
+            dock.style.boxShadow = "none";
+          } else if (o < 0.12) {
+            dock.style.boxShadow = "inset 0 0 0 0.2px hsla(0, 0%, 96%, " + Math.min(0.7, o * 4) + "), 0 0 0 0.2px hsla(240, 3%, 11%, " + Math.min(0.55, o * 3) + "), hsla(0, 0%, 0%, " + Math.min(0.3, o * 1.5) + ") 2px 5px 19px 7px";
+          } else {
+            dock.style.removeProperty("box-shadow");
+          }
           // Clear inline layout leftovers when switching edges
           dock.style.removeProperty("flex-direction");
           dock.style.removeProperty("height");
@@ -25905,7 +26658,11 @@ window.setDesktopBackground = setDesktopBackground;
         if (size) size.value = lsGet(KEYS.dockSize, "58");
         if (mag) mag.value = lsGet(KEYS.dockMagAmt, "2");
         if (pos) pos.value = lsGet(KEYS.dockPos, "bottom");
-        if (opac) opac.value = lsGet(KEYS.dockOpacity, "18");
+        if (opac) {
+          opac.value = lsGet(KEYS.dockOpacity, "18");
+          var out = document.getElementById("dock-opacity-value");
+          if (out) out.textContent = opac.value + "%";
+        }
 
         function setToggle(id, key, defOn) {
           const el = document.getElementById(id);
@@ -26012,11 +26769,16 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
       });
 
       ["dock-size-range", "dock-mag-range", "dock-opacity-range"].forEach(function (id) {
-        document.addEventListener("input", function (e) {
-          if (!e.target || e.target.id !== id) return;
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("input", function (e) {
           if (id === "dock-size-range") lsSet(KEYS.dockSize, e.target.value);
           if (id === "dock-mag-range") lsSet(KEYS.dockMagAmt, e.target.value);
-          if (id === "dock-opacity-range") lsSet(KEYS.dockOpacity, e.target.value);
+          if (id === "dock-opacity-range") {
+            lsSet(KEYS.dockOpacity, e.target.value);
+            var out = document.getElementById("dock-opacity-value");
+            if (out) out.textContent = e.target.value + "%";
+          }
           applyDockSettings();
         });
       });
@@ -27805,6 +28567,8 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   var GFN_ICON = "https://cdn.jsdelivr.net/gh/mathissofun137/Lumaicons/geforcenow.png";
   var SNAPCHAT_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/snapchat.png";
   var INSTAGRAM_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png";
+  var GOOGLE_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/google.png";
+  var DUCKDUCKGO_ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png";
   var APPS = [
     { id: "vscode", name: "Code", sub: "Code editor", cats: ["develop", "create", "work"], icon: CODE_ICON, code: true, inst: true, win: ".Vscode", badge: true },
     { id: "terminal", name: "Terminal", sub: "Command line", cats: ["develop", "work"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Terminal.png", dock: "terminal", inst: true, win: ".terminal", lp: "" },
@@ -27820,6 +28584,9 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     { id: "gfn", name: "GeForce Now", sub: "Cloud gaming by NVIDIA", cats: ["play", "arcade"], icon: GFN_ICON, dock: "gfn", inst: true, win: "#gfn-window,.gfn-app" },
     { id: "snapchat", name: "Snapchat", sub: "Share snaps with friends", cats: ["play", "create"], icon: SNAPCHAT_ICON, dock: "snapchat", inst: true, win: "#snapchat-window,.snapchat-app" },
     { id: "instagram", name: "Instagram", sub: "Photos, reels & stories", cats: ["play", "create"], icon: INSTAGRAM_ICON, dock: "instagram", inst: true, win: "#instagram-window,.instagram-app" },
+    { id: "google", name: "Google", sub: "Search the web", cats: ["work"], icon: GOOGLE_ICON, dock: "google", inst: true, win: "#google-window,.google-app" },
+    { id: "duckduckgo", name: "DuckDuckGo", sub: "Private search", cats: ["work"], icon: DUCKDUCKGO_ICON, dock: "duckduckgo", inst: true, win: "#duckduckgo-window,.duckduckgo-app" },
+    { id: "ai", name: "AI", sub: "Chat assistant", cats: ["work", "create"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png", dock: "ai", inst: true, win: "#ai-window,.ai-app" },
     { id: "safari", name: "Safari", sub: "Web browser", cats: ["work"], dock: "safari" },
     { id: "steam", name: "Steam", sub: "Games & community", cats: ["arcade", "play"], dock: "steam" },
     { id: "appletv", name: "Netflix", sub: "Movies & TV shows", cats: ["play"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/netflix.png", dock: "appletv", win: ".imovie-window,#imovie-window" },
@@ -27955,6 +28722,8 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     if (id === "gfn") { if (typeof window.openGfn === "function") window.openGfn(); else { var gfnb = dockBtn("gfn"); if (gfnb) gfnb.click(); } return; }
     if (id === "snapchat") { if (typeof window.openSnapchat === "function") window.openSnapchat(); else { var scb = dockBtn("snapchat"); if (scb) scb.click(); } return; }
     if (id === "instagram") { if (typeof window.openInstagram === "function") window.openInstagram(); else { var igb = dockBtn("instagram"); if (igb) igb.click(); } return; }
+    if (id === "google") { if (typeof window.openGoogle === "function") window.openGoogle(); else { var gob = dockBtn("google"); if (gob) gob.click(); } return; }
+    if (id === "duckduckgo") { if (typeof window.openDuckduckgo === "function") window.openDuckduckgo(); else { var ddg = dockBtn("duckduckgo"); if (ddg) ddg.click(); } return; }
     if (id === "appletv") { if (typeof window.openIMovie === "function") window.openIMovie(); else { var nfb = dockBtn("appletv"); if (nfb) nfb.click(); } return; }
     try {
       if (id === "notes" && typeof note !== "undefined") { open_window(note, point_note, app_name_notes); return; }
@@ -28032,7 +28801,7 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   var NAMES = [
     [".appstore-window", "App Store"], [".devhub-window", "Dev Hub"], [".Vscode", "Code"], [".terminal", "Terminal"],
     [".note", "Notes"], [".calculator", "Calculator"], [".maps", "Maps"], [".steam", "Steam"],
-    [".tiktok-app", "TikTok"], [".youtube-app", "YouTube"], [".gdash-app", "Geometry Dash"], [".twitch-app", "Twitch"], [".gfn-app", "GeForce Now"], [".snapchat-app", "Snapchat"], [".instagram-app", "Instagram"],
+    [".tiktok-app", "TikTok"], [".youtube-app", "YouTube"], [".gdash-app", "Geometry Dash"], [".twitch-app", "Twitch"], [".gfn-app", "GeForce Now"], [".snapchat-app", "Snapchat"], [".instagram-app", "Instagram"], [".google-app", "Google"], [".duckduckgo-app", "DuckDuckGo"], [".ai-app", "AI"],
     [".settings-window", "System Settings"], [".imovie-window", "Netflix"], [".safari", "Safari"], [".finder-window", "Finder"]
   ];
   function visible(el) {
@@ -28208,6 +28977,20 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
             else {
               var igb = document.querySelector('.dock-open-app-button[data-dock-id="instagram"], .open_instagram');
               if (igb) igb.click();
+            }
+            break;
+          case "google":
+            if (typeof window.openGoogle === "function") window.openGoogle();
+            else {
+              var gob = document.querySelector('.dock-open-app-button[data-dock-id="google"], .open_google');
+              if (gob) gob.click();
+            }
+            break;
+          case "duckduckgo":
+            if (typeof window.openDuckduckgo === "function") window.openDuckduckgo();
+            else {
+              var ddg = document.querySelector('.dock-open-app-button[data-dock-id="duckduckgo"], .open_duckduckgo');
+              if (ddg) ddg.click();
             }
             break;
           case "settings":
@@ -30181,7 +30964,7 @@ body[data-os-style="kali"] .safari .safari-tab {
 
   /* Per-OS browser iframe start pages (distinct chrome / start for each style) */
   var OS_BROWSER_IFRAMES = {
-    mac: "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg",
+    mac: "https://originfastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg",
     windows: "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy@main/index.svg#edge",
     ubuntu: "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy@main/index.svg#firefox",
     kali: "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy@main/index.svg#firefox-esr"
@@ -30300,10 +31083,8 @@ body[data-os-style="kali"] .safari .safari-tab {
   /* Faster iframe apps: preconnect, CDN warm, speculative load on dock hover */
 
   var WARM_SHELLS = [
-    "https://fastly.jsdelivr.net/gh/mathissofun137/Luma-os-apps@main/index.svg",
-    "https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg",
-    "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg",
-    "https://cdn.jsdelivr.net/gh/Mo9nikeypurple/svgproxy@main/index.svg"
+    "https://originfastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg",
+    "https://fastly.jsdelivr.net/gh/mathissofun137/Luma-os-apps@main/index.svg"
   ];
 
   function preconnect(origin) {
@@ -30372,6 +31153,8 @@ body[data-os-style="kali"] .safari .safari-tab {
       gfn: "gfn-frame",
       snapchat: "snapchat-frame",
       instagram: "instagram-frame",
+      google: "google-frame",
+      duckduckgo: "duckduckgo-frame",
       safari: "safari-frame"
     };
     var fid = map[dockId];
@@ -30383,7 +31166,7 @@ body[data-os-style="kali"] .safari .safari-tab {
       try {
         if (typeof NYX_PROXY_URL !== "undefined") saved = NYX_PROXY_URL;
       } catch (e) {}
-      if (!saved) saved = "https://fastly.jsdelivr.net/gh/mo9nikeypurple/svgproxy/index.svg";
+      if (!saved) saved = "https://originfastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg";
     }
     if (!saved) return;
     var cur = fr.getAttribute("src") || "";
@@ -30418,7 +31201,7 @@ body[data-os-style="kali"] .safari .safari-tab {
     }, true);
     // Also on mouseover of launchpad tiles
     document.addEventListener("pointerenter", function (e) {
-      var t = e.target && e.target.closest && e.target.closest("[data-lp-app], .open_tiktok, .open_youtube, .open_gdash, .open_twitch, .open_gfn, .open_snapchat, .open_instagram, .open_spotify, .open_safari");
+      var t = e.target && e.target.closest && e.target.closest("[data-lp-app], .open_tiktok, .open_youtube, .open_gdash, .open_twitch, .open_gfn, .open_snapchat, .open_instagram, .open_google, .open_duckduckgo, .open_ai, .open_spotify, .open_safari");
       if (!t) return;
       var id = t.getAttribute("data-lp-app") || t.getAttribute("data-dock-id");
       if (!id) {
@@ -30818,7 +31601,7 @@ body[data-os-style="kali"] .safari .safari-tab {
 <style id="nyx-v2-css">
 /* ===================================================================
    NYX v2 ADD-ON: Chromebook lite mode, macOS menu bar, Settings polish,
-   Vibe (music app)
+   Spotify (music app)
    =================================================================== */
 
 /* ---------- 0. General robustness (all devices) ---------- */
@@ -31027,7 +31810,7 @@ html:not(.nyx-lite) body .navbar { background: linear-gradient(180deg, rgba(255,
 .settings-window .window__taskbar--content h2 { font-weight: 600; opacity: .85; }
 
 /* ===================================================================
-   4. Vibe — music app
+   4. Spotify — music app
    =================================================================== */
 .vibe-window {
   display: none; position: absolute; top: 5%; left: 6%;
@@ -31177,6 +31960,8 @@ html:not(.nyx-lite) body .navbar { background: linear-gradient(180deg, rgba(255,
 .vibe-right h4 { margin: 0 0 14px; font-size: 16px; font-weight: 700; }
 .vibe-yt { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 18px; }
 .vibe-yt iframe, .vibe-yt > div { position: absolute; inset: 0; width: 100%; height: 100%; }
+.vibe-yt { min-height: 160px; }
+.vibe-yt iframe { background: #000; }
 .vibe-np-title { font-size: 22px; font-weight: 800; margin: 4px 0 4px; line-height: 1.15; }
 .vibe-np-artist { color: var(--vb-sub); font-size: 14px; }
 .vibe-q-head { margin: 24px 0 6px; font-weight: 700; font-size: 15px; }
@@ -31228,7 +32013,7 @@ html:not(.nyx-lite) body .navbar { background: linear-gradient(180deg, rgba(255,
 @container (max-width: 620px) { .vibe-app { grid-template-columns: 0 minmax(0, 1fr) 0 !important; padding: 0 4px; } .vibe-side { display: none; } .vibe-trow { grid-template-columns: 28px minmax(0, 1fr) 36px 46px; } .vibe-trow .more { display: none; } .vibe-hero .cover { width: 120px; height: 120px; } .vibe-sr-grid { grid-template-columns: 1fr; } }
 @media (max-width: 760px) { .vibe-player { grid-template-columns: minmax(0, 1fr) auto; } .vibe-extra { display: none; } .vibe-center .vibe-prog { position: absolute; left: 0; right: 0; bottom: 0; } }
 
-/* Vibe fixes */
+/* Spotify fixes */
 .vibe-window .window__taskbar.vibe-bar { background: #000 !important; border: 0 !important; }
 .vibe-window em { font-style: normal; }
 /* keep the menu bar (and its dropdowns) above every app window */
@@ -31246,7 +32031,7 @@ body .navbar { z-index: 3000 !important; }
 /* ===================================================================
    NYX v2 ADD-ON JS
    1) Chromebook lite mode + touch dragging
-   2) Vibe music app (YouTube playback, public search instances)
+   2) Spotify music app (YouTube playback, public search instances)
    3) sudo apt beta test spotify
    =================================================================== */
 (function () {
@@ -31299,14 +32084,69 @@ body .navbar { z-index: 3000 !important; }
   }
 
   /* ------------------------------------------------------------------
-     2) Vibe — music app
+     2) Spotify — music app
      ------------------------------------------------------------------ */
   var KEY_INST = "nyx_vibe_installed";
   var win, built = false;
 
-  var ICON = "data:image/svg+xml;utf8," + encodeURIComponent(
+  var ICON_FB = "data:image/svg+xml;utf8," + encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#ec4899"/></linearGradient></defs>' +
     '<rect width="128" height="128" rx="29" fill="url(#g)"/><g fill="#fff"><rect x="30" y="52" width="10" height="24" rx="5"/><rect x="48" y="38" width="10" height="52" rx="5"/><rect x="66" y="26" width="10" height="76" rx="5"/><rect x="84" y="44" width="10" height="40" rx="5"/></g></svg>');
+  window.__vibeFB = ICON_FB;
+  var ICON = "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Spotify.png";
+
+  /* ---- built-in catalog (always works offline / when search APIs fail) ---- */
+  var CATALOG = [
+    { id: "dQw4w9WgXcQ", title: "Never Gonna Give You Up", artist: "Rick Astley", dur: 213 },
+    { id: "kJQP7kiw5Fk", title: "Despacito", artist: "Luis Fonsi ft. Daddy Yankee", dur: 282 },
+    { id: "9bZkp7q19f0", title: "Gangnam Style", artist: "PSY", dur: 253 },
+    { id: "OPf0YbXqDm0", title: "Uptown Funk", artist: "Mark Ronson ft. Bruno Mars", dur: 271 },
+    { id: "fJ9rUzIMcZQ", title: "Bohemian Rhapsody", artist: "Queen", dur: 355 },
+    { id: "hTWKbfoikeg", title: "Smells Like Teen Spirit", artist: "Nirvana", dur: 278 },
+    { id: "YQHsXMglC9A", title: "Hello", artist: "Adele", dur: 367 },
+    { id: "JGwWNGJdvx8", title: "Shape of You", artist: "Ed Sheeran", dur: 263 },
+    { id: "2Vv-BfVoq4g", title: "Perfect", artist: "Ed Sheeran", dur: 263 },
+    { id: "lp-EO5I60KA", title: "Thinking Out Loud", artist: "Ed Sheeran", dur: 297 },
+    { id: "RgKAFK5djSk", title: "See You Again", artist: "Wiz Khalifa ft. Charlie Puth", dur: 237 },
+    { id: "60ItHLz5WEA", title: "Faded", artist: "Alan Walker", dur: 213 },
+    { id: "09R8_2nJtjg", title: "Sugar", artist: "Maroon 5", dur: 235 },
+    { id: "CevxZvSJLk8", title: "Roar", artist: "Katy Perry", dur: 226 },
+    { id: "0KSOMA3QBU0", title: "Dark Horse", artist: "Katy Perry ft. Juicy J", dur: 215 },
+    { id: "aJOTlE1K90k", title: "Girls Like You", artist: "Maroon 5", dur: 235 },
+    { id: "ZbZSe6N_BXs", title: "Happy", artist: "Pharrell Williams", dur: 233 },
+    { id: "ru0K8uYEZWw", title: "Can't Stop the Feeling!", artist: "Justin Timberlake", dur: 237 },
+    { id: "pRpeEdMmmQ0", title: "Waka Waka (This Time for Africa)", artist: "Shakira", dur: 202 },
+    { id: "kXYiU_JCYtU", title: "Numb", artist: "Linkin Park", dur: 187 },
+    { id: "eVTXPUF4Oz4", title: "In the End", artist: "Linkin Park", dur: 216 },
+    { id: "7wtfhZwyrcc", title: "Believer", artist: "Imagine Dragons", dur: 204 },
+    { id: "fKopy74weus", title: "Thunder", artist: "Imagine Dragons", dur: 187 },
+    { id: "IcrbM1l_BoI", title: "Wake Me Up", artist: "Avicii", dur: 247 },
+    { id: "hT_nvWreIhg", title: "Counting Stars", artist: "OneRepublic", dur: 257 },
+    { id: "hHUbLv4ThOo", title: "Starboy", artist: "The Weeknd ft. Daft Punk", dur: 230 },
+    { id: "4NRXx6UjOD4", title: "The Hills", artist: "The Weeknd", dur: 242 },
+    { id: "1vrEljMfXYo", title: "Take On Me", artist: "a-ha", dur: 225 },
+    { id: "L_jWHffIx5E", title: "All Star", artist: "Smash Mouth", dur: 200 },
+    { id: "Zi_XLOBDo_Y", title: "Billie Jean", artist: "Michael Jackson", dur: 294 },
+    { id: "sOnqjkJTMaA", title: "Thriller", artist: "Michael Jackson", dur: 358 },
+    { id: "e-ORhEE9VVg", title: "Blank Space", artist: "Taylor Swift", dur: 231 },
+    { id: "nfWlot6h_JM", title: "Shake It Off", artist: "Taylor Swift", dur: 219 },
+    { id: "450p7goxZqg", title: "All of Me", artist: "John Legend", dur: 269 },
+    { id: "hLQl3WQQoQ0", title: "Someone Like You", artist: "Adele", dur: 285 },
+    { id: "3tmd-ClpJxA", title: "Havana", artist: "Camila Cabello", dur: 217 },
+    { id: "jofNR_WkoCE", title: "The Fox (What Does the Fox Say?)", artist: "Ylvis", dur: 219 },
+    { id: "pt8VYOfr8As", title: "Levitating", artist: "Dua Lipa", dur: 203 },
+    { id: "4fndeDfaWCg", title: "I Want It That Way", artist: "Backstreet Boys", dur: 213 },
+    { id: "lDK9QqIzhwk", title: "Livin' on a Prayer", artist: "Bon Jovi", dur: 249 }
+  ];
+  function catalogSearch(q) {
+    q = (q || "").toLowerCase().trim();
+    if (!q) return CATALOG.slice();
+    var words = q.split(/\s+/).filter(Boolean);
+    return CATALOG.filter(function (t) {
+      var hay = (t.title + " " + t.artist).toLowerCase();
+      return words.every(function (w) { return hay.indexOf(w) >= 0; });
+    });
+  }
 
   /* ---- state ---- */
   var S = {
@@ -31319,7 +32159,6 @@ body .navbar { z-index: 3000 !important; }
   };
   function save() { ls("vibe_liked", JSON.stringify(S.liked)); ls("vibe_lists", JSON.stringify(S.lists)); ls("vibe_recent", JSON.stringify(S.recent.slice(0, 40))); }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  function thumb(id) { return "https://i.ytimg.com/vi/" + id + "/mqdefault.jpg"; }
   function fmt(s) { s = Math.max(0, Math.floor(s || 0)); return Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2); }
   function cleanTitle(t) { return String(t || "").replace(/\s*[\(\[](official|lyrics?|audio|video|music video|hd|hq|visualizer)[^\)\]]*[\)\]]/ig, "").trim(); }
   function isLiked(id) { return S.liked.some(function (t) { return t.id === id; }); }
@@ -31329,9 +32168,41 @@ body .navbar { z-index: 3000 !important; }
     win.appendChild(el); setTimeout(function () { el.remove(); }, 2300);
   }
 
-  /* ---- search over public Invidious / Piped instances ---- */
-  var INV = ["https://inv.nadeko.net", "https://yewtu.be", "https://invidious.nerdvpn.de", "https://invidious.privacyredirect.com", "https://invidious.f5.si"];
-  var PIPED = ["https://pipedapi.kavin.rocks", "https://pipedapi.adminforge.de", "https://api.piped.private.coffee", "https://pipedapi.leptons.xyz"];
+  /* =====================================================================
+     AUDIO ENGINE — full-length songs through a native <audio> element.
+     Source chain (first that actually plays wins; dead sources are skipped
+     for a few minutes):  direct URL  ->  Piped  ->  Invidious  ->  JioSaavn
+     ->  Audius  ->  YouTube embed (last resort).
+     ===================================================================== */
+  var ART = {};                                  // track id -> artwork (non-YouTube sources)
+  var CFG = {};
+  try { CFG = JSON.parse(ls("vibe_cfg") || "{}") || {}; } catch (e) { CFG = {}; }
+  function cfgSave() { ls("vibe_cfg", JSON.stringify(CFG)); }
+  function on(src) { return !(CFG.off && CFG.off[src]); }
+  function csv(s) { return String(s || "").split(/[\s,]+/).filter(Boolean).map(function (u) { return u.replace(/\/+$/, ""); }); }
+  function decodeEnt(s) { var t = document.createElement("textarea"); t.innerHTML = String(s || ""); return t.value; }
+  function norm(s) { return String(s || "").toLowerCase().replace(/\(.*?\)|\[.*?\]/g, " ").replace(/\b(feat|ft|featuring|official|video|audio|lyrics?|remastered|remaster)\b.*$/i, " ").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim(); }
+  function overlap(a, b) {
+    var A = norm(a).split(" ").filter(Boolean), B = norm(b).split(" ").filter(Boolean);
+    if (!A.length || !B.length) return 0;
+    var hit = A.filter(function (w) { return B.indexOf(w) >= 0; }).length;
+    return hit / Math.max(A.length, 1);
+  }
+  function trackKey(t) { return norm(t.title) + "|" + norm(t.artist).split(" ")[0]; }
+
+  function thumb(id) { return ART[id] || ("https://i.ytimg.com/vi/" + id + "/mqdefault.jpg"); }
+
+  /* ---- source health: skip sources that failed twice in a row for 5 min ---- */
+  var HEALTH = {};
+  function skipped(n) { var h = HEALTH[n]; return !!(h && h.fails >= 2 && Date.now() - h.at < 300000); }
+  function good(n) { HEALTH[n] = { fails: 0, at: Date.now() }; }
+  function bad(n) { var h = HEALTH[n] || { fails: 0 }; HEALTH[n] = { fails: h.fails + 1, at: Date.now() }; }
+
+  /* ---- network helpers ---- */
+  var INV = ["https://inv.nadeko.net", "https://yewtu.be", "https://invidious.nerdvpn.de", "https://invidious.privacyredirect.com", "https://invidious.f5.si", "https://invidious.materialio.us", "https://iv.melmac.space"];
+  var PIPED = ["https://pipedapi.kavin.rocks", "https://pipedapi.adminforge.de", "https://api.piped.private.coffee", "https://pipedapi.leptons.xyz", "https://piped-api.garudalinux.org", "https://pipedapi.reallyaweso.me", "https://pipedapi.darkness.services"];
+  var SAAVN = ["https://saavn.dev", "https://jiosaavn-api-privatecvc2.vercel.app", "https://saavn.me"];
+  var AUD = "https://api.audius.co/v1", AUD_APP = "NyxVibe";
   var instP = null;
   function withTimeout(p, ms) {
     return new Promise(function (res, rej) { var t = setTimeout(function () { rej(new Error("timeout")); }, ms); p.then(function (v) { clearTimeout(t); res(v); }, function (e) { clearTimeout(t); rej(e); }); });
@@ -31339,7 +32210,7 @@ body .navbar { z-index: 3000 !important; }
   function getJSON(url, ms) {
     var ctl = ("AbortController" in window) ? new AbortController() : null;
     return withTimeout(fetch(url, ctl ? { signal: ctl.signal } : {}).then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); }), ms || 6000)
-      .catch(function (e) { if (ctl) ctl.abort(); throw e; });
+      .catch(function (e) { if (ctl) { try { ctl.abort(); } catch (x) {} } throw e; });
   }
   function anyOf(ps) {
     return new Promise(function (res, rej) {
@@ -31348,35 +32219,110 @@ body .navbar { z-index: 3000 !important; }
       ps.forEach(function (p) { p.then(res, function (e) { errs.push(e); if (--n === 0) rej(errs[0]); }); });
     });
   }
+  function uniq(a) { var s = {}; return a.filter(function (x) { if (!x || s[x]) return false; return (s[x] = 1); }); }
   function instances() {
     if (instP) return instP;
-    instP = withTimeout(fetch("https://api.invidious.io/instances.json?sort_by=health").then(function (r) { return r.json(); }), 4000)
-      .then(function (j) {
-        var live = j.filter(function (x) { return x[1] && x[1].api && x[1].type === "https" && x[1].uri; }).map(function (x) { return x[1].uri.replace(/\/$/, ""); }).slice(0, 5);
-        return { inv: live.concat(INV.filter(function (u) { return live.indexOf(u) < 0; })).slice(0, 8), piped: PIPED };
-      }).catch(function () { return { inv: INV, piped: PIPED }; });
+    var good1 = ls("vibe_good_inv"), good2 = ls("vibe_good_piped");
+    var p1 = withTimeout(fetch("https://api.invidious.io/instances.json?sort_by=health").then(function (r) { return r.json(); }), 4000)
+      .then(function (j) { return j.filter(function (x) { return x[1] && x[1].api && x[1].type === "https" && x[1].uri; }).map(function (x) { return x[1].uri.replace(/\/$/, ""); }).slice(0, 6); }).catch(function () { return []; });
+    var p2 = withTimeout(fetch("https://piped-instances.kavin.rocks/").then(function (r) { return r.json(); }), 4000)
+      .then(function (j) { return j.map(function (x) { return x && x.api_url && x.api_url.replace(/\/$/, ""); }).filter(Boolean).slice(0, 8); }).catch(function () { return []; });
+    instP = Promise.all([p1, p2]).then(function (r) {
+      return {
+        inv: uniq(csv(CFG.invidious).concat([good1], r[0], INV)).slice(0, 10),
+        piped: uniq(csv(CFG.piped).concat([good2], r[1], PIPED)).slice(0, 10)
+      };
+    });
     return instP;
   }
   function idFromPiped(u) { var m = /[?&]v=([\w-]{11})/.exec(u || ""); return m && m[1]; }
-  function search(q) {
-    q = q.trim();
-    if (S.cache[q]) return Promise.resolve(S.cache[q]);
+
+  /* ---- searching ---- */
+  function ytSearch(q) {
     return instances().then(function (I) {
       var tasks = [];
-      I.piped.forEach(function (b) {
-        tasks.push(getJSON(b + "/search?q=" + encodeURIComponent(q) + "&filter=music_songs", 6500).then(function (j) {
+      if (on("piped")) I.piped.slice(0, 6).forEach(function (b) {
+        tasks.push(getJSON(b + "/search?q=" + encodeURIComponent(q) + "&filter=music_songs", 5500).then(function (j) {
           var out = (j.items || []).map(function (x) { var id = idFromPiped(x.url); return id && { id: id, title: cleanTitle(x.title), artist: (x.uploaderName || "").replace(/ - Topic$/, ""), dur: x.duration || 0 }; }).filter(Boolean);
-          if (!out.length) throw new Error("empty"); return out;
+          if (!out.length) throw new Error("empty"); ls("vibe_good_piped", b); return out;
         }));
       });
-      I.inv.forEach(function (b) {
-        tasks.push(getJSON(b + "/api/v1/search?q=" + encodeURIComponent(q) + "&type=video&fields=videoId,title,author,lengthSeconds", 6500).then(function (j) {
+      if (on("invidious")) I.inv.slice(0, 6).forEach(function (b) {
+        tasks.push(getJSON(b + "/api/v1/search?q=" + encodeURIComponent(q) + "&type=video&fields=videoId,title,author,lengthSeconds", 5500).then(function (j) {
           var out = (j || []).filter(function (x) { return x.videoId && x.lengthSeconds > 45 && x.lengthSeconds < 1200; }).map(function (x) { return { id: x.videoId, title: cleanTitle(x.title), artist: (x.author || "").replace(/ - Topic$/, ""), dur: x.lengthSeconds }; });
-          if (!out.length) throw new Error("empty"); return out;
+          if (!out.length) throw new Error("empty"); ls("vibe_good_inv", b); return out;
         }));
       });
       return anyOf(tasks);
-    }).then(function (r) { S.cache[q] = r; return r; });
+    });
+  }
+  function saavnTrack(x) {
+    if (!x) return null;
+    var urls = x.downloadUrl || x.download_url || [];
+    var best = Array.isArray(urls) ? urls[urls.length - 1] : null;
+    var u = best && (best.url || best.link);
+    if (!u) return null;
+    var id = "sv_" + x.id;
+    var img = x.image; if (Array.isArray(img)) { var im = img[img.length - 1]; img = im && (im.url || im.link); }
+    if (img) ART[id] = String(img).replace(/^http:/, "https:");
+    var artist = (x.artists && x.artists.primary && x.artists.primary.map(function (a) { return a.name; }).join(", ")) || x.primaryArtists || x.singers || "";
+    return { id: id, title: decodeEnt(cleanTitle(x.name || x.title)), artist: decodeEnt(artist), dur: +x.duration || 0, url: String(u).replace(/^http:/, "https:"), src: "saavn" };
+  }
+  function saavnSearch(q, limit) {
+    return anyOf(SAAVN.slice().map(function (b) {
+      return getJSON(b + "/api/search/songs?query=" + encodeURIComponent(q) + "&limit=" + (limit || 12), 5500).then(function (j) {
+        var rs = (j && j.data && (j.data.results || j.data)) || (j && j.results) || [];
+        var out = rs.map(saavnTrack).filter(Boolean);
+        if (!out.length) throw new Error("empty"); return out;
+      });
+    }));
+  }
+  function audTrack(x) {
+    if (!x || x.is_streamable === false || x.is_delete || !(x.duration > 45)) return null;
+    var id = "au_" + x.id, a = x.artwork && (x.artwork["480x480"] || x.artwork["150x150"] || x.artwork["1000x1000"]);
+    if (a) ART[id] = a;
+    return { id: id, title: decodeEnt(x.title), artist: decodeEnt((x.user && x.user.name) || ""), dur: x.duration || 0, url: AUD + "/tracks/" + x.id + "/stream?app_name=" + AUD_APP, src: "audius" };
+  }
+  function audiusSearch(q, limit) {
+    return getJSON(AUD + "/tracks/search?query=" + encodeURIComponent(q) + "&app_name=" + AUD_APP + "&limit=" + (limit || 20), 5500).then(function (j) {
+      var out = ((j && j.data) || []).map(audTrack).filter(Boolean); if (!out.length) throw new Error("empty"); return out;
+    });
+  }
+  function gather(jobs, graceMs, hardMs) {
+    return new Promise(function (res) {
+      var results = [], left = jobs.length, fin = false, grace = null, hard;
+      function finish() { if (fin) return; fin = true; clearTimeout(grace); clearTimeout(hard); res(jobs.map(function (_, i) { return results[i] || []; })); }
+      hard = setTimeout(finish, hardMs);
+      if (!left) return finish();
+      jobs.forEach(function (p, i) {
+        p.then(function (r) { results[i] = r || []; if (r && r.length && !grace) grace = setTimeout(finish, graceMs); }, function () { results[i] = []; })
+          .then(function () { if (--left === 0) finish(); });
+      });
+    });
+  }
+  function search(q) {
+    q = (q || "").trim();
+    if (S.cache[q]) return Promise.resolve(S.cache[q]);
+    var local = catalogSearch(q);
+    var jobs = [];
+    if (on("saavn")) jobs.push(saavnSearch(q));
+    if (on("piped") || on("invidious")) jobs.push(ytSearch(q));
+    if (on("audius")) jobs.push(audiusSearch(q));
+    return gather(jobs, 2200, 7000).then(function (groups) {
+      var other = groups.some(function (g, i) { return g.length && i < groups.length - (on("audius") ? 1 : 0); });
+      if (on("audius") && other) groups[groups.length - 1] = groups[groups.length - 1].slice(0, 4);
+      var out = [], seen = {}, max = 0;
+      groups.forEach(function (g) { max = Math.max(max, g.length); });
+      for (var i = 0; i < max; i++) groups.forEach(function (g) {
+        var t = g[i]; if (!t) return;
+        var k = trackKey(t); if (seen[t.id] || seen[k]) return;
+        seen[t.id] = seen[k] = 1; out.push(t);
+      });
+      local.forEach(function (t) { var k = trackKey(t); if (!seen[t.id] && !seen[k]) { seen[t.id] = seen[k] = 1; out.push(t); } });
+      if (!out.length) out = local.length ? local : CATALOG.slice(0, 12);
+      S.cache[q] = out;
+      return out;
+    });
   }
   function fromLink(txt) {
     var m = /(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/)([\w-]{11})/.exec(txt) || /^([\w-]{11})$/.exec(txt.trim());
@@ -31387,76 +32333,202 @@ body .navbar { z-index: 3000 !important; }
       .catch(function () { return { id: id, title: "YouTube video " + id, artist: "YouTube", dur: 0 }; });
   }
 
-  /* ---- YouTube player ---- */
-  var yt = null, ytReady = false, pending = null, tick = null;
-  function loadYT() {
-    return new Promise(function (res) {
-      if (window.YT && window.YT.Player) return res();
-      var prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = function () { try { prev && prev(); } catch (e) {} res(); };
-      var s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; s.async = true; document.head.appendChild(s);
+  /* ---- stream resolvers: each returns a promise of [{url,label}] ---- */
+  function srcPiped(t) {
+    return instances().then(function (I) {
+      return anyOf(I.piped.slice(0, 6).map(function (b) {
+        return getJSON(b + "/streams/" + t.id, 7000).then(function (j) {
+          var a = (j.audioStreams || []).filter(function (s) { return s.url && !/video/.test(s.mimeType || ""); });
+          if (!a.length) throw new Error("no audio");
+          a.sort(function (x, y) { var mx = /mp4/.test(x.mimeType || "") ? 1 : 0, my = /mp4/.test(y.mimeType || "") ? 1 : 0; return (my - mx) || ((y.bitrate || 0) - (x.bitrate || 0)); });
+          ls("vibe_good_piped", b);
+          return a.slice(0, 3).map(function (s) { return { url: s.url, label: "Piped" + (s.bitrate ? " · " + Math.round(s.bitrate / 1000) + "k" : "") }; });
+        });
+      }));
     });
   }
-  function ensurePlayer() {
-    if (yt) return Promise.resolve();
-    return loadYT().then(function () {
-      return new Promise(function (res) {
-        yt = new YT.Player("vibe-yt-host", {
-          width: "100%", height: "100%",
-          playerVars: { playsinline: 1, rel: 0, modestbranding: 1, controls: 1, fs: 0, origin: location.origin && location.origin !== "null" ? location.origin : undefined },
-          events: {
-            onReady: function () { ytReady = true; yt.setVolume(S.vol); res(); if (pending) { var p = pending; pending = null; yt.loadVideoById(p); } },
-            onStateChange: onState,
-            onError: function () { toast("That track can't be played here, skipping…"); setTimeout(function () { next(true); }, 700); }
-          }
-        });
+  function srcInvidious(t) {
+    return instances().then(function (I) {
+      return I.inv.slice(0, 4).map(function (b) { return { url: b + "/latest_version?id=" + t.id + "&itag=140&local=true", label: "Invidious", inst: b }; });
+    });
+  }
+  function bestMatch(list, t) {
+    var best = null, bs = 0;
+    list.forEach(function (c) {
+      var s = overlap(t.title, c.title) * 0.75 + (t.artist && overlap(t.artist, c.artist + " " + c.title) > 0 ? 0.25 : 0);
+      if (t.dur && c.dur && Math.abs(t.dur - c.dur) > 20) s -= 0.6;
+      if (s > bs) { bs = s; best = c; }
+    });
+    return bs >= 0.5 ? best : null;
+  }
+  function srcSaavn(t) {
+    return saavnSearch((t.title + " " + t.artist).replace(/\s+(ft\.?|feat\.?|featuring)\s.*$/i, ""), 8).then(function (list) {
+      var m = bestMatch(list, t); if (!m) throw new Error("no match");
+      return [{ url: m.url, label: "JioSaavn" }];
+    });
+  }
+  function srcAudius(t) {
+    return audiusSearch(t.title + " " + t.artist, 10).then(function (list) {
+      var m = bestMatch(list, t); if (!m) throw new Error("no match");
+      return [{ url: m.url, label: "Audius (closest match)" }];
+    });
+  }
+
+  /* ---- playing a candidate URL on the shared <audio> element ---- */
+  var audio = null, gen = 0, cancelFn = null, ytMode = "idle", resumeAt = 0, midRetry = {};
+  var yt = null, ytReady = true, tick = null;     // kept for the YouTube-embed fallback
+  function setStatus(txt, kind) {
+    var el = $("vibe-src"); if (!el) return;
+    el.textContent = txt || ""; el.className = "vibe-srcbadge" + (kind ? " " + kind : "");
+    var el2 = $("vibe-np-src"); if (el2) { el2.textContent = txt || ""; el2.className = "vibe-srcbadge" + (kind ? " " + kind : ""); }
+  }
+  function attempt(url, ms) {
+    return new Promise(function (res, rej) {
+      var done = false, to;
+      function cleanup() { clearTimeout(to); audio.removeEventListener("playing", ok); audio.removeEventListener("error", fail); if (cancelFn === cancel) cancelFn = null; }
+      function ok() { if (done) return; done = true; cleanup(); res(); }
+      function fail() { if (done) return; done = true; cleanup(); rej(new Error("media error")); }
+      function cancel() { if (done) return; done = true; cleanup(); rej(new Error("cancelled")); }
+      cancelFn = cancel;
+      audio.addEventListener("playing", ok); audio.addEventListener("error", fail);
+      to = setTimeout(function () { if (done) return; done = true; cleanup(); rej(new Error("timeout")); }, ms || 9000);
+      try { audio.src = url; audio.load(); } catch (e) { return fail(); }
+      var pr = audio.play();
+      if (pr && pr.catch) pr.catch(function (err) {
+        if (err && err.name === "NotAllowedError" && !done) { done = true; cleanup(); var e2 = new Error("blocked"); e2.blocked = true; rej(e2); }
       });
     });
   }
-  function onState(e) {
-    var st = e.data; // 0 ended, 1 playing, 2 paused
-    S.playing = st === 1 || st === 3;
-    if (st === 0) next(true);
-    renderPlayState();
+  function tryList(list, ms, my) {
+    var i = 0;
+    return new Promise(function (res, rej) {
+      (function step() {
+        if (my !== gen) return rej(new Error("cancelled"));
+        if (i >= list.length) return rej(new Error("exhausted"));
+        var c = list[i++];
+        attempt(c.url, ms).then(function () { if (c.inst) ls("vibe_good_inv", c.inst); res(c.label); }, function (e) { if (e && (e.blocked || e.message === "cancelled")) return rej(e); step(); });
+      })();
+    });
   }
-  function setPlaying(on) { S.playing = on; renderPlayState(); }
-  function startTick() {
-    if (tick) return;
-    tick = setInterval(function () {
-      if (!ytReady || !yt || !yt.getCurrentTime) return;
-      var c = yt.getCurrentTime(), d = yt.getDuration() || (cur() && cur().dur) || 0;
-      $("vibe-cur").textContent = fmt(c); $("vibe-dur").textContent = fmt(d);
-      var p = d ? Math.min(100, c / d * 100) : 0;
-      $("vibe-fill").style.width = p + "%"; $("vibe-seek").style.setProperty("--p", p + "%");
-    }, 400);
+  function stopEmbed() { var host = $("vibe-yt-host"); if (host) host.innerHTML = ""; stopProgressTick(); }
+  function showArt(t) {
+    var box = document.querySelector(".vibe-yt"), img = $("vibe-np-art");
+    if (!box) return;
+    box.classList.toggle("audio", ytMode !== "embed");
+    if (img && t) { img.src = thumb(t.id); img.classList.toggle("yt", /ytimg/.test(img.src)); }
+  }
+  function playResolved(t, startAt) {
+    var my = ++gen; if (cancelFn) cancelFn();
+    stopEmbed(); try { audio.pause(); } catch (e) {}
+    ytMode = "loading"; S.playing = false; renderPlayState(); showArt(t);
+    setStatus("Finding audio…", "busy");
+    var isYT = /^[\w-]{11}$/.test(t.id) && !t.src;
+    var stages = [];
+    if (t.url) stages.push({ n: t.src || "direct", get: function () { return Promise.resolve([{ url: t.url, label: ({ saavn: "JioSaavn", audius: "Audius" })[t.src] || "Direct" }]); }, ms: 11000 });
+    if (isYT && on("piped")) stages.push({ n: "piped", get: function () { return srcPiped(t); }, ms: 10000 });
+    if (isYT && on("invidious")) stages.push({ n: "invidious", get: function () { return srcInvidious(t); }, ms: 6000 });
+    if (on("saavn") && t.src !== "saavn") stages.push({ n: "saavn", get: function () { return srcSaavn(t); }, ms: 11000 });
+    if (on("audius") && t.src !== "audius") stages.push({ n: "audius", get: function () { return srcAudius(t); }, ms: 11000 });
+    var i = 0;
+    function failAll() {
+      if (my !== gen) return;
+      if (isYT && on("embed")) { setStatus("Using YouTube player", "warn"); return mountIframe(t.id); }
+      ytMode = "error"; S.playing = false; renderPlayState();
+      setStatus("Couldn't play this one — try another song", "err");
+      toast("Couldn't find a playable stream for this song");
+    }
+    (function nextStage() {
+      if (my !== gen) return;
+      if (i >= stages.length) return failAll();
+      var st = stages[i++];
+      if (st.n !== "direct" && skipped(st.n)) return nextStage();
+      setStatus("Finding audio… (" + st.n + ")", "busy");
+      st.get().then(function (list) { return tryList(list, st.ms, my); }).then(function (label) {
+        if (my !== gen) return;
+        good(st.n); ytMode = "audio"; S.playing = true; renderPlayState();
+        setStatus("● " + label, "ok");
+        if (startAt) { try { audio.currentTime = startAt; } catch (e) {} }
+      }, function (err) {
+        if (my !== gen) return;
+        if (err && err.blocked) { ytMode = "idle"; S.playing = false; renderPlayState(); setStatus("Press play to start", "warn"); return; }
+        if (err && err.message === "cancelled") return;
+        if (st.n !== "direct") bad(st.n);
+        nextStage();
+      });
+    })();
   }
 
-  function playQueue(list, i) {
-    S.queue = list.slice(); S.idx = i; startTrack();
+  /* ---- YouTube embed (last resort only) ---- */
+  var EMBED_HOSTS = ["https://www.youtube-nocookie.com/embed/", "https://www.youtube.com/embed/"];
+  function stopProgressTick() { if (tick) { clearInterval(tick); tick = null; } }
+  function startApproxTick() {
+    stopProgressTick();
+    var started = Date.now(), est = (cur() && cur().dur) || 210;
+    tick = setInterval(function () {
+      var c = Math.min(est, (Date.now() - started) / 1000);
+      var curEl = $("vibe-cur"), durEl = $("vibe-dur"), fill = $("vibe-fill"), seek = $("vibe-seek");
+      if (curEl) curEl.textContent = fmt(c);
+      if (durEl) durEl.textContent = fmt(est);
+      var p = est ? Math.min(100, c / est * 100) : 0;
+      if (fill) fill.style.width = p + "%";
+      if (seek) seek.style.setProperty("--p", p + "%");
+      if (c >= est - 0.5) { stopProgressTick(); next(true); }
+    }, 400);
   }
+  function mountIframe(id) {
+    var hostEl = $("vibe-yt-host"); if (!hostEl) return;
+    try { audio.pause(); } catch (e) {}
+    hostEl.innerHTML = "";
+    ytMode = "embed";
+    var iframe = document.createElement("iframe");
+    iframe.setAttribute("allow", "autoplay; encrypted-media; picture-in-picture; fullscreen");
+    iframe.setAttribute("allowfullscreen", "true"); iframe.setAttribute("frameborder", "0");
+    iframe.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+    iframe.src = EMBED_HOSTS[0] + id + "?autoplay=1&rel=0&modestbranding=1&playsinline=1";
+    iframe.style.cssText = "position:absolute;inset:0;width:100%;height:100%;border:0;background:#000";
+    hostEl.appendChild(iframe);
+    showArt(cur()); var box = document.querySelector(".vibe-yt"); if (box) box.classList.remove("audio");
+    var app = $("vibe-app"); if (app) app.classList.remove("no-right");
+    setPlaying(true); startApproxTick();
+  }
+  function setPlaying(on) { S.playing = on; renderPlayState(); }
+
+  function playQueue(list, i) { S.queue = list.slice(); S.idx = i; startTrack(); }
   function startTrack() {
-    var t = cur(); if (!t) return;
+    var t = cur(); if (!t || S.closed) return;
     S.recent = [t].concat(S.recent.filter(function (r) { return r.id !== t.id; })); save();
     renderNow(); renderQueue(); markPlaying();
-    $("vibe-fill").style.width = "0"; $("vibe-cur").textContent = "0:00";
-    ensurePlayer().then(function () {
-      if (ytReady) yt.loadVideoById(t.id); else pending = t.id;
-      startTick();
-    });
+    var fill = $("vibe-fill"), curEl = $("vibe-cur"), durEl = $("vibe-dur");
+    if (fill) fill.style.width = "0";
+    if (curEl) curEl.textContent = "0:00";
+    if (durEl) durEl.textContent = t.dur ? fmt(t.dur) : "0:00";
+    playResolved(t);
     if ("mediaSession" in navigator) {
-      try { navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist, artwork: [{ src: thumb(t.id), sizes: "320x180", type: "image/jpeg" }] }); } catch (e) {}
+      try { navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: t.artist, artwork: [{ src: thumb(t.id), sizes: "320x320", type: "image/jpeg" }] }); } catch (e) {}
     }
     var th = $("vibe-main"); if (th) th.style.setProperty("--vb-tint", tintFor(t.id));
   }
   function tintFor(id) { var h = 0; for (var i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 360; return "hsl(" + h + ",38%,28%)"; }
+  function stopAll() {
+    gen++; if (cancelFn) cancelFn();
+    try { audio.pause(); } catch (e) {}
+    stopEmbed(); ytMode = "idle"; S.playing = false; renderPlayState();
+  }
   function toggle() {
-    if (!cur()) return;
-    if (!ytReady) return;
-    var st = yt.getPlayerState();
-    if (st === 1 || st === 3) { yt.pauseVideo(); setPlaying(false); } else { yt.playVideo(); setPlaying(true); }
+    if (!cur() || S.closed) return;
+    if (ytMode === "loading") return;
+    if (ytMode === "audio") {
+      if (audio.paused) { var p = audio.play(); if (p && p.catch) p.catch(function () {}); } else audio.pause();
+      return;
+    }
+    if (ytMode === "embed") {
+      if (S.playing) { stopEmbed(); setPlaying(false); } else mountIframe(cur().id);
+      return;
+    }
+    startTrack();
   }
   function next(auto) {
-    if (!S.queue.length) return;
+    if (!S.queue.length || S.closed) return;
     if (auto && S.repeat === 2) { return startTrack(); }
     var n;
     if (S.shuffle && S.queue.length > 1) { do { n = Math.floor(Math.random() * S.queue.length); } while (n === S.idx); }
@@ -31477,8 +32549,34 @@ body .navbar { z-index: 3000 !important; }
     S.idx = n; startTrack();
   }
   function prev() {
-    if (ytReady && yt.getCurrentTime && yt.getCurrentTime() > 4) { yt.seekTo(0, true); return; }
-    if (S.idx > 0) { S.idx--; startTrack(); } else if (ytReady) yt.seekTo(0, true);
+    if (ytMode === "audio" && audio.currentTime > 4) { audio.currentTime = 0; return; }
+    if (S.idx > 0) { S.idx--; startTrack(); } else if (ytMode === "audio") audio.currentTime = 0;
+  }
+  function wireAudio() {
+    audio = $("vibe-audio");
+    if (!audio) { audio = document.createElement("audio"); audio.id = "vibe-audio"; audio.preload = "auto"; ($("vibe-window") || document.body).appendChild(audio); }
+    audio.volume = S.vol / 100;
+    function paint() {
+      if (ytMode !== "audio") return;
+      var d = audio.duration, c = audio.currentTime || 0;
+      var curEl = $("vibe-cur"), durEl = $("vibe-dur"), fill = $("vibe-fill"), seek = $("vibe-seek");
+      if (isFinite(d) && d > 0) {
+        if (curEl) curEl.textContent = fmt(c); if (durEl) durEl.textContent = fmt(d);
+        var p = Math.min(100, c / d * 100); if (fill) fill.style.width = p + "%"; if (seek) seek.style.setProperty("--p", p + "%");
+      } else if (curEl) curEl.textContent = fmt(c);
+    }
+    audio.addEventListener("timeupdate", paint);
+    audio.addEventListener("durationchange", paint);
+    audio.addEventListener("ended", function () { if (ytMode === "audio") next(true); });
+    audio.addEventListener("playing", function () { if (ytMode === "audio") { setPlaying(true); var s = $("vibe-src"); if (s && /Buffering/.test(s.textContent)) setStatus("● " + (HEALTH.__label || "Playing"), "ok"); } });
+    audio.addEventListener("pause", function () { if (ytMode === "audio" && !audio.ended) setPlaying(false); });
+    audio.addEventListener("waiting", function () { if (ytMode === "audio") { var s = $("vibe-src"); if (s) HEALTH.__label = s.textContent.replace(/^●\s*/, ""); setStatus("Buffering…", "busy"); } });
+    audio.addEventListener("error", function () {
+      // an error after a successful start (expired URL / network drop): re-resolve once and resume
+      if (ytMode !== "audio") return;
+      var t = cur(); if (!t || midRetry[t.id]) { ytMode = "error"; setPlaying(false); setStatus("Playback interrupted", "err"); return; }
+      midRetry[t.id] = 1; resumeAt = audio.currentTime || 0; toast("Reconnecting…"); playResolved(t, resumeAt);
+    });
   }
 
   /* ---- rendering ---- */
@@ -31489,11 +32587,13 @@ body .navbar { z-index: 3000 !important; }
   var NOTE = '<svg viewBox="0 0 24 24"><path d="M9 3v12.3A3.5 3.5 0 1 0 11 18.5V7h8V3z"/></svg>';
 
   function renderPlayState() {
+    try { window.dispatchEvent(new Event("vibe:state")); } catch (e) {}
     var b = $("vibe-pp"); if (b) { b.innerHTML = S.playing ? PAUSE : PLAY; b.title = S.playing ? "Pause" : "Play"; }
     markPlaying();
   }
   function renderNow() {
     var t = cur(); if (!t) return;
+    try { window.dispatchEvent(new Event("vibe:state")); } catch (e) {}
     $("vibe-cover").src = thumb(t.id); $("vibe-t").textContent = t.title; $("vibe-a").textContent = t.artist;
     $("vibe-np-title").textContent = t.title; $("vibe-np-artist").textContent = t.artist;
     $("vibe-like").classList.toggle("on", isLiked(t.id));
@@ -31537,7 +32637,7 @@ body .navbar { z-index: 3000 !important; }
 
   function greet() { var h = new Date().getHours(); return h < 5 ? "Good night" : h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; }
   function offlineNote(retry) {
-    return '<div class="vibe-note"><b>Couldn\'t reach a music search server.</b><br>Vibe finds songs through public YouTube search mirrors, and they\'re all busy or blocked on this network right now. You can still play anything by pasting a YouTube link below.' +
+    return '<div class="vibe-note"><b>Couldn\'t reach a music search server.</b><br>Spotify couldn\'t reach any of its music sources from this network right now (Piped, Invidious, JioSaavn, Audius). You can still play anything by pasting a YouTube link below, or open Settings → Music to test the sources.' +
       '<input id="vibe-paste" placeholder="Paste a YouTube link or video ID and press Enter"><br><button type="button" id="vibe-retry">Try again</button></div>';
   }
 
@@ -31550,13 +32650,31 @@ body .navbar { z-index: 3000 !important; }
       '<div id="vibe-shelves"></div>';
     var box = $("vibe-shelves");
     var failed = 0, loaded = 0;
+    // Instant local shelves so UI never waits on flaky mirrors
+    var localBuckets = [
+      CATALOG.slice(0, 10),
+      CATALOG.slice(5, 15),
+      CATALOG.slice(10, 20),
+      CATALOG.slice(15, 25),
+      CATALOG.slice(20, 30),
+      CATALOG.slice(25, 35),
+      CATALOG.slice(30, 40)
+    ];
     SHELVES.forEach(function (sh, si) {
       var d = document.createElement("section"); d.className = "vibe-shelf";
-      d.innerHTML = '<div class="vibe-shelf-head"><h2>' + esc(sh.title) + '</h2><a data-q="' + esc(sh.q) + '">Show all</a></div><div class="vibe-cards single-row">' + new Array(7).join('<div class="vibe-skel"></div>') + '</div>';
+      var seed = localBuckets[si] || CATALOG.slice(0, 10);
+      var ctx0 = "sh" + si;
+      lists[ctx0] = seed;
+      d.innerHTML = '<div class="vibe-shelf-head"><h2>' + esc(sh.title) + '</h2><a data-q="' + esc(sh.q) + '">Show all</a></div><div class="vibe-cards single-row">' + seed.slice(0, 12).map(function (t, i) { return cardHtml(t, i, ctx0); }).join("") + '</div>';
       box.appendChild(d);
+      if (!S.recent.length && si === 0) {
+        lists.quick = seed.slice(0, 8);
+        $("vibe-quick").innerHTML = seed.slice(0, 8).map(function (t, i) { return '<div class="vibe-qp" data-id="' + t.id + '" data-i="' + i + '" data-ctx="quick"><img src="' + thumb(t.id) + '" alt=""><b>' + esc(t.title) + '</b><button type="button" class="vibe-fab" data-act="play">' + PLAY + '</button></div>'; }).join("");
+      }
       setTimeout(function () {
         if (S.view !== "home") return;
         search(sh.q).then(function (r) {
+          if (!r || !r.length) return;
           loaded++;
           var ctx = "sh" + si; lists[ctx] = r;
           d.querySelector(".vibe-cards").innerHTML = r.slice(0, 12).map(function (t, i) { return cardHtml(t, i, ctx); }).join("");
@@ -31565,11 +32683,8 @@ body .navbar { z-index: 3000 !important; }
             $("vibe-quick").innerHTML = r.slice(0, 8).map(function (t, i) { return '<div class="vibe-qp" data-id="' + t.id + '" data-i="' + i + '" data-ctx="quick"><img src="' + thumb(t.id) + '" alt=""><b>' + esc(t.title) + '</b><button type="button" class="vibe-fab" data-act="play">' + PLAY + '</button></div>'; }).join("");
           }
           markPlaying();
-        }).catch(function () {
-          failed++; d.remove();
-          if (failed === SHELVES.length && !loaded && S.view === "home") box.innerHTML = offlineNote();
-        });
-      }, si * 250);
+        }).catch(function () { /* local seed already shown */ });
+      }, si * 280);
     });
   }
 
@@ -31712,6 +32827,13 @@ body .navbar { z-index: 3000 !important; }
       }
       if (t.id === "vibe-retry") { S.cache = {}; instP = null; go(S.view, S.arg, true); }
     });
+    win.addEventListener("contextmenu", function (e) {
+      var el = e.target.closest && e.target.closest("[data-ctx][data-id]");
+      if (!el) return;
+      var track = (lists[el.dataset.ctx] || [])[+el.dataset.i];
+      if (!track) return;
+      e.preventDefault(); e.stopPropagation(); trackMenu(e, track);
+    });
     win.addEventListener("keydown", function (e) {
       if (e.target.id === "vibe-paste" && e.key === "Enter") {
         fromLink(e.target.value).then(function (t) { lists.paste = [t]; playQueue([t], 0); toast("Playing " + t.title); }).catch(function () { toast("That doesn't look like a YouTube link"); });
@@ -31736,9 +32858,9 @@ body .navbar { z-index: 3000 !important; }
       f(ev); function mv(e) { f(e); } function up() { document.removeEventListener("mousemove", mv); document.removeEventListener("mouseup", up); }
       document.addEventListener("mousemove", mv); document.addEventListener("mouseup", up);
     }
-    $("vibe-seek").addEventListener("mousedown", function (e) { e.stopPropagation(); if (!ytReady || !cur()) return; var d = yt.getDuration(); seekFrom(this, e, function (p) { yt.seekTo(p * d, true); $("vibe-fill").style.width = p * 100 + "%"; }); });
-    $("vibe-vol").addEventListener("mousedown", function (e) { e.stopPropagation(); seekFrom(this, e, function (p) { S.vol = Math.round(p * 100); S.muted = false; $("vibe-volfill").style.width = S.vol + "%"; if (ytReady) { yt.unMute(); yt.setVolume(S.vol); } }); });
-    $("vibe-mute").addEventListener("click", function () { S.muted = !S.muted; if (ytReady) { S.muted ? yt.mute() : yt.unMute(); } this.style.opacity = S.muted ? .5 : 1; });
+    $("vibe-seek").addEventListener("mousedown", function (e) { e.stopPropagation(); if (ytMode !== "audio" || !isFinite(audio.duration)) return; var d = audio.duration; seekFrom(this, e, function (p) { audio.currentTime = p * d; $("vibe-fill").style.width = p * 100 + "%"; $("vibe-cur").textContent = fmt(p * d); }); });
+    $("vibe-vol").addEventListener("mousedown", function (e) { e.stopPropagation(); seekFrom(this, e, function (p) { S.vol = Math.round(p * 100); S.muted = false; $("vibe-volfill").style.width = S.vol + "%"; audio.muted = false; audio.volume = S.vol / 100; }); });
+    $("vibe-mute").addEventListener("click", function () { S.muted = !S.muted; audio.muted = S.muted; this.style.opacity = S.muted ? .5 : 1; });
     win.addEventListener("keydown", function (e) {
       if (/input|textarea/i.test(e.target.tagName)) return;
       if (e.code === "Space") { e.preventDefault(); toggle(); }
@@ -31754,7 +32876,7 @@ body .navbar { z-index: 3000 !important; }
     }
     // window controls
     win.querySelector(".vibe-close").addEventListener("click", closeVibe);
-    win.querySelector(".vibe-min").addEventListener("click", function () { win.style.display = "none"; });
+    win.querySelector(".vibe-min").addEventListener("click", function () { win.classList.add("minimized"); win.style.display = "none"; });
     win.querySelector(".vibe-full").addEventListener("click", function () { win.classList.toggle("is-maximized"); });
     win.addEventListener("mousedown", function () { try { window.nyxBumpZ(win); } catch (e) { win.style.zIndex = 90; } }, true);
     try { if (window.jQuery) window.jQuery(win).draggable({ handle: ".vibe-bar", cancel: "button", containment: "window" }); } catch (e) {}
@@ -31762,26 +32884,37 @@ body .navbar { z-index: 3000 !important; }
 
   function build() {
     if (built) return; win = $("vibe-window"); if (!win) return; built = true;
-    wire(); renderPlayState(); renderLib();
+    wireAudio(); wire(); renderPlayState(); renderLib();
+    new MutationObserver(function () {
+      var hidden = win.style.display === "none" || getComputedStyle(win).display === "none";
+      if (hidden && !win.classList.contains("minimized") && !S.closed) { stopAll(); S.closed = true; dockOpen(false); }
+    }).observe(win, { attributes: true, attributeFilter: ["style", "class"] });
     $("vibe-back").disabled = true; $("vibe-fwd").disabled = true;
     $("vibe-main").style.setProperty("--vb-tint", "#2d3a63");
     go("home", null, true);
   }
   function openVibe() {
     win = $("vibe-window"); if (!win) return;
+    ls(KEY_INST, "1");
+    ensureDock(true); ensureLaunchpad(true);
+    S.closed = false;
     var first = !built;
     build();
     win.style.display = "flex";
-    if (first && win.offsetWidth < 1120) $("vibe-app").classList.add("no-right"); win.style.visibility = "visible"; win.style.opacity = "1";
+    if (first && win.offsetWidth < 1120) $("vibe-app").classList.add("no-right");
+    win.style.visibility = "visible"; win.style.opacity = "1";
     win.classList.remove("minimized");
     try { window.nyxBumpZ(win); } catch (e) { win.style.zIndex = 90; }
     var pt = document.getElementById("point-vibe"); if (pt) pt.style.display = "block";
-    try { if (typeof window.setMenuAppName === "function") window.setMenuAppName("Vibe"); } catch (e) {}
+    dockOpen(true);
+    try { if (typeof window.setMenuAppName === "function") window.setMenuAppName("Spotify"); } catch (e) {}
   }
+  function dockOpen(on) { try { if (typeof window.nyxSetDockOpen === "function") window.nyxSetDockOpen("vibe", on); } catch (e) {} }
   function closeVibe() {
     if (!win) return;
-    try { if (ytReady) yt.pauseVideo(); } catch (e) {}
-    S.playing = false; renderPlayState();
+    S.closed = true;
+    stopAll();
+    win.classList.remove("minimized"); dockOpen(false);
     win.style.display = "none"; win.classList.remove("is-maximized");
     var pt = document.getElementById("point-vibe"); if (pt) pt.style.display = "none";
     try { if (typeof window.setMenuAppName === "function") window.setMenuAppName("Finder"); } catch (e) {}
@@ -31794,12 +32927,12 @@ body .navbar { z-index: 3000 !important; }
     var btn = $("dock-vibe");
     if (show && !btn) {
       btn = document.createElement("button"); btn.type = "button"; btn.id = "dock-vibe";
-      btn.className = "dock-open-app-button icon open_vibe vibe-dock-icon"; btn.title = "Vibe"; btn.setAttribute("data-dock-id", "vibe"); btn.setAttribute("aria-label", "Launch Vibe");
-      btn.innerHTML = '<p class="tooltip">Vibe</p><span class="dock-icon-wrap"><img src="' + ICON + '" alt="Vibe" draggable="false" style="width:3.6rem;height:auto;aspect-ratio:1"></span><div class="dot" data-open-dot></div><div class="point" id="point-vibe" style="display:none"></div>';
+      btn.className = "dock-open-app-button icon open_vibe vibe-dock-icon"; btn.title = "Spotify"; btn.setAttribute("data-dock-id", "vibe"); btn.setAttribute("aria-label", "Launch Spotify");
+      btn.innerHTML = '<p class="tooltip">Spotify</p><span class="dock-icon-wrap"><img src="' + ICON + '" onerror="this.onerror=null;this.src=window.__vibeFB" alt="Spotify" draggable="false"></span><div class="dot" data-open-dot></div><div class="point" id="point-vibe" style="display:none"></div>';
       btn.addEventListener("click", function (e) { e.preventDefault(); e.stopPropagation(); openVibe(); });
       var divider = dock.querySelector('.divider[data-dock-id="__divider__"]') || dock.querySelector(".divider");
       if (divider) dock.insertBefore(btn, divider); else dock.appendChild(btn);
-      try { var d = $("macos-dock"); if (d) d.__mwDock = false; } catch (e) {}
+      try { window.dispatchEvent(new Event("nyx-dock-settings")); } catch (e) {}
     } else if (!show && btn) { btn.remove(); }
   }
   function ensureLaunchpad(show) {
@@ -31807,8 +32940,8 @@ body .navbar { z-index: 3000 !important; }
     if (!grid) return;
     var el = $("lp-vibe");
     if (show && !el) {
-      el = document.createElement("div"); el.className = "child-launchpad"; el.id = "lp-vibe"; el.setAttribute("data-keywords", "Vibe music spotify songs player");
-      el.innerHTML = '<img src="' + ICON + '" alt="Vibe"><strong>Vibe</strong>';
+      el = document.createElement("div"); el.className = "child-launchpad"; el.id = "lp-vibe"; el.setAttribute("data-keywords", "Spotify music spotify songs player");
+      el.innerHTML = '<img src="' + ICON + '" onerror="this.onerror=null;this.src=window.__vibeFB" alt="Spotify"><strong>Spotify</strong>';
       el.addEventListener("click", function () { var lp = $("launchpad"); if (lp) lp.style.display = "none"; openVibe(); });
       grid.appendChild(el);
     } else if (!show && el) el.remove();
@@ -31816,11 +32949,28 @@ body .navbar { z-index: 3000 !important; }
   function setInstalled(on) {
     ls(KEY_INST, on ? "1" : "0");
     ensureDock(on); ensureLaunchpad(on);
-    if (!on) { closeVibe(); try { if (ytReady) yt.stopVideo(); } catch (e) {} }
+    if (!on) { closeVibe(); stopAll(); }
   }
 
   /* ---- terminal: sudo apt beta test spotify ---- */
+  function diag() {
+    var tests = [
+      ["Piped", function () { return instances().then(function (I) { return anyOf(I.piped.slice(0, 6).map(function (b) { return getJSON(b + "/streams/dQw4w9WgXcQ", 7000).then(function (j) { if (!(j.audioStreams && j.audioStreams.length)) throw new Error("no audio"); return b; }); })); }); }],
+      ["Invidious", function () { return instances().then(function (I) { return anyOf(I.inv.slice(0, 6).map(function (b) { return getJSON(b + "/api/v1/search?q=test&type=video&fields=videoId", 6000).then(function () { return b; }); })); }); }],
+      ["JioSaavn", function () { return saavnSearch("test", 1).then(function (r) { return r.length + " result"; }); }],
+      ["Audius", function () { return audiusSearch("test", 1).then(function (r) { return r.length + " result"; }); }]
+    ];
+    return Promise.all(tests.map(function (t) {
+      return t[1]().then(function (r) { return { name: t[0], ok: true, detail: String(r).replace(/^https?:\/\//, "") }; }, function (e) { return { name: t[0], ok: false, detail: (e && e.message) || "unreachable" }; });
+    }));
+  }
   window.nyxVibe = {
+    close: function () { closeVibe(); },
+    isOpen: function () { return !!win && !S.closed && win.style.display !== "none"; },
+    now: function () { var t = cur(); return t ? { title: t.title, artist: t.artist, playing: !!S.playing } : null; },
+    getCfg: function () { return CFG; },
+    setCfg: function (c) { CFG = c || {}; cfgSave(); instP = null; S.cache = {}; },
+    diag: diag,
     open: openVibe,
     apt: function (action) {
       var installed = ls(KEY_INST) === "1";
@@ -31844,7 +32994,10 @@ body .navbar { z-index: 3000 !important; }
   };
 
   function boot() {
-    if (ls(KEY_INST) === "1") { ensureDock(true); ensureLaunchpad(true); setTimeout(function () { ensureDock(true); ensureLaunchpad(true); }, 1500); }
+    // Always available — no terminal install required
+    if (ls(KEY_INST) === null) ls(KEY_INST, "1");
+    ensureDock(true); ensureLaunchpad(true);
+    setTimeout(function () { ensureDock(true); ensureLaunchpad(true); }, 1500);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
   setTimeout(boot, 900);
@@ -31866,6 +33019,412 @@ body .navbar { z-index: 3000 !important; }
   document.addEventListener("click", function (e) { if (e.target.closest && e.target.closest(".settings-nav")) setTimeout(addLiteRow, 60); }, true);
 })();
 
+</script>
+<style id="nyx-v3-css">
+/* ===== NYX v3: Spotify additions ===== */
+.vibe-srcbadge { display: block; font-size: 11px; font-weight: 600; color: #8a8a8a; margin-top: 3px; min-height: 14px; }
+.vibe-srcbadge.ok { color: #1ed760; } .vibe-srcbadge.busy { color: #b3b3b3; } .vibe-srcbadge.warn { color: #ffb020; } .vibe-srcbadge.err { color: #ff6b6b; }
+#vibe-np-src { margin: 0 0 6px; }
+.vibe-yt.audio { aspect-ratio: 1 / 1; background: #1a1a1a; }
+.vibe-yt.audio #vibe-yt-host { display: none; }
+.vibe-yt:not(.audio) #vibe-np-art { display: none; }
+.vibe-yt #vibe-np-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.vibe-yt #vibe-np-art.yt { transform: scale(1.34); }
+.vibe-card .art img:not([src*="ytimg"]), .vibe-qp img:not([src*="ytimg"]) { transform: none; }
+
+/* ===== Menu bar customization (only active once the user customizes: body.tb-on) ===== */
+html body.tb-on div.navbar.navbar {
+  height: var(--tb-h, 28px) !important; left: var(--tb-mx, 0px) !important; right: var(--tb-mx, 0px) !important; width: auto !important;
+  top: var(--tb-top, 0px) !important; bottom: var(--tb-bottom, auto) !important; border-radius: var(--tb-radius, 0px) !important;
+  background: var(--tb-bgcss) !important; -webkit-backdrop-filter: var(--tb-filter) !important; backdrop-filter: var(--tb-filter) !important;
+  border: 0 !important; border-bottom: var(--tb-border, 0) !important; box-shadow: var(--tb-shadow, none) !important;
+  color: var(--tb-color, #f5f5f7) !important; text-shadow: var(--tb-tshadow, none) !important;
+  transition: transform .22s ease, opacity .22s ease;
+}
+html.nyx-lite body.tb-on div.navbar.navbar { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html body.tb-on div.navbar.navbar li { font-size: var(--tb-fs, 13px) !important; font-weight: var(--tb-fw, 400) !important; color: var(--tb-color, #f5f5f7) !important; }
+html body.tb-on div.navbar.navbar .leftLi { padding: 0 var(--tb-gap, 11px) !important; }
+html body.tb-on div.navbar.navbar .leftLi:hover { background: var(--tb-hover) !important; border-radius: var(--tb-itemr, 0px) !important; }
+html body.tb-on div.navbar.navbar .navbar__right > li { padding: 0 calc(var(--tb-gap, 11px) * .55) !important; }
+html body.tb-on div.navbar.navbar .navbar__right svg { width: var(--tb-icon, 15px) !important; height: var(--tb-icon, 15px) !important; }
+html body.tb-on div.navbar.navbar .leftLi.logo img { height: calc(var(--tb-icon, 15px) - 1px) !important; }
+html body div.navbar .tb-logo-text { font-size: calc(var(--tb-fs, 13px) + 2px); font-weight: 700; line-height: 1; }
+html body div.navbar #tb-custom, html body div.navbar #tb-now { padding: 0 9px; white-space: nowrap; max-width: 280px; overflow: hidden; text-overflow: ellipsis; display: none; }
+html body.tb-show-custom div.navbar #tb-custom { display: flex; }
+html body.tb-show-now.tb-has-now div.navbar #tb-now { display: flex; cursor: pointer; }
+html body.tb-hide-apple div.navbar .leftLi.logo, html body.tb-hide-appname div.navbar #menu-app-name, html body.tb-hide-menus div.navbar .leftLi.menu-item,
+html body.tb-hide-battery div.navbar .navbar__right .battery, html body.tb-hide-pct div.navbar .battery__text, html body.tb-hide-wifi div.navbar .navbar__right .wifi,
+html body.tb-hide-search div.navbar .navbar__right .open_Search, html body.tb-hide-cc div.navbar .navbar__right .cc-btn, html body.tb-hide-clock div.navbar .navbar__right .clock { display: none !important; }
+html body.tb-center-menus div.navbar .navbar__left { position: absolute; left: 50%; transform: translateX(-50%); }
+html body.tb-bottom div.navbar li > ul { top: auto !important; bottom: 100% !important; }
+html body.tb-bottom:not(.dock-left):not(.dock-right) .dock-container { bottom: calc(var(--tb-h, 28px) + var(--tb-my, 0px) + 4px) !important; }
+html body.tb-autohide div.navbar.navbar { transform: translateY(calc(-100% - 8px)); opacity: 0; pointer-events: none; }
+html body.tb-autohide.tb-bottom div.navbar.navbar { transform: translateY(calc(100% + 8px)); }
+html body.tb-autohide.tb-peek div.navbar.navbar { transform: none; opacity: 1; pointer-events: auto; }
+#tb-edge { position: fixed; left: 0; right: 0; height: 6px; z-index: 99; display: none; }
+body.tb-autohide #tb-edge { display: block; }
+html body.tb-on .window.is-maximized, html body.tb-on .settings-window.is-maximized, html body.tb-on .safari.is-maximized,
+html body.tb-on .steam.is-maximized, html body.tb-on .Vscode.is-maximized, html body.tb-on .vibe-window.is-maximized {
+  top: var(--tb-reserve-top, 28px) !important; height: calc(100dvh - var(--tb-reserve-top, 28px) - var(--tb-reserve-bot, 0px)) !important;
+}
+
+/* ===== controls used by the new settings panels ===== */
+.v3-gtitle { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; opacity: .55; margin: 22px 4px 8px; }
+.v3-note { margin: 4px 4px 12px; font-size: 12.5px; opacity: .6; line-height: 1.4; }
+.v3-switch { position: relative; flex: none; width: 42px; height: 25px; border-radius: 99px; border: 0; padding: 0; background: rgba(120,120,128,.32); cursor: pointer; transition: background .2s; }
+.v3-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 21px; height: 21px; border-radius: 50%; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,.3); transition: transform .2s; }
+.v3-switch.on { background: #30d158; } .v3-switch.on::after { transform: translateX(17px); }
+.v3-slider { display: flex; align-items: center; gap: 10px; min-width: 200px; }
+.v3-slider output { min-width: 44px; text-align: right; font-size: 12.5px; opacity: .65; font-variant-numeric: tabular-nums; }
+.v3-slider input { flex: 1; min-width: 110px; accent-color: #0a84ff; }
+.v3-seg { display: inline-flex; padding: 2px; border-radius: 9px; background: rgba(120,120,128,.18); }
+.v3-seg button { border: 0; background: transparent; color: inherit; font: 600 12.5px inherit; font-family: inherit; padding: 5px 11px; border-radius: 7px; cursor: pointer; white-space: nowrap; }
+.v3-seg button.on { background: #fff; color: #1d1d1f; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+.v3-select, .v3-text { height: 28px; border-radius: 7px; border: 1px solid rgba(0,0,0,.12); background: #fff; color: #1d1d1f; padding: 0 8px; font-size: 13px; font-family: inherit; max-width: 100%; }
+.v3-color { display: inline-flex; align-items: center; gap: 8px; }
+.v3-color input[type=color] { width: 34px; height: 26px; padding: 0; border: 0; border-radius: 6px; background: none; cursor: pointer; }
+.v3-btn { height: 28px; padding: 0 13px; border-radius: 7px; border: 0; background: #0a84ff; color: #fff; font: 600 12.5px inherit; font-family: inherit; cursor: pointer; white-space: nowrap; }
+.v3-btn.ghost { background: rgba(120,120,128,.2); color: inherit; } .v3-btn.sm { height: 24px; padding: 0 9px; font-size: 12px; }
+.v3-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
+.v3-chip { border: 0; padding: 6px 12px; border-radius: 99px; font: 600 12.5px inherit; font-family: inherit; background: rgba(120,120,128,.18); color: inherit; cursor: pointer; }
+.v3-chip:hover { background: rgba(120,120,128,.3); }
+.v3-preview { margin: 0 0 14px; border-radius: 12px; overflow: hidden; position: relative; height: 84px; background: linear-gradient(135deg,#3a1c71,#d76d77 55%,#ffaf7b); }
+.v3-preview .pv { position: absolute; left: 0; right: 0; top: 0; height: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; color: #f5f5f7; font-size: 12px; background: rgba(24,24,28,.38); }
+.v3-status { display: grid; gap: 6px; padding: 12px 14px; }
+.v3-status div { display: flex; align-items: center; gap: 10px; font-size: 13px; padding: 7px 10px; border-radius: 8px; background: rgba(120,120,128,.14); }
+.v3-status i { width: 9px; height: 9px; border-radius: 50%; background: #999; flex: none; }
+.v3-status .ok i { background: #30d158; } .v3-status .no i { background: #ff453a; }
+.v3-status small { margin-left: auto; opacity: .6; max-width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+
+/* ===== Ubuntu (GNOME 42 / Yaru) fidelity ===== */
+html body[data-os-style="ubuntu"], html body[data-os-style="ubuntu"] div.navbar { font-family: Ubuntu, Cantarell, "Noto Sans", system-ui, sans-serif; }
+html body[data-os-style="ubuntu"] div.navbar.navbar { background: #000 !important; height: 28px !important; border: 0 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; text-shadow: none !important; padding: 0 !important; }
+html body[data-os-style="ubuntu"] div.navbar .leftLi { height: 100%; padding: 0 12px !important; font-size: 13px !important; font-weight: 700 !important; color: #fff !important; border-radius: 14px !important; }
+html body[data-os-style="ubuntu"] div.navbar .leftLi.logo::before { font-weight: 700 !important; padding: 0 !important; }
+html body[data-os-style="ubuntu"] div.navbar .leftLi.app_name p::after { content: "\00a0\25BE"; font-size: 9px; opacity: .85; }
+html body[data-os-style="ubuntu"] div.navbar .leftLi:hover { background: rgba(255,255,255,.17) !important; }
+html body[data-os-style="ubuntu"] #os-ubu-bar { z-index: 3001; }
+html body[data-os-style="ubuntu"] #os-ubu-bar #os-ubu-clock { pointer-events: auto; padding: 0 12px; height: 24px; line-height: 24px; border-radius: 14px; font: 700 13px Ubuntu, Cantarell, system-ui, sans-serif; color: #fff; white-space: pre; }
+html body[data-os-style="ubuntu"] #os-ubu-bar #os-ubu-clock:hover { background: rgba(255,255,255,.17); }
+html body[data-os-style="ubuntu"] #os-ubu-bar .ub-tray { color: #fff; gap: 9px; padding: 0 10px; }
+html body[data-os-style="ubuntu"] #os-ubu-bar .ub-tray svg { width: 16px; height: 16px; }
+html body[data-os-style="ubuntu"] .dock-container { top: 28px !important; width: 70px !important; }
+html body[data-os-style="ubuntu"] .dock-el.dock, html body[data-os-style="ubuntu"] #macos-dock { width: 70px !important; max-width: 70px !important; background: rgba(28,28,28,.78) !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; padding: 6px 0 8px !important; box-shadow: 1px 0 0 rgba(255,255,255,.05) !important; gap: 0 !important; }
+html body[data-os-style="ubuntu"] .dock-el .dock-open-app-button { width: 56px !important; height: 56px !important; margin: 1px 0 !important; border-radius: 12px !important; transition: background .12s ease; }
+html body[data-os-style="ubuntu"] .dock-el .dock-open-app-button img { width: 44px !important; height: 44px !important; object-fit: contain; }
+html body[data-os-style="ubuntu"] .dock-el .dock-open-app-button:hover { background: rgba(255,255,255,.11) !important; }
+html body[data-os-style="ubuntu"] .dock-el .dock-open-app-button:active { background: rgba(255,255,255,.2) !important; }
+html body[data-os-style="ubuntu"] .dock-el .dock-open-app-button:has(.dot.is-open) { background: rgba(255,255,255,.07) !important; }
+html body[data-os-style="ubuntu"] .dock-el .dot.is-open, html body[data-os-style="ubuntu"] .dock-el .os-open .dot { left: 4px !important; width: 6px !important; height: 6px !important; background: #e95420 !important; }
+html body[data-os-style="ubuntu"] #macos-dock #os-showapps { margin-top: auto !important; margin-bottom: 2px !important; }
+html body[data-os-style="ubuntu"] #macos-dock #os-showapps img { width: 30px !important; height: 30px !important; }
+html body[data-os-style="ubuntu"] .window, html body[data-os-style="ubuntu"] .safari, html body[data-os-style="ubuntu"] .settings-window { border-radius: 12px 12px 0 0 !important; }
+html body[data-os-style="ubuntu"] .window__taskbar { background: #2c2c2c !important; border-bottom: 1px solid #1f1f1f !important; height: 38px !important; }
+html body[data-os-style="ubuntu"] .window__taskbar--actions button { width: 26px !important; min-width: 26px !important; height: 26px !important; background: rgba(255,255,255,.09) !important; }
+html body[data-os-style="ubuntu"] .window, html body[data-os-style="ubuntu"] .safari, html body[data-os-style="ubuntu"] .finder-window { box-shadow: 0 0 0 1px rgba(0,0,0,.7), 0 16px 48px rgba(0,0,0,.5) !important; }
+
+/* dock motion for Ubuntu / Windows styles (macOS style keeps its magnification loop) */
+@keyframes nyx-dock-bounce { 0%,100% { transform: translateX(0) } 30% { transform: translateX(10px) } 60% { transform: translateX(3px) } }
+html body[data-os-style="ubuntu"] .dock-el .dock-open-app-button img { transition: transform .16s cubic-bezier(.2,.8,.3,1.2) !important; }
+html body[data-os-style="ubuntu"] .dock-el .dock-open-app-button:hover img { transform: scale(1.14) !important; }
+html body[data-os-style="ubuntu"] .dock-el .dock-open-app-button:active img { transform: scale(.92) !important; }
+html body[data-os-style="ubuntu"] .dock-el .dock-open-app-button.nyx-bounce img { animation: nyx-dock-bounce .5s ease 2; }
+html body[data-os-style="windows"] .dock-el .dock-open-app-button img { transition: transform .15s ease !important; }
+html body[data-os-style="windows"] .dock-el .dock-open-app-button:hover img { transform: translateY(-3px) scale(1.12) !important; }
+html body[data-os-style="windows"] .dock-el .dock-open-app-button:active img { transform: scale(.9) !important; }
+</style>
+<script id="nyx-v3-js">
+/* ===== NYX v3: Menu Bar customization + Music (Spotify) settings ===== */
+(function () {
+  "use strict";
+  function LSget(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }
+  function LSset(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function $(id) { return document.getElementById(id); }
+  function h(tag, a, kids) {
+    var e = document.createElement(tag);
+    if (a) for (var k in a) { var v = a[k]; if (v === false || v == null) continue;
+      if (k === "class") e.className = v; else if (k === "html") e.innerHTML = v; else if (k === "text") e.textContent = v; else e.setAttribute(k, v === true ? "" : v); }
+    (kids || []).forEach(function (c) { if (c != null) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return e;
+  }
+  function row(l, s, c) { return h("div", { class: "settings-row" }, [h("div", { class: "row-label" }, [h("strong", { text: l }), s ? h("span", { text: s }) : null]), c]); }
+  function group(r) { return h("div", { class: "settings-group" }, r); }
+  function gt(t) { return h("div", { class: "v3-gtitle", text: t }); }
+  function sw(on, fn) { var b = h("button", { type: "button", class: "v3-switch" + (on ? " on" : ""), role: "switch" }); b.addEventListener("click", function (e) { e.stopPropagation(); var v = !b.classList.contains("on"); b.classList.toggle("on", v); fn(v); }); return b; }
+  function slider(min, max, step, val, fmt, fn) {
+    var i = h("input", { type: "range", min: min, max: max, step: step, value: val }), o = h("output");
+    function u() { o.textContent = fmt ? fmt(+i.value) : i.value; } i.addEventListener("input", function () { u(); fn(+i.value); }); u();
+    return h("div", { class: "v3-slider" }, [i, o]);
+  }
+  function seg(opts, val, fn) {
+    var w = h("div", { class: "v3-seg" });
+    opts.forEach(function (o) { var b = h("button", { type: "button", class: o[0] === val ? "on" : "", text: o[1] }); b.addEventListener("click", function () { w.querySelectorAll("button").forEach(function (x) { x.classList.remove("on"); }); b.classList.add("on"); fn(o[0]); }); w.appendChild(b); });
+    return w;
+  }
+  function color(val, fn, empty) {
+    var w = h("div", { class: "v3-color" }), i = h("input", { type: "color", value: /^#[0-9a-f]{6}$/i.test(val || "") ? val : "#888888" });
+    var c = empty ? h("button", { type: "button", class: "v3-btn ghost sm", text: val ? "Auto" : "Auto ✓" }) : null;
+    i.addEventListener("input", function () { fn(i.value); if (c) c.textContent = "Auto"; });
+    w.appendChild(i); if (c) { c.addEventListener("click", function () { fn(""); c.textContent = "Auto ✓"; }); w.appendChild(c); }
+    return w;
+  }
+  function text(val, ph, fn, w) { var i = h("input", { type: "text", class: "v3-text", value: val || "", placeholder: ph || "", style: w ? "width:" + w + "px" : "" }); i.addEventListener("input", function () { fn(i.value); }); return i; }
+  function btn(l, fn, cls) { var b = h("button", { type: "button", class: "v3-btn" + (cls ? " " + cls : ""), text: l }); b.addEventListener("click", fn); return b; }
+
+  /* ---- add a nav item + panel to the existing (continuous) Settings page ---- */
+  function addPanel(id, title, sub, afterId, icon, grad, render) {
+    var content = document.querySelector(".settings-content"), sideEl = document.querySelector(".settings-sidebar");
+    if (!content || !sideEl || $("settings-panel-" + id)) return;
+    var b = h("button", { type: "button", class: "settings-nav", "data-panel": id }, [h("span", { class: "nav-icon", style: "background:" + grad, text: icon }), document.createTextNode(title)]);
+    var ref = sideEl.querySelector('.settings-nav[data-panel="' + afterId + '"]');
+    if (ref) ref.insertAdjacentElement("afterend", b); else sideEl.appendChild(b);
+    var p = h("div", { id: "settings-panel-" + id, style: "display:block" }, [h("h3", { text: title }), h("p", { class: "sub", text: sub })]);
+    var body = h("div"); p.appendChild(body); content.appendChild(p);
+    p.__render = function () { body.innerHTML = ""; render(body); }; p.__render();
+    b.addEventListener("click", function () {
+      sideEl.querySelectorAll(".settings-nav").forEach(function (x) { x.classList.remove("active"); }); b.classList.add("active");
+      content.scrollTo({ top: Math.max(0, p.offsetTop - 12), behavior: "smooth" });
+    });
+    return p;
+  }
+
+  /* ================= MENU BAR ================= */
+  var KEY = "nyx_topbar";
+  var DEF = { height: 28, font: 13, weight: 400, bg: "#18181c", alpha: 38, blur: 48, glass: true, color: "", radius: 0, margin: 0, border: true, shadow: true, pos: "top", autohide: false, center: false, gap: 11, icon: 15,
+    logo: "apple", logoText: "", logoUrl: "", custom: "", now: false,
+    show: { apple: 1, appname: 1, menus: 1, battery: 1, pct: 1, wifi: 1, search: 1, cc: 1, clock: 1, custom: 0 },
+    clock: { h24: false, sec: false, weekday: true, month: true, day: true, ampm: true, fmt: "" } };
+  var PRESETS = [
+    ["macOS", {}],
+    ["Solid dark", { alpha: 96, blur: 0, glass: false, shadow: false }],
+    ["Light", { bg: "#f2f2f7", alpha: 82, blur: 30, color: "#1d1d1f", glass: false }],
+    ["Floating", { margin: 8, radius: 14, alpha: 45, blur: 40, height: 32, shadow: true }],
+    ["Minimal", { alpha: 0, blur: 0, glass: false, border: false, shadow: false, font: 12 }],
+    ["Tahoe glass", { height: 30, alpha: 18, blur: 60 }],
+    ["Neon", { bg: "#0b0b1a", alpha: 72, color: "#7df9ff", blur: 30, weight: 500 }],
+    ["Taskbar", { pos: "bottom", height: 40, bg: "#1f1f1f", alpha: 80, blur: 40, glass: false, show: { menus: 0, appname: 0 } }]
+  ];
+  function merge(base, o) { var r = JSON.parse(JSON.stringify(base)); for (var k in (o || {})) { if (o[k] && typeof o[k] === "object" && !Array.isArray(o[k])) { r[k] = Object.assign({}, r[k], o[k]); } else r[k] = o[k]; } return r; }
+  var raw = LSget(KEY, null), tb = merge(DEF, raw || {});
+  function save() { LSset(KEY, tb); apply(); }
+  function rgb(hex) { var m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex || ""); return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [24, 24, 28]; }
+  var origLogo = null;
+  function apply() {
+    var B = document.body, R = document.documentElement.style; if (!B) return;
+    var on = !!LSget(KEY, null);
+    B.classList.toggle("tb-on", on);
+    ["apple", "appname", "menus", "battery", "pct", "wifi", "search", "cc", "clock"].forEach(function (k) { B.classList.toggle("tb-hide-" + k, on && !tb.show[k]); });
+    B.classList.toggle("tb-show-custom", on && !!tb.show.custom && !!tb.custom);
+    B.classList.toggle("tb-show-now", on && !!tb.now);
+    B.classList.toggle("tb-center-menus", on && tb.center);
+    B.classList.toggle("tb-bottom", on && tb.pos === "bottom");
+    B.classList.toggle("tb-autohide", on && tb.autohide);
+    var c = rgb(tb.bg), a = tb.alpha / 100;
+    var lum = (0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]) / 255;
+    var txt = tb.color || (a > .6 && lum > .6 ? "#1d1d1f" : "#f5f5f7");
+    var dark = rgb(txt); var darkText = (dark[0] + dark[1] + dark[2]) < 380;
+    var base = "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + a + ")";
+    R.setProperty("--tb-bgcss", tb.glass ? "linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.05))," + base : base);
+    R.setProperty("--tb-filter", tb.blur > 0 ? "blur(" + tb.blur + "px) saturate(200%)" : "none");
+    R.setProperty("--tb-color", txt);
+    R.setProperty("--tb-hover", darkText ? "rgba(0,0,0,.09)" : "rgba(255,255,255,.14)");
+    R.setProperty("--tb-border", tb.border ? "1px solid " + (darkText ? "rgba(0,0,0,.12)" : "rgba(255,255,255,.26)") : "0");
+    R.setProperty("--tb-shadow", tb.shadow ? "0 8px 28px rgba(0,0,0,.14)" : "none");
+    R.setProperty("--tb-tshadow", darkText || a > .6 ? "none" : "0 1px 2px rgba(0,0,0,.35)");
+    R.setProperty("--tb-h", tb.height + "px"); R.setProperty("--tb-fs", tb.font + "px"); R.setProperty("--tb-fw", tb.weight);
+    R.setProperty("--tb-radius", tb.radius + "px"); R.setProperty("--tb-itemr", Math.min(tb.radius, 8) + "px");
+    R.setProperty("--tb-mx", tb.margin + "px"); R.setProperty("--tb-my", tb.margin + "px");
+    R.setProperty("--tb-top", tb.pos === "top" ? tb.margin + "px" : "auto"); R.setProperty("--tb-bottom", tb.pos === "bottom" ? tb.margin + "px" : "auto");
+    R.setProperty("--tb-gap", tb.gap + "px"); R.setProperty("--tb-icon", tb.icon + "px");
+    var reserve = tb.autohide ? 0 : tb.height + tb.margin * 2;
+    R.setProperty("--tb-reserve-top", on ? (tb.pos === "top" ? reserve : 0) + "px" : "28px");
+    R.setProperty("--tb-reserve-bot", on && tb.pos === "bottom" ? reserve + "px" : "0px");
+    applyLogo(on); applyCustom(on); tickClock(); updateNow();
+    var edge = $("tb-edge"); if (edge) { edge.style.top = tb.pos === "top" ? "0" : "auto"; edge.style.bottom = tb.pos === "bottom" ? "0" : "auto"; }
+  }
+  function applyLogo(on) {
+    var li = document.querySelector(".navbar .leftLi.logo"); if (!li) return; var img = li.querySelector("img"); if (!img) return;
+    if (origLogo === null) origLogo = img.getAttribute("src");
+    var span = li.querySelector(".tb-logo-text");
+    if (!on || tb.logo === "apple") { img.style.display = ""; img.setAttribute("src", origLogo); if (span) span.remove(); return; }
+    if (tb.logo === "image" && tb.logoUrl) { img.style.display = ""; img.setAttribute("src", tb.logoUrl); if (span) span.remove(); return; }
+    img.style.display = "none";
+    if (!span) { span = h("span", { class: "tb-logo-text" }); li.insertBefore(span, li.firstChild); }
+    span.textContent = tb.logo === "nyx" ? "N" : (tb.logoText || "★");
+  }
+  function applyCustom(on) {
+    var right = document.querySelector(".navbar .navbar__right"); if (!right) return;
+    var c = $("tb-custom"); if (!c) { c = h("li", { id: "tb-custom" }); right.insertBefore(c, right.firstChild); }
+    c.textContent = tb.custom || "";
+    var n = $("tb-now"); if (!n) { n = h("li", { id: "tb-now", title: "Open Spotify" }); n.addEventListener("click", function () { try { window.nyxVibe.open(); } catch (e) {} }); right.insertBefore(n, right.firstChild); }
+  }
+  function updateNow() {
+    var n = $("tb-now"); if (!n) return; var s = null; try { s = window.nyxVibe && window.nyxVibe.now(); } catch (e) {}
+    document.body.classList.toggle("tb-has-now", !!(s && s.title));
+    n.textContent = s && s.title ? (s.playing ? "♫ " : "❚❚ ") + s.title + (s.artist ? " — " + s.artist : "") : "";
+  }
+  window.addEventListener("vibe:state", updateNow);
+
+  /* ---- clock ---- */
+  var WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"], MO = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  var WDL = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], MOL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  function p2(n) { return (n < 10 ? "0" : "") + n; }
+  function fmtClock(d) {
+    var c = tb.clock;
+    if (LSget(KEY, null) && c.fmt) {
+      var h24 = d.getHours(), h12 = h24 % 12 || 12;
+      return c.fmt.replace(/\{(\w+)\}/g, function (m, k) {
+        return ({ dddd: WDL[d.getDay()], ddd: WD[d.getDay()], MMMM: MOL[d.getMonth()], MMM: MO[d.getMonth()], D: d.getDate(), DD: p2(d.getDate()), M: d.getMonth() + 1, MM: p2(d.getMonth() + 1), YYYY: d.getFullYear(), H: h24, HH: p2(h24), h: h12, hh: p2(h12), mm: p2(d.getMinutes()), ss: p2(d.getSeconds()), A: h24 >= 12 ? "PM" : "AM" })[k] || m;
+      });
+    }
+    if (!LSget(KEY, null)) c = DEF.clock;
+    var date = []; if (c.weekday) date.push(WD[d.getDay()]); if (c.month) date.push(MO[d.getMonth()]); if (c.day) date.push(d.getDate());
+    var hh = d.getHours(), t;
+    if (c.h24) t = p2(hh) + ":" + p2(d.getMinutes()) + (c.sec ? ":" + p2(d.getSeconds()) : "");
+    else t = (hh % 12 || 12) + ":" + p2(d.getMinutes()) + (c.sec ? ":" + p2(d.getSeconds()) : "") + (c.ampm ? " " + (hh >= 12 ? "PM" : "AM") : "");
+    return (date.length ? date.join(" ") + " " : "") + t;
+  }
+  var clockEl = null, nodeDesc = Object.getOwnPropertyDescriptor(Node.prototype, "textContent"), writing = false;
+  function tickClock() { if (!clockEl) return; var s = fmtClock(new Date()); if (nodeDesc.get.call(clockEl) !== s) { writing = true; nodeDesc.set.call(clockEl, s); writing = false; } }
+  function initClock() {
+    clockEl = $("clock"); if (!clockEl || clockEl.__tb) return; clockEl.__tb = 1;
+    Object.defineProperty(clockEl, "textContent", { configurable: true, get: function () { return nodeDesc.get.call(this); }, set: function (v) { if (writing) nodeDesc.set.call(this, v); } });
+    tickClock(); setInterval(function () { if (!document.hidden) tickClock(); }, 1000);
+  }
+  /* ---- autohide peek ---- */
+  function initEdge() {
+    if (!$("tb-edge")) document.body.appendChild(h("div", { id: "tb-edge" }));
+    var edge = $("tb-edge"), bar = document.querySelector(".navbar"), t = null;
+    edge.addEventListener("mouseenter", function () { document.body.classList.add("tb-peek"); });
+    bar.addEventListener("mouseleave", function () { clearTimeout(t); t = setTimeout(function () { document.body.classList.remove("tb-peek"); }, 350); });
+    bar.addEventListener("mouseenter", function () { clearTimeout(t); document.body.classList.add("tb-peek"); });
+  }
+
+  /* ---- panel ---- */
+  function renderBar(body) {
+    var on = !!LSget(KEY, null);
+    function set(k, v) { tb[k] = v; save(); }
+    function setIn(o, k, v) { tb[o][k] = v; save(); }
+    function re() { var p = $("settings-panel-menubar"); if (p) p.__render(); }
+    body.appendChild(h("div", { class: "v3-preview" }, [h("div", { class: "pv" }, [h("span", { text: "  Finder   File   Edit   View" }), h("span", { text: "100%   Sat Oct 31  3:37 PM" })])]));
+    var chips = h("div", { class: "v3-chips" });
+    PRESETS.forEach(function (p) { var b = h("button", { type: "button", class: "v3-chip", text: p[0] }); b.addEventListener("click", function () { tb = merge(DEF, p[1]); LSset(KEY, tb); if (p[0] === "macOS") { LSset(KEY, null); } apply(); re(); }); chips.appendChild(b); });
+    body.appendChild(gt("Presets")); body.appendChild(group([chips]));
+    body.appendChild(gt("Look"));
+    body.appendChild(group([
+      row("Height", "Thickness of the bar", slider(22, 48, 1, tb.height, function (v) { return v + " px"; }, function (v) { set("height", v); })),
+      row("Background color", null, color(tb.bg, function (v) { set("bg", v); })),
+      row("Opacity", "How see-through the bar is", slider(0, 100, 1, tb.alpha, function (v) { return v + "%"; }, function (v) { set("alpha", v); })),
+      row("Blur", "Frosted-glass strength (0 = off, faster on Chromebooks)", slider(0, 80, 1, tb.blur, function (v) { return v + " px"; }, function (v) { set("blur", v); })),
+      row("Glass highlight", "Soft light gradient on top of the bar", sw(tb.glass, function (v) { set("glass", v); })),
+      row("Text color", "Auto picks a readable color", color(tb.color, function (v) { set("color", v); }, true)),
+      row("Font size", null, slider(10, 18, 1, tb.font, function (v) { return v + " px"; }, function (v) { set("font", v); })),
+      row("Font weight", null, seg([[300, "Light"], [400, "Regular"], [500, "Medium"], [600, "Bold"]], tb.weight, function (v) { set("weight", +v); })),
+      row("Icon size", null, slider(11, 24, 1, tb.icon, function (v) { return v + " px"; }, function (v) { set("icon", v); })),
+      row("Item spacing", null, slider(4, 24, 1, tb.gap, function (v) { return v + " px"; }, function (v) { set("gap", v); })),
+      row("Rounded corners", null, slider(0, 24, 1, tb.radius, function (v) { return v + " px"; }, function (v) { set("radius", v); })),
+      row("Floating margin", "Gap around the bar (floating pill look)", slider(0, 20, 1, tb.margin, function (v) { return v + " px"; }, function (v) { set("margin", v); })),
+      row("Border line", null, sw(tb.border, function (v) { set("border", v); })),
+      row("Shadow", null, sw(tb.shadow, function (v) { set("shadow", v); }))
+    ]));
+    body.appendChild(gt("Layout"));
+    body.appendChild(group([
+      row("Position", null, seg([["top", "Top"], ["bottom", "Bottom"]], tb.pos, function (v) { set("pos", v); })),
+      row("Auto-hide", "Slide away until you move the mouse to the screen edge", sw(tb.autohide, function (v) { set("autohide", v); })),
+      row("Center the menus", "Move File / Edit / View to the middle", sw(tb.center, function (v) { set("center", v); }))
+    ]));
+    body.appendChild(gt("Items"));
+    var items = [["apple", "Logo"], ["appname", "App name"], ["menus", "Menus (File, Edit, View…)"], ["battery", "Battery"], ["pct", "Battery percentage"], ["wifi", "Wi-Fi"], ["search", "Spotlight"], ["cc", "Control Center"], ["clock", "Clock"]];
+    body.appendChild(group(items.map(function (it) { return row(it[1], null, sw(!!tb.show[it[0]], function (v) { setIn("show", it[0], v ? 1 : 0); })); })));
+    body.appendChild(gt("Logo"));
+    var logoUrl = h("input", { type: "text", class: "v3-text", placeholder: "https://…/logo.png", value: tb.logoUrl || "", style: "width:220px" });
+    logoUrl.addEventListener("input", function () { set("logoUrl", logoUrl.value); });
+    var logoTxt = text(tb.logoText, "emoji or text, e.g. 🐱", function (v) { set("logoText", v); }, 160);
+    body.appendChild(group([
+      row("Menu logo", null, seg([["apple", "Apple"], ["nyx", "N"], ["text", "Emoji/Text"], ["image", "Image"]], tb.logo, function (v) { set("logo", v); })),
+      row("Emoji / text", "Used by “Emoji/Text”", logoTxt),
+      row("Image URL", "Used by “Image”", logoUrl)
+    ]));
+    body.appendChild(gt("Clock"));
+    var fmt = text(tb.clock.fmt, "{ddd} {MMM} {D}  {h}:{mm} {A}", function (v) { tb.clock.fmt = v; save(); }, 230);
+    body.appendChild(group([
+      row("24-hour time", null, sw(tb.clock.h24, function (v) { setIn("clock", "h24", v); })),
+      row("Show seconds", null, sw(tb.clock.sec, function (v) { setIn("clock", "sec", v); })),
+      row("Show AM/PM", null, sw(tb.clock.ampm, function (v) { setIn("clock", "ampm", v); })),
+      row("Show weekday", null, sw(tb.clock.weekday, function (v) { setIn("clock", "weekday", v); })),
+      row("Show month", null, sw(tb.clock.month, function (v) { setIn("clock", "month", v); })),
+      row("Show day number", null, sw(tb.clock.day, function (v) { setIn("clock", "day", v); })),
+      row("Custom format", "Tokens: {dddd} {ddd} {MMMM} {MMM} {D} {DD} {YYYY} {H} {HH} {h} {hh} {mm} {ss} {A}. Empty = use the switches above.", fmt)
+    ]));
+    body.appendChild(gt("Extras"));
+    body.appendChild(group([
+      row("Now playing", "Show the song playing in Spotify; click to open Spotify", sw(tb.now, function (v) { set("now", v); })),
+      row("Custom text", "Show your own text in the bar", text(tb.custom, "Hello Nyx", function (v) { tb.custom = v; tb.show.custom = v ? 1 : 0; save(); }, 180))
+    ]));
+    body.appendChild(h("div", { style: "margin-top:18px" }, [btn("Reset menu bar to default", function () { tb = merge(DEF, {}); LSset(KEY, null); apply(); re(); }, "ghost")]));
+  }
+
+  /* ================= MUSIC (Spotify) ================= */
+  var SRC = [["saavn", "JioSaavn", "Full songs, fast"], ["piped", "YouTube via Piped", "Biggest catalog"], ["invidious", "YouTube via Invidious", "Backup for YouTube"], ["audius", "Audius", "Always full-length, indie/remix catalog"], ["embed", "YouTube player (last resort)", "Used only if nothing else works"]];
+  function renderMusic(body) {
+    var api = window.nyxVibe; if (!api || !api.getCfg) { body.appendChild(h("p", { class: "v3-note", text: "Spotify isn't loaded yet." })); return; }
+    var cfg = api.getCfg(); cfg.off = cfg.off || {};
+    function commit() { api.setCfg(cfg); }
+    body.appendChild(gt("Where Spotify gets full-length songs"));
+    body.appendChild(group(SRC.map(function (s) { return row(s[1], s[2], sw(!cfg.off[s[0]], function (v) { cfg.off[s[0]] = v ? 0 : 1; commit(); })); })));
+    body.appendChild(gt("Your own servers (optional)"));
+    body.appendChild(group([
+      row("Piped API URLs", "Comma separated, tried first", text(cfg.piped || "", "https://pipedapi.example.com", function (v) { cfg.piped = v; commit(); }, 240)),
+      row("Invidious URLs", "Comma separated, tried first", text(cfg.invidious || "", "https://invidious.example.com", function (v) { cfg.invidious = v; commit(); }, 240))
+    ]));
+    body.appendChild(gt("Connection test"));
+    var out = h("div", { class: "v3-status" });
+    var b = btn("Test music sources", function () {
+      out.innerHTML = ""; b.textContent = "Testing…";
+      api.diag().then(function (rs) { b.textContent = "Test music sources"; out.innerHTML = ""; rs.forEach(function (r) { out.appendChild(h("div", { class: r.ok ? "ok" : "no" }, [h("i"), h("span", { text: r.name }), h("small", { text: r.ok ? "reachable · " + r.detail : "blocked / down · " + r.detail })])); }); });
+    });
+    body.appendChild(group([row("Check which sources work on this network", "At least one green dot means Spotify can play full songs", b), out]));
+  }
+
+  function init() {
+    if (!document.body) return;
+    initClock(); initEdge(); apply();
+    addPanel("menubar", "Menu Bar", "Customize the top bar: look, layout, items, clock and more.", "controlcenter", "▭", "linear-gradient(135deg,#0a84ff,#64d2ff)", renderBar);
+    addPanel("music", "Music", "Where Spotify gets full-length songs, and a connection test.", "notifications", "♫", "linear-gradient(135deg,#ff375f,#bf5af2)", renderMusic);
+    setTimeout(updateNow, 800);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+  setTimeout(function () { if (!$("settings-panel-menubar")) init(); }, 1500);
+})();
+
+
+/* ===== NYX v3: look-neutral performance helpers ===== */
+(function () {
+  var v = document.getElementById("desktop-bg-video");
+  function covered() {
+    var m = document.querySelectorAll(".is-maximized");
+    for (var i = 0; i < m.length; i++) { if (m[i].offsetParent !== null || getComputedStyle(m[i]).display !== "none") return true; }
+    return false;
+  }
+  function sync() {
+    if (!v || !(v.currentSrc || v.src)) return;
+    var want = !document.hidden && !covered();
+    if (want && v.paused && v.__nyxPaused) { v.__nyxPaused = false; var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+    else if (!want && !v.paused) { v.__nyxPaused = true; v.pause(); }
+  }
+  document.addEventListener("visibilitychange", sync);
+  setInterval(sync, 2000);
+})();
+
+/* ===== Ubuntu top-bar clock (the original only filled it in after 10 s, and only once) ===== */
+(function () {
+  function tick() { var u = document.getElementById("os-ubu-clock"); if (!u) return; var d = new Date(); var t = d.toLocaleDateString([], { month: "short", day: "numeric" }) + "  " + d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); if (u.textContent !== t) u.textContent = t; }
+  tick(); setInterval(tick, 1000); setTimeout(tick, 1500);
+  try { var l = document.createElement("link"); l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap"; document.head.appendChild(l); } catch (e) {}
+})();
+
+(function () { document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest(".dock-el .dock-open-app-button"); if (!b) return; b.classList.remove("nyx-bounce"); void b.offsetWidth; b.classList.add("nyx-bounce"); setTimeout(function () { b.classList.remove("nyx-bounce"); }, 1100); }, true); })();
 </script>
 </body>
 </html>

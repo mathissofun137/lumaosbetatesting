@@ -13039,7 +13039,7 @@ html[data-theme] .window-header.steam-popup-header,
         </div>
         <div class="window__taskbar--content"><h2>AI</h2></div>
       </div>
-      <iframe id="ai-frame" data-nyx-src="https://testingcf.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/assistant" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; microphone; camera" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#0b0b0f;display:block"></iframe>
+      <iframe id="ai-frame" data-nyx-src="https://quantil.jsdelivr.net/gh/mathissofun137/luma-os-apps@main/index.svg#/assistant" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture; microphone; camera" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#0b0b0f;display:block"></iframe>
     </div>
 
 
@@ -13070,7 +13070,7 @@ html[data-theme] .window-header.steam-popup-header,
         <i class="fab fa-steam" style="font-size: 20px; margin-right: 8px;"></i>
         <div class="steam-menu-items">
           <div class="steam-dropdown">
-            <span class="steam-menu-item steam-dropdown-trigger" data-dropdown="steam-menu">Yuki</span>
+            <span class="steam-menu-item steam-dropdown-trigger" data-dropdown="steam-menu">Steam</span>
             <div class="steam-dropdown-menu" id="steam-menu-dropdown">
               <div class="steam-dropdown-item" data-action="steam-settings">Settings</div>
               <div class="steam-dropdown-item" data-action="steam-account">Account</div>
@@ -13225,7 +13225,7 @@ html[data-theme] .window-header.steam-popup-header,
       </div>
 
       <div class="steam-bottom-bar">
-        <div class="steam-bottom-left"></div>
+        <div class="steam-bottom-left"><span class="nx-addgame"><b>+</b> ADD A GAME</span></div>
         <div class="steam-bottom-center">
           <button class="steam-downloads-btn"><i class="fas fa-download"></i> DOWNLOADS</button>
         </div>
@@ -13273,7 +13273,7 @@ html[data-theme] .window-header.steam-popup-header,
           <div class="nflx-splash-sound"></div>
         </div>
         <div class="atv-topbar">
-          <div class="atv-logo">NETFLIX</div>
+          <svg class="nx-logo" viewBox="0 0 100 26" xmlns="http://www.w3.org/2000/svg" aria-label="Netflix"><text x="0" y="23" textLength="100" lengthAdjust="spacingAndGlyphs" font-family="Bebas Neue,Impact,Oswald,Arial Narrow,sans-serif" font-weight="900" font-size="31" fill="#e50914">NETFLIX</text></svg>
           <div class="atv-tabs" id="atv-tabs">
             <button type="button" class="active" data-atv-tab="home">Home</button>
             <button type="button" data-atv-tab="popular">TV Shows</button>
@@ -13282,16 +13282,24 @@ html[data-theme] .window-header.steam-popup-header,
             <button type="button" data-atv-tab="upcoming">My List</button>
           </div>
           <input type="search" class="atv-search" id="atv-search" placeholder="Titles, people, genres" autocomplete="off">
+          <div class="nx-right">
+            <svg id="nx-search-btn" viewBox="0 0 24 24"><circle cx="10" cy="10" r="7"/><path d="M15 15l6 6"/></svg>
+            <span class="nx-kids">Kids</span>
+            <svg viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0112 0v6l2 2H4zM10 21h4"/></svg>
+            <div class="nx-avatar"></div><div class="nx-caret"></div>
+          </div>
         </div>
         <div class="atv-scroll" id="atv-scroll">
           <div class="atv-hero" id="atv-hero">
+            <div class="nx-maturity">13+</div>
             <div class="atv-hero-inner">
-              <div class="atv-hero-badge">N SERIES</div>
+              <div class="atv-hero-badge">F I L M</div>
               <h2 id="atv-hero-title">Loading…</h2>
+              <div class="nx-top10"><b>TOP<br>10</b>#1 in Movies Today</div>
               <p id="atv-hero-overview"></p>
               <div class="atv-hero-actions">
-                <button type="button" class="play" id="atv-hero-play">▶ Play</button>
-                <button type="button" class="info" id="atv-hero-info">ℹ More Info</button>
+                <button type="button" class="play" id="atv-hero-play"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M6 4l15 8-15 8z" fill="#000"/></svg>Play</button>
+                <button type="button" class="info" id="atv-hero-info"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.5"/></svg>More Info</button>
               </div>
             </div>
           </div>
@@ -13454,6 +13462,13 @@ html[data-theme] .window-header.steam-popup-header,
                   <button type="button" class="accent-swatch" data-accent="#af52de" style="width:22px;height:22px;border-radius:50%;background:#af52de;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,0.2);cursor:pointer"></button>
                   <button type="button" class="accent-swatch" data-accent="#ff375f" style="width:22px;height:22px;border-radius:50%;background:#ff375f;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,0.2);cursor:pointer"></button>
                 </div>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Window traffic lights</strong><span>Close / minimize / maximize buttons — left (macOS) or right (Windows-style)</span></div>
+                <select id="settings-tl-side" style="height:28px;border-radius:6px;border:1px solid rgba(0,0,0,0.12);padding:0 8px;font-size:13px;background:#fff">
+                  <option value="left" selected>Left</option>
+                  <option value="right">Right</option>
+                </select>
               </div>
               <div class="settings-row">
                 <div class="row-label"><strong>Allow wallpaper tinting</strong><span>Softly tint windows based on the desktop picture</span></div>
@@ -24799,16 +24814,22 @@ window.setDesktopBackground = setDesktopBackground;
           });
       }
 
-      function cardHtml(m) {
-        var poster = m.poster_path ? IMG + m.poster_path : "";
-        var year = (m.release_date || "").slice(0, 4);
+      function cardHtml(m, i, top10) {
         var title = (m.title || "Untitled").replace(/</g, "&lt;");
+        var match = Math.min(99, Math.round(55 + (m.vote_average || 7) * 4.4));
+        var yr = (m.release_date || "").slice(0, 4);
+        if (top10) {
+          return '<button type="button" class="atv-card" data-id="' + m.id + '"><span class="nx-rank">' + (i + 1) + '</span>' +
+            (m.poster_path ? '<img src="' + IMG + m.poster_path + '" alt="" loading="lazy" draggable="false">' : '<div class="atv-card-ph"></div>') + '</button>';
+        }
+        var img = m.backdrop_path ? "https://image.tmdb.org/t/p/w500" + m.backdrop_path : (m.poster_path ? IMG + m.poster_path : "");
         return (
           '<button type="button" class="atv-card" data-id="' + m.id + '">' +
-            (poster
-              ? '<img src="' + poster + '" alt="" loading="lazy" draggable="false">'
-              : '<div class="atv-card-ph"></div>') +
-            '<div class="atv-card-meta"><strong>' + title + "</strong><span>" + year + "</span></div>" +
+            (img ? '<img src="' + img + '" alt="" loading="lazy" draggable="false">' : '<div class="atv-card-ph"></div>') +
+            '<span class="nx-ct">' + title + '</span>' +
+            '<div class="nx-info"><div class="nx-ic"><i>▶</i><i>＋</i><i>👍</i><i>⌄</i></div>' +
+            '<div class="nx-meta"><span class="m">' + match + '% Match</span><span class="a">' + (m.adult ? "18+" : "13+") + '</span><span class="h">HD</span></div>' +
+            '<div class="nx-tags">' + title + (yr ? " • " + yr : "") + '</div></div>' +
           "</button>"
         );
       }
@@ -24821,10 +24842,10 @@ window.setDesktopBackground = setDesktopBackground;
           .map(function (sec) {
             if (!sec.items || !sec.items.length) return "";
             return (
-              '<div class="atv-row">' +
+              '<div class="atv-row' + (sec.top10 ? " nx-top10row" : "") + '">' +
                 "<h3>" + sec.title + "</h3>" +
                 '<div class="atv-row-track">' +
-                  sec.items.map(cardHtml).join("") +
+                  sec.items.slice(0, sec.top10 ? 10 : 20).map(function (m, i) { return cardHtml(m, i, sec.top10); }).join("") +
                 "</div>" +
               "</div>"
             );
@@ -24873,15 +24894,19 @@ window.setDesktopBackground = setDesktopBackground;
             tmdb("/trending/movie/week"),
             tmdb("/movie/popular"),
             tmdb("/movie/top_rated"),
-            tmdb("/movie/now_playing")
+            tmdb("/movie/now_playing"),
+            tmdb("/movie/upcoming")
           ]).then(function (all) {
             return {
               hero: (all[0].results || [])[0] || (all[1].results || [])[0],
               sections: [
+                { title: "Top 10 Movies in the U.S. Today", items: all[1].results || [], top10: true },
                 { title: "Trending Now", items: all[0].results || [] },
                 { title: "Popular on Netflix", items: all[1].results || [] },
                 { title: "Top Rated", items: all[2].results || [] },
-                { title: "New Releases", items: all[3].results || [] }
+                { title: "New Releases", items: all[3].results || [] },
+                { title: "Coming Soon", items: all[4].results || [] },
+                { title: "Because you watched " + ((all[0].results || [])[1] || {}).title, items: (all[2].results || []).slice().reverse() }
               ]
             };
           });
@@ -25522,10 +25547,21 @@ window.setDesktopBackground = setDesktopBackground;
       function insertOnDock(btn) {
         var d = dockEl();
         if (!d || !btn) return;
+        // Never insert a second copy if this id is already on the dock
+        try {
+          var id = btn.getAttribute("data-dock-id");
+          if (id) {
+            var existing = d.querySelector('.dock-open-app-button[data-dock-id="' + id + '"]');
+            if (existing && existing !== btn) {
+              return;
+            }
+          }
+        } catch (e) {}
         var divider = d.querySelector('.divider[data-dock-id="__divider__"]') || d.querySelector(".divider");
         if (divider) d.insertBefore(btn, divider);
         else d.appendChild(btn);
-        try { d.__mwDock = false; window.dispatchEvent(new Event("resize")); } catch (e) {}
+        // Do NOT clear d.__mwDock — that re-ran restoreOrder and shoved icons right
+        try { window.dispatchEvent(new Event("resize")); } catch (e) {}
       }
 
       // Move / create icon on the dock while the app is running
@@ -26751,7 +26787,7 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
           }
         }
         if (e.target.id === "dock-reset-order") {
-          try { localStorage.removeItem("macos_dock_order_v1"); } catch (err) {}
+          try { localStorage.removeItem("macos_dock_order_v1", "macos_dock_order_v2"); localStorage.removeItem("macos_dock_order_v2"); } catch (err) {}
           location.reload();
         }
         if (e.target.id === "btn-mission-control") {
@@ -27644,7 +27680,7 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   var items = []; // { btn, img, spring, distance }
   var raf = 0;
   var dragging = null;
-  var STORAGE_KEY = "macos_dock_order_v1";
+  var STORAGE_KEY = "macos_dock_order_v2";
 
   function dockEl() {
     return document.getElementById("macos-dock") || document.querySelector(".dock-el");
@@ -27775,38 +27811,91 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   }
 
   // --- drag reorder (bonus, doesn't affect magnification) ---
+  // Skip temp running-only icons and never treat a normal click as a reorder.
+  var DRAG_THRESHOLD = 14;
+  var __dockOrderRestored = false;
+  function isTempDockBtn(el) {
+    return !!(el && el.getAttribute && el.getAttribute("data-dock-temp") === "1");
+  }
   function saveOrder() {
     var d = dockEl();
     if (!d) return;
     var ids = Array.prototype.slice.call(d.children)
-      .filter(function (el) { return el.dataset && el.dataset.dockId; })
+      .filter(function (el) {
+        return el.dataset && el.dataset.dockId && !isTempDockBtn(el);
+      })
       .map(function (el) { return el.dataset.dockId; });
+    // Ignore empty / single-item saves so we don't wipe a good order by accident
+    if (ids.length < 2) return;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(ids)); } catch (e) {}
   }
   function restoreOrder() {
     var d = dockEl();
     if (!d) return;
+    if (__dockOrderRestored) return;
     var order = null;
     try { order = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"); } catch (e) {}
-    if (!Array.isArray(order) || !order.length) return;
+    if (!Array.isArray(order) || !order.length) {
+      __dockOrderRestored = true;
+      return;
+    }
     var map = {};
+    var extras = [];
     Array.prototype.slice.call(d.children).forEach(function (el) {
-      if (el.dataset && el.dataset.dockId) map[el.dataset.dockId] = el;
+      if (!(el.dataset && el.dataset.dockId)) return;
+      var id = el.dataset.dockId;
+      // Prefer the first occurrence of each id; ignore temp clones during restore
+      if (isTempDockBtn(el)) { extras.push(el); return; }
+      if (!map[id]) map[id] = el;
     });
-    order.forEach(function (id) { if (map[id]) d.appendChild(map[id]); });
+    // Rebuild in saved order, then append any unknown permanent icons before the divider,
+    // and finally put temp icons (if any) just before the divider.
+    var frag = document.createDocumentFragment();
+    var used = {};
+    order.forEach(function (id) {
+      var el = map[id];
+      if (el && !used[id]) {
+        frag.appendChild(el);
+        used[id] = 1;
+      }
+    });
+    // Permanent icons not present in the saved list keep a stable relative order
+    Object.keys(map).forEach(function (id) {
+      if (!used[id]) {
+        frag.appendChild(map[id]);
+        used[id] = 1;
+      }
+    });
+    // Re-attach remaining non-button nodes (should be none) and temps later
+    while (d.firstChild) d.removeChild(d.firstChild);
+    d.appendChild(frag);
+    // Put temp running icons before the divider / trash if those exist
+    var divider = d.querySelector('.divider[data-dock-id="__divider__"]') || d.querySelector(".divider");
+    extras.forEach(function (el) {
+      if (divider) d.insertBefore(el, divider);
+      else d.appendChild(el);
+    });
+    __dockOrderRestored = true;
   }
   function onPointerDown(e) {
     var btn = e.target.closest && e.target.closest(".dock-open-app-button[data-dock-id]");
     if (!btn || e.button !== 0) return;
     var d = dockEl();
     if (!d || !d.contains(btn)) return;
-    dragging = { el: btn, x: e.clientX, y: e.clientY, moved: false, pid: e.pointerId };
+    // Don't reorder temp icons or locked system items via accidental drag
+    if (isTempDockBtn(btn)) return;
+    dragging = { el: btn, x: e.clientX, y: e.clientY, moved: false, pid: e.pointerId, originIndex: -1 };
+    try {
+      var kids = Array.prototype.slice.call(d.children);
+      dragging.originIndex = kids.indexOf(btn);
+    } catch (err) {}
     try { btn.setPointerCapture(e.pointerId); } catch (err) {}
   }
   function onPointerMove(e) {
     if (!dragging) return;
     var dx = e.clientX - dragging.x, dy = e.clientY - dragging.y;
-    if (!dragging.moved && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+    // Require a real drag — normal clicks often move a few pixels
+    if (!dragging.moved && (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD)) {
       dragging.moved = true;
       dockEl().classList.add("dock-dragging");
       dragging.el.classList.add("dock-dragging-item");
@@ -27830,12 +27919,18 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   function onPointerUp() {
     if (!dragging) return;
     var el = dragging.el, moved = dragging.moved;
+    var originIndex = dragging.originIndex;
     try { el.releasePointerCapture(dragging.pid); } catch (err) {}
     el.classList.remove("dock-dragging-item");
     var d = dockEl();
     if (d) d.classList.remove("dock-dragging");
     if (moved) {
-      saveOrder();
+      var kids = Array.prototype.slice.call(d.children);
+      var newIndex = kids.indexOf(el);
+      // Only persist if the icon actually changed slots
+      if (newIndex !== originIndex) {
+        saveOrder();
+      }
       el.__suppressClick = true;
       setTimeout(function () { el.__suppressClick = false; }, 50);
       collect(); // refresh item list after reorder
@@ -29088,7 +29183,7 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     "nyx_installed_apps", "nyx_brightness", "nyx_dev_mode", "nyx_perf_mode",
     "nyx_safari_iframe", "nyx_safari_proxy_engine", "nyx_safari_school_wifi",
     "nyx_safari_http_proxy", "nyx_force_http_proxy", "nyx_wisp", "nyx_assets_base",
-    "macos_desktop_bg", "macos_dock_order_v1", "safari_dark_mode",
+    "macos_desktop_bg", "macos_dock_order_v1", "macos_dock_order_v2", "safari_dark_mode",
     "safari_whats_new_seen", "safari_privacy_banner_seen", "ABDE", "WID", "TRNSPRT"
   ];
 
@@ -33425,6 +33520,396 @@ html body[data-os-style="windows"] .dock-el .dock-open-app-button:active img { t
 })();
 
 (function () { document.addEventListener("click", function (e) { var b = e.target.closest && e.target.closest(".dock-el .dock-open-app-button"); if (!b) return; b.classList.remove("nyx-bounce"); void b.offsetWidth; b.classList.add("nyx-bounce"); setTimeout(function () { b.classList.remove("nyx-bounce"); }, 1100); }, true); })();
+</script>
+<style id="nx-rm-style">
+#steam-window.nx-closed{display:none!important;visibility:hidden!important;pointer-events:none!important}
+
+/* ===== Overlay traffic lights (no title bar strip) ===== */
+.window:not(.finder-window):not(.safari):not(.steam)>.window__taskbar{position:absolute!important;top:0;left:0;right:0;height:38px!important;z-index:60;background:transparent!important;border:none!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;pointer-events:none;padding:0 0 0 14px!important}
+.window:not(.finder-window):not(.safari):not(.steam)>.window__taskbar::before{content:"";position:absolute;top:0;left:0;right:0;height:8px;pointer-events:auto}
+.window:not(.finder-window):not(.safari):not(.steam)>.window__taskbar .window__taskbar--actions{pointer-events:auto;padding:12px 14px 12px 0!important;margin-top:0}
+.window:not(.finder-window):not(.safari):not(.steam)>.window__taskbar .window__taskbar--content{display:none!important}
+.window:not(.finder-window):not(.safari):not(.steam)>.window__taskbar .window__taskbar--actions button{box-shadow:0 0 0 .5px rgba(0,0,0,.25)}
+
+/* ===== Netflix 1:1 ===== */
+.imovie-window{background:#141414!important;border-radius:10px!important;font-family:"Netflix Sans","Helvetica Neue",Helvetica,Arial,"Inter",sans-serif!important}
+.imovie-window .window__taskbar{background:#141414!important;border-bottom:none!important}
+.imovie-window .window__taskbar--content h2{display:none}
+.imovie-window .imovie-body,.imovie-window .atv-shell{background:#141414!important}
+.imovie-window .atv-topbar{position:absolute!important;top:0;left:0;right:0;z-index:15;display:flex!important;align-items:center;gap:20px;height:68px;padding:0 4%!important;background:linear-gradient(180deg,rgba(0,0,0,.75) 10%,transparent)!important;transition:background .3s}
+.imovie-window .atv-topbar.solid{background:#141414!important}
+.nx-logo{height:26px;width:100px;display:block;flex:none;margin-right:6px}
+.imovie-window .atv-logo{display:none!important}
+.imovie-window .atv-topbar .atv-tabs{gap:18px!important;flex:1}
+.imovie-window .atv-topbar .atv-tabs button{font-size:13.5px!important;font-weight:400!important;color:#e5e5e5!important;padding:0!important;white-space:nowrap}
+.imovie-window .atv-topbar .atv-tabs button:hover{color:#b3b3b3!important}
+.imovie-window .atv-topbar .atv-tabs button.active{font-weight:700!important;color:#fff!important}
+.nx-right{display:flex;align-items:center;gap:18px;color:#fff;font-size:13px}
+.nx-right svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;cursor:pointer}
+.nx-right .nx-kids{cursor:pointer}
+.nx-avatar{width:32px;height:32px;border-radius:4px;background:#e50914 linear-gradient(135deg,#f5a623,#e50914);position:relative;cursor:pointer}
+.nx-avatar::before,.nx-avatar::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.nx-avatar::before{width:4px;height:4px;left:8px;top:11px;box-shadow:12px 0 #fff}
+.nx-avatar::after{width:12px;height:5px;left:10px;top:20px;border-radius:0 0 12px 12px;background:#fff}
+.nx-caret{border:5px solid transparent;border-top-color:#fff;margin-top:5px}
+.imovie-window .atv-search{position:static!important;width:0!important;padding:0!important;opacity:0;border:1px solid transparent!important;background:transparent!important;color:#fff!important;font-size:13px;height:32px;transition:width .25s,opacity .25s,padding .25s;order:5}
+.imovie-window .atv-topbar.searching .atv-search{width:220px!important;opacity:1;padding:0 10px!important;border-color:#fff!important;background:rgba(0,0,0,.75)!important;border-radius:0!important}
+.imovie-window .atv-scroll{background:#141414!important;height:100%!important}
+.imovie-window .atv-hero{min-height:56.25%;height:auto!important;aspect-ratio:16/8.2;background-size:cover!important;background-position:center top!important;display:flex!important;align-items:center;padding:0!important;position:relative}
+.imovie-window .atv-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14.7vw;max-height:170px;background:linear-gradient(180deg,transparent,#141414 90%);pointer-events:none}
+.imovie-window .atv-hero-inner{position:relative;z-index:2;padding:0 4%!important;max-width:42%!important;margin-top:40px}
+.imovie-window .atv-hero-badge{display:flex!important;align-items:center;gap:8px;background:none!important;color:#fff!important;font-weight:700;font-size:12px;letter-spacing:.25em!important;padding:0!important;margin-bottom:6px}
+.imovie-window .atv-hero-badge::before{content:"N";color:#e50914;font-weight:900;font-size:22px;letter-spacing:0;background:none!important;width:auto!important;height:auto!important;position:static!important}
+.imovie-window .atv-hero h2{font-size:clamp(28px,4.4vw,56px)!important;font-weight:900!important;line-height:1!important;letter-spacing:-.02em;text-shadow:2px 4px 6px rgba(0,0,0,.45);margin:0 0 12px!important}
+.nx-top10{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;margin-bottom:10px;text-shadow:1px 1px 3px #000}
+.nx-top10 b{background:#e50914;border-radius:2px;font-size:9px;line-height:1;padding:4px 3px 3px;text-align:center;font-weight:900;letter-spacing:-.3px}
+.imovie-window .atv-hero p{font-size:clamp(11px,1.25vw,16px)!important;line-height:1.35;color:#fff!important;text-shadow:1px 1px 3px rgba(0,0,0,.6);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;max-width:520px}
+.imovie-window .atv-hero-actions{margin-top:14px;gap:10px!important}
+.imovie-window .atv-hero-actions button{border-radius:4px!important;font-weight:700!important;font-size:15px!important;padding:8px 22px!important;height:auto!important;display:flex;align-items:center;gap:8px;border:none}
+.imovie-window .atv-hero-actions .play{background:#fff!important;color:#000!important}
+.imovie-window .atv-hero-actions .play:hover{background:rgba(255,255,255,.75)!important}
+.imovie-window .atv-hero-actions .info{background:rgba(109,109,110,.7)!important;color:#fff!important}
+.imovie-window .atv-hero-actions .info:hover{background:rgba(109,109,110,.4)!important}
+.nx-maturity{position:absolute;right:0;bottom:30%;z-index:3;background:rgba(51,51,51,.6);border-left:3px solid #dcdcdc;color:#fff;padding:7px 40px 7px 12px;font-size:15px}
+.imovie-window .atv-rows{margin-top:-6.5vw;position:relative;z-index:5;padding:0 0 40px!important}
+.imovie-window .atv-row{margin-bottom:2.2vw!important;padding:0 4%;position:relative}
+.imovie-window .atv-row h3{font-size:clamp(14px,1.4vw,20px)!important;font-weight:700!important;color:#e5e5e5!important;margin:0 0 .5em!important;padding:0!important;letter-spacing:0!important}
+.imovie-window .atv-row h3:hover::after{content:"Explore All ›";font-size:.75em;color:#54b9c5;margin-left:12px;font-weight:700}
+.imovie-window .atv-row:hover{z-index:20}
+.imovie-window .atv-row-track{gap:.45vw!important;padding:34px 0 120px!important;margin:-34px 0 -120px;overflow-x:auto!important;overflow-y:visible!important;scrollbar-width:none;scroll-snap-type:none!important}
+.imovie-window .atv-row-track::-webkit-scrollbar{display:none}
+.imovie-window .atv-card{flex:0 0 calc((100% - 5*.45vw)/5.2)!important;border-radius:4px!important;position:relative;aspect-ratio:16/9;background:#2f2f2f!important;overflow:visible;transition:transform .3s cubic-bezier(.5,0,.1,1),box-shadow .3s;transform-origin:center;z-index:1}
+.imovie-window .atv-card img{width:100%;height:100%;object-fit:cover;border-radius:4px;display:block}
+.imovie-window .atv-card-ph{width:100%;height:100%;background:#2f2f2f;border-radius:4px}
+.imovie-window .atv-card .nx-ct{position:absolute;left:8px;bottom:6px;right:8px;font-weight:900;font-size:13px;text-shadow:0 1px 4px #000;line-height:1.05;pointer-events:none}
+.imovie-window .atv-card:hover{transform:scale(1.35)!important;z-index:30;box-shadow:0 10px 30px rgba(0,0,0,.8);border-radius:6px!important}
+.imovie-window .atv-card:first-child:hover{transform-origin:left center}
+.imovie-window .atv-card:last-child:hover{transform-origin:right center}
+.nx-info{display:none;position:absolute;left:0;right:0;top:100%;background:#181818;border-radius:0 0 6px 6px;padding:9px 10px 10px;box-shadow:0 10px 20px rgba(0,0,0,.6);font-size:7.5px;line-height:1.3}
+.imovie-window .atv-card:hover .nx-info{display:block}
+.imovie-window .atv-card:hover .nx-ct{display:none}
+.nx-ic{display:flex;gap:5px;margin-bottom:6px;align-items:center}
+.nx-ic i{width:17px;height:17px;border-radius:50%;border:1.5px solid rgba(255,255,255,.5);display:grid;place-items:center;font-style:normal;font-size:8px;color:#fff;background:rgba(42,42,42,.6)}
+.nx-ic i:first-child{background:#fff;color:#000;border-color:#fff}
+.nx-ic i:last-child{margin-left:auto}
+.nx-meta{display:flex;gap:6px;align-items:center;font-weight:700;margin-bottom:3px}
+.nx-meta .m{color:#46d369}
+.nx-meta .a{border:1px solid rgba(255,255,255,.4);padding:0 3px;font-size:7px;font-weight:400}
+.nx-meta .h{border:1px solid rgba(255,255,255,.4);padding:0 3px;font-size:6px}
+.nx-tags{color:#fff;font-size:7.5px}
+.imovie-window .atv-row.nx-top10row .atv-card{flex:0 0 calc((100% - 4*.45vw)/4.4)!important;aspect-ratio:auto!important;background:none!important;display:flex;align-items:flex-end;overflow:visible}
+.imovie-window .atv-row.nx-top10row .atv-card .nx-rank{font-size:clamp(70px,11vw,150px);font-weight:900;line-height:.8;color:#141414;-webkit-text-stroke:3px #595959;letter-spacing:-.08em;margin-right:-.06em;flex:none}
+.imovie-window .atv-row.nx-top10row .atv-card img{aspect-ratio:2/3;width:auto;flex:none;max-height:none;height:clamp(120px,15vw,230px)!important}
+.imovie-window .atv-row.nx-top10row .atv-card:hover{transform:scale(1.08)!important}
+.imovie-window .atv-row.nx-top10row .nx-info,.imovie-window .atv-row.nx-top10row .nx-ct{display:none!important}
+.imovie-window .atv-source-note{color:#757575!important;font-size:12px;padding:30px 4% 40px!important;text-align:left!important}
+.imovie-window .atv-status{color:#737373!important}
+.imovie-window .atv-player-bar{background:rgba(0,0,0,.9)!important}
+.imovie-window .atv-player-bar button.primary{background:#e50914!important}
+.imovie-window .atv-player-sources button.active{background:#e50914!important}
+.imovie-window .atv-scroll::-webkit-scrollbar{width:10px}.imovie-window .atv-scroll::-webkit-scrollbar-thumb{background:#4d4d4d;border-radius:0}
+
+/* ===== Rainmeter-style desktop widgets ===== */
+#rm-layer{position:fixed;inset:0;z-index:7;pointer-events:none;font-family:"Montserrat","Inter",-apple-system,sans-serif;color:#fff}
+.rm-w{position:absolute;pointer-events:auto;user-select:none;-webkit-user-select:none;cursor:grab;text-shadow:0 1px 4px rgba(0,0,0,.55);transition:opacity .25s;touch-action:none}
+.rm-w.drag{cursor:grabbing;z-index:5}
+.rm-w.rm-hidden{display:none!important}
+.rm-w svg{display:block;overflow:visible}
+.rm-card{background:rgba(10,12,18,.28);backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.rm-flat{background:none;border:none;box-shadow:none;backdrop-filter:none;padding:0}
+.rm-t{font-size:9px;letter-spacing:.32em;text-transform:uppercase;opacity:.65;margin-bottom:8px;font-weight:500}
+.rm-big{font-size:34px;font-weight:200;letter-spacing:.04em;line-height:1}
+.rm-sm{font-size:10px;letter-spacing:.16em;opacity:.7;text-transform:uppercase}
+.rm-row{display:flex;align-items:center;gap:10px;font-size:10px;letter-spacing:.12em;margin:5px 0}
+.rm-row .k{width:62px;opacity:.65;text-transform:uppercase;font-size:9px}
+.rm-bar{flex:1;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden;min-width:70px}
+.rm-bar>i{display:block;height:100%;background:var(--rm-a,#7fdcff);border-radius:2px;transition:width .6s}
+.rm-row .v{width:34px;text-align:right;opacity:.9;font-variant-numeric:tabular-nums}
+.rm-ring text{fill:#fff;font-family:inherit}
+.rm-cal{display:grid;grid-template-columns:repeat(7,22px);gap:2px 0;text-align:center;font-size:10px}
+.rm-cal b{opacity:.5;font-weight:500;font-size:8px;letter-spacing:.1em}
+.rm-cal span{height:22px;line-height:22px;border-radius:50%;opacity:.85}
+.rm-cal span.mut{opacity:.25}.rm-cal span.today{background:#fff;color:#111;opacity:1;font-weight:700;text-shadow:none}
+.rm-viz{display:flex;align-items:flex-end;gap:3px;height:64px}
+.rm-viz i{width:5px;background:linear-gradient(0deg,#7fdcff,#c79bff);border-radius:2px;height:10%;transition:height .12s}
+.rm-todo{width:210px;font-size:11px}
+.rm-todo div[contenteditable]{outline:none;min-height:70px;line-height:1.7;letter-spacing:.04em;white-space:pre-wrap;user-select:text;-webkit-user-select:text;cursor:text}
+#rm-panel{position:fixed;top:40px;right:14px;width:290px;max-height:80vh;overflow:auto;z-index:99990;background:rgba(30,30,34,.82);backdrop-filter:blur(30px) saturate(1.8);-webkit-backdrop-filter:blur(30px) saturate(1.8);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:14px;color:#fff;font:13px -apple-system,"Inter",sans-serif;box-shadow:0 20px 50px rgba(0,0,0,.5);display:none}
+#rm-panel.open{display:block}
+#rm-panel h4{margin:0 0 10px;font-size:14px}
+#rm-panel label{display:flex;justify-content:space-between;align-items:center;padding:6px 2px;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer}
+#rm-panel input{accent-color:#0a84ff}
+#rm-panel .rm-btns{display:flex;gap:8px;margin-top:12px}
+#rm-panel button{flex:1;border:none;border-radius:6px;padding:6px;background:rgba(255,255,255,.14);color:#fff;font-size:12px;cursor:pointer}
+#rm-panel button:hover{background:rgba(255,255,255,.24)}
+body.perf-mode-ultimate #rm-layer{display:none}
+@media(max-width:900px){#rm-layer{display:none}}
+
+.imovie-window .atv-topbar{padding-left:calc(4% + 64px)!important}
+
+/* ===== Safari overlay chrome ===== */
+.safari.window .safari-chrome{position:absolute!important;top:0;left:0;right:0;z-index:30;background:rgba(36,36,38,.55)!important;backdrop-filter:blur(24px) saturate(1.6);-webkit-backdrop-filter:blur(24px) saturate(1.6);border-bottom:none!important}
+.safari.window:not(.dark-mode) .safari-chrome{background:rgba(246,246,248,.6)!important}
+.safari.window .safari-frames{height:100%!important;flex:1;box-sizing:border-box;padding-top:52px}
+.safari.window .safari-traffic button{box-shadow:0 0 0 .5px rgba(0,0,0,.3)}
+/* ===== Steam — closer to the real client ===== */
+.window.steam{background:#1b2838!important;border:1px solid #000!important;border-radius:6px!important;font-family:"Motiva Sans","Segoe UI",Arial,Helvetica,sans-serif!important}
+.window.steam>.window__taskbar{position:absolute!important;top:0;left:0;right:0;height:34px!important;z-index:60;background:transparent!important;border:none!important;box-shadow:none!important;pointer-events:none;padding:0!important}
+.window.steam>.window__taskbar::before{content:"";position:absolute;top:0;left:0;right:0;height:8px;pointer-events:auto}
+.window.steam>.window__taskbar .window__taskbar--content{display:none!important}
+.window.steam>.window__taskbar .window__taskbar--actions{pointer-events:auto;position:absolute;right:0;top:0}
+.steam .steam-main{background:#1b2838}
+.steam .steam-top-bar{background:#171d25!important;height:34px!important;padding:0 160px 0 12px!important;border:none!important;color:#c7d5e0}
+.steam .steam-top-bar .steam-menu-item{font-size:13px!important;letter-spacing:0!important;text-transform:none!important;color:#c6d4df!important;font-weight:400!important;padding:0 8px!important}
+.steam .steam-top-bar .steam-menu-item:hover{color:#fff!important}
+.steam .steam-top-right{margin-left:auto}
+.steam .steam-top-right .steam-quick-nav-btn,.steam .steam-notifications{background:transparent!important;color:#8f98a0!important;width:24px!important;height:24px!important}
+.steam .steam-user-profile{background:transparent!important;font-size:12px;color:#b8b6b4;gap:8px}
+.steam .steam-user-profile img{width:24px;height:24px;border-radius:2px;border:1px solid #4c6b22}
+.steam .steam-nav-bar{background:linear-gradient(180deg,#171d25 0%,#1b2838 100%)!important;height:56px!important;padding:0 16px!important;border:none!important;align-items:center}
+.steam .steam-nav-btn{background:transparent!important;color:#8f98a0!important;border:none!important;width:28px!important;height:28px!important}
+.steam .steam-nav-btn:hover{color:#fff!important}
+.steam .steam-tabs{gap:6px!important}
+.steam .steam-tab{font-size:15px!important;font-weight:500!important;letter-spacing:.02em!important;text-transform:uppercase;color:#8f98a0!important;border:none!important;border-bottom:none!important;padding:6px 12px!important;background:transparent!important}
+.steam .steam-tab:hover{color:#fff!important}
+.steam .steam-tab.active{color:#fff!important;border:none!important;box-shadow:none!important}
+.steam .steam-tab.active::after{display:none!important}
+.steam .steam-disclaimer{background:#1b2838!important;color:#67707b!important;font-size:11px!important;padding:2px 16px!important;min-height:0!important;border:none!important;opacity:.8}
+.steam .steam-content-area{background:#1b2838}
+.steam .steam-library-sidebar{background:#1b2838!important;border-right:1px solid #000!important;width:250px!important}
+.steam .sidebar-search-container{background:#171d25!important;margin:10px!important;border-radius:3px!important;border:1px solid #000!important;box-shadow:inset 0 1px 3px rgba(0,0,0,.5)}
+.steam .sidebar-search-input{background:transparent!important;color:#fff!important;font-size:13px!important}
+.steam .sidebar-game-list>*{font-size:13px;color:#b8b6b4}
+.steam .sidebar-game-list>*:hover{background:#3d4450!important;color:#fff}
+.steam .steam-main-content{background:linear-gradient(180deg,#1b2838 0%,#16202d 100%)!important}
+.steam .store-section-title{font-size:14px!important;letter-spacing:.06em;color:#fff!important;font-weight:500}
+.steam .yuki-lib-grid>*{background:#16202d!important;border-radius:3px!important;border:none!important;box-shadow:0 2px 8px rgba(0,0,0,.4);transition:transform .15s}
+.steam .yuki-lib-grid>*:hover{transform:translateY(-2px)}
+.steam .steam-bottom-bar{background:#171d25!important;height:32px!important;border-top:1px solid #000!important;color:#8f98a0;font-size:12px;font-weight:500;letter-spacing:.04em}
+.steam .steam-bottom-bar button,.steam .steam-friends-btn,.steam .nx-addgame{background:transparent!important;color:#8f98a0!important;border:none!important;font-size:12px!important;cursor:pointer}
+.steam .steam-bottom-bar button:hover,.steam .steam-friends-btn:hover,.steam .nx-addgame:hover{color:#fff!important}
+.steam .nx-addgame b{font-size:16px;margin-right:6px;vertical-align:-1px}
+.steam .steam-friends-btn{color:#5ba3d9!important}
+.steam .sidebar-search-input{border:none!important;box-shadow:none!important;outline:none}
+.steam .sidebar-search-container{padding:0!important}
+
+/* ===== Safari: traffic lights float over the page, no bar ===== */
+#safari-window .safari-chrome{position:absolute!important;top:0!important;left:0!important;right:0!important;height:0!important;min-height:0!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:none!important;box-shadow:none!important;z-index:200!important;pointer-events:none}
+#safari-window .safari-chrome-top{position:absolute!important;top:0;left:0;right:0;height:14px!important;min-height:0!important;padding:0!important;pointer-events:auto;background:transparent!important}
+#safari-window .safari-chrome-top .safari-traffic{position:absolute!important;top:12px;left:14px;pointer-events:auto!important;z-index:210!important;padding:0!important}
+#safari-window .safari-traffic button{box-shadow:0 0 0 .5px rgba(0,0,0,.35),0 1px 4px rgba(0,0,0,.35)}
+#safari-window.safari .safari-frames,#safari-window .safari-frames{height:100%!important;padding-top:0!important;flex:1}
+</style>
+<script>(function(){var tb=document.querySelector(".imovie-window .atv-topbar"),sc=document.getElementById("atv-scroll"),b=document.getElementById("nx-search-btn"),inp=document.getElementById("atv-search");
+if(sc&&tb)sc.addEventListener("scroll",function(){tb.classList.toggle("solid",sc.scrollTop>20)});
+if(b&&tb)b.addEventListener("click",function(){tb.classList.toggle("searching");if(tb.classList.contains("searching"))inp.focus()});
+if(inp&&tb)inp.addEventListener("blur",function(){if(!inp.value)tb.classList.remove("searching")});})();
+</script>
+<script>
+/* ===== Rainmeter-style widget suite ===== */
+(function(){
+"use strict";
+var LS="nyx_rm_v2", NS="http://www.w3.org/2000/svg";
+function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v));}catch(e){return null}}
+var state=ls(LS);if(!state){state={pos:{},hidden:{},all:false};}
+// Desktop widgets off by default (ring clock, weather, and the rest)
+["clock","weather","cpu","mem","cal","moon","world","prog","todo","net","bat","viz","fps","sys"].forEach(function(k){state.hidden[k]=true});
+state.all=false;
+try{localStorage.setItem(LS,JSON.stringify(state));}catch(e){}
+function save(){ls(LS,state)}
+var $=function(s,r){return(r||document).querySelector(s)};
+function h(html){var d=document.createElement("div");d.innerHTML=html;return d.firstElementChild}
+var pad=function(n){return(n<10?"0":"")+n};
+var DAYS=["SUN","MON","TUE","WED","THU","FRI","SAT"],MON=["January","February","March","April","May","June","July","August","September","October","November","December"];
+function ring(r,w){var c=2*Math.PI*r;return{c:c,html:'<circle cx="0" cy="0" r="'+r+'" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="'+w+'"/><circle class="rg" cx="0" cy="0" r="'+r+'" fill="none" stroke-width="'+w+'" stroke-linecap="round" stroke-dasharray="0 '+c+'" transform="rotate(-90)"/>'}}
+function setRing(el,frac,c,color){frac=Math.max(0,Math.min(1,frac));el.setAttribute("stroke-dasharray",(frac*c).toFixed(1)+" "+c);if(color)el.setAttribute("stroke",color)}
+var noise={};function wob(id,base,amp,speed){var t=Date.now()/1000*(speed||1);var s=noise[id]||(noise[id]=Math.random()*100);return Math.max(2,Math.min(98,base+amp*(Math.sin(t+s)*.5+Math.sin(t*2.3+s*1.7)*.3+Math.sin(t*.37+s)*.2)))}
+
+var W=[];
+/* 1 — concentric ring clock */
+W.push({id:"clock",name:"Ring Clock",col:0,build:function(){var a=ring(78,5),b=ring(64,5),c=ring(50,5);
+ var el=h('<div class="rm-w rm-flat"><svg width="190" height="190" viewBox="-95 -95 190 190" class="rm-ring"><g>'+a.html+'</g><g>'+b.html+'</g><g>'+c.html+'</g><text class="t" y="6" text-anchor="middle" font-size="22" font-weight="200" letter-spacing="2"></text><text class="d" y="26" text-anchor="middle" font-size="7" letter-spacing="3" opacity=".7"></text></svg></div>');
+ var g=el.querySelectorAll(".rg");el._u=function(){var n=new Date,s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,hr=n.getHours()%12+m/60;
+  setRing(g[0],hr/12,a.c,"#ff8fa3");setRing(g[1],m/60,b.c,"#7fdcff");setRing(g[2],s/60,c.c,"#c8ff8f");
+  el.querySelector(".t").textContent=pad(n.getHours())+":"+pad(n.getMinutes());el.querySelector(".d").textContent=DAYS[n.getDay()]+" · "+n.getDate()+" "+MON[n.getMonth()].slice(0,3).toUpperCase()};el._fast=1;return el}});
+/* 2 — CPU */
+W.push({id:"cpu",name:"CPU Cores",col:0,build:function(){var n=Math.min(navigator.hardwareConcurrency||8,8),bars="";for(var i=0;i<n;i++)bars+='<div class="rm-row"><span class="k">Core '+(i+1)+'</span><span class="rm-bar"><i></i></span><span class="v">0%</span></div>';
+ var r=ring(34,6);var el=h('<div class="rm-w rm-card"><div class="rm-t">CPU</div><div style="display:flex;gap:14px;align-items:center"><svg width="86" height="86" viewBox="-43 -43 86 86" class="rm-ring">'+r.html+'<text class="p" y="5" text-anchor="middle" font-size="16" font-weight="300">0%</text></svg><div class="rm-sm">'+n+' cores<br>'+(navigator.platform||"")+'</div></div><div style="margin-top:6px">'+bars+'</div></div>');
+ var rows=el.querySelectorAll(".rm-row");el._u=function(){var tot=0;rows.forEach(function(r2,i){var v=wob("c"+i,35,30,.7+i*.13);tot+=v;r2.querySelector("i").style.width=v+"%";r2.querySelector(".v").textContent=Math.round(v)+"%"});tot/=rows.length;setRing(el.querySelector(".rg"),tot/100,r.c,"#ffb86b");el.querySelector(".p").textContent=Math.round(tot)+"%"};return el}});
+/* 3 — memory & disk */
+W.push({id:"mem",name:"Memory & Disk",col:0,build:function(){var el=h('<div class="rm-w rm-card"><div class="rm-t">Memory · Storage</div><div class="rm-row"><span class="k">RAM</span><span class="rm-bar"><i class="a"></i></span><span class="v">–</span></div><div class="rm-row"><span class="k">Swap</span><span class="rm-bar"><i class="b"></i></span><span class="v">–</span></div><div class="rm-row"><span class="k">Disk</span><span class="rm-bar"><i class="c"></i></span><span class="v">–</span></div><div class="rm-sm mm" style="margin-top:8px"></div></div>');
+ var disk=null;try{navigator.storage.estimate().then(function(e){disk=e})}catch(x){}
+ el._u=function(){var m=performance.memory,ram=m?m.usedJSHeapSize/m.jsHeapSizeLimit*100+30:wob("ram",55,6,.2);ram=Math.min(95,ram);var sw=wob("sw",18,5,.15),dk=disk&&disk.quota?Math.max(2,disk.usage/disk.quota*100):wob("dk",42,1,.05);
+  [["a",ram],["b",sw],["c",dk]].forEach(function(p){var b=el.querySelector("."+p[0]);b.style.width=p[1]+"%";b.parentNode.nextSibling.textContent=Math.round(p[1])+"%";if(p[1]>85)b.style.background="#ff6b6b"});
+  el.querySelector(".mm").textContent=(navigator.deviceMemory?navigator.deviceMemory+" GB installed":"Unified memory")+(disk?" · "+(disk.usage/1048576).toFixed(0)+" MB used":"")};return el}});
+/* 4 — weather */
+W.push({id:"weather",name:"Weather",col:1,build:function(){var el=h('<div class="rm-w rm-card" style="min-width:176px"><div class="rm-t wl">Weather</div><div style="display:flex;align-items:center;gap:12px"><div class="ic" style="font-size:38px">⛅</div><div><div class="rm-big tp">--°</div><div class="rm-sm ds">Loading</div></div></div><div class="rm-sm fc" style="margin-top:10px"></div></div>');
+ var us=/^America\//.test(Intl.DateTimeFormat().resolvedOptions().timeZone),code2=function(c){return c==0?["☀️","Clear"]:c<3?["🌤️","Partly cloudy"]:c==3?["☁️","Overcast"]:c<50?["🌫️","Fog"]:c<60?["🌦️","Drizzle"]:c<70?["🌧️","Rain"]:c<80?["❄️","Snow"]:c<90?["🌧️","Showers"]:["⛈️","Thunderstorm"]};
+ function go(lat,lon,name){fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1"+(us?"&temperature_unit=fahrenheit&wind_speed_unit=mph":"")).then(function(r){return r.json()}).then(function(d){var c=d.current,x=code2(c.weather_code);el.querySelector(".ic").textContent=x[0];el.querySelector(".tp").textContent=Math.round(c.temperature_2m)+"°";el.querySelector(".ds").textContent=x[1];el.querySelector(".wl").textContent=name;el.querySelector(".fc").innerHTML="H "+Math.round(d.daily.temperature_2m_max[0])+"° · L "+Math.round(d.daily.temperature_2m_min[0])+"°<br>💧 "+c.relative_humidity_2m+"% · 💨 "+Math.round(c.wind_speed_10m)+(us?" mph":" km/h")}).catch(function(){el.querySelector(".ds").textContent="Offline"})}
+ go(41.88,-87.63,"Chicago");setInterval(function(){go(41.88,-87.63,"Chicago")},900000);return el}});
+/* 5 — calendar */
+W.push({id:"cal",name:"Calendar",col:1,build:function(){var el=h('<div class="rm-w rm-card"><div class="rm-t cm"></div><div class="rm-cal"></div></div>');
+ el._u=function(){var n=new Date,y=n.getFullYear(),m=n.getMonth(),f=new Date(y,m,1).getDay(),dm=new Date(y,m+1,0).getDate(),pm=new Date(y,m,0).getDate(),s="";el.querySelector(".cm").textContent=MON[m]+" "+y;
+  "SMTWTFS".split("").forEach(function(d){s+="<b>"+d+"</b>"});for(var i=f-1;i>=0;i--)s+='<span class="mut">'+(pm-i)+"</span>";for(var d=1;d<=dm;d++)s+='<span class="'+(d==n.getDate()?"today":"")+'">'+d+"</span>";
+  var tot=f+dm,rest=(7-tot%7)%7;for(i=1;i<=rest;i++)s+='<span class="mut">'+i+"</span>";el.querySelector(".rm-cal").innerHTML=s};return el}});
+/* 6 — moon */
+W.push({id:"moon",name:"Moon Phase",col:1,build:function(){var el=h('<div class="rm-w rm-card" style="display:flex;gap:14px;align-items:center"><svg width="54" height="54" viewBox="-27 -27 54 54"><circle r="24" fill="#222"/><path class="lit" fill="#f1ecd2"/><circle r="24" fill="none" stroke="rgba(255,255,255,.25)"/></svg><div><div class="rm-t" style="margin:0 0 4px">Moon</div><div class="nm" style="font-size:13px;font-weight:300"></div><div class="rm-sm il"></div></div></div>');
+ el._u=function(){var syn=29.530588853,d=((Date.now()-Date.UTC(2000,0,6,18,14))/864e5)%syn;if(d<0)d+=syn;var p=d/syn,ill=(1-Math.cos(p*2*Math.PI))/2,r=24,k=Math.cos(p*2*Math.PI)*r,wax=p<.5;
+  var path="M0 "+(-r)+"A"+r+" "+r+" 0 0 "+(wax?1:0)+" 0 "+r+"A"+Math.abs(k)+" "+r+" 0 0 "+((wax?(k>0?0:1):(k>0?1:0)))+" 0 "+(-r)+"Z";el.querySelector(".lit").setAttribute("d",path);
+  var names=["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"];el.querySelector(".nm").textContent=names[Math.round(p*8)%8];el.querySelector(".il").textContent=Math.round(ill*100)+"% lit"};return el}});
+/* 7 — world clocks */
+W.push({id:"world",name:"World Clocks",col:2,build:function(){var Z=[["New York","America/New_York"],["London","Europe/London"],["Tokyo","Asia/Tokyo"],["Sydney","Australia/Sydney"]],rows=Z.map(function(z){return'<div class="rm-row" style="justify-content:space-between"><span class="k" style="width:80px">'+z[0]+'</span><span class="v" style="width:auto;font-size:15px;font-weight:200;letter-spacing:.08em"></span></div>'}).join("");
+ var el=h('<div class="rm-w rm-card" style="min-width:190px"><div class="rm-t">World</div>'+rows+"</div>");var vs=el.querySelectorAll(".v");
+ el._u=function(){Z.forEach(function(z,i){vs[i].textContent=new Date().toLocaleTimeString("en-US",{timeZone:z[1],hour:"2-digit",minute:"2-digit",hour12:false})})};return el}});
+/* 8 — progress */
+W.push({id:"prog",name:"Time Progress",col:2,build:function(){var el=h('<div class="rm-w rm-card"><div class="rm-t">Progress</div>'+["Day","Week","Month","Year"].map(function(k){return'<div class="rm-row"><span class="k">'+k+'</span><span class="rm-bar"><i></i></span><span class="v"></span></div>'}).join("")+"</div>");var bs=el.querySelectorAll(".rm-row");
+ el._u=function(){var n=new Date,y=n.getFullYear(),ds=(n-new Date(y,n.getMonth(),n.getDate()))/864e5,wk=(n.getDay()+ds)/7,mo=((n.getDate()-1)+ds)/new Date(y,n.getMonth()+1,0).getDate(),yr=(n-new Date(y,0,1))/(new Date(y+1,0,1)-new Date(y,0,1));
+  [ds,wk,mo,yr].forEach(function(v,i){bs[i].querySelector("i").style.width=v*100+"%";bs[i].querySelector(".v").textContent=Math.round(v*100)+"%"})};return el}});
+/* 9 — todo */
+W.push({id:"todo",name:"Notes",col:2,build:function(){var el=h('<div class="rm-w rm-card rm-todo"><div class="rm-t">Notes</div><div contenteditable="true" spellcheck="false"></div></div>');var ed=el.querySelector("[contenteditable]");
+ ed.textContent=ls("nyx_rm_note")||"☐ Finish the project\n☐ Reply to emails\n☐ Go for a walk";ed.addEventListener("input",function(){ls("nyx_rm_note",ed.textContent)});return el}});
+/* 10 — network */
+W.push({id:"net",name:"Network",col:3,build:function(){var pts=[],el=h('<div class="rm-w rm-card" style="min-width:196px"><div class="rm-t">Network <span class="ty" style="opacity:.8"></span></div><svg width="170" height="46" viewBox="0 0 170 46"><polyline class="u" fill="none" stroke="#ff8fa3" stroke-width="1.5"/><polyline class="d" fill="none" stroke="#7fdcff" stroke-width="1.5"/></svg><div class="rm-row" style="justify-content:space-between"><span style="color:#7fdcff">▼ <b class="dv" style="font-weight:400"></b></span><span style="color:#ff8fa3">▲ <b class="uv" style="font-weight:400"></b></span></div><div class="rm-sm rt"></div></div>'),dn=[],up=[];
+ el._u=function(){var c=navigator.connection||{},cap=c.downlink||40;var d=wob("nd",cap*.35,cap*.3,1.3),u=wob("nu",cap*.1,cap*.08,.9);dn.push(d);up.push(u);if(dn.length>34){dn.shift();up.shift()}var mx=Math.max.apply(0,dn.concat(up))*1.1||1;
+  function pl(a){return a.map(function(v,i){return(i*5)+","+(44-v/mx*40)}).join(" ")}el.querySelector(".d").setAttribute("points",pl(dn));el.querySelector(".u").setAttribute("points",pl(up));el.querySelector(".dv").textContent=d.toFixed(1)+" Mb/s";el.querySelector(".uv").textContent=u.toFixed(1)+" Mb/s";
+  el.querySelector(".ty").textContent=(c.effectiveType||"wifi").toUpperCase();el.querySelector(".rt").textContent="Ping "+(c.rtt!=null?c.rtt:24)+" ms"};return el}});
+/* 11 — battery */
+W.push({id:"bat",name:"Battery",col:3,build:function(){var r=ring(30,6),el=h('<div class="rm-w rm-card" style="display:flex;gap:14px;align-items:center"><svg width="76" height="76" viewBox="-38 -38 76 76" class="rm-ring">'+r.html+'<text class="p" y="5" text-anchor="middle" font-size="15" font-weight="300">--</text></svg><div><div class="rm-t" style="margin:0 0 4px">Battery</div><div class="rm-sm st">Plugged in</div></div></div>'),b=null;
+ try{navigator.getBattery().then(function(x){b=x})}catch(e){}
+ el._u=function(){var lvl=b?b.level:.82;setRing(el.querySelector(".rg"),lvl,r.c,lvl<.2?"#ff6b6b":"#8fff9e");el.querySelector(".p").textContent=Math.round(lvl*100)+"%";el.querySelector(".st").textContent=b?(b.charging?"⚡ Charging":"On battery"):"Plugged in"};return el}});
+/* 12 — visualizer */
+W.push({id:"viz",name:"Visualizer",col:3,build:function(){var bars="";for(var i=0;i<22;i++)bars+="<i></i>";var el=h('<div class="rm-w rm-card"><div class="rm-t">Now Playing</div><div class="rm-viz">'+bars+'</div><div style="font-size:12px;margin-top:8px;font-weight:300;letter-spacing:.08em">Midnight City</div><div class="rm-sm">M83</div></div>');var bs=el.querySelectorAll("i");
+ el._u=function(){var t=Date.now()/1000;bs.forEach(function(b,i){var v=.2+.8*Math.abs(Math.sin(t*(1.6+i*.17)+i)*Math.cos(t*.9+i*.5));b.style.height=(v*100)+"%"})};el._fast=1;return el}});
+/* 13 — FPS gauge */
+W.push({id:"fps",name:"Frame Rate",col:3,build:function(){var r=34,c=Math.PI*r,el=h('<div class="rm-w rm-card" style="text-align:center"><div class="rm-t">Display</div><svg width="100" height="58" viewBox="-50 -48 100 58"><path d="M-34 0A34 34 0 0 1 34 0" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="6" stroke-linecap="round"/><path class="g" d="M-34 0A34 34 0 0 1 34 0" fill="none" stroke="#c8ff8f" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 '+c+'"/><text class="f" y="-4" text-anchor="middle" font-size="16" font-weight="300" fill="#fff">60</text></svg><div class="rm-sm">FPS</div></div>'),n=0,last=performance.now(),fps=60;
+ (function loop(t){n++;if(t-last>=500){fps=n*1000/(t-last);n=0;last=t}requestAnimationFrame(loop)})(last);
+ el._u=function(){el.querySelector(".f").textContent=Math.round(fps);el.querySelector(".g").setAttribute("stroke-dasharray",(Math.min(1,fps/120)*c).toFixed(1)+" "+c)};el._fast=1;return el}});
+/* 14 — system info */
+W.push({id:"sys",name:"System Info",col:2,build:function(){var rs=[["OS",/Mac/.test(navigator.userAgent)?"macOS":(navigator.platform||"Web")],["Screen",screen.width+"×"+screen.height],["Cores",navigator.hardwareConcurrency||"–"],["Lang",navigator.language],["Zone",(Intl.DateTimeFormat().resolvedOptions().timeZone||"").split("/").pop()]],
+ el=h('<div class="rm-w rm-card"><div class="rm-t">System</div>'+rs.map(function(r){return'<div class="rm-row" style="justify-content:space-between"><span class="k">'+r[0]+'</span><span style="font-size:10px;letter-spacing:.1em">'+r[1]+"</span></div>"}).join("")+'<div class="rm-row" style="justify-content:space-between"><span class="k">Uptime</span><span class="up" style="font-size:10px;letter-spacing:.1em"></span></div></div>');
+ el._u=function(){var s=Math.floor(performance.now()/1000);el.querySelector(".up").textContent=pad(Math.floor(s/3600))+":"+pad(Math.floor(s/60)%60)+":"+pad(s%60)};return el}});
+
+var layer=h('<div id="rm-layer"></div>');document.body.appendChild(layer);
+var gap=14,colW=[24,226,0,0];
+function layout(){var vw=innerWidth,vh=innerHeight,cols=[[],[],[],[]];W.forEach(function(w){if(!w.el||state.pos[w.id])return;cols[w.col].push(w)});
+ var xs=[24,274,vw-24-224-244,vw-24-224];if(vw<1300){xs=[24,24,vw-248,vw-248]}
+ cols.forEach(function(c,ci){var y=52;c.forEach(function(w){if(w.el.classList.contains("rm-hidden"))return;var hh=w.el.offsetHeight;w.el.style.left=(ci==0||ci==3?xs[ci]:xs[ci])+"px";w.el.style.top=y+"px";y+=hh+gap})});
+ W.forEach(function(w){var p=state.pos[w.id];if(p&&w.el){w.el.style.left=Math.min(p[0],vw-40)+"px";w.el.style.top=Math.min(p[1],vh-40)+"px"}})}
+W.forEach(function(w){w.el=w.build();layer.appendChild(w.el);w.el.dataset.id=w.id;if(state.hidden[w.id]||!state.all)w.el.classList.add("rm-hidden")});
+function tick(fast){W.forEach(function(w){if(w.el._u&&!w.el.classList.contains("rm-hidden")&&(!fast||w.el._fast))try{w.el._u()}catch(e){}})}
+tick();setTimeout(layout,60);setTimeout(layout,600);setInterval(function(){tick(false)},1000);setInterval(function(){tick(true)},120);addEventListener("resize",layout);
+/* drag */
+var drag=null;layer.addEventListener("pointerdown",function(e){var el=e.target.closest(".rm-w");if(!el||e.target.closest("[contenteditable]"))return;var r=el.getBoundingClientRect();drag={el:el,dx:e.clientX-r.left,dy:e.clientY-r.top};el.classList.add("drag");el.setPointerCapture&&el.setPointerCapture(e.pointerId);e.preventDefault()});
+addEventListener("pointermove",function(e){if(!drag)return;drag.el.style.left=(e.clientX-drag.dx)+"px";drag.el.style.top=Math.max(28,e.clientY-drag.dy)+"px"});
+addEventListener("pointerup",function(){if(!drag)return;drag.el.classList.remove("drag");state.pos[drag.el.dataset.id]=[parseInt(drag.el.style.left),parseInt(drag.el.style.top)];save();drag=null});
+/* control panel */
+var panel=h('<div id="rm-panel"><h4>Desktop Widgets</h4><label><span>Show widgets</span><input type="checkbox" id="rm-all"></label><div id="rm-list"></div><div class="rm-btns"><button id="rm-reset">Reset layout</button><button id="rm-close">Done</button></div></div>');document.body.appendChild(panel);
+var list=$("#rm-list",panel);W.forEach(function(w){var l=h('<label><span>'+w.name+'</span><input type="checkbox" data-id="'+w.id+'"></label>');l.firstChild.nextSibling.checked=!state.hidden[w.id];list.appendChild(l)});
+$("#rm-all",panel).checked=state.all;
+panel.addEventListener("change",function(e){var t=e.target;if(t.id=="rm-all"){state.all=t.checked;W.forEach(function(w){w.el.classList.toggle("rm-hidden",!state.all||!!state.hidden[w.id])})}else if(t.dataset.id){state.hidden[t.dataset.id]=!t.checked;var w=W.filter(function(x){return x.id==t.dataset.id})[0];w.el.classList.toggle("rm-hidden",!t.checked||!state.all)}save();tick();layout()});
+$("#rm-reset",panel).onclick=function(){try{localStorage.removeItem(LS)}catch(e){}location.reload()};$("#rm-close",panel).onclick=function(){panel.classList.remove("open")};
+function toggle(){panel.classList.toggle("open")}
+addEventListener("keydown",function(e){if(e.ctrlKey&&e.shiftKey&&(e.key=="W"||e.key=="w")){e.preventDefault();toggle()}});
+var clk=document.querySelector("li.clock");if(clk){var li=document.createElement("li");li.title="Desktop Widgets";li.style.cssText="cursor:pointer;display:flex;align-items:center;padding:0 6px";li.innerHTML='<svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1.4"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1.4"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1.4"/><rect x="9" y="9" width="5.5" height="5.5" rx="3"/></svg>';li.addEventListener("click",function(e){e.stopPropagation();toggle()});clk.parentNode.insertBefore(li,clk)}
+})();
+
+</script>
+<script>(function(){var w=document.getElementById("steam-window");if(!w)return;
+function hideAll(){w.classList.remove("active","open","is-open","is-maximized","maximized");w.classList.add("nx-closed");try{var pt=document.getElementById("point-steam");if(pt)pt.style.display="none";if(typeof window.nyxSetDockOpen==="function")window.nyxSetDockOpen(w,false);if(typeof setMenuAppName==="function")setMenuAppName("Finder")}catch(e){}}
+document.addEventListener("click",function(e){var t=e.target;if(!t.closest)return;
+ if(t.closest("#steam-window .close-steam")||t.closest('[data-action="steam-exit"]')){e.preventDefault();e.stopImmediatePropagation();hideAll();return}
+ if(t.closest(".open_steam,[data-dock-id='steam'],.child-launchpad[data-lp-app='steam']")){w.classList.remove("nx-closed");w.style.visibility="visible";w.style.pointerEvents="auto"}},true);
+var _o=window.nyxPlayOpenAnim;})();
+</script>
+
+<style id="nyx-tl-side-css">
+/* ===== Traffic lights side (left default / right when body.tl-right) ===== */
+body.tl-right .window__taskbar {
+  flex-direction: row-reverse !important;
+}
+body.tl-right .window__taskbar--actions {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  order: 10;
+}
+body.tl-right .window__taskbar--content {
+  order: 1;
+  margin-right: auto;
+  margin-left: 0;
+  text-align: left;
+}
+
+/* Overlay chrome windows (transparent title bar) */
+body.tl-right .window:not(.finder-window):not(.safari):not(.steam) > .window__taskbar {
+  padding: 0 14px 0 0 !important;
+  justify-content: flex-end !important;
+  flex-direction: row !important;
+}
+body.tl-right .window:not(.finder-window):not(.safari):not(.steam) > .window__taskbar .window__taskbar--actions {
+  margin-left: auto !important;
+  padding: 12px 0 12px 14px !important;
+}
+
+/* Finder */
+body.tl-right .finder-toolbar {
+  flex-direction: row !important;
+}
+body.tl-right .finder-traffic {
+  order: 50 !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+}
+
+/* Safari floating traffic lights */
+body.tl-right #safari-window .safari-chrome-top .safari-traffic,
+body.tl-right #safari-window .safari-traffic {
+  left: auto !important;
+  right: 14px !important;
+}
+body.tl-right #safari-window .safari-chrome-top {
+  justify-content: flex-end !important;
+}
+
+/* Calculator */
+body.tl-right .calculator__top--taskabr {
+  justify-content: flex-end !important;
+  flex-direction: row-reverse !important;
+}
+</style>
+<script id="nyx-tl-side-js">
+(function () {
+  "use strict";
+  var KEY = "nyx_tl_side";
+  function getSide() {
+    try {
+      var v = localStorage.getItem(KEY);
+      return v === "right" ? "right" : "left";
+    } catch (e) { return "left"; }
+  }
+  function apply(side) {
+    side = side === "right" ? "right" : "left";
+    document.body.classList.toggle("tl-right", side === "right");
+    var sel = document.getElementById("settings-tl-side");
+    if (sel && sel.value !== side) sel.value = side;
+    try { localStorage.setItem(KEY, side); } catch (e) {}
+  }
+  function bind() {
+    var sel = document.getElementById("settings-tl-side");
+    if (!sel || sel.__tlBound) return;
+    sel.__tlBound = 1;
+    sel.value = getSide();
+    sel.addEventListener("change", function () { apply(sel.value); });
+  }
+  function init() {
+    apply(getSide());
+    bind();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+  setTimeout(bind, 800);
+  setTimeout(bind, 2500);
+  window.nyxSetTrafficLightSide = apply;
+})();
 </script>
 </body>
 </html>

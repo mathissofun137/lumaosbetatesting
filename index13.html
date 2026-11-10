@@ -49,6 +49,7 @@ var ce=Document.prototype.createElement;Document.prototype.createElement=functio
 
   <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
@@ -12227,6 +12228,16 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="point" id="point-spotify" style="display:none"></div>
       </button>
 
+      <button type="button" class="dock-open-app-button icon open_messages" data-dock-id="messages" title="Messages" aria-label="Launch Messages" onclick="try{window.openMessages&&window.openMessages(event)}catch(e){}">
+        <p class="tooltip">Messages</p>
+        <span class="dock-icon-wrap">
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Messages.png" alt="Messages" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-messages" style="display:none"></div>
+      </button>
+
+
       <button type="button" class="dock-open-app-button icon open_gdash" data-dock-id="gdash" title="Geometry Dash" aria-label="Launch Geometry Dash" >
         <p class="tooltip">Geometry Dash</p>
         <span class="dock-icon-wrap">
@@ -12935,6 +12946,82 @@ html[data-theme] .window-header.steam-popup-header,
           </div>
           <audio id="sp-audio" preload="metadata" crossorigin="anonymous"></audio>
         </footer>
+      </div>
+    </div>
+
+    
+    <!-- Messages app (Supabase chat) -->
+    <div class="window messages-app" id="messages-window" style="display:none">
+      <div class="window__taskbar">
+        <div class="window__taskbar--actions">
+          <button type="button" class="close-messages" title="Close"></button>
+          <button type="button" class="backfull-messages" title="Minimize"></button>
+          <button type="button" class="full-messages" title="Maximize"></button>
+        </div>
+        <div class="window__taskbar--content"><h2>Messages</h2></div>
+      </div>
+      <div class="msg-shell">
+        <aside class="msg-side">
+          <div class="msg-side-head">
+            <h3>Channels</h3>
+            <span class="msg-user-chip" id="msg-username">guest</span>
+          </div>
+          <div class="msg-channels" id="msg-channels"></div>
+          <div class="msg-side-foot">
+            <button type="button" id="msg-rename-btn">Change username</button>
+          </div>
+        </aside>
+        <section class="msg-main">
+          <div class="msg-top">
+            <h4 id="msg-channel-title"># general</h4>
+            <span class="msg-status" id="msg-status">Not connected</span>
+          </div>
+          <div class="msg-list" id="msg-list">
+            <div class="msg-empty" id="msg-empty">Open Supabase settings and paste your project URL + anon key to start chatting.</div>
+          </div>
+          <div class="msg-composer">
+            <textarea id="msg-input" rows="1" placeholder="Message #general" maxlength="2000"></textarea>
+            <button type="button" class="send" id="msg-send">Send</button>
+          </div>
+        </section>
+      </div>
+      <div class="msg-cfg" id="msg-cfg" role="dialog" aria-label="Supabase settings">
+        <h3>Connect Supabase</h3>
+        <p>Connected to the built-in Supabase project. Credentials are locked. You can still change the default channel below.</p>
+        <label>Supabase Project URL</label>
+        <input id="msg-url" type="url" placeholder="https://xxxx.supabase.co" autocomplete="off" spellcheck="false" />
+        <label>Anon public key</label>
+        <input id="msg-key" type="password" placeholder="eyJhbGciOi..." autocomplete="off" spellcheck="false" />
+        <label>Default channel</label>
+        <input id="msg-default-ch" type="text" value="general" placeholder="general" />
+        <div class="row-actions">
+          <button type="button" id="msg-save-cfg">Save &amp; connect</button>
+          <button type="button" class="ghost" id="msg-close-cfg">Close</button>
+        </div>
+        <label style="margin-top:20px">SQL — create table + policies (run in Supabase SQL editor)</label>
+        <pre id="msg-sql">create table if not exists public.messages (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null,
+  username text not null,
+  content text not null,
+  created_at timestamptz not null default now(),
+  channel text not null default 'general',
+  pinned boolean not null default false,
+  reply_to uuid null,
+  image_path text null
+);
+
+alter table public.messages enable row level security;
+
+create policy "read messages" on public.messages
+  for select using (true);
+
+create policy "insert messages" on public.messages
+  for insert with check (true);
+
+-- Optional: allow realtime
+-- In Dashboard → Database → Replication, enable messages
+alter publication supabase_realtime add table public.messages;</pre>
       </div>
     </div>
 
@@ -25946,6 +26033,15 @@ window.setDesktopBackground = setDesktopBackground;
             win: document.getElementById("game-app-" + idx)
           };
         }
+        if (btn.getAttribute("data-dock-id") === "messages" || btn.classList.contains("open_messages") || btn.getAttribute("title") === "Messages") {
+          const win = document.getElementById("messages-window");
+          return {
+            name: "Messages",
+            close: () => { if (typeof window.closeMessages === "function") window.closeMessages(); },
+            open: () => { if (typeof window.openMessages === "function") window.openMessages(); },
+            win
+          };
+        }
         if (btn.getAttribute("data-dock-id") === "finder" || btn.getAttribute("title") === "Finder") {
           const win = document.getElementById("finder-window");
           return {
@@ -29101,6 +29197,12 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
             else alert("Calendar isn’t available in this build.");
             break;
           case "messages":
+            if (typeof window.openMessages === "function") window.openMessages();
+            else {
+              var msgb = document.querySelector('.dock-open-app-button[data-dock-id="messages"], .open_messages');
+              if (msgb) msgb.click();
+            }
+            break;
           case "contacts":
           case "siri":
           case "photos":
@@ -33229,6 +33331,215 @@ html body[data-os-style="windows"] .dock-el .dock-open-app-button img { transiti
 html body[data-os-style="windows"] .dock-el .dock-open-app-button:hover img { transform: translateY(-3px) scale(1.12) !important; }
 html body[data-os-style="windows"] .dock-el .dock-open-app-button:active img { transform: scale(.9) !important; }
 </style>
+
+<style id="nyx-messages-css">
+/* Messages — force visible chrome */
+#messages-window.window,
+#messages-window.messages-app,
+#messages-window {
+  position: fixed !important;
+  top: 64px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(920px, calc(100vw - 40px)) !important;
+  height: min(620px, calc(100vh - 100px)) !important;
+  min-width: 320px !important;
+  max-width: none !important;
+  min-height: 360px !important;
+  z-index: 99990 !important;
+  display: none;
+  flex-direction: column !important;
+  background: #1c1c1e !important;
+  color: #f5f5f7 !important;
+  overflow: hidden !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.55) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: none !important;
+  pointer-events: auto !important;
+}
+#messages-window.is-open,
+#messages-window.active,
+#messages-window[data-open="1"] {
+  display: flex !important;
+}
+#messages-window.is-maximized {
+  top: 28px !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  transform: none !important;
+  width: 100vw !important;
+  height: calc(100vh - 28px) !important;
+  border-radius: 0 !important;
+}
+#messages-window .window__taskbar {
+  flex: 0 0 40px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  background: #2c2c2e !important;
+  border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 14px !important;
+  position: relative !important;
+  z-index: 5 !important;
+  pointer-events: auto !important;
+  cursor: grab;
+}
+#messages-window .window__taskbar--content {
+  display: flex !important;
+}
+#messages-window .window__taskbar--content h2 {
+  color: #f5f5f7 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+#messages-window .window__taskbar--actions {
+  display: flex !important;
+  gap: 8px !important;
+  pointer-events: auto !important;
+}
+#messages-window .window__taskbar--actions button {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  border: none !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+}
+#messages-window .close-messages { background: #ff5f56 !important; }
+#messages-window .backfull-messages { background: #ffbd2e !important; }
+#messages-window .full-messages { background: #27c93f !important; }
+
+#messages-window .msg-shell {
+  display: grid !important;
+  grid-template-columns: 220px 1fr !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: calc(100% - 40px) !important;
+  background: #1c1c1e !important;
+  color: #f5f5f7 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, system-ui, sans-serif !important;
+}
+#messages-window .msg-side {
+  background: #2c2c2e !important;
+  border-right: 1px solid rgba(255,255,255,0.08) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+#messages-window .msg-side-head {
+  padding: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+#messages-window .msg-side-head h3 { font-size: 15px !important; font-weight: 700 !important; margin: 0 !important; color: #fff !important; }
+#messages-window .msg-user-chip {
+  font-size: 11px !important; color: #aeaeb2 !important; padding: 4px 8px !important; border-radius: 999px !important;
+  background: rgba(255,255,255,0.06) !important; max-width: 120px !important; overflow: hidden !important;
+  text-overflow: ellipsis !important; white-space: nowrap !important;
+}
+#messages-window .msg-channels { flex: 1 !important; overflow: auto !important; padding: 6px 8px 12px !important; }
+#messages-window .msg-ch {
+  width: 100% !important; text-align: left !important; border: 0 !important; background: transparent !important; color: #d1d1d6 !important;
+  font: 500 13px inherit !important; padding: 9px 10px !important; border-radius: 8px !important; cursor: pointer !important;
+  display: flex !important; align-items: center !important; gap: 8px !important;
+}
+#messages-window .msg-ch:hover { background: rgba(255,255,255,0.06) !important; color: #fff !important; }
+#messages-window .msg-ch.on { background: #0a84ff !important; color: #fff !important; }
+#messages-window .msg-ch .hash { opacity: 0.55 !important; font-weight: 700 !important; }
+#messages-window .msg-side-foot {
+  padding: 10px !important; border-top: 1px solid rgba(255,255,255,0.08) !important;
+  display: flex !important; flex-direction: column !important; gap: 6px !important;
+}
+#messages-window .msg-side-foot button {
+  border: 0 !important; border-radius: 8px !important; padding: 8px 10px !important; font: 600 12px inherit !important;
+  cursor: pointer !important; background: rgba(255,255,255,0.08) !important; color: #f5f5f7 !important;
+}
+#messages-window .msg-main {
+  display: flex !important; flex-direction: column !important; min-width: 0 !important; min-height: 0 !important;
+  background: #1c1c1e !important; height: 100% !important;
+}
+#messages-window .msg-top {
+  padding: 12px 16px !important; border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+  display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 12px !important;
+  flex: 0 0 auto !important;
+}
+#messages-window .msg-top h4 { margin: 0 !important; font-size: 15px !important; font-weight: 700 !important; color: #fff !important; }
+#messages-window .msg-status { font-size: 12px !important; color: #8e8e93 !important; }
+#messages-window .msg-status.ok { color: #30d158 !important; }
+#messages-window .msg-status.err { color: #ff453a !important; }
+#messages-window .msg-list {
+  flex: 1 1 auto !important; overflow: auto !important; padding: 16px 18px 8px !important;
+  display: flex !important; flex-direction: column !important; gap: 10px !important; min-height: 120px !important;
+}
+#messages-window .msg-empty {
+  margin: auto !important; text-align: center !important; color: #8e8e93 !important;
+  font-size: 13px !important; line-height: 1.5 !important; max-width: 320px !important;
+}
+#messages-window .msg-bubble { display: grid !important; grid-template-columns: 36px 1fr !important; gap: 10px !important; }
+#messages-window .msg-av {
+  width: 36px !important; height: 36px !important; border-radius: 50% !important;
+  background: linear-gradient(135deg, #5e5ce6, #0a84ff) !important;
+  display: grid !important; place-items: center !important; font-size: 12px !important; font-weight: 700 !important; color: #fff !important;
+}
+#messages-window .msg-name { font-size: 13px !important; font-weight: 700 !important; color: #fff !important; }
+#messages-window .msg-time { font-size: 11px !important; color: #8e8e93 !important; margin-left: 8px !important; }
+#messages-window .msg-text { font-size: 14px !important; line-height: 1.4 !important; color: #e5e5ea !important; white-space: pre-wrap !important; word-break: break-word !important; }
+#messages-window .msg-pinned { color: #ffd60a !important; font-size: 10px !important; font-weight: 700 !important; margin-left: 6px !important; }
+#messages-window .msg-composer {
+  flex: 0 0 auto !important; padding: 12px 16px 16px !important; border-top: 1px solid rgba(255,255,255,0.08) !important;
+  display: flex !important; gap: 10px !important; align-items: flex-end !important; background: #1c1c1e !important;
+}
+#messages-window .msg-composer textarea {
+  flex: 1 !important; min-height: 42px !important; max-height: 120px !important; resize: none !important; border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,0.12) !important; background: #2c2c2e !important; color: #f5f5f7 !important;
+  padding: 10px 12px !important; font: 14px inherit !important; outline: none !important;
+}
+#messages-window .msg-composer button.send {
+  border: 0 !important; border-radius: 12px !important; height: 42px !important; padding: 0 16px !important;
+  background: #0a84ff !important; color: #fff !important; font: 600 13px inherit !important; cursor: pointer !important;
+}
+#messages-window .msg-cfg {
+  display: none; position: absolute !important; inset: 40px 0 0 0 !important; z-index: 40 !important;
+  background: rgba(28,28,30,0.98) !important; padding: 24px !important; overflow: auto !important; color: #f5f5f7 !important;
+}
+#messages-window .msg-cfg.open { display: block !important; }
+#messages-window .msg-cfg h3 { margin: 0 0 8px !important; font-size: 18px !important; color: #fff !important; }
+#messages-window .msg-cfg p { color: #aeaeb2 !important; font-size: 13px !important; line-height: 1.45 !important; margin: 0 0 16px !important; }
+#messages-window .msg-cfg label { display: block !important; font-size: 12px !important; font-weight: 600 !important; color: #8e8e93 !important; margin: 12px 0 6px !important; }
+#messages-window .msg-cfg input {
+  width: min(520px, 100%) !important; height: 36px !important; border-radius: 8px !important;
+  border: 1px solid rgba(255,255,255,0.14) !important; background: #2c2c2e !important; color: #fff !important;
+  padding: 0 10px !important; font: 13px ui-monospace, Menlo, monospace !important;
+}
+#messages-window .msg-cfg .row-actions { display: flex !important; gap: 8px !important; margin-top: 18px !important; flex-wrap: wrap !important; }
+#messages-window .msg-cfg .row-actions button {
+  border: 0 !important; border-radius: 8px !important; padding: 9px 14px !important; font: 600 13px inherit !important;
+  cursor: pointer !important; background: #0a84ff !important; color: #fff !important;
+}
+#messages-window .msg-cfg .row-actions button.ghost { background: rgba(255,255,255,0.1) !important; }
+#messages-window .msg-cfg pre {
+  background: #111 !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px !important;
+  padding: 12px !important; overflow: auto !important; font-size: 11.5px !important; color: #d1d1d6 !important; max-width: 640px !important;
+}
+@media (max-width: 720px) {
+  #messages-window .msg-shell { grid-template-columns: 1fr !important; }
+  #messages-window .msg-side { display: none !important; }
+}
+
+#msg-cfg, #msg-cfg-btn, .msg-cfg { display: none !important; visibility: hidden !important; pointer-events: none !important; }
+</style>
+
 <script id="nyx-v3-js">
 /* ===== NYX v3: Menu Bar customization + Music (Spotify) settings ===== */
 (function () {
@@ -33911,6 +34222,502 @@ body.tl-right .calculator__top--taskabr {
   window.nyxSetTrafficLightSide = apply;
 })();
 </script>
+
+<script id="nyx-messages-js">
+(function () {
+  "use strict";
+  var LS_CFG = "nyx_supabase_chat";
+  var LS_USER = "nyx_chat_user";
+  var CHANNELS = ["general", "random", "help", "off-topic"];
+  var state = { client: null, channel: "general", sub: null, user: null, connected: false };
+
+  function $(id) { return document.getElementById(id); }
+  function uuid() {
+    try { if (crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      var r = (Math.random() * 16) | 0, v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+  // Locked Supabase project (not user-editable)
+  var LOCKED_URL = 'https://kztukcmkcwhdjhszyqpp.supabase.co';
+  var LOCKED_KEY = 'sb_publishable_wFoZpDfLmFnzoCQFKyOxRw_U98_Aw4L';
+  function loadCfg() {
+    return { url: LOCKED_URL, key: LOCKED_KEY, defaultChannel: "general" };
+  }
+  function saveCfg(cfg) {
+    // Credentials are locked — ignore saves of url/key
+    try {
+      localStorage.setItem(LS_CFG, JSON.stringify({
+        url: LOCKED_URL,
+        key: LOCKED_KEY,
+        defaultChannel: (cfg && cfg.defaultChannel) || "general"
+      }));
+    } catch (e) {}
+  }
+  function loadUser() {
+    try {
+      var u = JSON.parse(localStorage.getItem(LS_USER) || "null");
+      if (u && u.id && u.username) return u;
+    } catch (e) {}
+    var id = uuid();
+    var u = { id: id, username: "guest_" + id.slice(0, 6) };
+    try { localStorage.setItem(LS_USER, JSON.stringify(u)); } catch (e) {}
+    return u;
+  }
+  function setStatus(text, kind) {
+    var el = $("msg-status");
+    if (!el) return;
+    el.textContent = text;
+    el.className = "msg-status" + (kind ? " " + kind : "");
+  }
+  function initials(name) {
+    var s = (name || "?").trim();
+    return (s.charAt(0) || "?").toUpperCase();
+  }
+  function fmtTime(iso) {
+    try {
+      var d = new Date(iso);
+      return d.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+    } catch (e) { return ""; }
+  }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+  function renderChannels() {
+    var box = $("msg-channels");
+    if (!box) return;
+    box.innerHTML = "";
+    CHANNELS.forEach(function (ch) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "msg-ch" + (ch === state.channel ? " on" : "");
+      b.innerHTML = '<span class="hash">#</span><span>' + escapeHtml(ch) + "</span>";
+      b.addEventListener("click", function () { switchChannel(ch); });
+      box.appendChild(b);
+    });
+    var title = $("msg-channel-title");
+    if (title) title.textContent = "# " + state.channel;
+    var input = $("msg-input");
+    if (input) input.placeholder = "Message #" + state.channel;
+  }
+  function bubbleHtml(m) {
+    var pin = m.pinned ? '<span class="msg-pinned">pinned</span>' : "";
+    return (
+      '<div class="msg-bubble" data-id="' + escapeHtml(m.id) + '">' +
+        '<div class="msg-av">' + escapeHtml(initials(m.username)) + "</div>" +
+        '<div class="msg-body">' +
+          '<div class="msg-meta"><span class="msg-name">' + escapeHtml(m.username) + "</span>" +
+          '<span class="msg-time">' + escapeHtml(fmtTime(m.created_at)) + "</span>" + pin + "</div>" +
+          '<div class="msg-text">' + escapeHtml(m.content) + "</div>" +
+        "</div></div>"
+    );
+  }
+  function appendMessage(m, scroll) {
+    var list = $("msg-list");
+    if (!list || !m) return;
+    var empty = $("msg-empty");
+    if (empty) empty.remove();
+    if (m.id && list.querySelector('[data-id="' + m.id + '"]')) return;
+    var wrap = document.createElement("div");
+    wrap.innerHTML = bubbleHtml(m);
+    if (wrap.firstElementChild) list.appendChild(wrap.firstElementChild);
+    if (scroll !== false) list.scrollTop = list.scrollHeight;
+  }
+  function normalizeMsg(m) {
+    if (!m) return m;
+    // Real schema: x=content, t=created_at, ch=channel
+    if (!m.content && m.x != null) m.content = m.x;
+    if (!m.x && m.content != null) m.x = m.content;
+    if (!m.created_at && m.t) m.created_at = m.t;
+    if (!m.t && m.created_at) m.t = m.created_at;
+    if (!m.channel && m.ch) m.channel = m.ch;
+    if (!m.ch && m.channel) m.ch = m.channel;
+    if (!m.username) m.username = "guest";
+    return m;
+  }
+  function renderMessages(rows) {
+    var list = $("msg-list");
+    if (!list) return;
+    list.innerHTML = "";
+    if (!rows || !rows.length) {
+      list.innerHTML = '<div class="msg-empty" id="msg-empty">No messages in #' + escapeHtml(state.channel) + " yet. Say hello!</div>";
+      return;
+    }
+    var html = "";
+    rows.forEach(function (m) { html += bubbleHtml(normalizeMsg(m)); });
+    list.innerHTML = html;
+    list.scrollTop = list.scrollHeight;
+  }
+  function ensureClient() {
+    var cfg = loadCfg();
+    if (!cfg.url || !cfg.key) return null;
+    if (!window.supabase || !window.supabase.createClient) {
+      setStatus("Supabase SDK missing", "err");
+      return null;
+    }
+    if (state.client && state._url === cfg.url && state._key === cfg.key) return state.client;
+    try {
+      state.client = window.supabase.createClient(cfg.url, cfg.key, {
+        auth: { persistSession: false, autoRefreshToken: false }
+      });
+      state._url = cfg.url;
+      state._key = cfg.key;
+      return state.client;
+    } catch (e) {
+      setStatus("Client error", "err");
+      return null;
+    }
+  }
+  async function loadMessages() {
+    var client = ensureClient();
+    if (!client) {
+      setStatus("Not connected", "err");
+      var empty = $("msg-empty");
+      if (empty) empty.textContent = "Open Supabase settings and paste your project URL + anon key.";
+      return;
+    }
+    setStatus("Loading…");
+    try {
+      var res = await client
+        .from("messages")
+        .select("id,user_id,username,content,x,created_at,t,ch,channel,pinned,reply_to,image_path")
+        .eq("ch", state.channel)
+        .order("t", { ascending: true })
+        .limit(200);
+      if (res.error) throw res.error;
+      renderMessages(res.data || []);
+      setStatus("Connected · live", "ok");
+      state.connected = true;
+    } catch (e) {
+      console.error("[messages]", e);
+      setStatus((e && e.message) || "Load failed", "err");
+      state.connected = false;
+      var list = $("msg-list");
+      if (list) {
+        list.innerHTML = '<div class="msg-empty" id="msg-empty">Could not load messages.<br><br>' +
+          escapeHtml((e && e.message) || "") + "</div>";
+      }
+    }
+  }
+  function subscribeRealtime() {
+    var client = ensureClient();
+    if (!client) return;
+    if (state.sub) {
+      try { client.removeChannel(state.sub); } catch (e) {}
+      state.sub = null;
+    }
+    state.sub = client
+      .channel("messages:" + state.channel)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages", filter: "ch=eq." + state.channel },
+        function (payload) {
+          if (payload && payload.new) appendMessage(normalizeMsg(payload.new), true);
+        }
+      )
+      .subscribe(function (status) {
+        if (status === "SUBSCRIBED") setStatus("Connected · live", "ok");
+        else if (status === "CHANNEL_ERROR") setStatus("Realtime error", "err");
+        else if (status === "TIMED_OUT") setStatus("Realtime timeout", "err");
+      });
+  }
+  async function switchChannel(ch) {
+    if (!ch || ch === state.channel) return;
+    state.channel = ch;
+    renderChannels();
+    await loadMessages();
+    subscribeRealtime();
+  }
+  async function sendMessage() {
+    var input = $("msg-input");
+    var btn = $("msg-send");
+    if (!input) return;
+    var text = (input.value || "").trim();
+    if (!text) return;
+    var client = ensureClient();
+    if (!client) { setStatus("Not connected", "err"); return; }
+    if (!state.user) state.user = loadUser();
+    if (btn) btn.disabled = true;
+    try {
+      var row = {
+        user_id: state.user.id,
+        username: state.user.username,
+        x: text,
+        content: text,
+        ch: state.channel,
+        channel: state.channel,
+        pinned: false,
+        reply_to: null,
+        image_path: null
+      };
+      var res = await client.from("messages").insert(row).select().single();
+      if (res.error) throw res.error;
+      input.value = "";
+      if (res.data) appendMessage(normalizeMsg(res.data), true);
+    } catch (e) {
+      console.error("[messages send]", e);
+      setStatus((e && e.message) || "Send failed", "err");
+      alert("Could not send: " + ((e && e.message) || e));
+    } finally {
+      if (btn) btn.disabled = false;
+      input.focus();
+    }
+  }
+  function openCfg() {
+    /* settings hidden — credentials locked */
+    return;
+  }
+  function closeCfg() {
+    var panel = $("msg-cfg");
+    if (panel) panel.classList.remove("open");
+  }
+  async function saveAndConnect() {
+    var ch = (($("msg-default-ch") && $("msg-default-ch").value) || "general").trim() || "general";
+    if (CHANNELS.indexOf(ch) < 0) CHANNELS.unshift(ch);
+    saveCfg({ url: LOCKED_URL, key: LOCKED_KEY, defaultChannel: ch });
+    state.channel = ch;
+    state.client = null;
+    closeCfg();
+    renderChannels();
+    await loadMessages();
+    subscribeRealtime();
+  }
+
+  function markDock(open) {
+    try {
+      var btn = document.querySelector('.dock-open-app-button[data-dock-id="messages"]');
+      if (!btn) return;
+      var dot = btn.querySelector(".dot, .point");
+      if (dot) {
+        if (open) {
+          dot.style.display = "";
+          dot.classList.add("is-open");
+        } else {
+          dot.classList.remove("is-open");
+        }
+      }
+      var pt = $("point-messages");
+      if (pt) pt.style.display = open ? "" : "none";
+    } catch (e) {}
+  }
+
+  function openWindow(e) {
+    if (e) {
+      try { e.preventDefault(); e.stopPropagation(); } catch (err) {}
+    }
+    var win = $("messages-window");
+    if (!win) {
+      console.error("[messages] #messages-window missing");
+      alert("Messages window not found in the page.");
+      return false;
+    }
+    // Keep window on document.body so no parent can hide it
+    try {
+      if (win.parentElement !== document.body) document.body.appendChild(win);
+    } catch (err) {}
+
+    win.classList.remove("nx-closed", "minimized", "win-anim-out", "win-anim-in");
+    win.classList.add("is-open", "active");
+    win.setAttribute("data-open", "1");
+
+    // Nuclear visibility — beat any other stylesheet
+    win.style.cssText = [
+      "display:flex !important",
+      "flex-direction:column !important",
+      "visibility:visible !important",
+      "opacity:1 !important",
+      "pointer-events:auto !important",
+      "position:fixed !important",
+      "top:64px !important",
+      "left:50% !important",
+      "transform:translateX(-50%) !important",
+      "width:min(920px, calc(100vw - 40px)) !important",
+      "height:min(620px, calc(100vh - 100px)) !important",
+      "z-index:99990 !important",
+      "background:#1c1c1e !important",
+      "color:#f5f5f7 !important",
+      "border-radius:12px !important",
+      "border:1px solid rgba(255,255,255,0.18) !important",
+      "box-shadow:0 24px 64px rgba(0,0,0,0.55) !important",
+      "overflow:hidden !important",
+      "filter:none !important"
+    ].join(";");
+
+    markDock(true);
+    try {
+      if (typeof window.nyxSetDockOpen === "function") window.nyxSetDockOpen("messages", true);
+    } catch (err) {}
+
+    state.user = loadUser();
+    var chip = $("msg-username");
+    if (chip) chip.textContent = state.user.username;
+    renderChannels();
+    var cfg = loadCfg();
+    if (cfg.defaultChannel) state.channel = cfg.defaultChannel;
+    renderChannels();
+    loadMessages().then(function () { subscribeRealtime(); }).catch(function () {});
+    return true;
+  }
+
+  function closeWindow() {
+    var win = $("messages-window");
+    if (!win) return;
+    win.classList.remove("is-open", "active", "is-maximized", "win-anim-in");
+    win.removeAttribute("data-open");
+    win.style.cssText = "display:none !important";
+    markDock(false);
+    try {
+      if (typeof window.nyxSetDockOpen === "function") window.nyxSetDockOpen("messages", false);
+    } catch (e) {}
+    if (state.sub && state.client) {
+      try { state.client.removeChannel(state.sub); } catch (e) {}
+      state.sub = null;
+    }
+  }
+  function toggleMax() {
+    var win = $("messages-window");
+    if (win) win.classList.toggle("is-maximized");
+  }
+  function minimize() {
+    var win = $("messages-window");
+    if (!win) return;
+    win.style.display = "none";
+    win.classList.remove("active");
+  }
+
+  function isMessagesLauncher(el) {
+    if (!el || !el.closest) return null;
+    return el.closest(
+      '.open_messages, [data-dock-id="messages"], .child-launchpad[data-lp-app="messages"], #point-messages'
+    );
+  }
+
+  function bindLaunchers() {
+    var nodes = document.querySelectorAll(
+      '.open_messages, [data-dock-id="messages"], .child-launchpad[data-lp-app="messages"]'
+    );
+    nodes.forEach(function (node) {
+      if (node.__msgBound) return;
+      node.__msgBound = true;
+      node.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openWindow(e);
+      }, true);
+    });
+  }
+
+  function bind() {
+    // Force locked credentials into storage
+    try {
+      localStorage.setItem(LS_CFG, JSON.stringify({
+        url: LOCKED_URL,
+        key: LOCKED_KEY,
+        defaultChannel: "general"
+      }));
+    } catch (e) {}
+    state.user = loadUser();
+    var chip = $("msg-username");
+    if (chip) chip.textContent = state.user.username;
+
+    if (!document.__msgDocBound) {
+      document.__msgDocBound = true;
+      document.addEventListener("click", function (e) {
+        var t = e.target;
+        if (!t) return;
+        if (isMessagesLauncher(t)) {
+          e.preventDefault();
+          e.stopPropagation();
+          openWindow(e);
+          return;
+        }
+        if (t.closest && t.closest("#messages-window .close-messages")) {
+          e.preventDefault();
+          e.stopPropagation();
+          closeWindow();
+          return;
+        }
+        if (t.closest && t.closest("#messages-window .full-messages")) {
+          e.preventDefault();
+          toggleMax();
+          return;
+        }
+        if (t.closest && t.closest("#messages-window .backfull-messages")) {
+          e.preventDefault();
+          minimize();
+          return;
+        }
+      }, true);
+    }
+
+    bindLaunchers();
+    setTimeout(bindLaunchers, 500);
+    setTimeout(bindLaunchers, 2000);
+
+    var send = $("msg-send");
+    var input = $("msg-input");
+    if (send && !send.__msgBound) {
+      send.__msgBound = true;
+      send.addEventListener("click", sendMessage);
+    }
+    if (input && !input.__msgBound) {
+      input.__msgBound = true;
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    }
+    var rename = $("msg-rename-btn");
+    if (rename && !rename.__msgBound) {
+      rename.__msgBound = true;
+      rename.addEventListener("click", function () {
+        var name = prompt("Username", (state.user && state.user.username) || "guest");
+        if (!name) return;
+        name = name.trim().slice(0, 24);
+        if (!name) return;
+        state.user = state.user || loadUser();
+        state.user.username = name;
+        try { localStorage.setItem(LS_USER, JSON.stringify(state.user)); } catch (e) {}
+        if (chip) chip.textContent = name;
+      });
+    }
+
+    try {
+      if (window.jQuery && jQuery.fn && jQuery.fn.draggable) {
+        var $w = jQuery("#messages-window");
+        if ($w.length && !$w.data("ui-draggable")) {
+          $w.draggable({
+            handle: ".window__taskbar",
+            cancel: "button, input, textarea, a",
+            start: function () { jQuery(this).css("z-index", 95); }
+          });
+        }
+      }
+    } catch (e) {}
+  }
+
+  window.openMessages = openWindow;
+  window.closeMessages = closeWindow;
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bind);
+  } else {
+    bind();
+  }
+  window.addEventListener("load", function () {
+    bindLaunchers();
+  });
+})();
+
+</script>
+
 </body>
 </html>
 

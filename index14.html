@@ -12228,14 +12228,6 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="point" id="point-spotify" style="display:none"></div>
       </button>
 
-      <button type="button" class="dock-open-app-button icon open_messages" data-dock-id="messages" title="Messages" aria-label="Launch Messages" onclick="try{window.openMessages&&window.openMessages(event)}catch(e){}">
-        <p class="tooltip">Messages</p>
-        <span class="dock-icon-wrap">
-          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Messages.png" alt="Messages" draggable="false" />
-        </span>
-        <div class="dot" data-open-dot></div>
-        <div class="point" id="point-messages" style="display:none"></div>
-      </button>
 
 
       <button type="button" class="dock-open-app-button icon open_gdash" data-dock-id="gdash" title="Geometry Dash" aria-label="Launch Geometry Dash" >
@@ -12636,6 +12628,14 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-settings" style="display:none"></div>
       </button>
+      <button type="button" class="dock-open-app-button icon open_messages" data-dock-id="messages" title="Discord" aria-label="Launch Discord">
+        <p class="tooltip">Discord</p>
+        <span class="dock-icon-wrap">
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/discord.png" alt="Discord" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-messages" style="display:none"></div>
+      </button>
       <div class="divider" data-dock-id="__divider__" aria-hidden="true"></div>
       <button type="button" class="dock-open-app-button icon" data-dock-id="trash" title="Trash" aria-label="Launch Trash" >
         <p class="tooltip">Trash</p>
@@ -12668,9 +12668,9 @@ html[data-theme] .window-header.steam-popup-header,
         <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/AppStore.png" alt="App Store" draggable="false">
         <strong>App Store</strong>
       </div>
-      <div class="child-launchpad" data-lp-app="messages" data-keywords="Messages chat text">
-        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Messages.png" alt="Messages" draggable="false">
-        <strong>Messages</strong>
+      <div class="child-launchpad" data-lp-app="messages" data-keywords="Discord chat text">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/discord.png" alt="Discord" draggable="false">
+        <strong>Discord</strong>
       </div>
       <div class="child-launchpad" data-lp-app="calendar" data-keywords="Calendar schedule events">
         <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calendar.png" alt="Calendar" draggable="false">
@@ -12958,7 +12958,7 @@ html[data-theme] .window-header.steam-popup-header,
           <button type="button" class="backfull-messages" title="Minimize"></button>
           <button type="button" class="full-messages" title="Maximize"></button>
         </div>
-        <div class="window__taskbar--content"><h2>Messages</h2></div>
+        <div class="window__taskbar--content"><h2>Discord</h2></div>
       </div>
       <div class="msg-shell">
         <nav class="msg-rail">
@@ -14299,7 +14299,7 @@ alter publication supabase_realtime add table public.messages;</pre>
         google: dockIcon("google", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/google.png"),
         duckduckgo: dockIcon("duckduckgo", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png"),
         ai: dockIcon("ai", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png"),
-        messages: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Messages.png",
+        messages: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/discord.png",
         music: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Music.png",
         mail: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Mail.png",
         photos: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Photos.png",
@@ -14331,7 +14331,7 @@ alter publication supabase_realtime add table public.messages;</pre>
         { name: "Google", kind: "Application", section: "Applications", keywords: "google search web", icon: ICON.google, action: openApp.google },
         { name: "DuckDuckGo", kind: "Application", section: "Applications", keywords: "duckduckgo ddg search privacy", icon: ICON.duckduckgo, action: openApp.duckduckgo },
         { name: "AI", kind: "Application", section: "Applications", keywords: "ai assistant chatgpt chat gpt openai", icon: ICON.ai, action: openApp.ai },
-        { name: "Messages", kind: "Application", section: "Applications", keywords: "chat imessage text sms", icon: ICON.messages, action: () => { try { clickDock("messages"); } catch (e) {} } },
+        { name: "Discord", kind: "Application", section: "Applications", keywords: "chat discord text sms", icon: ICON.messages, action: () => { try { clickDock("messages"); } catch (e) {} } },
         { name: "Music", kind: "Application", section: "Applications", keywords: "songs apple music audio player", icon: ICON.music, action: () => { try { clickDock("music"); } catch (e) {} } },
         { name: "Mail", kind: "Application", section: "Applications", keywords: "email inbox mail", icon: ICON.mail, action: () => { try { clickDock("mail"); } catch (e) {} } },
         { name: "Photos", kind: "Application", section: "Applications", keywords: "pictures gallery images camera", icon: ICON.photos, action: () => { try { clickDock("photos"); } catch (e) {} } },
@@ -17055,6 +17055,20 @@ alter publication supabase_realtime add table public.messages;</pre>
       { name: "Panther", version: "macOS 10.3", url: "https://media.512pixels.net/downloads/macos-wallpapers-6k/10-3-6k.jpg" },
       { name: "Jaguar", version: "macOS 10.2", url: "https://media.512pixels.net/downloads/macos-wallpapers-6k/10-2-6k.jpg" },
       { name: "Cheetah & Puma", version: "macOS 10.0", url: "https://media.512pixels.net/downloads/macos-wallpapers-6k/10-0_10-1-6k.jpg" },
+      { name: "Alya Closeup", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/alya-closeup.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/alya-closeup.mp4" },
+      { name: "Black Silk Waves", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/black-silk-waves.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/black-silk-waves.mp4" },
+      { name: "BMW M2 Rain", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/bmw-m2-rain.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/bmw-m2-rain.mp4" },
+      { name: "BMW M5 Dark", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/bmw-m5-dark.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/bmw-m5-dark.mp4" },
+      { name: "Celestial Veil", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/celestial-veil.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/celestial-veil.mp4" },
+      { name: "Crimson Silence", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/crimson-silence.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/crimson-silence.mp4" },
+      { name: "Gojo Hollow Eyes", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/gojo-hollow-eyes.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/gojo-hollow-eyes.mp4" },
+      { name: "Gojo Vs Sukuna", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/gojo-vs-sukuna.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/gojo-vs-sukuna.mp4" },
+      { name: "Hunter x Hunter", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/hunter-x-hunter.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/hunter-x-hunter.mp4" },
+      { name: "Jett", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/jett.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/jett.mp4" },
+      { name: "Night City", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/night-city.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/night-city.mp4" },
+      { name: "Sukuna Flames", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/sukuna-flames.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/sukuna-flames.mp4" },
+      { name: "Sunset RX", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/sunset-rx.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/sunset-rx.mp4" },
+      { name: "Ylia", version: "Luma Live", url: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/ylia.mp4", type: "video", preview: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/Wallpapers/ylia.mp4" },
       { name: "Minecraft Sunset", version: "Live", url: "wallpaper-minecraft-sunset.mp4", type: "video", thumb: "wallpaper-minecraft-sunset-thumb.jpg" },
       { name: "Minecraft Northern Lights", version: "Live", url: "wallpaper-minecraft-northern-lights.mp4", type: "video", thumb: "wallpaper-minecraft-northern-lights-thumb.jpg" },
       { name: "Crimson Demon Queen", version: "MotionBGs 4K", url: "https://motionbgs.com/dl/4k/10158/", type: "video", thumb: "https://motionbgs.com/i/c/364x205/media/10158/crimson-demon-queen.3840x2160.jpg.webp", preview: "https://motionbgs.com/media/10158/crimson-demon-queen.960x540.mp4", mbId: "10158" },
@@ -25560,7 +25574,8 @@ window.setDesktopBackground = setDesktopBackground;
         { id: "appletv", sel: ".imovie-window" },
         { id: "devhub", sel: ".devhub-window, #devhub-window" },
         { id: "appstore", sel: ".appstore-window, #appstore-window" },
-        { id: "finder", sel: "#finder-window, .finder-window" }
+        { id: "finder", sel: "#finder-window, .finder-window" },
+        { id: "messages", sel: "#messages-window, .messages-app" }
       ];
       var ICON_FALLBACK = {
         tiktok: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/TikTok.png",
@@ -26094,10 +26109,10 @@ window.setDesktopBackground = setDesktopBackground;
             win: document.getElementById("game-app-" + idx)
           };
         }
-        if (btn.getAttribute("data-dock-id") === "messages" || btn.classList.contains("open_messages") || btn.getAttribute("title") === "Messages") {
+        if (btn.getAttribute("data-dock-id") === "messages" || btn.classList.contains("open_messages") || btn.getAttribute("title") === "Discord" || btn.getAttribute("title") === "Messages") {
           const win = document.getElementById("messages-window");
           return {
-            name: "Messages",
+            name: "Discord",
             close: () => { if (typeof window.closeMessages === "function") window.closeMessages(); },
             open: () => { if (typeof window.openMessages === "function") window.openMessages(); },
             win
@@ -33399,11 +33414,9 @@ html body[data-os-style="windows"] .dock-el .dock-open-app-button:active img { t
 #messages-window.messages-app,
 #messages-window {
   position: fixed !important;
-  top: 64px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: min(920px, calc(100vw - 40px)) !important;
-  height: min(620px, calc(100vh - 100px)) !important;
+  /* position left/top set by JS so the window can be dragged like other apps */
+  width: min(920px, calc(100vw - 40px));
+  height: min(620px, calc(100vh - 100px));
   min-width: 320px !important;
   max-width: none !important;
   min-height: 360px !important;
@@ -33435,6 +33448,9 @@ html body[data-os-style="windows"] .dock-el .dock-open-app-button:active img { t
   width: 100vw !important;
   height: calc(100vh - 28px) !important;
   border-radius: 0 !important;
+}
+#messages-window.ui-draggable-dragging {
+  transform: none !important;
 }
 #messages-window .window__taskbar {
   flex: 0 0 40px !important;
@@ -35176,7 +35192,7 @@ body.tl-right .calculator__top--taskabr {
     terminal: "Terminal", note: "Notes", maps: "Maps", calculator: "Calculator", launchpad: "Launchpad",
     "vscode-window": "VS Code", "settings-window": "System Settings", "safari-window": "Safari",
     "finder-window": "Finder", "imovie-window": "Netflix", "appstore-window": "App Store",
-    "devhub-window": "DevHub", "vibe-window": "Vibe", "steam-window": "Steam", "messages-window": "Messages",
+    "devhub-window": "DevHub", "vibe-window": "Vibe", "steam-window": "Steam", "messages-window": "Discord",
     "spotify-window": "Spotify", "youtube-window": "YouTube", "tiktok-window": "TikTok", "twitch-window": "Twitch",
     "snapchat-window": "Snapchat", "instagram-window": "Instagram", "google-window": "Google",
     "duckduckgo-window": "DuckDuckGo", "gfn-window": "GeForce Now", "gdash-window": "Geometry Dash", "ai-window": "AI"
@@ -35222,8 +35238,8 @@ body.tl-right .calculator__top--taskabr {
     var idle = !!p.idle;
     if (!apps.length) return idle ? "Idle" : "On the desktop";
     var text;
-    if (apps.length === 1 && apps[0] === "Messages") {
-      text = idle ? "Messages" : "In Messages";
+    if (apps.length === 1 && (apps[0] === "Discord" || apps[0] === "Messages")) {
+      text = idle ? "Discord" : "In Discord";
     } else {
       var shown = apps.slice(0, 4).join(", ");
       if (apps.length > 4) shown += " +" + (apps.length - 4);
@@ -36096,28 +36112,33 @@ body.tl-right .calculator__top--taskabr {
     win.classList.add("is-open", "active");
     win.setAttribute("data-open", "1");
 
-    // Nuclear visibility — beat any other stylesheet
-    win.style.cssText = [
-      "display:flex !important",
-      "flex-direction:column !important",
-      "visibility:visible !important",
-      "opacity:1 !important",
-      "pointer-events:auto !important",
-      "position:fixed !important",
-      "top:64px !important",
-      "left:50% !important",
-      "transform:translateX(-50%) !important",
-      "width:min(1080px, calc(100vw - 40px)) !important",
-      "height:min(700px, calc(100vh - 100px)) !important",
-      "z-index:99990 !important",
-      "background:#313338 !important",
-      "color:#dbdee1 !important",
-      "border-radius:10px !important",
-      "border:1px solid #1e1f22 !important",
-      "box-shadow:0 24px 64px rgba(0,0,0,0.55) !important",
-      "overflow:hidden !important",
-      "filter:none !important"
-    ].join(";");
+    // Visible + movable (no !important on left/top/transform so drag works)
+    win.style.display = "flex";
+    win.style.flexDirection = "column";
+    win.style.visibility = "visible";
+    win.style.opacity = "1";
+    win.style.pointerEvents = "auto";
+    win.style.position = "fixed";
+    win.style.zIndex = "99990";
+    win.style.background = "#313338";
+    win.style.color = "#dbdee1";
+    win.style.borderRadius = "10px";
+    win.style.border = "1px solid #1e1f22";
+    win.style.boxShadow = "0 24px 64px rgba(0,0,0,0.55)";
+    win.style.overflow = "hidden";
+    win.style.filter = "none";
+    // First open: center. Later opens: keep last dragged position.
+    if (!win.dataset.nyxPos) {
+      var w = Math.min(1080, window.innerWidth - 40);
+      var h = Math.min(700, window.innerHeight - 100);
+      win.style.width = w + "px";
+      win.style.height = h + "px";
+      win.style.top = "64px";
+      win.style.left = Math.max(20, Math.round((window.innerWidth - w) / 2)) + "px";
+      win.style.transform = "none";
+      win.style.right = "auto";
+      win.style.bottom = "auto";
+    }
 
     markDock(true);
     state.winOpen = true;
@@ -36151,7 +36172,28 @@ body.tl-right .calculator__top--taskabr {
   }
   function toggleMax() {
     var win = $("messages-window");
-    if (win) win.classList.toggle("is-maximized");
+    if (!win) return;
+    var on = win.classList.toggle("is-maximized");
+    if (on) {
+      // maximized styles come from CSS; clear inline size so they apply
+      win.style.top = "";
+      win.style.left = "";
+      win.style.right = "";
+      win.style.bottom = "";
+      win.style.width = "";
+      win.style.height = "";
+      win.style.transform = "none";
+    } else if (win.dataset.nyxPos) {
+      // keep previous dragged position if any
+    } else {
+      var w = Math.min(1080, window.innerWidth - 40);
+      var h = Math.min(700, window.innerHeight - 100);
+      win.style.width = w + "px";
+      win.style.height = h + "px";
+      win.style.top = "64px";
+      win.style.left = Math.max(20, Math.round((window.innerWidth - w) / 2)) + "px";
+      win.style.transform = "none";
+    }
   }
   function minimize() {
     state.winOpen = false;
@@ -36279,8 +36321,29 @@ body.tl-right .calculator__top--taskabr {
         if ($w.length && !$w.data("ui-draggable")) {
           $w.draggable({
             handle: ".window__taskbar",
-            cancel: "button, input, textarea, a",
-            start: function () { jQuery(this).css("z-index", 95); }
+            cancel: "button, input, textarea, a, .msg-shell",
+            containment: "window",
+            start: function (ev, ui) {
+              var el = this;
+              el.classList.remove("is-maximized");
+              // Drop centering transform and lock pixel left/top for jQuery UI
+              el.style.transform = "none";
+              el.style.right = "auto";
+              el.style.bottom = "auto";
+              var r = el.getBoundingClientRect();
+              el.style.left = r.left + "px";
+              el.style.top = r.top + "px";
+              el.style.width = r.width + "px";
+              el.style.height = r.height + "px";
+              jQuery(el).css({ zIndex: 99995, transform: "none" });
+              ui.position.left = r.left;
+              ui.position.top = r.top;
+            },
+            stop: function () {
+              var el = this;
+              el.dataset.nyxPos = "1";
+              el.style.zIndex = "99990";
+            }
           });
         }
       }

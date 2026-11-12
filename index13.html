@@ -12961,29 +12961,61 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="window__taskbar--content"><h2>Messages</h2></div>
       </div>
       <div class="msg-shell">
+        <nav class="msg-rail">
+          <button type="button" class="rail-btn rail-home" id="msg-rail-home" title="Direct Messages">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" fill-rule="evenodd" aria-hidden="true"><path d="M7 5h10a5 5 0 0 1 4.8 3.6l1.1 4.2A3.6 3.6 0 0 1 19.500 17.400c-1.100 0-2-.5-2.700-1.400l-.6-.8H7.800l-.6.800c-.7.900-1.600 1.400-2.700 1.400A3.600 3.600 0 0 1 1.100 12.800l1.100-4.200A5 5 0 0 1 7 5zm2.500 5a1.600 1.600 0 1 0 0 3.200 1.600 1.600 0 0 0 0-3.200zm5 0a1.600 1.600 0 1 0 0 3.200 1.600 1.600 0 0 0 0-3.200z"/></svg>
+          </button>
+          <div class="rail-dms" id="msg-rail-dms"></div>
+          <div class="rail-sep"></div>
+          <button type="button" class="rail-btn rail-server on" id="msg-rail-server" title="Luma OS">L</button>
+        </nav>
         <aside class="msg-side">
+          <div class="msg-find" id="msg-find"><button type="button" id="msg-find-btn">Find or start a conversation</button></div>
+          <div class="msg-nav" id="msg-nav"><button type="button" class="msg-ch" id="msg-nav-friends"><span class="nav-ic">&#128101;</span><span>Friends</span></button></div>
           <div class="msg-side-head">
-            <h3>Channels</h3>
-            <span class="msg-user-chip" id="msg-username">guest</span>
+            <h3>Luma OS</h3>
+            <span class="chev">&#8964;</span>
           </div>
-          <div class="msg-channels" id="msg-channels"></div>
+          <div class="msg-scroll">
+            <div class="msg-side-sub" id="msg-sub-ch"><span>Text Channels</span><button type="button" id="msg-ch-new" title="Add channel" style="display:none">+</button></div>
+            <div class="msg-channels" id="msg-channels"></div>
+            <div class="msg-side-sub"><span>Direct Messages</span><button type="button" id="msg-dm-new" title="New direct message">+</button></div>
+            <div class="msg-dms" id="msg-dms"></div>
+          </div>
           <div class="msg-side-foot">
-            <button type="button" id="msg-rename-btn">Change username</button>
+            <div class="up-av" id="msg-self-av">G</div>
+            <div class="up-info">
+              <span class="up-name" id="msg-username">guest</span>
+              <span class="up-status">Online</span>
+            </div>
+            <button type="button" id="msg-notif-btn" title="Notifications">&#128276;</button>
+            <button type="button" id="msg-rename-btn" title="Change username">&#9998;</button>
+            <button type="button" id="msg-avatar-btn" title="Profile picture">&#128444;</button>
+            <button type="button" id="msg-signout-btn" title="Sign out">&#10162;</button>
           </div>
         </aside>
         <section class="msg-main">
           <div class="msg-top">
-            <h4 id="msg-channel-title"># general</h4>
+            <h4 id="msg-channel-title"><span class="hash">#</span>general</h4>
             <span class="msg-status" id="msg-status">Not connected</span>
           </div>
+          <div class="msg-home" id="msg-home"></div>
           <div class="msg-list" id="msg-list">
-            <div class="msg-empty" id="msg-empty">Open Supabase settings and paste your project URL + anon key to start chatting.</div>
+            <div class="msg-empty" id="msg-empty">Connecting…</div>
           </div>
           <div class="msg-composer">
             <textarea id="msg-input" rows="1" placeholder="Message #general" maxlength="2000"></textarea>
-            <button type="button" class="send" id="msg-send">Send</button>
+            <button type="button" class="send" id="msg-send" title="Send">&#10148;</button>
           </div>
         </section>
+        <aside class="msg-members" id="msg-members"></aside>
+      </div>
+      <div class="msg-dmpick" id="msg-dmpick" role="dialog" aria-label="New direct message">
+        <div class="msg-dmpick-card">
+          <div class="msg-dmpick-head"><span>New message</span><button type="button" id="msg-dm-close" title="Close">✕</button></div>
+          <input id="msg-dm-search" type="text" placeholder="Search people…" autocomplete="off" spellcheck="false" />
+          <div class="msg-dmpick-list" id="msg-dm-list"></div>
+        </div>
       </div>
       <div class="msg-cfg" id="msg-cfg" role="dialog" aria-label="Supabase settings">
         <h3>Connect Supabase</h3>
@@ -13022,6 +13054,35 @@ create policy "insert messages" on public.messages
 -- Optional: allow realtime
 -- In Dashboard → Database → Replication, enable messages
 alter publication supabase_realtime add table public.messages;</pre>
+      </div>
+      <div class="msg-dmpick" id="msg-perm" role="dialog" aria-label="Channel permissions">
+        <div class="msg-dmpick-card">
+          <div class="msg-dmpick-head"><span id="msg-perm-title">Channel permissions</span><button type="button" id="msg-perm-close" title="Close">&#10005;</button></div>
+          <label class="msg-perm-row" style="margin:6px 8px 0"><input type="checkbox" id="msg-perm-private" /> <span>Private: only selected people can see this channel</span></label>
+          <label class="msg-perm-row" style="margin:0 8px"><input type="checkbox" id="msg-perm-restrict" /> <span>Restricted: only selected people can type</span></label>
+          <div class="msg-perm-cols"><span>Person</span><span>See</span><span>Type</span></div>
+          <div class="msg-dmpick-list" id="msg-perm-list"></div>
+          <div style="padding:10px 16px"><button type="button" id="msg-perm-save" class="msg-auth-go">Save</button></div>
+        </div>
+      </div>
+      <div class="msg-auth" id="msg-auth" role="dialog" aria-label="Sign in to chat">
+        <form class="msg-auth-card" id="msg-auth-form" autocomplete="on" novalidate>
+          <div class="msg-auth-logo">L</div>
+          <h3 id="msg-auth-title">Welcome back</h3>
+          <p id="msg-auth-sub">Sign in to join Luma OS.</p>
+          <div class="msg-auth-tabs">
+            <button type="button" class="on" data-mode="signin">Sign in</button>
+            <button type="button" data-mode="signup">Create account</button>
+          </div>
+          <div id="msg-auth-userwrap">
+            <label for="msg-auth-user">Username</label>
+            <input id="msg-auth-user" type="text" autocomplete="username" maxlength="24" spellcheck="false" autocapitalize="off" placeholder="2-24 letters, numbers, _ . -" />
+          </div>
+          <label for="msg-auth-pass">Password</label>
+          <input id="msg-auth-pass" type="password" autocomplete="current-password" placeholder="At least 6 characters" />
+          <div class="msg-auth-err" id="msg-auth-err" role="alert"></div>
+          <button type="submit" class="msg-auth-go" id="msg-auth-go">Sign in</button>
+        </form>
       </div>
     </div>
 
@@ -33537,6 +33598,317 @@ html body[data-os-style="windows"] .dock-el .dock-open-app-button:active img { t
   #messages-window .msg-side { display: none !important; }
 }
 
+
+/* ===== Direct messages ===== */
+#messages-window .msg-side .msg-scroll { flex: 1 !important; overflow: auto !important; min-height: 0 !important; }
+#messages-window .msg-side .msg-scroll .msg-channels { flex: none !important; overflow: visible !important; padding-bottom: 4px !important; }
+#messages-window .msg-side-sub {
+  display: flex !important; align-items: center !important; justify-content: space-between !important;
+  padding: 10px 14px 4px !important; font-size: 11px !important; font-weight: 700 !important;
+  letter-spacing: .04em !important; text-transform: uppercase !important; color: #8e8e93 !important;
+}
+#messages-window .msg-side-sub button {
+  border: 0 !important; background: rgba(255,255,255,0.08) !important; color: #f5f5f7 !important;
+  width: 22px !important; height: 22px !important; border-radius: 6px !important; font: 700 15px/1 inherit !important;
+  cursor: pointer !important; padding: 0 !important;
+}
+#messages-window .msg-side-sub button:hover { background: #0a84ff !important; }
+#messages-window .msg-dms { padding: 2px 8px 12px !important; }
+#messages-window .msg-dm-empty { padding: 6px 10px !important; font-size: 12px !important; color: #8e8e93 !important; line-height: 1.4 !important; }
+#messages-window .msg-dm-av {
+  width: 22px !important; height: 22px !important; flex: 0 0 22px !important; border-radius: 50% !important;
+  background: linear-gradient(135deg, #5e5ce6, #0a84ff) !important; color: #fff !important;
+  display: grid !important; place-items: center !important; font-size: 11px !important; font-weight: 700 !important;
+}
+#messages-window .msg-ch .msg-dm-name { flex: 1 !important; min-width: 0 !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+#messages-window .msg-badge {
+  background: #ff453a !important; color: #fff !important; border-radius: 999px !important;
+  font-size: 11px !important; font-weight: 700 !important; min-width: 18px !important; height: 18px !important;
+  padding: 0 5px !important; display: grid !important; place-items: center !important;
+}
+#messages-window button.msg-name-btn {
+  background: none !important; border: 0 !important; padding: 0 !important; cursor: pointer !important;
+  font-family: inherit !important; text-align: left !important;
+}
+#messages-window button.msg-name-btn:hover { text-decoration: underline !important; color: #64b5ff !important; }
+#messages-window .msg-dmpick {
+  display: none; position: absolute !important; inset: 40px 0 0 0 !important; z-index: 60 !important;
+  background: rgba(0,0,0,0.55) !important; align-items: center !important; justify-content: center !important;
+}
+#messages-window .msg-dmpick.open { display: flex !important; }
+#messages-window .msg-dmpick-card {
+  width: min(380px, calc(100% - 32px)) !important; max-height: 80% !important; display: flex !important; flex-direction: column !important;
+  background: #2c2c2e !important; border: 1px solid rgba(255,255,255,0.14) !important; border-radius: 14px !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important; overflow: hidden !important;
+}
+#messages-window .msg-dmpick-head {
+  display: flex !important; align-items: center !important; justify-content: space-between !important;
+  padding: 14px 16px 8px !important; color: #fff !important; font-weight: 700 !important; font-size: 15px !important;
+}
+#messages-window .msg-dmpick-head button {
+  border: 0 !important; background: rgba(255,255,255,0.1) !important; color: #fff !important;
+  width: 26px !important; height: 26px !important; border-radius: 50% !important; cursor: pointer !important; font-size: 14px !important;
+}
+#messages-window .msg-dmpick input {
+  margin: 0 16px 8px !important; height: 36px !important; border-radius: 8px !important;
+  border: 1px solid rgba(255,255,255,0.14) !important; background: #1c1c1e !important; color: #fff !important;
+  padding: 0 10px !important; font: 13px inherit !important; outline: none !important;
+}
+#messages-window .msg-dmpick-list { overflow: auto !important; padding: 0 8px 12px !important; min-height: 60px !important; }
+
+
+/* ===== DM notifications ===== */
+.nyx-dm-toast-wrap { position: fixed; top: 48px; right: 16px; z-index: 100000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+.nyx-dm-toast {
+  pointer-events: auto; cursor: pointer; width: 300px; display: grid; grid-template-columns: 36px 1fr; gap: 10px; align-items: center;
+  padding: 12px 14px; border-radius: 14px; background: rgba(44,44,46,0.96); color: #f5f5f7;
+  border: 1px solid rgba(255,255,255,0.16); box-shadow: 0 14px 40px rgba(0,0,0,0.5); backdrop-filter: blur(14px);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, system-ui, sans-serif;
+  animation: nyxDmIn .25s ease-out;
+}
+.nyx-dm-toast.out { opacity: 0; transform: translateX(20px); transition: all .25s ease; }
+.nyx-dm-toast .av { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg,#5e5ce6,#0a84ff); display: grid; place-items: center; font-weight: 700; font-size: 13px; color: #fff; }
+.nyx-dm-toast .who { font-size: 13px; font-weight: 700; color: #fff; }
+.nyx-dm-toast .txt { font-size: 13px; color: #d1d1d6; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@keyframes nyxDmIn { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: none; } }
+.nyx-dm-dockbadge {
+  position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
+  background: #ff453a; color: #fff; font: 700 11px/18px -apple-system, system-ui, sans-serif; text-align: center; z-index: 5; pointer-events: none;
+}
+
+
+/* ===================== DISCORD THEME ===================== */
+#messages-window .window__taskbar { background: #1e1f22 !important; border-bottom: 1px solid #111214 !important; }
+#messages-window .window__taskbar--content h2 { color: #949ba4 !important; font-weight: 600 !important; }
+#messages-window .msg-shell {
+  grid-template-columns: 72px 240px minmax(0, 1fr) 240px !important;
+  background: #313338 !important; color: #dbdee1 !important;
+  font-family: "gg sans", "Noto Sans", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+#messages-window .msg-shell.no-members { grid-template-columns: 72px 240px minmax(0, 1fr) !important; }
+#messages-window .msg-shell.no-members .msg-members { display: none !important; }
+#messages-window .msg-shell button,
+#messages-window .msg-shell textarea,
+#messages-window .msg-shell input { font-family: inherit !important; }
+#messages-window .msg-shell * { scrollbar-width: thin; scrollbar-color: #1a1b1e transparent; }
+#messages-window .msg-shell ::-webkit-scrollbar { width: 14px; height: 14px; }
+#messages-window .msg-shell ::-webkit-scrollbar-track { background: transparent; }
+#messages-window .msg-shell ::-webkit-scrollbar-thumb {
+  background: #1a1b1e; border: 3px solid transparent; background-clip: padding-box; border-radius: 8px; min-height: 40px;
+}
+
+/* server rail */
+#messages-window .msg-rail {
+  background: #1e1f22 !important; display: flex !important; flex-direction: column !important; align-items: center !important;
+  padding: 12px 0 !important; gap: 8px !important; overflow: hidden !important; min-height: 0 !important;
+}
+#messages-window .rail-btn {
+  position: relative !important; width: 48px !important; height: 48px !important; border: 0 !important; border-radius: 50% !important;
+  background: #313338 !important; color: #dbdee1 !important; cursor: pointer !important; display: grid !important; place-items: center !important;
+  font-size: 18px !important; font-weight: 600 !important; padding: 0 !important; transition: border-radius .15s ease, background .15s ease, color .15s ease !important;
+}
+#messages-window .rail-btn:hover, #messages-window .rail-btn.on { background: #5865f2 !important; color: #fff !important; border-radius: 16px !important; }
+#messages-window .rail-server::before {
+  content: ""; position: absolute; left: -12px; top: 50%; width: 8px; height: 8px; border-radius: 0 4px 4px 0;
+  background: #fff; transform: translateY(-50%); transition: height .15s ease, opacity .15s ease; opacity: 0;
+}
+#messages-window .rail-server:hover::before { opacity: 1; }
+#messages-window .rail-server.on::before { height: 40px; opacity: 1; }
+#messages-window .rail-sep { width: 32px; height: 2px; border-radius: 1px; background: #35363c; flex: none; }
+#messages-window .rail-badge {
+  position: absolute; right: -4px; bottom: -4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px;
+  background: #f23f42; color: #fff; font-size: 11px; font-weight: 700; line-height: 16px; text-align: center;
+  border: 3px solid #1e1f22; box-sizing: content-box;
+}
+
+/* channel sidebar */
+#messages-window .msg-side { background: #2b2d31 !important; border-right: 0 !important; }
+#messages-window .msg-side-head {
+  height: 48px !important; padding: 0 16px !important; border-bottom: 1px solid #1f2023 !important;
+  box-shadow: 0 1px 0 rgba(2,2,2,.2), 0 1.5px 0 rgba(6,6,7,.05), 0 2px 0 rgba(4,4,5,.05) !important; flex: none !important;
+}
+#messages-window .msg-side-head h3 { font-size: 16px !important; font-weight: 600 !important; color: #f2f3f5 !important; }
+#messages-window .msg-side-head .chev { color: #b5bac1; font-size: 16px; line-height: 1; }
+#messages-window .msg-side .msg-scroll { padding-bottom: 8px !important; }
+#messages-window .msg-side-sub { padding: 18px 8px 4px 16px !important; font-size: 12px !important; font-weight: 600 !important; letter-spacing: .02em !important; color: #949ba4 !important; }
+#messages-window .msg-side-sub:hover { color: #dbdee1 !important; }
+#messages-window .msg-side-sub button {
+  background: transparent !important; color: #b5bac1 !important; width: 18px !important; height: 18px !important;
+  font-size: 18px !important; font-weight: 400 !important; line-height: 16px !important; border-radius: 4px !important;
+}
+#messages-window .msg-side-sub button:hover { background: transparent !important; color: #fff !important; }
+#messages-window .msg-side .msg-scroll .msg-channels, #messages-window .msg-dms { padding: 2px 8px 0 8px !important; }
+#messages-window .msg-ch {
+  height: 34px !important; padding: 0 8px !important; margin: 1px 0 !important; border-radius: 4px !important;
+  color: #949ba4 !important; font-size: 16px !important; font-weight: 500 !important; gap: 8px !important; background: transparent !important;
+}
+#messages-window .msg-ch:hover { background: #35373c !important; color: #dbdee1 !important; }
+#messages-window .msg-ch.on { background: #404249 !important; color: #fff !important; }
+#messages-window .msg-ch .hash { color: #80848e !important; font-size: 22px !important; font-weight: 400 !important; opacity: 1 !important; width: 20px; text-align: center; }
+#messages-window .msg-ch.on .hash { color: #dbdee1 !important; }
+#messages-window .msg-dm-empty { color: #80848e !important; padding: 6px 8px !important; font-size: 13px !important; }
+#messages-window .msg-dms .msg-ch { height: 42px !important; }
+#messages-window .msg-av-wrap { position: relative; display: inline-block; flex: 0 0 32px; width: 32px; height: 32px; }
+#messages-window .msg-av-wrap .dot {
+  position: absolute; right: -3px; bottom: -3px; width: 14px; height: 14px; box-sizing: border-box; border-radius: 50%;
+  border: 3px solid #2b2d31; background: #80848e;
+}
+#messages-window .msg-av-wrap .dot.on { background: #23a559; }
+#messages-window .msg-ch:hover .msg-av-wrap .dot { border-color: #35373c; }
+#messages-window .msg-ch.on .msg-av-wrap .dot { border-color: #404249; }
+#messages-window .msg-dm-av {
+  width: 32px !important; height: 32px !important; flex: 0 0 32px !important; border-radius: 50% !important;
+  background: var(--c, #5865f2) !important; color: #fff !important; font-size: 14px !important; font-weight: 600 !important;
+  display: grid !important; place-items: center !important;
+}
+#messages-window .msg-badge { background: #f23f42 !important; height: 16px !important; min-width: 16px !important; font-size: 12px !important; }
+
+/* user panel */
+#messages-window .msg-side-foot {
+  flex-direction: row !important; align-items: center !important; gap: 8px !important; height: 52px !important; flex: none !important;
+  padding: 0 8px !important; background: #232428 !important; border-top: 0 !important;
+}
+#messages-window .msg-side-foot .up-av {
+  width: 32px; height: 32px; flex: 0 0 32px; border-radius: 50%; background: var(--c, #5865f2); color: #fff;
+  display: grid; place-items: center; font-size: 14px; font-weight: 600;
+}
+#messages-window .msg-side-foot .up-info { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.2; }
+#messages-window .msg-side-foot .up-name { font-size: 14px; font-weight: 600; color: #f2f3f5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#messages-window .msg-side-foot .up-status { font-size: 12px; color: #949ba4; }
+#messages-window .msg-side-foot button {
+  width: 32px !important; height: 32px !important; padding: 0 !important; border-radius: 4px !important; background: transparent !important;
+  color: #b5bac1 !important; font-size: 16px !important; cursor: pointer !important; display: grid !important; place-items: center !important; flex: none !important;
+}
+#messages-window .msg-side-foot button:hover { background: #3f4147 !important; color: #dbdee1 !important; }
+
+/* main column */
+#messages-window .msg-main { background: #313338 !important; }
+#messages-window .msg-top {
+  height: 48px !important; padding: 0 16px !important; border-bottom: 1px solid #26272b !important;
+  box-shadow: 0 1px 0 rgba(2,2,2,.2), 0 1.5px 0 rgba(6,6,7,.05), 0 2px 0 rgba(4,4,5,.05) !important;
+}
+#messages-window .msg-top h4 { font-size: 16px !important; font-weight: 600 !important; color: #f2f3f5 !important; display: flex; align-items: center; }
+#messages-window .msg-top h4 .hash { color: #80848e; font-size: 24px; font-weight: 400; margin-right: 8px; line-height: 1; }
+#messages-window .msg-status { font-size: 12px !important; color: #949ba4 !important; }
+#messages-window .msg-list {
+  padding: 0 0 16px !important; gap: 0 !important; background: #313338 !important;
+}
+#messages-window .msg-list > .msg-bubble:first-child,
+#messages-window .msg-list > .msg-divider:first-child,
+#messages-window .msg-list > .msg-empty.welcome { margin-top: auto !important; }
+#messages-window .msg-divider { position: relative; height: 0; margin: 24px 16px 8px; border-top: 1px solid #3f4147; text-align: center; flex: none; }
+#messages-window .msg-divider span {
+  position: relative; top: -9px; display: inline-block; padding: 0 8px; background: #313338; line-height: 18px;
+  font-size: 12px; font-weight: 600; color: #949ba4;
+}
+#messages-window .msg-bubble {
+  grid-template-columns: 40px minmax(0, 1fr) !important; gap: 0 16px !important; padding: 2px 48px 2px 16px !important;
+  margin-top: 17px !important; position: relative !important; flex: none !important;
+}
+#messages-window .msg-bubble.grouped { margin-top: 0 !important; }
+#messages-window .msg-bubble:hover { background: rgba(2,2,2,.06) !important; }
+#messages-window .msg-av {
+  width: 40px !important; height: 40px !important; background: var(--c, #5865f2) !important; font-size: 16px !important; font-weight: 600 !important; margin-top: 2px !important;
+}
+#messages-window .msg-gtime { visibility: hidden; text-align: right; font-size: 11px; line-height: 22px; color: #949ba4; white-space: nowrap; overflow: hidden; margin-left: -8px; }
+#messages-window .msg-bubble:hover .msg-gtime { visibility: visible; }
+#messages-window .msg-meta { display: flex; align-items: baseline; flex-wrap: wrap; line-height: 22px; }
+#messages-window .msg-name { font-size: 16px !important; font-weight: 500 !important; color: #f2f3f5 !important; line-height: 22px !important; }
+#messages-window button.msg-name-btn:hover { color: #f2f3f5 !important; }
+#messages-window .msg-time { font-size: 12px !important; color: #949ba4 !important; margin-left: 8px !important; font-weight: 500 !important; }
+#messages-window .msg-text { font-size: 16px !important; line-height: 1.375 !important; color: #dbdee1 !important; }
+#messages-window .msg-pinned { color: #f0b232 !important; }
+#messages-window .msg-empty { color: #949ba4 !important; }
+#messages-window .msg-empty.welcome { margin: 0 16px 16px !important; max-width: none !important; text-align: left !important; }
+#messages-window .msg-empty.welcome .w-icon, #messages-window .msg-empty.welcome .w-av {
+  width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 38px; font-weight: 600; margin-bottom: 8px;
+  background: #41434a;
+}
+#messages-window .msg-empty.welcome .w-av { background: var(--c, #5865f2); }
+#messages-window .msg-empty.welcome h2 { margin: 0 0 8px !important; font-size: 32px !important; font-weight: 700 !important; color: #f2f3f5 !important; }
+#messages-window .msg-empty.welcome p { margin: 0 !important; font-size: 16px !important; color: #b5bac1 !important; line-height: 1.4 !important; }
+#messages-window .msg-empty.welcome p b { color: #f2f3f5; }
+
+/* composer */
+#messages-window .msg-composer {
+  margin: 0 16px 24px !important; padding: 0 8px 0 16px !important; background: #383a40 !important; border: 0 !important;
+  border-radius: 8px !important; align-items: center !important; gap: 8px !important;
+}
+#messages-window .msg-composer textarea {
+  background: transparent !important; border: 0 !important; border-radius: 0 !important; min-height: 44px !important;
+  padding: 11px 0 !important; font-size: 16px !important; color: #dbdee1 !important; line-height: 22px !important; box-shadow: none !important;
+}
+#messages-window .msg-composer textarea::placeholder { color: #6d6f78 !important; }
+#messages-window .msg-composer button.send {
+  background: transparent !important; color: #b5bac1 !important; width: 36px !important; height: 36px !important; padding: 0 !important;
+  border-radius: 4px !important; font-size: 18px !important;
+}
+#messages-window .msg-composer button.send:hover { color: #5865f2 !important; background: transparent !important; }
+
+/* members */
+#messages-window .msg-members { background: #2b2d31 !important; overflow: auto !important; padding: 0 8px 16px !important; min-height: 0 !important; display: block !important; }
+#messages-window .msg-mem-head { padding: 24px 8px 4px !important; font-size: 12px !important; font-weight: 600 !important; text-transform: uppercase !important; color: #949ba4 !important; letter-spacing: .02em !important; }
+#messages-window .msg-member {
+  width: 100% !important; display: flex !important; align-items: center !important; gap: 12px !important; padding: 6px 8px !important;
+  border: 0 !important; border-radius: 4px !important; background: transparent !important; cursor: pointer !important;
+  color: #80848e !important; font-size: 16px !important; font-weight: 500 !important; text-align: left !important;
+}
+#messages-window .msg-member.on { color: #dbdee1 !important; }
+#messages-window .msg-member:not(.on) .msg-dm-av { opacity: .45; }
+#messages-window .msg-member:hover { background: #35373c !important; }
+#messages-window .msg-member .msg-av-wrap .dot { border-color: #2b2d31; }
+#messages-window .msg-member:hover .msg-av-wrap .dot { border-color: #35373c; }
+
+/* picker modal */
+#messages-window .msg-dmpick { background: rgba(0,0,0,.7) !important; }
+#messages-window .msg-dmpick-card { background: #313338 !important; border: 0 !important; border-radius: 8px !important; box-shadow: 0 8px 16px rgba(0,0,0,.4) !important; }
+#messages-window .msg-dmpick-head { font-size: 20px !important; font-weight: 700 !important; color: #f2f3f5 !important; padding: 16px 16px 8px !important; }
+#messages-window .msg-dmpick-head button { background: transparent !important; color: #b5bac1 !important; }
+#messages-window .msg-dmpick-head button:hover { color: #fff !important; }
+#messages-window .msg-dmpick input { background: #1e1f22 !important; border: 0 !important; border-radius: 4px !important; height: 40px !important; font-size: 16px !important; color: #dbdee1 !important; }
+#messages-window .msg-dmpick-list .msg-ch { height: 44px !important; }
+
+/* toast */
+.nyx-dm-toast { background: #111214 !important; border: 0 !important; border-radius: 8px !important; border-left: 4px solid #5865f2 !important; }
+.nyx-dm-toast .av { background: var(--c, #5865f2) !important; }
+.nyx-dm-toast .who { font-weight: 600; }
+
+@media (max-width: 720px) {
+  #messages-window .msg-shell, #messages-window .msg-shell.no-members { grid-template-columns: 1fr !important; }
+  #messages-window .msg-rail, #messages-window .msg-side, #messages-window .msg-members { display: none !important; }
+}
+
+
+/* rail: home + DM avatars */
+#messages-window .msg-rail { overflow-y: auto !important; overflow-x: hidden !important; scrollbar-width: none !important; }
+#messages-window .msg-rail::-webkit-scrollbar { display: none; }
+#messages-window .rail-dms { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; flex: none; }
+#messages-window .rail-dms:empty { display: none; }
+#messages-window .rail-btn::before {
+  content: ""; position: absolute; left: -12px; top: 50%; width: 8px; height: 8px; border-radius: 0 4px 4px 0;
+  background: #fff; transform: translateY(-50%); transition: height .15s ease, opacity .15s ease; opacity: 0;
+}
+#messages-window .rail-btn:hover::before { opacity: 1; }
+#messages-window .rail-btn.on::before { height: 40px; opacity: 1; }
+#messages-window .rail-home { color: #fff !important; background: #313338 !important; }
+#messages-window .rail-home:hover, #messages-window .rail-home.on { background: #5865f2 !important; }
+#messages-window .rail-dm { background: var(--c, #5865f2) !important; color: #fff !important; font-size: 18px !important; font-weight: 600 !important; }
+#messages-window .rail-dm:hover, #messages-window .rail-dm.on { background: var(--c, #5865f2) !important; border-radius: 16px !important; }
+#messages-window .rail-dm .rail-badge { right: -6px; bottom: -6px; }
+
+
+/* member activity line */
+#messages-window .msg-member { align-items: center !important; }
+#messages-window .msg-mem-text { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.2; }
+#messages-window .msg-mem-text .msg-dm-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#messages-window .msg-act { font-size: 12px; font-weight: 400; color: #949ba4; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#messages-window .msg-av-wrap .dot.idle { background: #f0b232; }
+
+
+#messages-window .msg-act {
+  white-space: normal !important; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden !important;
+}
+
 #msg-cfg, #msg-cfg-btn, .msg-cfg { display: none !important; visibility: hidden !important; pointer-events: none !important; }
 </style>
 
@@ -34223,13 +34595,172 @@ body.tl-right .calculator__top--taskabr {
 })();
 </script>
 
+<style id="nyx-msg-auth-css">
+#messages-window .msg-auth {
+  display: none; position: absolute !important; inset: 40px 0 0 0 !important; z-index: 60 !important;
+  background: #313338 !important; align-items: center !important; justify-content: center !important; padding: 20px !important; overflow: auto !important;
+}
+#messages-window .msg-auth.open { display: flex !important; }
+#messages-window .msg-auth-card {
+  width: 100% !important; max-width: 400px !important; background: #2b2d31 !important; border: 1px solid #1e1f22 !important;
+  border-radius: 12px !important; padding: 28px !important; color: #dbdee1 !important; box-shadow: 0 12px 40px rgba(0,0,0,.4) !important;
+}
+#messages-window .msg-auth-logo {
+  width: 48px; height: 48px; border-radius: 16px; background: #5865f2; color: #fff; font-weight: 700; font-size: 22px;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;
+}
+#messages-window .msg-auth-card h3 { margin: 0 0 4px !important; font-size: 20px !important; color: #fff !important; text-align: center !important; }
+#messages-window .msg-auth-card p { margin: 0 0 16px !important; font-size: 13px !important; color: #949ba4 !important; text-align: center !important; }
+#messages-window .msg-auth-tabs { display: flex !important; gap: 4px !important; background: #1e1f22 !important; border-radius: 8px !important; padding: 3px !important; margin-bottom: 6px !important; }
+#messages-window .msg-auth-tabs button {
+  flex: 1 !important; border: 0 !important; background: transparent !important; color: #949ba4 !important; padding: 8px !important;
+  border-radius: 6px !important; font-size: 13px !important; font-weight: 600 !important; cursor: pointer !important;
+}
+#messages-window .msg-auth-tabs button.on { background: #404249 !important; color: #fff !important; }
+#messages-window .msg-auth-card label { display: block !important; font-size: 12px !important; font-weight: 700 !important; color: #b5bac1 !important; margin: 12px 0 6px !important; }
+#messages-window .msg-auth-card input {
+  width: 100% !important; box-sizing: border-box !important; background: #1e1f22 !important; color: #f2f3f5 !important;
+  border: 1px solid transparent !important; border-radius: 6px !important; padding: 10px 12px !important; font-size: 14px !important; outline: none !important;
+}
+#messages-window .msg-auth-card input:focus { border-color: #5865f2 !important; }
+#messages-window .msg-auth-err { min-height: 18px; margin-top: 10px; font-size: 12.5px; color: #f23f42; line-height: 1.4; }
+#messages-window .msg-auth-err.ok { color: #23a559; }
+#messages-window .msg-auth-go {
+  width: 100% !important; margin-top: 8px !important; border: 0 !important; background: #5865f2 !important; color: #fff !important;
+  padding: 11px !important; border-radius: 6px !important; font-size: 14px !important; font-weight: 600 !important; cursor: pointer !important;
+}
+#messages-window .msg-auth-go:hover { background: #4752c4 !important; }
+#messages-window .msg-auth-go:disabled { opacity: .6 !important; cursor: default !important; }
+#messages-window .msg-ch .ch-act { display: none; margin-left: auto; gap: 4px; }
+#messages-window .msg-ch:hover .ch-act { display: inline-flex; }
+#messages-window .msg-ch .ch-act span { padding: 0 4px; border-radius: 4px; font-size: 12px; color: #b5bac1; cursor: pointer; }
+#messages-window .msg-ch .ch-act span:hover { color: #fff; background: rgba(255,255,255,.12); }
+#messages-window .msg-ch .ch-lock { margin-left: auto; font-size: 11px; opacity: .7; }
+#messages-window .msg-ch:hover .ch-lock { display: none; }
+#messages-window .msg-perm-row { display: flex; align-items: center; gap: 10px; color: #dbdee1; font-size: 14px; cursor: pointer; padding: 6px 8px; border-radius: 6px; }
+#messages-window .msg-perm-row:hover { background: #35373c; }
+#messages-window .msg-perm-cols, #messages-window .msg-perm-user { display: grid; grid-template-columns: 1fr 44px 44px; align-items: center; padding: 4px 16px; }
+#messages-window .msg-perm-cols { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #949ba4; margin-top: 8px; }
+#messages-window .msg-perm-cols span:not(:first-child), #messages-window .msg-perm-user input { justify-self: center; }
+#messages-window .msg-perm-user { color: #dbdee1; font-size: 14px; border-radius: 4px; }
+#messages-window .msg-perm-user:hover { background: #35373c; }
+#messages-window .msg-side-foot button { width: 26px !important; min-width: 26px !important; padding: 0 !important; }
+#messages-window .msg-side-foot .up-name { max-width: 90px; }
+#messages-window [style*="--img"] { background-image: var(--img) !important; background-size: cover !important; background-position: center !important; color: transparent !important; }
+#messages-window .msg-bubble { position: relative !important; }
+#messages-window .msg-del { display: none; position: absolute; top: -14px; right: 16px; width: 30px; height: 28px; border: 1px solid #1e1f22; border-radius: 6px; background: #313338; color: #b5bac1; cursor: pointer; font-size: 14px; line-height: 1; padding: 0; z-index: 5; }
+#messages-window .msg-bubble:hover .msg-del { display: block; }
+#messages-window .msg-del:hover { background: #f23f42; color: #fff; border-color: #f23f42; }
+/* ---- DM / Friends mode (Discord dark) ---- */
+#messages-window .msg-find, #messages-window .msg-nav { display: none; }
+#messages-window .msg-shell.mode-dm .msg-find { display: block; padding: 10px 10px 8px; box-shadow: 0 1px 0 #1c1c1f; }
+#messages-window .msg-shell.mode-dm .msg-nav { display: block; padding: 8px 8px 0; }
+#messages-window .msg-find button { width: 100%; height: 28px; border: 0; border-radius: 4px; background: #1a1a1d; color: #a3a6ad; font-size: 13px; cursor: pointer; text-align: center; }
+#messages-window .msg-find button:hover { background: #222226; color: #dbdee1; }
+#messages-window .msg-nav .nav-ic { width: 24px; text-align: center; font-size: 16px; }
+#messages-window .msg-shell.mode-dm { grid-template-columns: 72px 240px minmax(0, 1fr) 320px !important; background: #000 !important; }
+#messages-window .msg-shell.mode-dm .msg-side-head, #messages-window .msg-shell.mode-dm #msg-sub-ch, #messages-window .msg-shell.mode-dm #msg-channels { display: none !important; }
+#messages-window .msg-shell.mode-dm .msg-rail, #messages-window .msg-shell.mode-dm .msg-main, #messages-window .msg-shell.mode-dm .msg-top { background: #000 !important; }
+#messages-window .msg-shell.mode-dm .msg-side { background: #0a0a0b !important; border-right: 1px solid #1c1c1f !important; }
+#messages-window .msg-shell.mode-dm .msg-members { background: #000 !important; border-left: 1px solid #1c1c1f !important; padding: 0 !important; }
+#messages-window .msg-shell.mode-dm .msg-top { box-shadow: 0 1px 0 #1c1c1f !important; }
+#messages-window .msg-shell.mode-dm .msg-side-foot { background: #0a0a0b !important; border-top: 1px solid #1c1c1f; }
+#messages-window .msg-shell.mode-dm .msg-side-sub { text-transform: none !important; font-size: 13px !important; font-weight: 500 !important; color: #a3a6ad !important; padding: 18px 8px 4px 16px !important; }
+#messages-window .msg-shell.mode-dm .msg-ch.on { background: #26272b !important; color: #fff !important; }
+#messages-window .msg-shell.mode-dm .msg-ch:hover { background: #1a1a1d !important; }
+#messages-window .msg-shell.mode-dm .msg-list, #messages-window .msg-shell.mode-dm .msg-composer { background: #000 !important; }
+#messages-window .msg-shell.mode-dm .msg-name { color: #f2f3f5 !important; font-weight: 600 !important; }
+#messages-window .msg-shell.mode-dm .msg-bubble:hover { background: #0c0c0e !important; }
+#messages-window .msg-shell.mode-dm .msg-composer textarea { background: #000 !important; border: 1px solid #2b2b2f !important; }
+#messages-window .msg-shell.mode-dm .msg-divider::before, #messages-window .msg-shell.mode-dm .msg-divider::after { background: #1c1c1f; }
+#messages-window .msg-shell.mode-dm .msg-empty.welcome .w-av { border-radius: 50%; }
+#messages-window .msg-top h4 .top-av { display: inline-flex; position: relative; width: 24px; height: 24px; margin-right: 10px; }
+#messages-window .msg-top h4 .top-av .msg-dm-av { width: 24px; height: 24px; font-size: 12px; }
+#messages-window .msg-home { display: none; flex-direction: column; min-height: 0; flex: 1; }
+#messages-window .msg-shell.mode-home .msg-home { display: flex; }
+#messages-window .msg-shell.mode-home .msg-top, #messages-window .msg-shell.mode-home .msg-list, #messages-window .msg-shell.mode-home .msg-composer { display: none !important; }
+#messages-window .home-top { height: 48px; flex: none; display: flex; align-items: center; gap: 14px; padding: 0 16px; box-shadow: 0 1px 0 #1c1c1f; font-weight: 600; color: #f2f3f5; }
+#messages-window .home-top .home-tab { border: 0; background: transparent; color: #a3a6ad; font-size: 15px; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+#messages-window .home-top .home-tab:hover { background: #1a1a1d; color: #dbdee1; }
+#messages-window .home-top .home-tab.on { background: #26272b; color: #fff; }
+#messages-window .home-search { margin: 16px 20px 8px; }
+#messages-window .home-search input { width: 100%; box-sizing: border-box; height: 40px; background: #000; border: 1px solid #2b2b2f; border-radius: 8px; color: #dbdee1; padding: 0 14px; font-size: 15px; outline: none; }
+#messages-window .home-search input:focus { border-color: #5865f2; }
+#messages-window .home-count { padding: 12px 20px 8px; font-size: 13px; font-weight: 600; color: #a3a6ad; }
+#messages-window .home-list { flex: 1; overflow: auto; padding: 0 20px 16px; min-height: 0; }
+#messages-window .home-row { display: flex; align-items: center; gap: 12px; padding: 10px 8px; border-top: 1px solid #1c1c1f; border-radius: 8px; cursor: pointer; }
+#messages-window .home-row:hover { background: #0e0e10; }
+#messages-window .home-row .nm { color: #f2f3f5; font-weight: 600; font-size: 16px; }
+#messages-window .home-row .st { color: #a3a6ad; font-size: 13px; }
+#messages-window .home-row .grow { flex: 1; min-width: 0; }
+#messages-window .home-row .go { width: 36px; height: 36px; border-radius: 50%; border: 0; background: #1a1a1d; color: #b5bac1; cursor: pointer; font-size: 16px; }
+#messages-window .home-row .go:hover { color: #fff; background: #26272b; }
+#messages-window .msg-dm-av.big { width: 80px !important; height: 80px !important; font-size: 32px !important; border: 6px solid #000; box-sizing: content-box; }
+#messages-window .dm-prof .msg-av-wrap { width: auto; height: auto; flex: none; }
+#messages-window .dm-banner { height: 100px; }
+#messages-window .dm-pav { margin: -48px 0 0 16px; position: relative; }
+#messages-window .dm-pav .dot { right: 4px !important; bottom: 4px !important; width: 18px !important; height: 18px !important; border-color: #000 !important; }
+#messages-window .dm-pbody { padding: 8px 16px 16px; }
+#messages-window .dm-pname { font-size: 20px; font-weight: 700; color: #f2f3f5; }
+#messages-window .dm-puser { font-size: 14px; color: #dbdee1; }
+#messages-window .dm-status { font-size: 13px; color: #a3a6ad; margin-top: 8px; }
+#messages-window .dm-sec { margin-top: 16px; padding-top: 12px; border-top: 1px solid #1c1c1f; }
+#messages-window .dm-sec h5 { margin: 0 0 4px; font-size: 12px; font-weight: 700; color: #f2f3f5; }
+#messages-window .dm-sec div { font-size: 14px; color: #dbdee1; }
+#messages-window .an-head { padding: 16px; font-size: 20px; font-weight: 700; color: #f2f3f5; }
+#messages-window .an-card { margin: 0 16px 12px; padding: 12px; border: 1px solid #1c1c1f; border-radius: 8px; background: #0a0a0b; display: flex; gap: 10px; align-items: center; cursor: pointer; }
+#messages-window .an-card:hover { background: #121214; }
+#messages-window .an-card .nm { color: #f2f3f5; font-weight: 600; font-size: 15px; }
+#messages-window .an-card .st { color: #a3a6ad; font-size: 13px; }
+#messages-window .an-card .grow { flex: 1; min-width: 0; }
+#messages-window .an-empty { margin: 0 16px; padding: 16px; color: #a3a6ad; font-size: 14px; }
+#messages-window .msg-composer textarea:disabled { opacity: .6; cursor: not-allowed; }
+/* ---- Discord look ---- */
+#messages-window, #messages-window .msg-shell, #messages-window .msg-shell button, #messages-window .msg-shell textarea, #messages-window .msg-shell input {
+  font-family: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+#messages-window .msg-rail { background: #1e1f22 !important; gap: 8px !important; padding-top: 12px !important; }
+#messages-window .rail-btn { width: 48px !important; height: 48px !important; border-radius: 50% !important; background: #313338 !important; color: #dbdee1 !important; font-size: 18px !important; font-weight: 600 !important; transition: border-radius .15s, background .15s !important; }
+#messages-window .rail-btn:hover, #messages-window .rail-btn.on { border-radius: 16px !important; background: #5865f2 !important; color: #fff !important; }
+#messages-window .rail-server { background: linear-gradient(135deg, #7c5cff, #5865f2) !important; color: #fff !important; font-size: 20px !important; font-weight: 700 !important; }
+#messages-window .msg-side-head { height: 48px !important; box-shadow: 0 1px 0 rgba(0,0,0,.25), 0 1.5px 0 rgba(0,0,0,.06) !important; border-bottom: 0 !important; cursor: pointer; }
+#messages-window .msg-side-head h3 { font-size: 15px !important; font-weight: 700 !important; }
+#messages-window .msg-side-sub { text-transform: uppercase !important; font-size: 11.5px !important; font-weight: 700 !important; letter-spacing: .02em !important; padding: 18px 8px 4px 16px !important; }
+#messages-window .msg-ch { height: 34px !important; border-radius: 4px !important; margin-bottom: 2px !important; font-weight: 500 !important; font-size: 15px !important; }
+#messages-window .msg-ch.on { background: #404249 !important; color: #fff !important; }
+#messages-window .msg-side-foot { background: #232428 !important; height: 52px !important; padding: 0 8px !important; }
+#messages-window .msg-side-foot .up-av, #messages-window .msg-dm-av, #messages-window .msg-av { border-radius: 50% !important; }
+#messages-window .msg-top { height: 48px !important; box-shadow: 0 1px 0 rgba(0,0,0,.25), 0 1.5px 0 rgba(0,0,0,.06) !important; border-bottom: 0 !important; background: #313338 !important; }
+#messages-window .msg-top h4 { font-size: 16px !important; font-weight: 600 !important; display: flex; align-items: center; }
+#messages-window .msg-status { margin-left: auto !important; font-size: 12px !important; padding: 2px 8px !important; border-radius: 10px !important; background: rgba(255,255,255,.06) !important; }
+#messages-window .msg-bubble { grid-template-columns: 40px 1fr !important; gap: 16px !important; padding: 2px 16px !important; margin-top: 17px !important; }
+#messages-window .msg-bubble.grouped { margin-top: 0 !important; }
+#messages-window .msg-bubble:hover { background: #2e3035 !important; }
+#messages-window .msg-av { width: 40px !important; height: 40px !important; font-size: 17px !important; font-weight: 600 !important; margin-top: 2px; }
+#messages-window .msg-name { color: var(--c, #fff) !important; font-size: 16px !important; font-weight: 500 !important; }
+#messages-window .msg-time { color: #949ba4 !important; font-size: 12px !important; margin-left: 8px !important; font-weight: 400 !important; }
+#messages-window .msg-text { color: #dbdee1 !important; font-size: 16px !important; line-height: 1.375rem !important; }
+#messages-window .msg-divider { display: flex; align-items: center; margin: 24px 16px 8px; color: #949ba4; font-size: 12px; font-weight: 600; }
+#messages-window .msg-divider::before, #messages-window .msg-divider::after { content: ""; flex: 1; height: 1px; background: #3f4147; }
+#messages-window .msg-divider span { padding: 0 8px; background: transparent; }
+#messages-window .msg-composer { position: relative; background: transparent !important; padding: 0 16px 24px !important; border: 0 !important; }
+#messages-window .msg-composer textarea { background: #383a40 !important; border-radius: 8px !important; padding: 11px 52px 11px 16px !important; font-size: 16px !important; color: #dbdee1 !important; border: 0 !important; }
+#messages-window .msg-composer button.send { position: absolute !important; right: 26px !important; bottom: 32px !important; background: transparent !important; color: #b5bac1 !important; }
+#messages-window .msg-members { background: #2b2d31 !important; }
+#messages-window .msg-mem-head { text-transform: uppercase !important; font-size: 12px !important; font-weight: 700 !important; color: #949ba4 !important; padding: 24px 8px 4px !important; letter-spacing: .02em !important; }
+#messages-window .msg-member { border-radius: 4px !important; height: 42px !important; }
+#messages-window .msg-act { color: #949ba4 !important; font-size: 12px !important; }
+</style>
 <script id="nyx-messages-js">
 (function () {
   "use strict";
   var LS_CFG = "nyx_supabase_chat";
   var LS_USER = "nyx_chat_user";
   var CHANNELS = ["general", "random", "help", "off-topic"];
-  var state = { client: null, channel: "general", sub: null, user: null, connected: false };
+  var LS_PEERS = "nyx_dm_peers";
+  var LS_NOTIF = "nyx_dm_notify";
+  var baseTitle = null;
+  var state = { home: false, homeTab: "online", homeQ: "", profiles: {}, avatars: {}, priv: {}, viewers: {}, chList: null, restricted: {}, writers: {}, isAdmin: false, meta: null, client: null, channel: "general", sub: null, inbox: null, winOpen: false, user: null, connected: false, unread: {}, users: [], members: {}, online: {}, presence: null, lastWin: null, myAct: "" };
 
   function $(id) { return document.getElementById(id); }
   function uuid() {
@@ -34255,16 +34786,7 @@ body.tl-right .calculator__top--taskabr {
       }));
     } catch (e) {}
   }
-  function loadUser() {
-    try {
-      var u = JSON.parse(localStorage.getItem(LS_USER) || "null");
-      if (u && u.id && u.username) return u;
-    } catch (e) {}
-    var id = uuid();
-    var u = { id: id, username: "guest_" + id.slice(0, 6) };
-    try { localStorage.setItem(LS_USER, JSON.stringify(u)); } catch (e) {}
-    return u;
-  }
+  function loadUser() { return state.user || null; }
   function setStatus(text, kind) {
     var el = $("msg-status");
     if (!el) return;
@@ -34288,34 +34810,341 @@ body.tl-right .calculator__top--taskabr {
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
   }
+  /* ---------- Direct message helpers ---------- */
+  function dmKey(a, b) { return a < b ? "dm:" + a + ":" + b : "dm:" + b + ":" + a; }
+  function isDm(ch) { return typeof ch === "string" && ch.indexOf("dm:") === 0; }
+  function dmOther(ch, me) {
+    if (!isDm(ch) || !me) return null;
+    var p = ch.split(":");
+    if (p.length !== 3) return null;
+    if (p[1] === me) return p[2];
+    if (p[2] === me) return p[1];
+    return null;
+  }
+  function loadPeers() {
+    try { return JSON.parse(localStorage.getItem(LS_PEERS) || "{}") || {}; } catch (e) { return {}; }
+  }
+  function savePeers(p) { try { localStorage.setItem(LS_PEERS, JSON.stringify(p)); } catch (e) {} }
+  function touchPeer(id, name, ts) {
+    var p = loadPeers();
+    var o = p[id] || {};
+    p[id] = { username: name || o.username || "user", ts: ts || Date.now() };
+    savePeers(p);
+    return p;
+  }
+  function currentPeerName() {
+    if (!state.user) return "";
+    var other = dmOther(state.channel, state.user.id);
+    if (!other) return "";
+    var p = loadPeers()[other];
+    return (p && p.username) || "user";
+  }
+  function updateHeader() {
+    var title = $("msg-channel-title");
+    var input = $("msg-input");
+    var shell = document.querySelector("#messages-window .msg-shell");
+    var dm = isDm(state.channel);
+    var mode = dmMode();
+    if (shell) { shell.classList.remove("no-members"); shell.classList.toggle("mode-dm", mode); shell.classList.toggle("mode-home", !!state.home); }
+    if (dm) {
+      var n = currentPeerName();
+      var oid = dmOther(state.channel, state.user && state.user.id);
+      if (title) title.innerHTML = '<span class="top-av">' + avHtml(oid, n, "msg-dm-av") + "</span>" + escapeHtml(n);
+      if (input) input.placeholder = "Message @" + n;
+    } else {
+      if (title) title.innerHTML = '<span class="hash">#</span>' + escapeHtml(state.channel);
+      if (input) input.placeholder = "Message #" + state.channel;
+    }
+    var av = $("msg-self-av");
+    if (av && state.user) {
+      av.textContent = initials(state.user.username);
+      av.style.setProperty("--c", avColor(state.user.id));
+      var si = safeImg(state.avatars[state.user.id]);
+      if (si) av.style.setProperty("--img", 'url("' + si + '")'); else av.style.removeProperty("--img");
+    }
+    var rs = $("msg-rail-server");
+    if (rs) rs.classList.toggle("on", !mode);
+    var rhm = $("msg-rail-home");
+    if (rhm) rhm.classList.toggle("on", mode);
+    var nf = $("msg-nav-friends");
+    if (nf) nf.classList.toggle("on", !!state.home);
+    applyComposer();
+    if (mode && state.user) renderMembers();
+  }
+  function renderDms() {
+    var box = $("msg-dms");
+    if (!box) return;
+    box.innerHTML = "";
+    var me = state.user && state.user.id;
+    var peers = loadPeers();
+    var ids = Object.keys(peers).filter(function (id) { return id !== me; });
+    ids.sort(function (a, b) { return (peers[b].ts || 0) - (peers[a].ts || 0); });
+    if (!ids.length) {
+      box.innerHTML = '<div class="msg-dm-empty">No conversations yet. Press + or click a name in chat to start one.</div>';
+    }
+    ids.forEach(function (id) {
+      var key = dmKey(me, id);
+      var n = state.unread[key] || 0;
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "msg-ch" + (key === state.channel && !state.home ? " on" : "");
+      b.setAttribute("data-peer", id);
+      var po = state.online[id];
+      var isOn = !!po;
+      b.innerHTML = '<span class="msg-av-wrap"><span class="msg-dm-av"' + avAttr(id) + ">" + escapeHtml(initials(peers[id].username)) + '</span><i class="dot' + (isOn ? (po.idle ? " idle" : " on") : "") + '"></i></span>' +
+        '<span class="msg-dm-name">' + escapeHtml(peers[id].username) + "</span>" +
+        (n ? '<span class="msg-badge">' + (n > 99 ? "99+" : n) + "</span>" : "");
+      box.appendChild(b);
+    });
+    var rail = $("msg-rail-dms");
+    if (rail) {
+      rail.innerHTML = "";
+      ids.slice(0, 15).forEach(function (id) {
+        var key = dmKey(me, id);
+        var n = state.unread[key] || 0;
+        var rb = document.createElement("button");
+        rb.type = "button";
+        rb.className = "rail-btn rail-dm" + (key === state.channel && !state.home ? " on" : "");
+        rb.setAttribute("data-peer", id);
+        rb.title = peers[id].username;
+        rb.style.setProperty("--c", avColor(id));
+        rb.innerHTML = escapeHtml(initials(peers[id].username)) +
+          (n ? '<span class="rail-badge">' + (n > 99 ? "99+" : n) + "</span>" : "");
+        rail.appendChild(rb);
+      });
+    }
+    updateHeader();
+    updateBadges();
+  }
+  function chNames() { return state.chList || CHANNELS; }
+  function canPost() {
+    if (!state.user) return false;
+    var ch = state.channel;
+    if (isDm(ch)) return true;
+    if (!state.restricted[ch]) return true;
+    return !!(state.isAdmin || (state.writers[ch] && state.writers[ch][state.user.id]));
+  }
+  function applyComposer() {
+    var input = $("msg-input"), btn = $("msg-send");
+    if (!input) return;
+    var ok = canPost();
+    input.disabled = !ok;
+    if (btn) btn.disabled = !ok;
+    if (!ok) input.placeholder = "You don't have permission to type in #" + state.channel;
+  }
+  async function loadAvatars() {
+    var c = ensureClient();
+    if (!c || !state.user) return;
+    try {
+      var r = await c.from("chat_profiles").select("user_id,username,avatar_url,created_at");
+      if (r.error) r = await c.from("chat_profiles").select("user_id,username,avatar_url");
+      if (r.error) throw r.error;
+      var map = {}, pf = {};
+      (r.data || []).forEach(function (p) { pf[p.user_id] = p; if (p.avatar_url && safeImg(p.avatar_url)) map[p.user_id] = p.avatar_url; });
+      state.avatars = map;
+      state.profiles = pf;
+    } catch (e) { console.warn("[messages avatars]", e); }
+  }
+  async function refreshAvatars() {
+    await loadAvatars();
+    updateHeader();
+    renderMembers();
+    renderDms();
+    if (state.winOpen && state.user) await loadMessages();
+  }
+  function testImage(url) {
+    return new Promise(function (res) {
+      var im = new Image();
+      im.onload = function () { res(true); };
+      im.onerror = function () { res(false); };
+      im.referrerPolicy = "no-referrer";
+      im.src = url;
+      setTimeout(function () { res(false); }, 8000);
+    });
+  }
+  async function changeAvatar() {
+    if (!state.user) { showAuth(); return; }
+    var cur = state.avatars[state.user.id] || "";
+    var url = prompt("Profile picture URL (https://...). Leave blank to remove it.", cur);
+    if (url === null) return;
+    url = url.trim();
+    if (url) {
+      if (!/^https?:\/\//i.test(url) || url.length > 500) { alert("Enter a full image link starting with http:// or https://"); return; }
+      if (!(await testImage(url))) { alert("That link didn't load as an image."); return; }
+    }
+    var cl = ensureClient();
+    if (!cl) return;
+    var res = await cl.auth.updateUser({ data: { username: state.user.username, avatar_url: url } });
+    if (res.error) { alert("Could not save: " + res.error.message); return; }
+    if (url) state.avatars[state.user.id] = url; else delete state.avatars[state.user.id];
+    setTimeout(refreshAvatars, 600);
+    updateHeader();
+  }
+  async function loadChannels() {
+    var client = ensureClient();
+    if (!client || !state.user) return;
+    try {
+      var r1 = await client.from("chat_channels").select("name,restricted,is_private").order("created_at", { ascending: true });
+      if (r1.error) throw r1.error;
+      var r2 = await client.from("chat_channel_writers").select("channel,user_id");
+      var r4 = await client.from("chat_channel_members").select("channel,user_id");
+      var r3 = await client.from("chat_admins").select("user_id").eq("user_id", state.user.id);
+      var list = [], rs = {}, ws = {}, pv = {}, vw = {};
+      (r1.data || []).forEach(function (c) { list.push(c.name); if (c.restricted) rs[c.name] = true; if (c.is_private) pv[c.name] = true; });
+      ((r4 && r4.data) || []).forEach(function (w) { (vw[w.channel] = vw[w.channel] || {})[w.user_id] = true; });
+      ((r2 && r2.data) || []).forEach(function (w) { (ws[w.channel] = ws[w.channel] || {})[w.user_id] = true; });
+      if (list.length) state.chList = list;
+      state.restricted = rs; state.writers = ws; state.priv = pv; state.viewers = vw;
+      state.isAdmin = !!(r3 && r3.data && r3.data.length);
+      if (!isDm(state.channel) && state.chList && state.chList.indexOf(state.channel) < 0) {
+        state.channel = state.chList[0];
+        renderChannels();
+        await loadMessages();
+        subscribeRealtime();
+      }
+    } catch (e) { console.warn("[messages channels]", e); }
+    renderChannels();
+  }
+  async function addChannel() {
+    var c = ensureClient();
+    if (!c || !state.isAdmin) return;
+    var name = prompt("New channel name (letters, numbers, - or _)");
+    if (!name) return;
+    name = name.trim().toLowerCase().replace(/\s+/g, "-").replace(/^#/, "");
+    if (!/^[a-z0-9_-]{1,32}$/.test(name)) { alert("Use 1-32 letters, numbers, - or _"); return; }
+    var priv = confirm("Make #" + name + " private (only people you pick can see it)?\n\nOK = private, Cancel = public");
+    var r = await c.from("chat_channels").insert({ name: name, is_private: priv });
+    if (r.error) { alert("Could not add channel: " + r.error.message); return; }
+    await loadChannels();
+    if (priv) { openPerm(name); return; }
+    switchChannel(name);
+  }
+  async function removeChannel(name) {
+    var c = ensureClient();
+    if (!c || !state.isAdmin) return;
+    if (!confirm("Delete #" + name + " and all its messages?")) return;
+    var r = await c.from("chat_channels").delete().eq("name", name);
+    if (r.error) { alert("Could not delete: " + r.error.message); return; }
+    await loadChannels();
+  }
+  var permCh = null;
+  async function openPerm(name) {
+    var c = ensureClient();
+    if (!c || !state.isAdmin) return;
+    permCh = name;
+    $("msg-perm-title").textContent = "#" + name + " permissions";
+    $("msg-perm-restrict").checked = !!state.restricted[name];
+    $("msg-perm-private").checked = !!state.priv[name];
+    var box = $("msg-perm-list");
+    box.innerHTML = '<div class="msg-dm-empty">Loading…</div>';
+    $("msg-perm").classList.add("open");
+    var r = await c.from("chat_profiles").select("user_id,username").order("username", { ascending: true });
+    var rows = (r.data || []).filter(function (u) { return u.user_id !== state.user.id; });
+    var w = state.writers[name] || {}, v = state.viewers[name] || {};
+    box.innerHTML = rows.length ? rows.map(function (u) {
+      return '<div class="msg-perm-user"><span>' + escapeHtml(u.username) + '</span>' +
+        '<input type="checkbox" data-see="' + escapeHtml(u.user_id) + '"' + (v[u.user_id] ? " checked" : "") + ' title="Can see" />' +
+        '<input type="checkbox" data-type="' + escapeHtml(u.user_id) + '"' + (w[u.user_id] ? " checked" : "") + ' title="Can type" /></div>';
+    }).join("") : '<div class="msg-dm-empty">No other accounts yet. You can always see and type everywhere.</div>';
+  }
+  async function savePerm() {
+    var c = ensureClient();
+    if (!c || !permCh) return;
+    var name = permCh;
+    var restrict = $("msg-perm-restrict").checked;
+    var priv = $("msg-perm-private").checked;
+    var list = $("msg-perm-list");
+    function ids(attr) { return Array.prototype.map.call(list.querySelectorAll("input[" + attr + "]:checked"), function (i) { return i.getAttribute(attr); }); }
+    var seeIds = ids("data-see"), typeIds = ids("data-type");
+    var errs = [];
+    function chk(res) { if (res && res.error) errs.push(res.error.message); }
+    chk(await c.from("chat_channels").update({ restricted: restrict, is_private: priv }).eq("name", name));
+    chk(await c.from("chat_channel_writers").delete().eq("channel", name));
+    if (typeIds.length) chk(await c.from("chat_channel_writers").insert(typeIds.map(function (u) { return { channel: name, user_id: u }; })));
+    chk(await c.from("chat_channel_members").delete().eq("channel", name));
+    if (seeIds.length) chk(await c.from("chat_channel_members").insert(seeIds.map(function (u) { return { channel: name, user_id: u }; })));
+    if (errs.length) { alert("Could not save: " + errs[0]); return; }
+    $("msg-perm").classList.remove("open");
+    await loadChannels();
+  }
   function renderChannels() {
     var box = $("msg-channels");
     if (!box) return;
     box.innerHTML = "";
-    CHANNELS.forEach(function (ch) {
+    var nb = $("msg-ch-new");
+    if (nb) nb.style.display = state.isAdmin ? "" : "none";
+    chNames().forEach(function (ch) {
       var b = document.createElement("button");
       b.type = "button";
       b.className = "msg-ch" + (ch === state.channel ? " on" : "");
-      b.innerHTML = '<span class="hash">#</span><span>' + escapeHtml(ch) + "</span>";
-      b.addEventListener("click", function () { switchChannel(ch); });
+      var extra = (state.priv[ch] || state.restricted[ch]) ? '<span class="ch-lock" title="' + (state.priv[ch] ? "Private" : "Restricted") + '">' + (state.priv[ch] ? "&#128065;" : "&#128274;") + "</span>" : "";
+      if (state.isAdmin) extra += '<span class="ch-act"><span data-act="perm" title="Permissions">&#9881;</span><span data-act="del" title="Delete channel">&#10005;</span></span>';
+      b.innerHTML = '<span class="hash">#</span><span>' + escapeHtml(ch) + "</span>" + extra;
+      b.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest("[data-act]");
+        if (a) { e.stopPropagation(); if (a.getAttribute("data-act") === "del") removeChannel(ch); else openPerm(ch); return; }
+        switchChannel(ch);
+      });
       box.appendChild(b);
     });
-    var title = $("msg-channel-title");
-    if (title) title.textContent = "# " + state.channel;
-    var input = $("msg-input");
-    if (input) input.placeholder = "Message #" + state.channel;
+    updateHeader();
+    renderDms();
   }
-  function bubbleHtml(m) {
+  var AV_COLORS = ["#5865f2", "#3ba55d", "#faa61a", "#ed4245", "#eb459e", "#1abc9c", "#9b59b6", "#e67e22"];
+  function avColor(seed) {
+    var h = 0, str = String(seed == null ? "" : seed);
+    for (var i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+    return AV_COLORS[h % AV_COLORS.length];
+  }
+  function safeImg(u) {
+    if (!u || !/^https?:\/\//i.test(u) || u.length > 500) return "";
+    return encodeURI(u).replace(/"/g, "%22").replace(/\\/g, "%5C").replace(/[()']/g, function (c) { return "%" + c.charCodeAt(0).toString(16); });
+  }
+  function avAttr(seed) {
+    var img = safeImg(state.avatars[seed]);
+    return ' style="--c:' + avColor(seed) + (img ? ";--img:url(&quot;" + escapeHtml(img) + '&quot;)' : "") + '"';
+  }
+  function sameDay(a, b) { return new Date(a).toDateString() === new Date(b).toDateString(); }
+  function fmtClock(ts) {
+    try { return new Date(ts).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); } catch (e) { return ""; }
+  }
+  function fmtStamp(ts) {
+    var d = new Date(ts), now = new Date(), y = new Date(now.getTime() - 86400000);
+    if (d.toDateString() === now.toDateString()) return "Today at " + fmtClock(ts);
+    if (d.toDateString() === y.toDateString()) return "Yesterday at " + fmtClock(ts);
+    return d.toLocaleDateString([], { month: "2-digit", day: "2-digit", year: "numeric" }) + " " + fmtClock(ts);
+  }
+  function fmtDivider(ts) {
+    return new Date(ts).toLocaleDateString([], { year: "numeric", month: "long", day: "numeric" });
+  }
+  function bubbleHtml(m, prev) {
+    var ts = Date.parse(m.created_at) || Date.now();
+    var uid = m.user_id || m.username || "";
+    var out = "";
+    var newDay = !prev || !sameDay(prev.ts, ts);
+    if (newDay) out += '<div class="msg-divider"><span>' + escapeHtml(fmtDivider(ts)) + "</span></div>";
+    var grouped = !newDay && prev && prev.uid === uid && (ts - prev.ts) < 420000;
+    var mine = state.user && m.user_id === state.user.id;
+    var delBtn = state.isAdmin ? '<button type="button" class="msg-del" data-del="' + escapeHtml(m.id) + '" title="Delete message">&#128465;</button>' : "";
+    var attrs = ' data-id="' + escapeHtml(m.id) + '" data-uid="' + escapeHtml(uid) + '" data-ts="' + ts + '"';
+    if (grouped) {
+      return out +
+        '<div class="msg-bubble grouped"' + attrs + ">" +
+          '<div class="msg-gtime">' + escapeHtml(fmtClock(ts)) + "</div>" +
+          '<div class="msg-body"><div class="msg-text">' + escapeHtml(m.content) + "</div></div>" + delBtn + "</div>";
+    }
     var pin = m.pinned ? '<span class="msg-pinned">pinned</span>' : "";
-    return (
-      '<div class="msg-bubble" data-id="' + escapeHtml(m.id) + '">' +
-        '<div class="msg-av">' + escapeHtml(initials(m.username)) + "</div>" +
+    var nameHtml = (m.user_id && !mine)
+      ? '<button type="button" class="msg-name msg-name-btn" data-uid="' + escapeHtml(m.user_id) + '" data-uname="' + escapeHtml(m.username) + '" title="Send a direct message"' + avAttr(uid) + ">" + escapeHtml(m.username) + "</button>"
+      : '<span class="msg-name"' + avAttr(uid) + ">" + escapeHtml(m.username) + "</span>";
+    return out +
+      '<div class="msg-bubble"' + attrs + ">" +
+        '<div class="msg-av"' + avAttr(uid) + ">" + escapeHtml(initials(m.username)) + "</div>" +
         '<div class="msg-body">' +
-          '<div class="msg-meta"><span class="msg-name">' + escapeHtml(m.username) + "</span>" +
-          '<span class="msg-time">' + escapeHtml(fmtTime(m.created_at)) + "</span>" + pin + "</div>" +
+          '<div class="msg-meta">' + nameHtml +
+          '<span class="msg-time">' + escapeHtml(fmtStamp(ts)) + "</span>" + pin + "</div>" +
           '<div class="msg-text">' + escapeHtml(m.content) + "</div>" +
-        "</div></div>"
-    );
+        "</div>" + delBtn + "</div>";
   }
   function appendMessage(m, scroll) {
     var list = $("msg-list");
@@ -34323,10 +35152,157 @@ body.tl-right .calculator__top--taskabr {
     var empty = $("msg-empty");
     if (empty) empty.remove();
     if (m.id && list.querySelector('[data-id="' + m.id + '"]')) return;
+    var prev = null;
+    var last = list.lastElementChild;
+    if (last && last.classList.contains("msg-bubble")) {
+      prev = { uid: last.getAttribute("data-uid"), ts: +last.getAttribute("data-ts") || 0 };
+    }
     var wrap = document.createElement("div");
-    wrap.innerHTML = bubbleHtml(m);
-    if (wrap.firstElementChild) list.appendChild(wrap.firstElementChild);
+    wrap.innerHTML = bubbleHtml(m, prev);
+    while (wrap.firstChild) list.appendChild(wrap.firstChild);
+    noteMember(m);
     if (scroll !== false) list.scrollTop = list.scrollHeight;
+  }
+  /* ---------- Members + presence ---------- */
+  function noteMember(m) {
+    if (!m || !m.user_id) return;
+    if (state.members[m.user_id] !== m.username) {
+      state.members[m.user_id] = m.username || "guest";
+      renderMembers();
+    }
+  }
+  /* ---------- What is this person doing on the OS? ---------- */
+  var APP_BY_KEY = {
+    terminal: "Terminal", note: "Notes", maps: "Maps", calculator: "Calculator", launchpad: "Launchpad",
+    "vscode-window": "VS Code", "settings-window": "System Settings", "safari-window": "Safari",
+    "finder-window": "Finder", "imovie-window": "Netflix", "appstore-window": "App Store",
+    "devhub-window": "DevHub", "vibe-window": "Vibe", "steam-window": "Steam", "messages-window": "Messages",
+    "spotify-window": "Spotify", "youtube-window": "YouTube", "tiktok-window": "TikTok", "twitch-window": "Twitch",
+    "snapchat-window": "Snapchat", "instagram-window": "Instagram", "google-window": "Google",
+    "duckduckgo-window": "DuckDuckGo", "gfn-window": "GeForce Now", "gdash-window": "Geometry Dash", "ai-window": "AI"
+  };
+  function winVisible(el) {
+    try {
+      var cs = getComputedStyle(el);
+      if (cs.display === "none" || cs.visibility === "hidden" || parseFloat(cs.opacity) === 0) return false;
+      if (el.classList.contains("minimized") || el.classList.contains("nx-closed")) return false;
+      return el.getClientRects().length > 0;
+    } catch (e) { return false; }
+  }
+  function winName(el) {
+    var key = el.id || "";
+    if (APP_BY_KEY[key]) return APP_BY_KEY[key];
+    for (var c in APP_BY_KEY) { if (el.classList.contains(c)) return APP_BY_KEY[c]; }
+    var h = el.querySelector(".window__taskbar--content h2");
+    var t = h ? (h.textContent || "").trim() : "";
+    if (t) return t.length > 28 ? t.slice(0, 28) + "…" : t;
+    return (key || "app").replace(/-window$/, "");
+  }
+  /* every open app, most recently used first */
+  function openApps() {
+    try {
+      var wins = Array.prototype.filter.call(document.querySelectorAll(".window, .calculator, #launchpad"), winVisible);
+      var scored = wins.map(function (w, i) {
+        var z = parseInt(getComputedStyle(w).zIndex, 10);
+        if (isNaN(z)) z = 0;
+        if (w === state.lastWin) z = 1e9;
+        return { name: winName(w), z: z, i: i };
+      });
+      scored.sort(function (a, b) { return b.z - a.z || b.i - a.i; });
+      var names = [];
+      scored.forEach(function (o) { if (names.indexOf(o.name) < 0) names.push(o.name); });
+      return names;
+    } catch (e) { return []; }
+  }
+  function currentApp() { var a = openApps(); return a.length ? a[0] : ""; }
+  function appsOf(p) { return (p && p.apps) ? p.apps : (p && p.app ? [p.app] : []); }
+  function actText(p) {
+    if (!p) return "";
+    var apps = appsOf(p);
+    var idle = !!p.idle;
+    if (!apps.length) return idle ? "Idle" : "On the desktop";
+    var text;
+    if (apps.length === 1 && apps[0] === "Messages") {
+      text = idle ? "Messages" : "In Messages";
+    } else {
+      var shown = apps.slice(0, 4).join(", ");
+      if (apps.length > 4) shown += " +" + (apps.length - 4);
+      text = (idle ? "" : "Using ") + shown;
+    }
+    return idle ? "Idle · " + text : text;
+  }
+  function myPresence() {
+    var apps = openApps();
+    return { username: state.user ? state.user.username : "guest", app: apps[0] || "", apps: apps, idle: !!document.hidden };
+  }
+  function memberItem(id, name, online, p) {
+    var idle = online && p && p.idle;
+    var line = online ? actText(p) : "";
+    return '<button type="button" class="msg-member' + (online ? " on" : "") + '" data-peer="' + escapeHtml(id) + '" data-uname="' + escapeHtml(name) + '">' +
+      '<span class="msg-av-wrap"><span class="msg-dm-av"' + avAttr(id) + ">" + escapeHtml(initials(name)) + '</span><i class="dot' + (online ? (idle ? " idle" : " on") : "") + '"></i></span>' +
+      '<span class="msg-mem-text"><span class="msg-dm-name">' + escapeHtml(name) + "</span>" +
+      (line ? '<span class="msg-act" title="' + escapeHtml(line) + '">' + escapeHtml(line) + "</span>" : "") + "</span></button>";
+  }
+  function renderMembers() {
+    var box = $("msg-members");
+    if (!box) return;
+    if (dmMode()) { renderDmRight(box); if (state.home) renderHomeList(); return; }
+    var me = state.user && state.user.id;
+    var on = {}, off = {};
+    Object.keys(state.online).forEach(function (id) { on[id] = state.online[id]; });
+    if (me && state.user) on[me] = myPresence();
+    Object.keys(state.members).forEach(function (id) { if (!on[id]) off[id] = state.members[id]; });
+    var onIds = Object.keys(on), offIds = Object.keys(off);
+    var html = '<div class="msg-mem-head">Online — ' + onIds.length + "</div>";
+    onIds.forEach(function (id) { html += memberItem(id, on[id].username || "guest", true, on[id]); });
+    if (offIds.length) {
+      html += '<div class="msg-mem-head">Offline — ' + offIds.length + "</div>";
+      offIds.forEach(function (id) { html += memberItem(id, off[id], false, null); });
+    }
+    box.innerHTML = html;
+  }
+  function trackPresence(force) {
+    try {
+      if (!state.presence || !state.user) return;
+      var p = myPresence();
+      var key = p.username + "|" + p.apps.join(",") + "|" + p.idle;
+      if (!force && key === state.myAct) return;
+      state.myAct = key;
+      state.presence.track({ username: p.username, app: p.app, apps: p.apps, idle: p.idle, t: Date.now() });
+      renderMembers();
+    } catch (e) {}
+  }
+  function subscribePresence() {
+    var client = ensureClient();
+    if (!client || state.presence || !state.user) return;
+    try {
+      var pc = client.channel("nyx-presence", { config: { presence: { key: state.user.id } } });
+      pc.on("presence", { event: "sync" }, function () {
+        var st = pc.presenceState();
+        var on = {};
+        Object.keys(st).forEach(function (k) {
+          var arr = st[k];
+          if (arr && arr.length) {
+            var last = arr[arr.length - 1];
+            on[k] = { username: last.username || "guest", app: last.app || "", apps: last.apps || (last.app ? [last.app] : []), idle: !!last.idle };
+          }
+        });
+        state.online = on;
+        renderMembers();
+        renderDms();
+      }).subscribe(function (status) {
+        if (status === "SUBSCRIBED") trackPresence(true);
+      });
+      state.presence = pc;
+      if (!state.actTimer) {
+        state.actTimer = setInterval(function () { trackPresence(false); }, 2000);
+        document.addEventListener("mousedown", function (e) {
+          var w = e.target && e.target.closest ? e.target.closest(".window") : null;
+          if (w) { state.lastWin = w; trackPresence(false); }
+        }, true);
+        document.addEventListener("visibilitychange", function () { trackPresence(false); });
+      }
+    } catch (e) { console.warn("[messages presence]", e); }
   }
   function normalizeMsg(m) {
     if (!m) return m;
@@ -34344,12 +35320,29 @@ body.tl-right .calculator__top--taskabr {
     var list = $("msg-list");
     if (!list) return;
     list.innerHTML = "";
+    state.members = {};
+    (rows || []).forEach(function (m) { if (m && m.user_id) state.members[m.user_id] = m.username || "guest"; });
+    renderMembers();
     if (!rows || !rows.length) {
-      list.innerHTML = '<div class="msg-empty" id="msg-empty">No messages in #' + escapeHtml(state.channel) + " yet. Say hello!</div>";
+      if (isDm(state.channel)) {
+        var other = dmOther(state.channel, state.user && state.user.id);
+        var nm = escapeHtml(currentPeerName());
+        list.innerHTML = '<div class="msg-empty welcome" id="msg-empty"><div class="w-av"' + avAttr(other) + ">" +
+          escapeHtml(initials(currentPeerName())) + "</div><h2>" + nm + "</h2><p>This is the beginning of your direct message history with <b>" + nm + "</b>.</p></div>";
+      } else {
+        var c = escapeHtml(state.channel);
+        list.innerHTML = '<div class="msg-empty welcome" id="msg-empty"><div class="w-icon">#</div><h2>Welcome to #' + c +
+          "!</h2><p>This is the start of the #" + c + " channel.</p></div>";
+      }
       return;
     }
     var html = "";
-    rows.forEach(function (m) { html += bubbleHtml(normalizeMsg(m)); });
+    var prev = null;
+    rows.forEach(function (m) {
+      m = normalizeMsg(m);
+      html += bubbleHtml(m, prev);
+      prev = { uid: m.user_id || m.username || "", ts: Date.parse(m.created_at) || 0 };
+    });
     list.innerHTML = html;
     list.scrollTop = list.scrollHeight;
   }
@@ -34363,7 +35356,7 @@ body.tl-right .calculator__top--taskabr {
     if (state.client && state._url === cfg.url && state._key === cfg.key) return state.client;
     try {
       state.client = window.supabase.createClient(cfg.url, cfg.key, {
-        auth: { persistSession: false, autoRefreshToken: false }
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: "nyx_chat_auth" }
       });
       state._url = cfg.url;
       state._key = cfg.key;
@@ -34382,14 +35375,16 @@ body.tl-right .calculator__top--taskabr {
       return;
     }
     setStatus("Loading…");
+    var wantCh = state.channel;
     try {
       var res = await client
         .from("messages")
         .select("id,user_id,username,content,x,created_at,t,ch,channel,pinned,reply_to,image_path")
-        .eq("ch", state.channel)
+        .eq("ch", wantCh)
         .order("t", { ascending: true })
         .limit(200);
       if (res.error) throw res.error;
+      if (wantCh !== state.channel) return;
       renderMessages(res.data || []);
       setStatus("Connected · live", "ok");
       state.connected = true;
@@ -34407,6 +35402,7 @@ body.tl-right .calculator__top--taskabr {
   function subscribeRealtime() {
     var client = ensureClient();
     if (!client) return;
+    subscribeInbox();
     if (state.sub) {
       try { client.removeChannel(state.sub); } catch (e) {}
       state.sub = null;
@@ -34427,7 +35423,8 @@ body.tl-right .calculator__top--taskabr {
       });
   }
   async function switchChannel(ch) {
-    if (!ch || ch === state.channel) return;
+    state.home = false;
+    if (!ch || ch === state.channel) { updateHeader(); return; }
     state.channel = ch;
     renderChannels();
     await loadMessages();
@@ -34441,7 +35438,8 @@ body.tl-right .calculator__top--taskabr {
     if (!text) return;
     var client = ensureClient();
     if (!client) { setStatus("Not connected", "err"); return; }
-    if (!state.user) state.user = loadUser();
+    if (!state.user) { showAuth(); return; }
+    if (!canPost()) { setStatus("You can't type in this channel", "err"); return; }
     if (btn) btn.disabled = true;
     try {
       var row = {
@@ -34464,7 +35462,7 @@ body.tl-right .calculator__top--taskabr {
       setStatus((e && e.message) || "Send failed", "err");
       alert("Could not send: " + ((e && e.message) || e));
     } finally {
-      if (btn) btn.disabled = false;
+      applyComposer();
       input.focus();
     }
   }
@@ -34486,6 +35484,579 @@ body.tl-right .calculator__top--taskabr {
     renderChannels();
     await loadMessages();
     subscribeRealtime();
+  }
+
+  /* ---------- Accounts (Supabase Auth) ---------- */
+  /* Hidden login address domain. Must be a real domain with mail (MX) records or Supabase rejects it as invalid.
+     No mail is ever sent (Confirm email must be off). If you own a domain, use it here. */
+  var AUTH_DOMAIN = "gmail.com";
+  var authMode = "signin";
+  function userFromSession(session) {
+    if (!session || !session.user) return null;
+    var u = session.user, md = u.user_metadata || {};
+    var name = (md.username || (u.email ? u.email.split("@")[0] : "") || "user").toString().slice(0, 24);
+    var av = md.avatar_url;
+    if (av && safeImg(av)) state.avatars[u.id] = av;
+    return { id: u.id, username: name };
+  }
+  function showAuth(msg, ok) {
+    var p = $("msg-auth");
+    if (p) p.classList.add("open");
+    setAuthMsg(msg || "", ok);
+    setStatus("Signed out", "err");
+  }
+  function hideAuth() {
+    var p = $("msg-auth");
+    if (p) p.classList.remove("open");
+  }
+  function setAuthMsg(t, ok) {
+    var e = $("msg-auth-err");
+    if (!e) return;
+    e.textContent = t || "";
+    e.className = "msg-auth-err" + (ok ? " ok" : "");
+  }
+  function setAuthMode(mode) {
+    authMode = mode;
+    var up = mode === "signup";
+    var tabs = document.querySelectorAll("#msg-auth .msg-auth-tabs button");
+    Array.prototype.forEach.call(tabs, function (b) { b.classList.toggle("on", b.getAttribute("data-mode") === mode); });
+    var t = $("msg-auth-title"); if (t) t.textContent = up ? "Create an account" : "Welcome back";
+    var sb = $("msg-auth-sub"); if (sb) sb.textContent = up ? "Pick a username and password. No email needed." : "Sign in to join Luma OS.";
+    var go = $("msg-auth-go"); if (go) go.textContent = up ? "Create account" : "Sign in";
+    var pw = $("msg-auth-pass"); if (pw) pw.setAttribute("autocomplete", up ? "new-password" : "current-password");
+    setAuthMsg("");
+  }
+  function teardownRealtime() {
+    var c = state.client;
+    if (c) {
+      [state.sub, state.inbox, state.presence, state.meta].forEach(function (ch) { if (ch) { try { c.removeChannel(ch); } catch (e) {} } });
+    }
+    state.sub = null; state.inbox = null; state.presence = null; state.meta = null; state.isAdmin = false; state.restricted = {}; state.writers = {}; state.priv = {}; state.viewers = {}; state.avatars = {}; state.profiles = {}; state.home = false; state.chList = null;
+    state.online = {}; state.members = {}; state.unread = {}; state.myAct = "";
+    if (state.actTimer) { clearInterval(state.actTimer); state.actTimer = null; }
+  }
+  function startSession() {
+    if (!state.user) return;
+    hideAuth();
+    var chip = $("msg-username");
+    if (chip) chip.textContent = state.user.username;
+    var cfg = loadCfg();
+    if (cfg.defaultChannel) state.channel = cfg.defaultChannel;
+    renderChannels();
+    updateHeader();
+    loadDmList();
+    loadAvatars().then(function () { return loadChannels(); }).then(function () { return loadMessages(); }).then(function () { subscribeRealtime(); }).catch(function () {});
+  }
+  function applySession(session) {
+    var u = userFromSession(session);
+    var prev = state.user && state.user.id;
+    state.user = u;
+    if (u) {
+      if (prev !== u.id) {
+        if (state.winOpen) startSession(); else { subscribeInbox(); }
+      } else if (state.user && prev === u.id) {
+        /* token refresh: keep going */
+      }
+    } else {
+      if (prev) {
+        teardownRealtime();
+        var l = $("msg-list"); if (l) l.innerHTML = "";
+        var d = $("msg-dms"); if (d) d.innerHTML = "";
+        var r = $("msg-rail-dms"); if (r) r.innerHTML = "";
+        var m = $("msg-members"); if (m) m.innerHTML = "";
+      }
+      if (state.winOpen) showAuth();
+    }
+  }
+  function initAuth() {
+    if (state.authReady) return state.authReady;
+    var client = ensureClient();
+    if (!client) return Promise.resolve();
+    state.authReady = client.auth.getSession().then(function (res) {
+      state.user = userFromSession(res && res.data && res.data.session);
+      if (state.user) subscribeInbox();
+      client.auth.onAuthStateChange(function (event, session) {
+        /* never await supabase calls inside this callback */
+        setTimeout(function () { applySession(session); }, 0);
+      });
+    }).catch(function (e) { console.warn("[messages auth]", e); });
+    return state.authReady;
+  }
+  async function submitAuth(ev) {
+    ev.preventDefault();
+    var client = ensureClient();
+    if (!client) { setAuthMsg("Could not reach the server."); return; }
+    var pass = $("msg-auth-pass").value || "";
+    var go = $("msg-auth-go");
+    var uname = ($("msg-auth-user").value || "").trim();
+    if (!/^[A-Za-z0-9_.-]{2,24}$/.test(uname)) { setAuthMsg("Username: 2-24 letters, numbers, _ . or -"); return; }
+    if (pass.length < 6) { setAuthMsg("Password must be at least 6 characters."); return; }
+    var email = uname.toLowerCase() + "@" + AUTH_DOMAIN;
+    if (go) go.disabled = true;
+    setAuthMsg("");
+    try {
+      var res;
+      if (authMode === "signup") {
+        res = await client.auth.signUp({ email: email, password: pass, options: { data: { username: uname } } });
+        if (res.error) throw res.error;
+        if (!res.data.session) {
+          setAuthMode("signin");
+          setAuthMsg("Account created. Sign in now.", true);
+          return;
+        }
+      } else {
+        res = await client.auth.signInWithPassword({ email: email, password: pass });
+        if (res.error) throw res.error;
+      }
+      $("msg-auth-pass").value = "";
+      applySession(res.data.session);
+    } catch (e) {
+      var m = (e && e.message) || "Something went wrong.";
+      if (/invalid login/i.test(m)) m = "Wrong username or password.";
+      else if (/already registered|already been registered/i.test(m)) m = "That username is taken.";
+      else if (/rate limit/i.test(m)) m = "Supabase is still trying to send a confirmation email. Turn off Confirm email (Auth > Providers > Email), then wait a few minutes and retry.";
+      else if (/not confirmed/i.test(m)) m = "Email confirmation is still on in Supabase. Turn it off (Auth > Providers > Email).";
+      setAuthMsg(m);
+    } finally {
+      if (go) go.disabled = false;
+    }
+  }
+  function bindAuthUi() {
+    var form = $("msg-auth-form");
+    if (form && !form.__bound) {
+      form.__bound = true;
+      form.addEventListener("submit", submitAuth);
+      Array.prototype.forEach.call(form.querySelectorAll(".msg-auth-tabs button"), function (b) {
+        b.addEventListener("click", function () { setAuthMode(b.getAttribute("data-mode")); });
+      });
+    }
+    var so = $("msg-signout-btn");
+    if (so && !so.__bound) {
+      so.__bound = true;
+      so.addEventListener("click", async function () {
+        var c = ensureClient();
+        if (c) { try { await c.auth.signOut(); } catch (e) {} }
+        applySession(null);
+      });
+    }
+  }
+
+  /* ---------- Discord-style DM home + profile panel ---------- */
+  function dmMode() { return !!state.home || isDm(state.channel); }
+  function statusOf(id) { var p = state.online[id]; return p ? (p.idle ? "Idle" : "Online") : "Offline"; }
+  function avHtml(id, name, cls) {
+    var p = state.online[id];
+    return '<span class="msg-av-wrap"><span class="' + cls + '"' + avAttr(id) + ">" + escapeHtml(initials(name)) + '</span><i class="dot' + (p ? (p.idle ? " idle" : " on") : "") + '"></i></span>';
+  }
+  function renderDmRight(box) {
+    if (state.home) {
+      var ids = Object.keys(state.online).filter(function (id) { return state.user && id !== state.user.id; });
+      var html = '<div class="an-head">Active Now</div>';
+      if (!ids.length) html += '<div class="an-empty">It\'s quiet for now. When someone is online, their activity shows up here.</div>';
+      ids.forEach(function (id) {
+        var p = state.online[id], nm = p.username || "user";
+        html += '<div class="an-card" data-peer="' + escapeHtml(id) + '" data-uname="' + escapeHtml(nm) + '">' + avHtml(id, nm, "msg-dm-av") +
+          '<div class="grow"><div class="nm">' + escapeHtml(nm) + '</div><div class="st">' + escapeHtml(actText(p) || "Online") + "</div></div></div>";
+      });
+      box.innerHTML = html;
+      return;
+    }
+    var other = dmOther(state.channel, state.user && state.user.id);
+    if (!other) { box.innerHTML = ""; return; }
+    var pr = state.profiles[other] || {};
+    var name = pr.username || currentPeerName();
+    var po = state.online[other];
+    var since = "";
+    if (pr.created_at) { try { since = new Date(pr.created_at).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" }); } catch (e) {} }
+    box.innerHTML = '<div class="dm-prof"><div class="dm-banner" style="background:' + avColor(other) + '"></div>' +
+      '<div class="dm-pav">' + avHtml(other, name, "msg-dm-av big") + "</div>" +
+      '<div class="dm-pbody"><div class="dm-pname">' + escapeHtml(name) + '</div><div class="dm-puser">' + escapeHtml(String(name).toLowerCase().replace(/\s+/g, "")) + "</div>" +
+      '<div class="dm-status">' + statusOf(other) + (po && actText(po) ? " · " + escapeHtml(actText(po)) : "") + "</div>" +
+      (since ? '<div class="dm-sec"><h5>Member Since</h5><div>' + escapeHtml(since) + "</div></div>" : "") + "</div></div>";
+  }
+  function buildHome() {
+    var el = $("msg-home");
+    if (!el || $("msg-home-list")) return;
+    el.innerHTML = '<div class="home-top"><span>&#128101; Friends</span>' +
+      '<button type="button" class="home-tab" data-tab="online">Online</button>' +
+      '<button type="button" class="home-tab" data-tab="all">All</button></div>' +
+      '<div class="home-search"><input id="msg-home-q" type="text" placeholder="Search" autocomplete="off" spellcheck="false" /></div>' +
+      '<div class="home-count" id="msg-home-count"></div><div class="home-list" id="msg-home-list"></div>';
+    Array.prototype.forEach.call(el.querySelectorAll(".home-tab"), function (b) {
+      b.addEventListener("click", function () { state.homeTab = b.getAttribute("data-tab"); renderHomeList(); });
+    });
+    $("msg-home-q").addEventListener("input", function () { state.homeQ = this.value; renderHomeList(); });
+    $("msg-home-list").addEventListener("click", function (e) {
+      var row = e.target.closest && e.target.closest("[data-peer]");
+      if (row) openDm(row.getAttribute("data-peer"), row.getAttribute("data-uname"));
+    });
+  }
+  function renderHomeList() {
+    var list = $("msg-home-list");
+    if (!list || !state.user) return;
+    var me = state.user.id, q = (state.homeQ || "").trim().toLowerCase();
+    Array.prototype.forEach.call(document.querySelectorAll("#msg-home .home-tab"), function (b) { b.classList.toggle("on", b.getAttribute("data-tab") === state.homeTab); });
+    var rows = [];
+    if (state.homeTab === "online") {
+      Object.keys(state.online).forEach(function (id) { if (id !== me) rows.push({ id: id, name: state.online[id].username || "user" }); });
+    } else {
+      Object.keys(state.profiles).forEach(function (id) { if (id !== me) rows.push({ id: id, name: state.profiles[id].username || "user" }); });
+      rows.sort(function (a, b) { return (state.online[b.id] ? 1 : 0) - (state.online[a.id] ? 1 : 0) || a.name.localeCompare(b.name); });
+    }
+    rows = rows.filter(function (r) { return !q || r.name.toLowerCase().indexOf(q) >= 0; });
+    var cnt = $("msg-home-count");
+    if (cnt) cnt.textContent = (state.homeTab === "online" ? "Online" : "All people") + " — " + rows.length;
+    list.innerHTML = rows.length ? rows.map(function (r) {
+      var p = state.online[r.id];
+      var st = p ? (actText(p) || "Online") : "Offline";
+      return '<div class="home-row" data-peer="' + escapeHtml(r.id) + '" data-uname="' + escapeHtml(r.name) + '">' + avHtml(r.id, r.name, "msg-dm-av") +
+        '<div class="grow"><div class="nm">' + escapeHtml(r.name) + '</div><div class="st">' + escapeHtml(st) + '</div></div>' +
+        '<button type="button" class="go" title="Message">&#128172;</button></div>';
+    }).join("") : '<div class="an-empty" style="margin:0">' + (state.homeTab === "online" ? "Nobody else is online right now." : "No one found.") + "</div>";
+  }
+  async function openHome() {
+    if (!state.user) { showAuth(); return; }
+    closePicker();
+    state.home = true;
+    buildHome();
+    updateHeader();
+    renderDms();
+    await loadAvatars();
+    renderMembers();
+    renderHomeList();
+  }
+
+  /* ---------- Direct messages: data + UI ---------- */
+  async function loadDmList() {
+    var client = ensureClient();
+    if (!client) return;
+    if (!state.user) return;
+    var me = state.user.id;
+    try {
+      var res = await client
+        .from("messages")
+        .select("ch,user_id,username,t")
+        .like("ch", "dm:%" + me + "%")
+        .order("t", { ascending: false })
+        .limit(500);
+      if (res.error) throw res.error;
+      var peers = loadPeers();
+      var named = {};
+      (res.data || []).forEach(function (r) {
+        var other = dmOther(r.ch, me);
+        if (!other) return;
+        var ts = Date.parse(r.t) || 0;
+        var cur = peers[other] || { username: "user", ts: 0 };
+        if (r.user_id === other && !named[other]) { cur.username = r.username || cur.username; named[other] = 1; }
+        if (ts > cur.ts) cur.ts = ts;
+        peers[other] = cur;
+      });
+      savePeers(peers);
+    } catch (e) {
+      console.warn("[messages dm list]", e);
+    }
+    renderDms();
+  }
+  function subscribeInbox() {
+    var client = ensureClient();
+    if (!client) return;
+    subscribePresence();
+    if (!state.meta && state.user) {
+      state.meta = client.channel("nyx-chmeta")
+        .on("postgres_changes", { event: "*", schema: "public", table: "chat_channels" }, function () { loadChannels(); })
+        .on("postgres_changes", { event: "*", schema: "public", table: "chat_channel_writers" }, function () { loadChannels(); })
+        .on("postgres_changes", { event: "DELETE", schema: "public", table: "messages" }, function (payload) {
+          if (state.winOpen) loadMessages();
+        })
+        .on("postgres_changes", { event: "*", schema: "public", table: "chat_profiles" }, function () { refreshAvatars(); })
+        .on("postgres_changes", { event: "*", schema: "public", table: "chat_channel_members" }, function () { loadChannels(); })
+        .subscribe();
+    }
+    if (state.inbox) return;
+    state.inbox = client
+      .channel("dm-inbox")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, function (payload) {
+        var m = payload && payload.new;
+        if (!m || !state.user) return;
+        var ch = m.ch || m.channel;
+        var other = dmOther(ch, state.user.id);
+        if (!other || m.user_id === state.user.id) return;
+        touchPeer(other, m.username || "user");
+        var viewing = state.winOpen && !document.hidden && ch === state.channel;
+        if (!viewing) {
+          state.unread[ch] = (state.unread[ch] || 0) + 1;
+          notifyDm(m, other);
+        }
+        renderDms();
+      })
+      .subscribe();
+  }
+  async function openDm(id, name) {
+    if (!state.user) { showAuth(); return; }
+    if (!id || id === state.user.id) return;
+    touchPeer(id, name);
+    closePicker();
+    state.home = false;
+    var key = dmKey(state.user.id, id);
+    delete state.unread[key];
+    if (key === state.channel) { renderChannels(); return; }
+    state.channel = key;
+    renderChannels();
+    await loadMessages();
+    subscribeRealtime();
+    var input = $("msg-input");
+    if (input) input.focus();
+  }
+  function renderPicker() {
+    var box = $("msg-dm-list");
+    if (!box) return;
+    var q = (($("msg-dm-search") && $("msg-dm-search").value) || "").trim().toLowerCase();
+    var rows = state.users.filter(function (u) { return !q || (u.username || "").toLowerCase().indexOf(q) >= 0; });
+    if (!rows.length) {
+      box.innerHTML = '<div class="msg-dm-empty">' + (state.users.length ? "No one matches that search." : "No other users found yet.") + "</div>";
+      return;
+    }
+    box.innerHTML = "";
+    rows.slice(0, 100).forEach(function (u) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "msg-ch";
+      b.setAttribute("data-peer", u.user_id);
+      b.setAttribute("data-uname", u.username);
+      b.innerHTML = '<span class="msg-av-wrap"><span class="msg-dm-av"' + avAttr(u.user_id) + ">" + escapeHtml(initials(u.username)) + "</span></span>" +
+        '<span class="msg-dm-name">' + escapeHtml(u.username) + "</span>";
+      box.appendChild(b);
+    });
+  }
+  async function openPicker() {
+    var pk = $("msg-dmpick");
+    if (!pk) return;
+    pk.classList.add("open");
+    var search = $("msg-dm-search");
+    if (search) { search.value = ""; search.focus(); }
+    var box = $("msg-dm-list");
+    if (box) box.innerHTML = '<div class="msg-dm-empty">Loading…</div>';
+    var client = ensureClient();
+    if (!client) { if (box) box.innerHTML = '<div class="msg-dm-empty">Not connected.</div>'; return; }
+    if (!state.user) { if (box) box.innerHTML = '<div class="msg-dm-empty">Sign in first.</div>'; return; }
+    try {
+      var res = await client
+        .from("messages")
+        .select("user_id,username,t")
+        .not("ch", "like", "dm:%")
+        .order("t", { ascending: false })
+        .limit(1000);
+      if (res.error) throw res.error;
+      var seen = {};
+      var out = [];
+      (res.data || []).forEach(function (r) {
+        if (!r.user_id || r.user_id === state.user.id || seen[r.user_id]) return;
+        seen[r.user_id] = 1;
+        out.push({ user_id: r.user_id, username: r.username || "guest" });
+      });
+      state.users = out;
+    } catch (e) {
+      console.warn("[messages users]", e);
+      state.users = [];
+    }
+    renderPicker();
+  }
+  function closePicker() {
+    var pk = $("msg-dmpick");
+    if (pk) pk.classList.remove("open");
+  }
+  function bindDm() {
+    var nb = $("msg-dm-new");
+    if (nb && !nb.__dmBound) { nb.__dmBound = true; nb.addEventListener("click", openPicker); }
+    var cb = $("msg-dm-close");
+    if (cb && !cb.__dmBound) { cb.__dmBound = true; cb.addEventListener("click", closePicker); }
+    var se = $("msg-dm-search");
+    if (se && !se.__dmBound) { se.__dmBound = true; se.addEventListener("input", renderPicker); }
+    var pk = $("msg-dmpick");
+    if (pk && !pk.__dmBound) {
+      pk.__dmBound = true;
+      pk.addEventListener("click", function (e) { if (e.target === pk) closePicker(); });
+    }
+    var dl = $("msg-dm-list");
+    if (dl && !dl.__dmBound) {
+      dl.__dmBound = true;
+      dl.addEventListener("click", function (e) {
+        var b = e.target.closest && e.target.closest("[data-peer]");
+        if (b) openDm(b.getAttribute("data-peer"), b.getAttribute("data-uname"));
+      });
+    }
+    var dms = $("msg-dms");
+    if (dms && !dms.__dmBound) {
+      dms.__dmBound = true;
+      dms.addEventListener("click", function (e) {
+        var b = e.target.closest && e.target.closest("[data-peer]");
+        if (b) openDm(b.getAttribute("data-peer"));
+      });
+    }
+    var ml = $("msg-list");
+    if (ml && !ml.__dmBound) {
+      ml.__dmBound = true;
+      ml.addEventListener("click", async function (e) {
+        var d = e.target.closest && e.target.closest(".msg-del");
+        if (d) {
+          e.stopPropagation();
+          if (!state.isAdmin || !confirm("Delete this message?")) return;
+          var cl = ensureClient();
+          var res = await cl.from("messages").delete().eq("id", d.getAttribute("data-del"));
+          if (res.error) { alert("Could not delete: " + res.error.message); return; }
+          loadMessages();
+          return;
+        }
+        var b = e.target.closest && e.target.closest(".msg-name-btn");
+        if (b) openDm(b.getAttribute("data-uid"), b.getAttribute("data-uname"));
+      });
+    }
+    var mem = $("msg-members");
+    if (mem && !mem.__dmBound) {
+      mem.__dmBound = true;
+      mem.addEventListener("click", function (e) {
+        var b = e.target.closest && e.target.closest("[data-peer]");
+        if (b) openDm(b.getAttribute("data-peer"), b.getAttribute("data-uname"));
+      });
+    }
+    var rd = $("msg-rail-dms");
+    if (rd && !rd.__dmBound) {
+      rd.__dmBound = true;
+      rd.addEventListener("click", function (e) {
+        var b = e.target.closest && e.target.closest("[data-peer]");
+        if (b) openDm(b.getAttribute("data-peer"));
+      });
+    }
+    var rh = $("msg-rail-home");
+    if (rh && !rh.__dmBound) { rh.__dmBound = true; rh.addEventListener("click", openHome); }
+    var fb = $("msg-find-btn"); if (fb && !fb.__b) { fb.__b = true; fb.addEventListener("click", openPicker); }
+    var nfb = $("msg-nav-friends"); if (nfb && !nfb.__b) { nfb.__b = true; nfb.addEventListener("click", openHome); }
+    var rsv = $("msg-rail-server");
+    if (rsv && !rsv.__dmBound) {
+      rsv.__dmBound = true;
+      rsv.addEventListener("click", function () {
+        state.home = false;
+        if (isDm(state.channel)) { var ch = chNames()[0]; state.channel = ch; renderChannels(); loadMessages().then(subscribeRealtime); }
+        else { renderChannels(); }
+      });
+    }
+  }
+
+  /* ---------- DM notifications ---------- */
+  function notifOn() { try { return localStorage.getItem(LS_NOTIF) !== "0"; } catch (e) { return true; } }
+  function refreshNotifBtn() {
+    var b = $("msg-notif-btn");
+    if (b) { b.textContent = notifOn() ? "\uD83D\uDD14" : "\uD83D\uDD15"; b.title = "Notifications: " + (notifOn() ? "On" : "Off"); }
+  }
+  function totalUnread() {
+    var n = 0;
+    Object.keys(state.unread).forEach(function (k) { n += state.unread[k] || 0; });
+    return n;
+  }
+  function updateBadges() {
+    var n = totalUnread();
+    try {
+      var btn = document.querySelector('.dock-open-app-button[data-dock-id="messages"]');
+      if (btn) {
+        var bd = btn.querySelector(".nyx-dm-dockbadge");
+        if (n > 0) {
+          if (!bd) {
+            if (getComputedStyle(btn).position === "static") btn.style.position = "relative";
+            bd = document.createElement("span");
+            bd.className = "nyx-dm-dockbadge";
+            btn.appendChild(bd);
+          }
+          bd.textContent = n > 99 ? "99+" : String(n);
+        } else if (bd) { bd.remove(); }
+      }
+    } catch (e) {}
+    try {
+      if (baseTitle === null) baseTitle = document.title.replace(/^\(\d+\)\s*/, "");
+      document.title = n > 0 ? "(" + n + ") " + baseTitle : baseTitle;
+    } catch (e) {}
+  }
+  var audioCtx = null;
+  function beep() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      var t = audioCtx.currentTime;
+      [880, 1175].forEach(function (f, i) {
+        var o = audioCtx.createOscillator();
+        var g = audioCtx.createGain();
+        o.type = "sine";
+        o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t + i * 0.11);
+        g.gain.exponentialRampToValueAtTime(0.12, t + i * 0.11 + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.11 + 0.18);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(t + i * 0.11);
+        o.stop(t + i * 0.11 + 0.2);
+      });
+    } catch (e) {}
+  }
+  function showToast(name, text, onClick) {
+    var wrap = document.querySelector(".nyx-dm-toast-wrap");
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.className = "nyx-dm-toast-wrap";
+      document.body.appendChild(wrap);
+    }
+    var t = document.createElement("div");
+    t.className = "nyx-dm-toast";
+    t.innerHTML = '<div class="av" style="--c:' + avColor(name) + '">' + escapeHtml(initials(name)) + '</div><div><div class="who">' +
+      escapeHtml(name) + '</div><div class="txt">' + escapeHtml(text) + "</div></div>";
+    function dismiss() {
+      t.classList.add("out");
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
+    }
+    t.addEventListener("click", function () { dismiss(); onClick(); });
+    wrap.appendChild(t);
+    while (wrap.children.length > 3) wrap.removeChild(wrap.firstChild);
+    setTimeout(dismiss, 6000);
+  }
+  function goToDm(id, name) {
+    if (!state.winOpen) openWindow();
+    openDm(id, name);
+  }
+  function notifyDm(m, other) {
+    if (!notifOn()) return;
+    var name = m.username || "Someone";
+    var raw = String(m.content != null ? m.content : (m.x != null ? m.x : ""));
+    var text = raw.length > 90 ? raw.slice(0, 90) + "…" : raw;
+    beep();
+    showToast(name, text, function () { goToDm(other, name); });
+  }
+  function startInboxWhenReady(n) {
+    n = n || 0;
+    if (window.supabase && window.supabase.createClient) { initAuth(); return; }
+    if (n < 20) setTimeout(function () { startInboxWhenReady(n + 1); }, 500);
+  }
+  function bindNotif() {
+    refreshNotifBtn();
+    var b = $("msg-notif-btn");
+    if (b && !b.__nBound) {
+      b.__nBound = true;
+      b.addEventListener("click", function () {
+        var on = !notifOn();
+        try { localStorage.setItem(LS_NOTIF, on ? "1" : "0"); } catch (e) {}
+        refreshNotifBtn();
+        if (on) {
+          beep();
+        }
+      });
+    }
+    if (!document.__dmVisBound) {
+      document.__dmVisBound = true;
+      document.addEventListener("visibilitychange", function () {
+        if (!document.hidden && state.winOpen && state.unread[state.channel]) {
+          delete state.unread[state.channel];
+          renderDms();
+        }
+      });
+    }
   }
 
   function markDock(open) {
@@ -34536,35 +36107,34 @@ body.tl-right .calculator__top--taskabr {
       "top:64px !important",
       "left:50% !important",
       "transform:translateX(-50%) !important",
-      "width:min(920px, calc(100vw - 40px)) !important",
-      "height:min(620px, calc(100vh - 100px)) !important",
+      "width:min(1080px, calc(100vw - 40px)) !important",
+      "height:min(700px, calc(100vh - 100px)) !important",
       "z-index:99990 !important",
-      "background:#1c1c1e !important",
-      "color:#f5f5f7 !important",
-      "border-radius:12px !important",
-      "border:1px solid rgba(255,255,255,0.18) !important",
+      "background:#313338 !important",
+      "color:#dbdee1 !important",
+      "border-radius:10px !important",
+      "border:1px solid #1e1f22 !important",
       "box-shadow:0 24px 64px rgba(0,0,0,0.55) !important",
       "overflow:hidden !important",
       "filter:none !important"
     ].join(";");
 
     markDock(true);
+    state.winOpen = true;
     try {
       if (typeof window.nyxSetDockOpen === "function") window.nyxSetDockOpen("messages", true);
     } catch (err) {}
 
-    state.user = loadUser();
-    var chip = $("msg-username");
-    if (chip) chip.textContent = state.user.username;
-    renderChannels();
-    var cfg = loadCfg();
-    if (cfg.defaultChannel) state.channel = cfg.defaultChannel;
-    renderChannels();
-    loadMessages().then(function () { subscribeRealtime(); }).catch(function () {});
+    var l = $("msg-list");
+    if (l && !state.user) l.innerHTML = "";
+    initAuth().then(function () {
+      if (state.user) startSession(); else showAuth();
+    });
     return true;
   }
 
   function closeWindow() {
+    state.winOpen = false;
     var win = $("messages-window");
     if (!win) return;
     win.classList.remove("is-open", "active", "is-maximized", "win-anim-in");
@@ -34584,6 +36154,7 @@ body.tl-right .calculator__top--taskabr {
     if (win) win.classList.toggle("is-maximized");
   }
   function minimize() {
+    state.winOpen = false;
     var win = $("messages-window");
     if (!win) return;
     win.style.display = "none";
@@ -34621,9 +36192,7 @@ body.tl-right .calculator__top--taskabr {
         defaultChannel: "general"
       }));
     } catch (e) {}
-    state.user = loadUser();
     var chip = $("msg-username");
-    if (chip) chip.textContent = state.user.username;
 
     if (!document.__msgDocBound) {
       document.__msgDocBound = true;
@@ -34682,12 +36251,27 @@ body.tl-right .calculator__top--taskabr {
         if (!name) return;
         name = name.trim().slice(0, 24);
         if (!name) return;
-        state.user = state.user || loadUser();
-        state.user.username = name;
-        try { localStorage.setItem(LS_USER, JSON.stringify(state.user)); } catch (e) {}
-        if (chip) chip.textContent = name;
+        if (!state.user) { showAuth(); return; }
+        var cl = ensureClient();
+        if (!cl) return;
+        cl.auth.updateUser({ data: { username: name, avatar_url: state.avatars[state.user.id] || "" } }).then(function (r) {
+          if (r.error) { alert("Could not rename: " + r.error.message); return; }
+          state.user.username = name;
+          if (chip) chip.textContent = name;
+          updateHeader();
+          trackPresence(true);
+        });
       });
     }
+
+    bindAuthUi();
+    var ab = $("msg-avatar-btn"); if (ab && !ab.__b) { ab.__b = true; ab.addEventListener("click", changeAvatar); }
+    var cn = $("msg-ch-new"); if (cn && !cn.__b) { cn.__b = true; cn.addEventListener("click", addChannel); }
+    var pc = $("msg-perm-close"); if (pc && !pc.__b) { pc.__b = true; pc.addEventListener("click", function () { $("msg-perm").classList.remove("open"); }); }
+    var ps = $("msg-perm-save"); if (ps && !ps.__b) { ps.__b = true; ps.addEventListener("click", savePerm); }
+    bindDm();
+    bindNotif();
+    startInboxWhenReady();
 
     try {
       if (window.jQuery && jQuery.fn && jQuery.fn.draggable) {

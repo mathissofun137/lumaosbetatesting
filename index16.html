@@ -12228,14 +12228,6 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="point" id="point-spotify" style="display:none"></div>
       </button>
 
-      <button type="button" class="dock-open-app-button icon open_messages" data-dock-id="messages" title="Messages" aria-label="Launch Messages" onclick="try{window.openMessages&&window.openMessages(event)}catch(e){}">
-        <p class="tooltip">Messages</p>
-        <span class="dock-icon-wrap">
-          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Messages.png" alt="Messages" draggable="false" />
-        </span>
-        <div class="dot" data-open-dot></div>
-        <div class="point" id="point-messages" style="display:none"></div>
-      </button>
 
 
       <button type="button" class="dock-open-app-button icon open_gdash" data-dock-id="gdash" title="Geometry Dash" aria-label="Launch Geometry Dash" >
@@ -12605,6 +12597,14 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-safari" style="display:none"></div>
       </button>
+      <button type="button" class="dock-open-app-button icon open_messages" data-dock-id="messages" title="Discord" aria-label="Launch Discord" onclick="try{window.openMessages&&window.openMessages(event)}catch(e){}">
+        <p class="tooltip">Discord</p>
+        <span class="dock-icon-wrap">
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/discord.png" alt="Discord" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-messages" style="display:none"></div>
+      </button>
       <button type="button" class="dock-open-app-button icon" data-dock-id="appstore" title="App Store" aria-label="Launch App Store" >
         <p class="tooltip">App Store</p>
         <span class="dock-icon-wrap">
@@ -12615,7 +12615,7 @@ html[data-theme] .window-header.steam-popup-header,
       <button type="button" class="dock-open-app-button icon open_steam" data-dock-id="steam" title="Steam" aria-label="Launch Steam" >
         <p class="tooltip">Steam</p>
         <span class="dock-icon-wrap">
-          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Steam.webp" alt="Steam" draggable="false" />
+          <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/steamv2.png" alt="Steam" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-steam" style="display:none"></div>
@@ -12668,9 +12668,9 @@ html[data-theme] .window-header.steam-popup-header,
         <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/AppStore.png" alt="App Store" draggable="false">
         <strong>App Store</strong>
       </div>
-      <div class="child-launchpad" data-lp-app="messages" data-keywords="Messages chat text">
-        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Messages.png" alt="Messages" draggable="false">
-        <strong>Messages</strong>
+      <div class="child-launchpad" data-lp-app="messages" data-keywords="Discord chat text messages">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/discord.png" alt="Discord" draggable="false">
+        <strong>Discord</strong>
       </div>
       <div class="child-launchpad" data-lp-app="calendar" data-keywords="Calendar schedule events">
         <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calendar.png" alt="Calendar" draggable="false">
@@ -12701,7 +12701,7 @@ html[data-theme] .window-header.steam-popup-header,
         <strong>Code</strong>
       </div>
       <div class="child-launchpad" data-lp-app="steam" data-keywords="Steam games play">
-        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Steam.webp" alt="Steam" draggable="false">
+        <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/steamv2.png" alt="Steam" draggable="false">
         <strong>Steam</strong>
       </div>
       <div class="child-launchpad" data-lp-app="appletv" data-keywords="Netflix video movie film streaming series shows">
@@ -12950,7 +12950,7 @@ html[data-theme] .window-header.steam-popup-header,
     </div>
 
     
-    <!-- Messages app (Supabase chat) -->
+    <!-- Discord app (Supabase chat) -->
     <div class="window messages-app" id="messages-window" style="display:none">
       <div class="window__taskbar">
         <div class="window__taskbar--actions">
@@ -12958,7 +12958,7 @@ html[data-theme] .window-header.steam-popup-header,
           <button type="button" class="backfull-messages" title="Minimize"></button>
           <button type="button" class="full-messages" title="Maximize"></button>
         </div>
-        <div class="window__taskbar--content"><h2>Messages</h2></div>
+        <div class="window__taskbar--content"><h2>Discord</h2></div>
       </div>
       <div class="msg-shell">
         <nav class="msg-rail">
@@ -12967,13 +12967,13 @@ html[data-theme] .window-header.steam-popup-header,
           </button>
           <div class="rail-dms" id="msg-rail-dms"></div>
           <div class="rail-sep"></div>
-          <button type="button" class="rail-btn rail-server on" id="msg-rail-server" title="Luma OS">L</button>
+          <button type="button" class="rail-btn rail-server on" id="msg-rail-server" title="Discord">D</button>
         </nav>
         <aside class="msg-side">
           <div class="msg-find" id="msg-find"><button type="button" id="msg-find-btn">Find or start a conversation</button></div>
           <div class="msg-nav" id="msg-nav"><button type="button" class="msg-ch" id="msg-nav-friends"><span class="nav-ic">&#128101;</span><span>Friends</span></button></div>
           <div class="msg-side-head">
-            <h3>Luma OS</h3>
+            <h3>Discord</h3>
             <span class="chev">&#8964;</span>
           </div>
           <div class="msg-scroll">
@@ -12989,7 +12989,6 @@ html[data-theme] .window-header.steam-popup-header,
               <span class="up-status">Online</span>
             </div>
             <button type="button" id="msg-notif-btn" title="Notifications"></button>
-            <button type="button" id="msg-setup-btn" title="Setup: OS look &amp; notifications"><svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.07 7.07 0 0 0 .06-.94c0-.32-.02-.64-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.61-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54a.5.5 0 0 0-.5-.42h-3.84a.5.5 0 0 0-.5.42l-.36 2.54c-.59.24-1.13.56-1.63.94l-2.39-.96a.5.5 0 0 0-.61.22L2.7 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.04.3-.06.62-.06.94s.02.64.06.94L2.82 14.52a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.31.61.22l2.39-.96c.5.38 1.04.7 1.63.94l.36 2.54c.04.24.25.42.5.42h3.84c.25 0 .46-.18.5-.42l.36-2.54c.59-.24 1.13-.56 1.63-.94l2.39.96c.23.09.48 0 .61-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></button>
             <button type="button" id="msg-rename-btn" title="Change username"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button>
             <button type="button" id="msg-avatar-btn" title="Profile picture"><svg viewBox="0 0 24 24"><path d="M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z"/></svg></button>
             <button type="button" id="msg-signout-btn" title="Sign out"><svg viewBox="0 0 24 24"><path d="M10 17l1.41-1.41L8.83 13H20v-2H8.83l2.58-2.59L10 7l-5 5 5 5zM4 5h8V3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8v-2H4V5z"/></svg></button>
@@ -13013,8 +13012,25 @@ html[data-theme] .window-header.steam-popup-header,
           <div class="msg-composer">
             <div class="msg-replybar" id="msg-replybar"><span>Replying to <b id="msg-reply-name"></b></span><button type="button" id="msg-reply-x" title="Cancel">&#10005;</button></div>
             <button type="button" class="cplus" id="msg-plus" title="Add an image or link">+</button>
+            <button type="button" class="cgif" id="msg-gif" title="GIF">GIF</button>
             <button type="button" class="cemoji" id="msg-emoji" title="Emoji"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-3.5 6a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm7 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zM12 18c-2.3 0-4.3-1.4-5.2-3.4h10.4C16.3 16.6 14.3 18 12 18z"/></svg></button>
             <div class="msg-emoji-pop" id="msg-emoji-pop"></div>
+            <div class="msg-gif-pop" id="msg-gif-pop" role="dialog" aria-label="GIF picker">
+              <div class="msg-gif-head">
+                <input type="search" id="msg-gif-search" placeholder="Search Giphy…" autocomplete="off" spellcheck="false" />
+                <button type="button" id="msg-gif-key" title="Giphy API key">Key</button>
+                <button type="button" id="msg-gif-close" title="Close">✕</button>
+              </div>
+              <div class="msg-gif-tabs">
+                <button type="button" class="on" data-gif-tab="trending">Trending</button>
+                <button type="button" data-gif-tab="funny">Funny</button>
+                <button type="button" data-gif-tab="react">Reactions</button>
+                <button type="button" data-gif-tab="love">Love</button>
+                <button type="button" data-gif-tab="meme">Memes</button>
+              </div>
+              <div class="msg-gif-grid" id="msg-gif-grid"><div class="msg-gif-empty">Loading GIFs…</div></div>
+              <div class="msg-gif-foot">Add a free Giphy key to search all of Giphy</div>
+            </div>
             <textarea id="msg-input" rows="1" placeholder="Message #general" maxlength="2000"></textarea>
             <button type="button" class="send" id="msg-send" title="Send">&#10148;</button>
           </div>
@@ -13093,9 +13109,9 @@ alter publication supabase_realtime add table public.messages;</pre>
       </div>
       <div class="msg-auth" id="msg-auth" role="dialog" aria-label="Sign in to chat">
         <form class="msg-auth-card" id="msg-auth-form" autocomplete="on" novalidate>
-          <div class="msg-auth-logo">L</div>
-          <h3 id="msg-auth-title">Welcome back</h3>
-          <p id="msg-auth-sub">Sign in to join Luma OS.</p>
+          <div class="msg-auth-logo" style="background:#5865f2">D</div>
+          <h3 id="msg-auth-title">Welcome back!</h3>
+          <p id="msg-auth-sub">We&#39;re so excited to see you again!</p>
           <div class="msg-auth-tabs">
             <button type="button" class="on" data-mode="signin">Sign in</button>
             <button type="button" data-mode="signup">Create account</button>
@@ -14308,7 +14324,7 @@ alter publication supabase_realtime add table public.messages;</pre>
         calendar: dockIcon("calendar", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calendar.png"),
         vscode: dockIcon("vscode", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/VSCode.svg"),
         maps: dockIcon("maps", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Maps.png"),
-        steam: dockIcon("steam", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Steam.webp"),
+        steam: dockIcon("steam", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/steamv2.png"),
         safari: dockIcon("safari", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Safari.png"),
         settings: dockIcon("settings", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/SystemSettings.png"),
         launchpad: dockIcon("launchpad", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Launchpad.png"),
@@ -14325,7 +14341,7 @@ alter publication supabase_realtime add table public.messages;</pre>
         google: dockIcon("google", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/google.png"),
         duckduckgo: dockIcon("duckduckgo", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png"),
         ai: dockIcon("ai", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png"),
-        messages: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Messages.png",
+        messages: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/discord.png",
         music: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Music.png",
         mail: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Mail.png",
         photos: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Photos.png",
@@ -14357,7 +14373,7 @@ alter publication supabase_realtime add table public.messages;</pre>
         { name: "Google", kind: "Application", section: "Applications", keywords: "google search web", icon: ICON.google, action: openApp.google },
         { name: "DuckDuckGo", kind: "Application", section: "Applications", keywords: "duckduckgo ddg search privacy", icon: ICON.duckduckgo, action: openApp.duckduckgo },
         { name: "AI", kind: "Application", section: "Applications", keywords: "ai assistant chatgpt chat gpt openai", icon: ICON.ai, action: openApp.ai },
-        { name: "Messages", kind: "Application", section: "Applications", keywords: "chat imessage text sms", icon: ICON.messages, action: () => { try { clickDock("messages"); } catch (e) {} } },
+        { name: "Discord", kind: "Application", section: "Applications", keywords: "chat discord text messages", icon: ICON.messages, action: () => { try { clickDock("messages"); } catch (e) {} } },
         { name: "Music", kind: "Application", section: "Applications", keywords: "songs apple music audio player", icon: ICON.music, action: () => { try { clickDock("music"); } catch (e) {} } },
         { name: "Mail", kind: "Application", section: "Applications", keywords: "email inbox mail", icon: ICON.mail, action: () => { try { clickDock("mail"); } catch (e) {} } },
         { name: "Photos", kind: "Application", section: "Applications", keywords: "pictures gallery images camera", icon: ICON.photos, action: () => { try { clickDock("photos"); } catch (e) {} } },
@@ -25563,6 +25579,7 @@ window.setDesktopBackground = setDesktopBackground;
       var TEMP_ATTR = "data-dock-temp";
       var PINNED_KEY = "nyx_dock_pinned_extra";
       var WIN_MAP = [
+        { id: "messages", sel: "#messages-window, .messages-app" },
         { id: "tiktok", sel: "#tiktok-window, .tiktok-app" },
         { id: "youtube", sel: "#youtube-window, .youtube-app" },
         { id: "spotify", sel: "#spotify-window, .spotify-app" },
@@ -25603,7 +25620,7 @@ window.setDesktopBackground = setDesktopBackground;
         calculator: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calculator.png",
         vscode: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/VSCode.svg",
         maps: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Maps.png",
-        steam: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Steam.webp",
+        steam: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/steamv2.png",
         safari: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Safari.png",
         settings: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/SystemSettings.png",
         appletv: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/netflix.png",
@@ -26120,10 +26137,10 @@ window.setDesktopBackground = setDesktopBackground;
             win: document.getElementById("game-app-" + idx)
           };
         }
-        if (btn.getAttribute("data-dock-id") === "messages" || btn.classList.contains("open_messages") || btn.getAttribute("title") === "Messages") {
+        if (btn.getAttribute("data-dock-id") === "messages" || btn.classList.contains("open_messages") || btn.getAttribute("title") === "Discord" || btn.getAttribute("title") === "Messages") {
           const win = document.getElementById("messages-window");
           return {
-            name: "Messages",
+            name: "Discord",
             close: () => { if (typeof window.closeMessages === "function") window.closeMessages(); },
             open: () => { if (typeof window.openMessages === "function") window.openMessages(); },
             win
@@ -27099,7 +27116,7 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
         if (el.classList.contains("calculator")) return { name: "Calculator", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Calculator.png" };
         if (el.classList.contains("Vscode")) return { name: "VS Code", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/VSCode.svg" };
         if (el.classList.contains("maps")) return { name: "Maps", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Maps.png" };
-        if (el.classList.contains("steam")) return { name: "Steam", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Steam.webp" };
+        if (el.classList.contains("steam")) return { name: "Steam", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/steamv2.png" };
         if (el.classList.contains("safari")) return { name: "Safari", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Safari.png" };
         if (el.classList.contains("settings-window")) return { name: "System Settings", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/SystemSettings.png" };
         if (el.classList.contains("imovie-window")) return { name: "Netflix", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/netflix.png" };
@@ -28866,6 +28883,7 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     { id: "duckduckgo", name: "DuckDuckGo", sub: "Private search", cats: ["work"], icon: DUCKDUCKGO_ICON, dock: "duckduckgo", inst: true, win: "#duckduckgo-window,.duckduckgo-app" },
     { id: "ai", name: "AI", sub: "Chat assistant", cats: ["work", "create"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png", dock: "ai", inst: true, win: "#ai-window,.ai-app" },
     { id: "safari", name: "Safari", sub: "Web browser", cats: ["work"], dock: "safari" },
+    { id: "messages", name: "Discord", sub: "Chat, DMs & servers", cats: ["play", "work"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/discord.png", dock: "messages", win: "#messages-window,.messages-app" },
     { id: "steam", name: "Steam", sub: "Games & community", cats: ["arcade", "play"], dock: "steam" },
     { id: "appletv", name: "Netflix", sub: "Movies & TV shows", cats: ["play"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/netflix.png", dock: "appletv", win: ".imovie-window,#imovie-window" },
     { id: "settings", name: "System Settings", sub: "Customize your Mac", cats: ["work"], dock: "settings" }
@@ -28877,6 +28895,37 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   function save(a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} }
   var installed = load();
   window.nyxIsInstalled = function (id) { return installed.indexOf(id) >= 0; };
+
+  // Discord is on the Dock by default
+  (function ensureDiscordOnDock() {
+    try {
+      var KEY = "nyx_installed_apps";
+      var arr = JSON.parse(localStorage.getItem(KEY) || "[]") || [];
+      if (arr.indexOf("messages") < 0) { arr.push("messages"); localStorage.setItem(KEY, JSON.stringify(arr)); }
+      var KEYR = "nyx_dock_removed";
+      var rem = JSON.parse(localStorage.getItem(KEYR) || "[]") || [];
+      rem = rem.filter(function (x) { return x !== "messages"; });
+      localStorage.setItem(KEYR, JSON.stringify(rem));
+    } catch (e) {}
+    function place() {
+      var d = document.getElementById("macos-dock");
+      var btn = document.querySelector('.dock-open-app-button[data-dock-id="messages"]');
+      if (!d || !btn) return;
+      if (btn.parentNode !== d) {
+        var safari = d.querySelector('[data-dock-id="safari"]');
+        if (safari && safari.nextSibling) d.insertBefore(btn, safari.nextSibling);
+        else {
+          var div = d.querySelector('[data-dock-id="__divider__"]');
+          if (div) d.insertBefore(btn, div); else d.appendChild(btn);
+        }
+      }
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", place);
+    else place();
+    setTimeout(place, 300);
+    setTimeout(place, 1200);
+  })();
+
 
   function dock() { return document.getElementById("macos-dock"); }
   function pool() { return document.getElementById("nyx-app-pool"); }
@@ -33428,27 +33477,29 @@ html body[data-os-style="windows"] .dock-el .dock-open-app-button:active img { t
 #messages-window.messages-app,
 #messages-window {
   position: fixed !important;
-  top: 64px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: min(920px, calc(100vw - 40px)) !important;
-  height: min(620px, calc(100vh - 100px)) !important;
+  /* left/top/transform set by JS so the window can be dragged */
+  width: min(1080px, calc(100vw - 40px)) !important;
+  height: min(700px, calc(100vh - 100px)) !important;
   min-width: 320px !important;
   max-width: none !important;
   min-height: 360px !important;
   z-index: 99990 !important;
   display: none;
   flex-direction: column !important;
-  background: #1c1c1e !important;
-  color: #f5f5f7 !important;
+  background: #313338 !important;
+  color: #dbdee1 !important;
   overflow: hidden !important;
-  border-radius: 12px !important;
-  border: 1px solid rgba(255,255,255,0.18) !important;
+  border-radius: 10px !important;
+  border: 1px solid #1e1f22 !important;
   box-shadow: 0 24px 64px rgba(0,0,0,0.55) !important;
   opacity: 1 !important;
   visibility: visible !important;
   filter: none !important;
   pointer-events: auto !important;
+}
+#messages-window.is-dragging {
+  transition: none !important;
+  user-select: none !important;
 }
 #messages-window.is-open,
 #messages-window.active,
@@ -33478,7 +33529,10 @@ html body[data-os-style="windows"] .dock-el .dock-open-app-button:active img { t
   position: relative !important;
   z-index: 5 !important;
   pointer-events: auto !important;
-  cursor: grab;
+  cursor: grab !important;
+}
+#messages-window .window__taskbar:active {
+  cursor: grabbing !important;
 }
 #messages-window .window__taskbar--content {
   display: flex !important;
@@ -34781,11 +34835,37 @@ body.tl-right .calculator__top--taskabr {
 #messages-window .msg-composer .cemoji { position: absolute; right: 60px; bottom: 33px; width: 26px; height: 26px; border: 0; background: transparent; color: #b5bac1; cursor: pointer; padding: 0; }
 #messages-window .msg-composer .cemoji:hover { color: #f0b232; }
 #messages-window .msg-composer .cemoji svg { width: 24px; height: 24px; fill: currentColor; }
+#messages-window .msg-composer .cgif { position: absolute; right: 92px; bottom: 33px; height: 22px; min-width: 34px; padding: 0 6px; border: 1px solid #4e5058; border-radius: 4px; background: transparent; color: #b5bac1; font-size: 11px; font-weight: 800; letter-spacing: 0.04em; cursor: pointer; line-height: 20px; }
+#messages-window .msg-composer .cgif:hover, #messages-window .msg-composer .cgif.on { color: #fff; border-color: #5865f2; background: #5865f2; }
 #messages-window .msg-composer button.send { right: 26px !important; bottom: 32px !important; width: 28px; height: 28px; font-size: 18px !important; }
 #messages-window .msg-emoji-pop { display: none; position: absolute; right: 24px; bottom: 76px; width: 300px; background: #2b2d31; border: 1px solid #1e1f22; border-radius: 8px; padding: 8px; box-shadow: 0 8px 24px rgba(0,0,0,.5); grid-template-columns: repeat(8, 1fr); gap: 2px; z-index: 30; }
 #messages-window .msg-emoji-pop.open { display: grid; }
 #messages-window .msg-emoji-pop button { border: 0; background: transparent; font-size: 22px; padding: 4px; border-radius: 4px; cursor: pointer; }
 #messages-window .msg-emoji-pop button:hover { background: #404249; }
+#messages-window .msg-gif-pop { display: none; position: absolute; right: 16px; bottom: 76px; width: min(420px, calc(100% - 32px)); height: 380px; background: #2b2d31; border: 1px solid #1e1f22; border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,.55); z-index: 40; flex-direction: column; overflow: hidden; }
+#messages-window .msg-gif-pop.open { display: flex; }
+#messages-window .msg-gif-head { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-bottom: 1px solid #1e1f22; }
+#messages-window .msg-gif-head input { flex: 1; min-width: 0; height: 34px; border-radius: 6px; border: 0; background: #1e1f22; color: #f2f3f5; padding: 0 12px; font-size: 14px; outline: none; }
+#messages-window .msg-gif-head input:focus { box-shadow: 0 0 0 2px #5865f2; }
+#messages-window #msg-gif-close { border: 0; background: transparent; color: #b5bac1; font-size: 16px; cursor: pointer; width: 28px; height: 28px; border-radius: 4px; }
+#messages-window #msg-gif-close:hover { background: #404249; color: #fff; }
+#messages-window #msg-gif-key { border: 0; background: #404249; color: #dbdee1; font-size: 11px; font-weight: 700; cursor: pointer; height: 28px; padding: 0 8px; border-radius: 4px; letter-spacing: 0.02em; }
+#messages-window #msg-gif-key:hover { background: #5865f2; color: #fff; }
+#messages-window #msg-gif-key.has-key { background: #3ba55d; color: #fff; }
+#messages-window .msg-gif-foot a { color: #00ffe0; text-decoration: none; }
+#messages-window .msg-gif-foot a:hover { text-decoration: underline; }
+#messages-window .msg-gif-tabs { display: flex; gap: 4px; padding: 8px 10px; overflow-x: auto; border-bottom: 1px solid #1e1f22; flex-shrink: 0; }
+#messages-window .msg-gif-tabs button { border: 0; background: transparent; color: #b5bac1; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 16px; cursor: pointer; white-space: nowrap; }
+#messages-window .msg-gif-tabs button:hover { background: #404249; color: #fff; }
+#messages-window .msg-gif-tabs button.on { background: #5865f2; color: #fff; }
+#messages-window .msg-gif-grid { flex: 1; min-height: 0; overflow: auto; padding: 8px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; align-content: start; }
+#messages-window .msg-gif-grid button { border: 0; padding: 0; background: #1e1f22; border-radius: 6px; overflow: hidden; cursor: pointer; aspect-ratio: 1.2; position: relative; }
+#messages-window .msg-gif-grid button:hover { outline: 2px solid #5865f2; outline-offset: -2px; }
+#messages-window .msg-gif-grid img { width: 100%; height: 100%; object-fit: cover; display: block; background: #1e1f22; }
+#messages-window .msg-gif-empty { grid-column: 1 / -1; text-align: center; color: #949ba4; font-size: 13px; padding: 28px 12px; }
+#messages-window .msg-gif-foot { padding: 6px 12px 8px; font-size: 11px; color: #6d6f78; border-top: 1px solid #1e1f22; text-align: right; flex-shrink: 0; }
+#messages-window .msg-composer textarea { padding-right: 130px !important; }
+#messages-window .msg-shell .msg-composer textarea#msg-input { padding: 11px 130px 11px 58px !important; }
 #messages-window .msg-replybar { display: none; align-items: center; justify-content: space-between; background: #2b2d31; border-radius: 8px 8px 0 0; padding: 8px 12px; font-size: 13px; color: #b5bac1; margin-bottom: -4px; position: relative; z-index: 1; }
 #messages-window .msg-replybar.open { display: flex; }
 #messages-window .msg-replybar b { color: #f2f3f5; }
@@ -34796,6 +34876,8 @@ body.tl-right .calculator__top--taskabr {
 #messages-window .msg-text a:hover { text-decoration: underline; }
 #messages-window .msg-text .mention { background: rgba(88,101,242,.3); color: #c9cdfb; border-radius: 3px; padding: 0 2px; font-weight: 500; }
 #messages-window .msg-embed { display: block; max-width: min(400px, 100%); max-height: 300px; border-radius: 8px; margin-top: 6px; background: #1e1f22; }
+#messages-window .msg-embed.is-gif { max-height: 350px; border-radius: 4px; }
+#messages-window a.msg-embed-link { display: inline-block; max-width: 100%; }
 #messages-window .msg-bubble.mentioned { background: rgba(250,166,26,.1) !important; box-shadow: inset 2px 0 0 #f0b232; }
 #messages-window .msg-bubble.mentioned:hover { background: rgba(250,166,26,.14) !important; }
 #messages-window .msg-reply { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #b5bac1; margin-bottom: 2px; position: relative; padding-left: 20px; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
@@ -34810,7 +34892,7 @@ body.tl-right .calculator__top--taskabr {
 #messages-window .msg-tools svg { width: 18px; height: 18px; fill: currentColor; }
 #messages-window .msg-shell.mode-dm .msg-tools { background: #0a0a0b; border-color: #26262a; }
 #messages-window .msg-shell.mode-dm .msg-members .dm-banner { border-radius: 0; }
-#messages-window .msg-shell .msg-composer textarea#msg-input { padding: 11px 92px 11px 58px !important; }
+#messages-window .msg-shell .msg-composer textarea#msg-input { padding: 11px 130px 11px 58px !important; }
 #messages-window .msg-bubble.has-reply .msg-av { margin-top: 22px !important; }
 #messages-window .msg-reply::before { left: -36px !important; top: 9px !important; height: 12px !important; width: 33px !important; }
 #messages-window .msg-reply { overflow: visible !important; text-overflow: clip !important; }
@@ -35494,8 +35576,14 @@ body.tl-right .calculator__top--taskabr {
     return AV_COLORS[h % AV_COLORS.length];
   }
   function safeImg(u) {
-    if (!u || !/^https?:\/\//i.test(u) || u.length > 500) return "";
+    if (!u || !/^https?:\/\//i.test(u) || u.length > 1200) return "";
     return encodeURI(u).replace(/"/g, "%22").replace(/\\/g, "%5C").replace(/[()']/g, function (c) { return "%" + c.charCodeAt(0).toString(16); });
+  }
+  function isGifUrl(u) {
+    var s = String(u || "").toLowerCase();
+    if (/\.(gif)(\?|#|$)/i.test(s)) return true;
+    if (/(?:^|\.)(?:tenor\.com|giphy\.com|gfycat\.com|redgifs\.com|media\.tenor\.com|c\.tenor\.com|media[0-9]*\.giphy\.com)/i.test(s)) return true;
+    return false;
   }
   function avAttr(seed) { return ' style="--c:' + avColor(seed) + '"'; }
   function avImg(id) {
@@ -35584,7 +35672,7 @@ body.tl-right .calculator__top--taskabr {
     terminal: "Terminal", note: "Notes", maps: "Maps", calculator: "Calculator", launchpad: "Launchpad",
     "vscode-window": "VS Code", "settings-window": "System Settings", "safari-window": "Safari",
     "finder-window": "Finder", "imovie-window": "Netflix", "appstore-window": "App Store",
-    "devhub-window": "DevHub", "vibe-window": "Vibe", "steam-window": "Steam", "messages-window": "Messages",
+    "devhub-window": "DevHub", "vibe-window": "Vibe", "steam-window": "Steam", "messages-window": "Discord",
     "spotify-window": "Spotify", "youtube-window": "YouTube", "tiktok-window": "TikTok", "twitch-window": "Twitch",
     "snapchat-window": "Snapchat", "instagram-window": "Instagram", "google-window": "Google",
     "duckduckgo-window": "DuckDuckGo", "gfn-window": "GeForce Now", "gdash-window": "Geometry Dash", "ai-window": "AI"
@@ -35630,8 +35718,8 @@ body.tl-right .calculator__top--taskabr {
     var idle = !!p.idle;
     if (!apps.length) return idle ? "Idle" : "On the desktop";
     var text;
-    if (apps.length === 1 && apps[0] === "Messages") {
-      text = idle ? "Messages" : "In Messages";
+    if (apps.length === 1 && (apps[0] === "Discord" || apps[0] === "Messages")) {
+      text = idle ? "Discord" : "In Discord";
     } else {
       var shown = apps.slice(0, 4).join(", ");
       if (apps.length > 4) shown += " +" + (apps.length - 4);
@@ -36240,7 +36328,7 @@ body.tl-right .calculator__top--taskabr {
       if (!u) return m;
       var raw = u.replace(/&amp;/g, "&");
       var full = /^https?:\/\//i.test(raw) ? raw : "https://" + raw;
-      if (/\.(png|jpe?g|gif|webp|svg|avif)(\?[^\s]*)?$/i.test(raw)) imgs.push(full);
+      if (/\.(png|jpe?g|gif|webp|svg|avif)(\?[^\s]*)?$/i.test(raw) || isGifUrl(full)) imgs.push(full);
       return '<a href="' + full.replace(/&/g, "&amp;") + '" target="_blank" rel="noopener noreferrer">' + u + "</a>" + tail;
     });
     var mine = false;
@@ -36251,7 +36339,10 @@ body.tl-right .calculator__top--taskabr {
     if (imgs.length && (text.trim() === imgs[0] || "https://" + text.trim() === imgs[0])) html = "";
     imgs.slice(0, 3).forEach(function (u) {
       var su = safeImg(u);
-      if (su) html += '<a href="' + escapeHtml(su) + '" target="_blank" rel="noopener noreferrer"><img class="msg-embed" src="' + escapeHtml(su) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></a>';
+      if (su) {
+        var gifCls = isGifUrl(u) ? " is-gif" : "";
+        html += '<a class="msg-embed-link" href="' + escapeHtml(su) + '" target="_blank" rel="noopener noreferrer"><img class="msg-embed' + gifCls + '" src="' + escapeHtml(su) + '" alt="GIF" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()"></a>';
+      }
     });
     return { html: html, mine: mine };
   }
@@ -36268,7 +36359,261 @@ body.tl-right .calculator__top--taskabr {
     i.value = i.value.slice(0, s) + t + i.value.slice(e);
     i.focus(); i.selectionStart = i.selectionEnd = s + t.length;
   }
+  /* GIF picker — full Giphy search (free beta key) + local fallback */
+  var LS_GIPHY = "nyx_giphy_key";
+  var gifState = { q: "", loading: false, tab: "trending" };
+  var GIF_LIB = [
+    {u:"https://media.giphy.com/media/3o7aCTPPm4OHfRLSH6/giphy.gif",t:"thumbs up yes ok agree nice",c:"react"},
+    {u:"https://media.giphy.com/media/111ebonMs90YLu/giphy.gif",t:"thumbs up like good",c:"react"},
+    {u:"https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",t:"clap applause bravo",c:"react"},
+    {u:"https://media.giphy.com/media/7rj2ZgttXo3H4/giphy.gif",t:"mind blown wow shocked",c:"react"},
+    {u:"https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",t:"loading waiting spinner",c:"react"},
+    {u:"https://media.giphy.com/media/26ufdipQqU2lhNaP6/giphy.gif",t:"facepalm oh no fail",c:"react"},
+    {u:"https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif",t:"nope no deny shake head",c:"react"},
+    {u:"https://media.giphy.com/media/d2lcHJCG2NqjPQQM/giphy.gif",t:"yes nodding agree",c:"react"},
+    {u:"https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif",t:"shrug idk whatever",c:"react"},
+    {u:"https://media.giphy.com/media/3o6Zt6ML6BklcajjsA/giphy.gif",t:"crying sad tears",c:"react"},
+    {u:"https://media.giphy.com/media/ROF8OQvDmxytW/giphy.gif",t:"laugh funny lol haha",c:"funny"},
+    {u:"https://media.giphy.com/media/10JhviFuU2dgw8/giphy.gif",t:"laugh funny lol crying laughing",c:"funny"},
+    {u:"https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif",t:"happy dance excited",c:"funny"},
+    {u:"https://media.giphy.com/media/l0MYC0LajbaPoEADe/giphy.gif",t:"mic drop done finish",c:"funny"},
+    {u:"https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif",t:"popcorn watching drama",c:"funny"},
+    {u:"https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.gif",t:"this is fine fire panic",c:"meme"},
+    {u:"https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif",t:"cat typing keyboard work",c:"meme"},
+    {u:"https://media.giphy.com/media/Vuw9m5wXviFIQ/giphy.gif",t:"spongebob imagination meme",c:"meme"},
+    {u:"https://media.giphy.com/media/l41lGvinEgARjB0so/giphy.gif",t:"confused math woman meme",c:"meme"},
+    {u:"https://media.giphy.com/media/xT0xeuOy2Fcl9vDDaU/giphy.gif",t:"leo dicaprio cheers toast",c:"meme"},
+    {u:"https://media.giphy.com/media/l0HlNQ03J5JxX6lva/giphy.gif",t:"surprised shocked pikachu",c:"meme"},
+    {u:"https://media.giphy.com/media/3oz8xLd9DJq2l2VFtu/giphy.gif",t:"doge wow meme",c:"meme"},
+    {u:"https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif",t:"deal with it cool",c:"meme"},
+    {u:"https://media.giphy.com/media/26BRv0ThvAwtujABG/giphy.gif",t:"heart love hearts",c:"love"},
+    {u:"https://media.giphy.com/media/l4pTfx2qLszoacZXi/giphy.gif",t:"kiss love smooches",c:"love"},
+    {u:"https://media.giphy.com/media/3o6Zt0hsoFsxGMnVp6/giphy.gif",t:"hug love friend",c:"love"},
+    {u:"https://media.giphy.com/media/3oEduOnl5IHM5N8O80/giphy.gif",t:"heart eyes love crush",c:"love"},
+    {u:"https://media.giphy.com/media/3o7TKF1fSIslcFkc0o/giphy.gif",t:"wave hello hi hey",c:"trending"},
+    {u:"https://media.giphy.com/media/l0MYGb1LuZ3n7dRnO/giphy.gif",t:"good morning coffee wake",c:"trending"},
+    {u:"https://media.giphy.com/media/xUPGcguWZHRC2HyBRS/giphy.gif",t:"party celebrate confetti",c:"trending"},
+    {u:"https://media.giphy.com/media/l0HlvtIPzPdt2usKs/giphy.gif",t:"bye goodbye wave leave",c:"trending"},
+    {u:"https://media.giphy.com/media/26gsjCZpPolPr3sBy/giphy.gif",t:"good night sleep tired",c:"trending"},
+    {u:"https://media.giphy.com/media/3o6ZtaO9BZHcOjmErm/giphy.gif",t:"wow amazed impressed",c:"trending"},
+    {u:"https://media.giphy.com/media/xT9IgG50Fb7Mi0prBC/giphy.gif",t:"ok hand perfect",c:"react"},
+    {u:"https://media.giphy.com/media/3ornka9rAaKRA2Rkac/giphy.gif",t:"angry mad rage",c:"react"},
+    {u:"https://media.giphy.com/media/26xBIygXOZJp2I1Ea/giphy.gif",t:"sleepy yawn tired",c:"react"},
+    {u:"https://media.giphy.com/media/3o7btNa0RUYa5E7iiQ/giphy.gif",t:"thinking hmm ponder",c:"react"},
+    {u:"https://media.giphy.com/media/3o6Zt8zb1QQf7Y9x4k/giphy.gif",t:"high five celebrate",c:"funny"},
+    {u:"https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif",t:"dancing party groove",c:"funny"},
+    {u:"https://media.giphy.com/media/xT0GqssRGfbw9tQjQY/giphy.gif",t:"awkward smile nervous",c:"funny"},
+    {u:"https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif",t:"love heart bounce",c:"love"},
+    {u:"https://media.giphy.com/media/ZqlvCTNHpqrio/giphy.gif",t:"cute love blush",c:"love"},
+    {u:"https://media.giphy.com/media/l4FGni1RB8r1a5Yek/giphy.gif",t:"thank you thanks gratitude",c:"trending"},
+    {u:"https://media.giphy.com/media/3o6Zt6GvlNyYV7Z1QI/giphy.gif",t:"welcome hello intro",c:"trending"},
+    {u:"https://media.giphy.com/media/xT5LMHxhOfscxPfIfm/giphy.gif",t:"chef kiss perfect",c:"react"},
+    {u:"https://media.giphy.com/media/3o7aD2saalBwyoq4aY/giphy.gif",t:"congratulations confetti win",c:"trending"}
+  ];
+  var DEFAULT_GIPHY_KEY = "wiXfkdZeJoJcEne9Gk1wKy2o97Cd6KiY";
+  function getGiphyKey() {
+    try {
+      var k = (localStorage.getItem(LS_GIPHY) || "").trim();
+      return k || DEFAULT_GIPHY_KEY;
+    } catch (e) { return DEFAULT_GIPHY_KEY; }
+  }
+  function setGiphyKey(k) {
+    try {
+      k = String(k || "").trim();
+      if (k) localStorage.setItem(LS_GIPHY, k);
+      else localStorage.removeItem(LS_GIPHY);
+    } catch (e) {}
+    refreshGifKeyBtn();
+  }
+  function refreshGifKeyBtn() {
+    var b = $("msg-gif-key");
+    if (!b) return;
+    var has = !!getGiphyKey();
+    b.classList.toggle("has-key", has);
+    b.title = has ? "Giphy API key set (click to change)" : "Set Giphy API key to search millions of GIFs";
+    b.textContent = has ? "Key ✓" : "Key";
+    var foot = document.querySelector("#msg-gif-pop .msg-gif-foot");
+    if (foot) {
+      foot.innerHTML = has
+        ? 'Searching <b>Giphy</b> · full catalog'
+        : 'Add a free <a href="https://developers.giphy.com/dashboard/" target="_blank" rel="noopener">Giphy API key</a> to search all of Giphy';
+    }
+  }
+  function promptGiphyKey() {
+    var cur = getGiphyKey();
+    var msg = "Paste your free Giphy API key to search millions of GIFs.\n\n1. Open developers.giphy.com/dashboard\n2. Create an app → copy the API key\n3. Paste it here\n\n(Leave blank to clear and use the built-in pack only.)";
+    var k = prompt(msg, cur || "");
+    if (k === null) return;
+    setGiphyKey(k);
+    loadGifs(gifState.q || "", gifState.tab || "trending");
+  }
+  function closeGifPop() {
+    var p = $("msg-gif-pop"), b = $("msg-gif");
+    if (p) p.classList.remove("open");
+    if (b) b.classList.remove("on");
+  }
+  function openGifPop() {
+    var p = $("msg-gif-pop"), b = $("msg-gif"), ep = $("msg-emoji-pop");
+    if (ep) ep.classList.remove("open");
+    if (!p) return;
+    try {
+      if (!localStorage.getItem(LS_GIPHY) && DEFAULT_GIPHY_KEY) {
+        localStorage.setItem(LS_GIPHY, DEFAULT_GIPHY_KEY);
+      }
+    } catch (e) {}
+    p.classList.add("open");
+    if (b) b.classList.add("on");
+    refreshGifKeyBtn();
+    var s = $("msg-gif-search");
+    if (s) { s.value = gifState.q || ""; setTimeout(function () { try { s.focus(); } catch (e) {} }, 30); }
+    loadGifs(gifState.q || "", gifState.tab || "trending");
+  }
+  function filterGifLib(query, tab) {
+    var q = String(query || "").trim().toLowerCase();
+    var list = GIF_LIB.slice();
+    if (tab && tab !== "trending") list = list.filter(function (g) { return g.c === tab; });
+    if (q) {
+      list = list.filter(function (g) { return (g.t + " " + g.c).indexOf(q) >= 0; });
+      if (!list.length) list = GIF_LIB.filter(function (g) { return (g.t + " " + g.c).indexOf(q) >= 0; });
+    }
+    if (!q && tab === "trending") {
+      for (var i = list.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = list[i]; list[i] = list[j]; list[j] = tmp;
+      }
+    }
+    return list;
+  }
+  function giphyPickUrl(item) {
+    try {
+      var im = item.images || {};
+      var prefer = im.downsized || im.fixed_height || im.original || im.downsized_medium || im.fixed_width;
+      if (prefer && prefer.url) return prefer.url;
+      if (im.original && im.original.url) return im.original.url;
+    } catch (e) {}
+    return "";
+  }
+  function giphyPickPreview(item) {
+    try {
+      var im = item.images || {};
+      var prefer = im.fixed_width_small || im.preview_gif || im.fixed_height_small || im.downsized_small || im.fixed_width || im.downsized;
+      if (prefer && prefer.url) return prefer.url;
+    } catch (e) {}
+    return giphyPickUrl(item);
+  }
+  async function fetchGiphy(query, tab) {
+    var key = getGiphyKey();
+    if (!key) return null;
+    var q = String(query || "").trim();
+    var url;
+    if (q) {
+      url = "https://api.giphy.com/v1/gifs/search?api_key=" + encodeURIComponent(key) +
+        "&q=" + encodeURIComponent(q) + "&limit=36&rating=pg-13&lang=en&bundle=messaging_non_clips";
+    } else {
+      // map tabs to Giphy search terms for variety, or use trending
+      var tabQ = { funny: "funny", react: "reaction", love: "love", meme: "meme", trending: "" }[tab] || "";
+      if (tabQ) {
+        url = "https://api.giphy.com/v1/gifs/search?api_key=" + encodeURIComponent(key) +
+          "&q=" + encodeURIComponent(tabQ) + "&limit=36&rating=pg-13&lang=en&bundle=messaging_non_clips";
+      } else {
+        url = "https://api.giphy.com/v1/gifs/trending?api_key=" + encodeURIComponent(key) +
+          "&limit=36&rating=pg-13&bundle=messaging_non_clips";
+      }
+    }
+    var res = await fetch(url);
+    if (!res.ok) {
+      var body = "";
+      try { body = await res.text(); } catch (e) {}
+      var err = new Error("Giphy " + res.status);
+      err.status = res.status;
+      err.body = body;
+      throw err;
+    }
+    var data = await res.json();
+    var out = [];
+    (data.data || []).forEach(function (item) {
+      var full = giphyPickUrl(item);
+      var prev = giphyPickPreview(item) || full;
+      if (!full) return;
+      out.push({
+        u: full,
+        p: prev,
+        t: (item.title || item.slug || "GIF").replace(/GIF$/i, "").trim() || "GIF"
+      });
+    });
+    return out;
+  }
+  async function loadGifs(query, tab) {
+    var grid = $("msg-gif-grid");
+    if (!grid) return;
+    gifState.loading = true;
+    gifState.q = query || "";
+    gifState.tab = tab || gifState.tab || "trending";
+    grid.innerHTML = '<div class="msg-gif-empty">Loading GIFs…</div>';
+    refreshGifKeyBtn();
+
+    var key = getGiphyKey();
+    var results = null;
+    var errMsg = "";
+
+    if (key) {
+      try {
+        results = await fetchGiphy(query, gifState.tab);
+      } catch (e) {
+        console.warn("[giphy]", e);
+        if (e && e.status === 401) {
+          errMsg = "Invalid Giphy API key. Click Key to update it.";
+        } else if (e && e.status === 429) {
+          errMsg = "Giphy rate limit hit (beta keys allow ~100/hour). Try again later.";
+        } else {
+          errMsg = "Could not reach Giphy. Showing built-in GIFs.";
+        }
+      }
+    }
+
+    if (!results || !results.length) {
+      // local fallback
+      var local = filterGifLib(query, gifState.tab).map(function (g) {
+        return { u: g.u, p: g.u, t: g.t };
+      });
+      if (!local.length && !key) {
+        grid.innerHTML = '<div class="msg-gif-empty">Add a free Giphy API key (Key button) to search millions of GIFs,<br>or paste a GIF URL with the + button.</div>';
+        gifState.loading = false;
+        return;
+      }
+      if (!local.length) {
+        grid.innerHTML = '<div class="msg-gif-empty">' + (errMsg || "No GIFs found. Try another search.") + "</div>";
+        gifState.loading = false;
+        return;
+      }
+      if (errMsg) {
+        // show note but still render local
+      }
+      results = local;
+    }
+
+    grid.innerHTML = results.slice(0, 36).map(function (g) {
+      var title = escapeHtml(String(g.t || "GIF").slice(0, 48));
+      return '<button type="button" data-gif="' + escapeHtml(g.u) + '" title="' + title + '"><img src="' + escapeHtml(g.p || g.u) + '" alt="' + title + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'" /></button>';
+    }).join("");
+    gifState.loading = false;
+  }
+  async function sendGifUrl(url) {
+    if (!url) return;
+    var input = $("msg-input");
+    if (!input) return;
+    var prev = input.value;
+    input.value = url;
+    closeGifPop();
+    try {
+      await sendMessage();
+    } catch (e) {
+      input.value = prev;
+    }
+  }
   function bindDiscordUi() {
+
+
     var pop = $("msg-emoji-pop");
     if (pop && !pop.__b) {
       pop.__b = true;
@@ -36278,12 +36623,84 @@ body.tl-right .calculator__top--taskabr {
         if (b) { insertAtCursor(b.textContent); pop.classList.remove("open"); }
       });
     }
-    var eb = $("msg-emoji"); if (eb && !eb.__b) { eb.__b = true; eb.addEventListener("click", function (ev) { ev.stopPropagation(); $("msg-emoji-pop").classList.toggle("open"); }); }
+    var eb = $("msg-emoji"); if (eb && !eb.__b) { eb.__b = true; eb.addEventListener("click", function (ev) { ev.stopPropagation(); closeGifPop(); $("msg-emoji-pop").classList.toggle("open"); }); }
+    var gb = $("msg-gif");
+    if (gb && !gb.__b) {
+      gb.__b = true;
+      gb.addEventListener("click", function (ev) {
+        ev.stopPropagation();
+        var p = $("msg-gif-pop");
+        if (p && p.classList.contains("open")) closeGifPop();
+        else openGifPop();
+      });
+    }
+    var gpop = $("msg-gif-pop");
+    if (gpop && !gpop.__b) {
+      gpop.__b = true;
+      gpop.addEventListener("click", function (ev) { ev.stopPropagation(); });
+      var gclose = $("msg-gif-close");
+      if (gclose) gclose.addEventListener("click", closeGifPop);
+      var gkey = $("msg-gif-key");
+      if (gkey && !gkey.__b) {
+        gkey.__b = true;
+        gkey.addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          promptGiphyKey();
+        });
+      }
+      refreshGifKeyBtn();
+      var gsearch = $("msg-gif-search");
+      var searchTimer = null;
+      if (gsearch) {
+        gsearch.addEventListener("input", function () {
+          gifState.q = gsearch.value;
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(function () {
+            loadGifs((gsearch.value || "").trim(), gifState.tab || "trending");
+          }, 280);
+        });
+        gsearch.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") { closeGifPop(); e.preventDefault(); }
+        });
+      }
+      var tabs = gpop.querySelector(".msg-gif-tabs");
+      if (tabs) {
+        tabs.addEventListener("click", function (ev) {
+          var b = ev.target.closest && ev.target.closest("[data-gif-tab]");
+          if (!b) return;
+          Array.prototype.forEach.call(tabs.querySelectorAll("[data-gif-tab]"), function (x) { x.classList.toggle("on", x === b); });
+          gifState.tab = b.getAttribute("data-gif-tab");
+          gifState.q = "";
+          if (gsearch) gsearch.value = "";
+          loadGifs("", gifState.tab);
+        });
+      }
+      var grid = $("msg-gif-grid");
+      if (grid) {
+        grid.addEventListener("click", function (ev) {
+          var b = ev.target.closest && ev.target.closest("[data-gif]");
+          if (!b) return;
+          var url = b.getAttribute("data-gif");
+          if (ev.shiftKey) {
+            insertAtCursor((($("msg-input").value && !/\s$/.test($("msg-input").value)) ? " " : "") + url + " ");
+            closeGifPop();
+          } else {
+            sendGifUrl(url);
+          }
+        });
+      }
+    }
     var win = $("messages-window");
-    if (win && !win.__emojiClose) { win.__emojiClose = true; win.addEventListener("click", function () { var p = $("msg-emoji-pop"); if (p) p.classList.remove("open"); }); }
+    if (win && !win.__emojiClose) {
+      win.__emojiClose = true;
+      win.addEventListener("click", function () {
+        var p = $("msg-emoji-pop"); if (p) p.classList.remove("open");
+        closeGifPop();
+      });
+    }
     var pl = $("msg-plus");
     if (pl && !pl.__b) { pl.__b = true; pl.addEventListener("click", function () {
-      var u = prompt("Paste an image or link URL to add to your message");
+      var u = prompt("Paste an image or GIF URL to add to your message");
       if (u && /^https?:\/\//i.test(u.trim())) insertAtCursor((($("msg-input").value && !/\s$/.test($("msg-input").value)) ? " " : "") + u.trim() + " ");
     }); }
     var rx = $("msg-reply-x"); if (rx && !rx.__b) { rx.__b = true; rx.addEventListener("click", function () { setReply(null); }); }
@@ -37288,7 +37705,7 @@ body.tl-right .calculator__top--taskabr {
     var win = $("messages-window");
     if (!win) {
       console.error("[messages] #messages-window missing");
-      alert("Messages window not found in the page.");
+      alert("Discord window not found in the page.");
       return false;
     }
     // Keep window on document.body so no parent can hide it
@@ -37300,28 +37717,41 @@ body.tl-right .calculator__top--taskabr {
     win.classList.add("is-open", "active");
     win.setAttribute("data-open", "1");
 
-    // Nuclear visibility — beat any other stylesheet
-    win.style.cssText = [
-      "display:flex !important",
-      "flex-direction:column !important",
-      "visibility:visible !important",
-      "opacity:1 !important",
-      "pointer-events:auto !important",
-      "position:fixed !important",
-      "top:64px !important",
-      "left:50% !important",
-      "transform:translateX(-50%) !important",
-      "width:min(1080px, calc(100vw - 40px)) !important",
-      "height:min(700px, calc(100vh - 100px)) !important",
-      "z-index:99990 !important",
-      "background:#313338 !important",
-      "color:#dbdee1 !important",
-      "border-radius:10px !important",
-      "border:1px solid #1e1f22 !important",
-      "box-shadow:0 24px 64px rgba(0,0,0,0.55) !important",
-      "overflow:hidden !important",
-      "filter:none !important"
-    ].join(";");
+    // Visible + movable. Only set default position the first time (or after close).
+    var alreadyPlaced = win.getAttribute("data-placed") === "1";
+    var leftPx, topPx;
+    if (alreadyPlaced && win.style.left && win.style.top) {
+      leftPx = win.style.left;
+      topPx = win.style.top;
+    } else {
+      var w = Math.min(1080, Math.max(640, window.innerWidth - 40));
+      var h = Math.min(700, Math.max(420, window.innerHeight - 100));
+      leftPx = Math.max(12, Math.round((window.innerWidth - w) / 2)) + "px";
+      topPx = Math.max(36, Math.round((window.innerHeight - h) / 4)) + "px";
+      win.setAttribute("data-placed", "1");
+    }
+    win.style.setProperty("display", "flex", "important");
+    win.style.flexDirection = "column";
+    win.style.setProperty("visibility", "visible", "important");
+    win.style.setProperty("opacity", "1", "important");
+    win.style.setProperty("pointer-events", "auto", "important");
+    win.style.setProperty("position", "fixed", "important");
+    win.style.setProperty("left", leftPx, "important");
+    win.style.setProperty("top", topPx, "important");
+    win.style.setProperty("right", "auto", "important");
+    win.style.setProperty("bottom", "auto", "important");
+    win.style.setProperty("transform", "none", "important");
+    win.style.setProperty("width", "min(1080px, calc(100vw - 40px))", "important");
+    win.style.setProperty("height", "min(700px, calc(100vh - 100px))", "important");
+    win.style.setProperty("z-index", "99990", "important");
+    win.style.setProperty("background", "#313338", "important");
+    win.style.setProperty("color", "#dbdee1", "important");
+    win.style.setProperty("border-radius", "10px", "important");
+    win.style.setProperty("border", "1px solid #1e1f22", "important");
+    win.style.setProperty("box-shadow", "0 24px 64px rgba(0,0,0,0.55)", "important");
+    win.style.setProperty("overflow", "hidden", "important");
+    win.style.setProperty("filter", "none", "important");
+    ensureMessagesDraggable();
 
     markDock(true);
     state.winOpen = true;
@@ -37479,20 +37909,136 @@ body.tl-right .calculator__top--taskabr {
     bindNotif();
     startInboxWhenReady();
 
-    try {
-      if (window.jQuery && jQuery.fn && jQuery.fn.draggable) {
-        var $w = jQuery("#messages-window");
-        if ($w.length && !$w.data("ui-draggable")) {
-          $w.draggable({
-            handle: ".window__taskbar",
-            cancel: "button, input, textarea, a",
-            start: function () { jQuery(this).css("z-index", 95); }
-          });
-        }
-      }
-    } catch (e) {}
+    ensureMessagesDraggable();
   }
 
+  function ensureMessagesDraggable() {
+    var win = document.getElementById("messages-window");
+    if (!win || win.__nyxDragBound) return;
+    win.__nyxDragBound = true;
+
+    var bar = win.querySelector(".window__taskbar");
+    if (!bar) return;
+    bar.style.cursor = "grab";
+    bar.style.userSelect = "none";
+    bar.style.webkitUserSelect = "none";
+
+    var dragging = false;
+    var sx = 0, sy = 0, ol = 0, ot = 0;
+
+    function setPos(left, top) {
+      win.style.setProperty("left", left + "px", "important");
+      win.style.setProperty("top", top + "px", "important");
+      win.style.setProperty("right", "auto", "important");
+      win.style.setProperty("bottom", "auto", "important");
+      win.style.setProperty("transform", "none", "important");
+      win.setAttribute("data-placed", "1");
+    }
+
+    function onDown(e) {
+      if (e.button !== 0) return;
+      if (e.target.closest && e.target.closest("button, input, textarea, a, select")) return;
+      if (win.classList.contains("is-maximized")) return;
+      dragging = true;
+      var r = win.getBoundingClientRect();
+      // lock current visual position into left/top
+      setPos(r.left, r.top);
+      sx = e.clientX;
+      sy = e.clientY;
+      ol = r.left;
+      ot = r.top;
+      win.classList.add("is-dragging", "active");
+      win.style.setProperty("z-index", "99995", "important");
+      bar.style.cursor = "grabbing";
+      document.body.classList.add("is-dragging");
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    function onMove(e) {
+      if (!dragging) return;
+      var nx = ol + (e.clientX - sx);
+      var ny = ot + (e.clientY - sy);
+      var maxX = window.innerWidth - 100;
+      var maxY = window.innerHeight - 48;
+      if (nx > maxX) nx = maxX;
+      if (ny > maxY) ny = maxY;
+      if (nx < -win.offsetWidth + 100) nx = -win.offsetWidth + 100;
+      if (ny < 0) ny = 0;
+      setPos(nx, ny);
+      e.preventDefault();
+    }
+
+    function onUp() {
+      if (!dragging) return;
+      dragging = false;
+      win.classList.remove("is-dragging");
+      win.style.setProperty("z-index", "99990", "important");
+      bar.style.cursor = "grab";
+      document.body.classList.remove("is-dragging");
+    }
+
+    bar.addEventListener("mousedown", onDown);
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+    // touch support
+    bar.addEventListener("touchstart", function (e) {
+      if (!e.touches || !e.touches[0]) return;
+      if (e.target.closest && e.target.closest("button, input, textarea, a")) return;
+      var t = e.touches[0];
+      dragging = true;
+      var r = win.getBoundingClientRect();
+      setPos(r.left, r.top);
+      sx = t.clientX; sy = t.clientY; ol = r.left; ot = r.top;
+      win.classList.add("is-dragging");
+      win.style.setProperty("z-index", "99995", "important");
+    }, { passive: true });
+    document.addEventListener("touchmove", function (e) {
+      if (!dragging || !e.touches || !e.touches[0]) return;
+      var t = e.touches[0];
+      var nx = ol + (t.clientX - sx);
+      var ny = ot + (t.clientY - sy);
+      if (ny < 0) ny = 0;
+      setPos(nx, ny);
+    }, { passive: true });
+    document.addEventListener("touchend", onUp);
+
+    // Also wire jQuery UI if present (optional, native already works)
+    try {
+      if (window.jQuery && jQuery.fn && jQuery.fn.draggable) {
+        var $w = jQuery(win);
+        if ($w.data("ui-draggable")) { try { $w.draggable("destroy"); } catch (err) {} }
+        $w.draggable({
+          handle: ".window__taskbar",
+          cancel: "button, input, textarea, a",
+          containment: "window",
+          start: function () {
+            var el = this;
+            var r = el.getBoundingClientRect();
+            el.style.setProperty("transform", "none", "important");
+            el.style.setProperty("left", r.left + "px", "important");
+            el.style.setProperty("top", r.top + "px", "important");
+            el.style.setProperty("z-index", "99995", "important");
+            el.classList.add("is-dragging");
+            document.body.classList.add("is-dragging");
+          },
+          drag: function (ev, ui) {
+            this.style.setProperty("left", ui.position.left + "px", "important");
+            this.style.setProperty("top", ui.position.top + "px", "important");
+            this.style.setProperty("transform", "none", "important");
+          },
+          stop: function () {
+            this.classList.remove("is-dragging");
+            this.style.setProperty("z-index", "99990", "important");
+            this.setAttribute("data-placed", "1");
+            document.body.classList.remove("is-dragging");
+          }
+        });
+      }
+    } catch (err) {}
+  }
+
+  window.openMessages = openWindow;
   window.openMessages = openWindow;
   window.closeMessages = closeWindow;
 

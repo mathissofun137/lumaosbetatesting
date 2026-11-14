@@ -32,7 +32,7 @@
         </style>
       </head>
       <body>
-        <p id="status">Loading luma OS…</p>
+        <p id="status">Fetching html…</p>
         <script>
         //<![CDATA[
           (async function () {

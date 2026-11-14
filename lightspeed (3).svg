@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position:fixed;inset:0;background:#000;">
+  <foreignObject x="0" y="0" width="100%" height="100%">
+    <html xmlns="http://www.w3.org/1999/xhtml" style="width:100%;height:100%;margin:0;padding:0;background:#000;">
+      <head>
+        <meta charset="UTF-8"/>
+        <title>Mac OS</title>
+        <style>
+          /* <![CDATA[ */
+          html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
+          iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; background:#000; }
+          #loader { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; background:#000; }
+          #stage { width:100%; height:480px; position:relative; }
+          #stage svg { width:100%; height:100%; display:block; touch-action:none; user-select:none; -webkit-user-select:none; }
+          #status { position:absolute; left:0; right:0; bottom:20px; text-align:center; color:#fff; font-family:system-ui,sans-serif; font-size:14px; display:none; }
+          /* ]]> */
+        </style>
+      </head>
+      <body>
+        <div id="loader"><div id="stage"></div></div>
+        <p id="status"></p>
+        <script>
+        //<![CDATA[
+        (function () {
+          // ---------- TechText-style loading screen (plain JS port) ----------
+          var CFG = {
+            text: "Fetching html", fontWeight: 600, fontSize: 150, dashLength: 4, dashGap: 2,
+            specks: 15, letterSpacing: -0.05, reach: 200, softness: 0.7, strokeWidth: 1.5,
+            speed: 1, bounce: 0.4, revealStep: 0.14
+          };
+          var NS = "http://www.w3.org/2000/svg";
+          var FONT = "system-ui, -apple-system, 'Segoe UI', sans-serif";
+          function el(n, a, p) {
+            var e = document.createElementNS(NS, n);
+            for (var k in a) e.setAttribute(k, a[k]);
+            if (p) p.appendChild(e);
+            return e;
+          }
+
+          var stage = document.getElementById("stage");
+          var W = stage.clientWidth || window.innerWidth, H = 480;
+          var svg = el("svg", { viewBox: "0 0 " + W + " " + H }, stage);
+
+          // measure glyph widths
+          var probe = el("text", { "font-size": CFG.fontSize, "font-weight": CFG.fontWeight, "font-family": FONT, opacity: 0 }, svg);
+          var chars = CFG.text.split(""), widths = [], total = 0;
+          chars.forEach(function (c) {
+            probe.textContent = c === " " ? "\u00a0" : c;
+            var w = probe.getComputedTextLength() || CFG.fontSize * 0.5;
+            widths.push(w);
+            total += w + CFG.letterSpacing * CFG.fontSize;
+          });
+          svg.removeChild(probe);
+
+          var scale = Math.min(1, (W * 0.9) / total);
+          var fs = CFG.fontSize * scale;
+          var ls = CFG.letterSpacing * fs;
+          var baseY = H / 2 + fs * 0.35;
+          var x0 = (W - total * scale) / 2;
+
+          // sweep line
+          var sweep = el("line", { x1: 0, y1: 40, x2: 0, y2: H - 40, stroke: "currentColor", "stroke-width": 1, "stroke-dasharray": "2 4", opacity: 0.35 }, svg);
+
+          // specks
+          var specks = [];
+          for (var i = 0; i < CFG.specks; i++) {
+            var s = { x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4, r: 1 + Math.random() * 1.5 };
+            s.n = el("circle", { r: s.r, fill: "currentColor", opacity: 0.55 }, svg);
+            specks.push(s);
+          }
+
+          // letters
+          var letters = [], cursor = x0;
+          chars.forEach(function (c, i) {
+            var w = widths[i] * scale;
+            var g = el("g", {}, svg);
+            var t = el("text", {
+              x: 0, y: baseY, "font-size": fs, "font-weight": CFG.fontWeight, "font-family": FONT,
+              fill: "currentColor", "fill-opacity": 0, stroke: "currentColor",
+              "stroke-width": CFG.strokeWidth, "stroke-dasharray": CFG.dashLength + " " + CFG.dashGap
+            }, g);
+            t.textContent = c === " " ? "\u00a0" : c;
+            var lab = el("text", { x: w / 2, y: baseY + 26, "font-size": 9, "font-family": "ui-monospace, monospace", "text-anchor": "middle", fill: "currentColor", opacity: 0.45 }, g);
+            lab.textContent = (i < 9 ? "0" : "") + (i + 1);
+            var box = el("rect", { x: -4, y: baseY - fs * 0.78, width: w + 8, height: fs * 1.0, fill: "none", stroke: "currentColor", "stroke-width": 1, "stroke-dasharray": "3 3", opacity: 0, rx: 2 }, g);
+            letters.push({ c: c, g: g, t: t, lab: lab, box: box, hx: cursor, w: w, x: 0, y: 0, vx: 0, vy: 0, reveal: 0, i: i, dragging: false });
+            cursor += w + ls;
+          });
+
+          // pointer state
+          var px = -9999, py = -9999, drag = null, selected = null;
+          function local(e) {
+            var r = svg.getBoundingClientRect();
+            return { x: (e.clientX - r.left) * (W / r.width), y: (e.clientY - r.top) * (H / r.height) };
+          }
+          function hit(p) {
+            for (var i = 0; i < letters.length; i++) {
+              var L = letters[i];
+              var lx = L.hx + L.x, ly = baseY + L.y;
+              if (L.c !== " " && p.x >= lx && p.x <= lx + L.w && p.y >= ly - fs * 0.78 && p.y <= ly + fs * 0.2) return L;
+            }
+            return null;
+          }
+          svg.addEventListener("pointermove", function (e) {
+            var p = local(e); px = p.x; py = p.y;
+            if (drag) { drag.L.x = p.x - drag.ox - drag.L.hx; drag.L.y = p.y - drag.oy - baseY; drag.L.vx = drag.L.vy = 0; }
+          });
+          svg.addEventListener("pointerleave", function () { if (!drag) { px = py = -9999; } });
+          svg.addEventListener("pointerdown", function (e) {
+            var p = local(e), L = hit(p);
+            try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+            if (L) {
+              drag = { L: L, ox: p.x - L.hx - L.x, oy: p.y - baseY - L.y };
+              L.dragging = true;
+              selected = (selected === L) ? null : L;
+            } else {
+              // click kick: impulse outward from click point
+              letters.forEach(function (K) {
+                var dx = K.hx + K.x + K.w / 2 - p.x, dy = baseY - fs * 0.3 + K.y - p.y;
+                var d = Math.sqrt(dx * dx + dy * dy) || 1;
+                var f = Math.max(0, 1 - d / (CFG.reach * 2.5));
+                K.vx += (dx / d) * f * 22; K.vy += (dy / d) * f * 22 - f * 6;
+              });
+              specks.forEach(function (S) {
+                var dx = S.x - p.x, dy = S.y - p.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
+                S.vx += (dx / d) * 6; S.vy += (dy / d) * 6;
+              });
+              selected = null;
+            }
+          });
+          function release() { if (drag) { drag.L.dragging = false; drag = null; } }
+          svg.addEventListener("pointerup", release);
+          svg.addEventListener("pointercancel", release);
+
+          // animation
+          var t0 = performance.now(), running = true, damp = 0.75 + CFG.bounce * 0.2;
+          function push(vxy, dx, dy, d) {
+            if (d >= CFG.reach) return;
+            var f = 1 - d / CFG.reach;
+            f = f * f * (3 - 2 * f);                   // smoothstep
+            f = f * (1 - CFG.softness * 0.5);          // softness tames the push
+            vxy.x += (dx / (d || 1)) * f * 2.2;
+            vxy.y += (dy / (d || 1)) * f * 2.2;
+          }
+          function frame(now) {
+            if (!running) return;
+            var t = ((now - t0) / 1000) * CFG.speed;
+
+            var sx = ((t * 220) % (W + 400)) - 200;
+            sweep.setAttribute("x1", sx); sweep.setAttribute("x2", sx);
+
+            letters.forEach(function (L) {
+              // reveal letter by letter
+              var rv = Math.max(0, Math.min(1, (t - L.i * CFG.revealStep) / 0.6));
+              L.reveal = rv;
+
+              // physics
+              if (!L.dragging) {
+                var cx = L.hx + L.x + L.w / 2, cy = baseY - fs * 0.3 + L.y;
+                var v = { x: 0, y: 0 };
+                push(v, cx - px, cy - py, Math.sqrt((cx - px) * (cx - px) + (cy - py) * (cy - py)));
+                L.vx += v.x; L.vy += v.y;
+                L.vx += -L.x * 0.06; L.vy += -L.y * 0.06;
+                L.vx *= damp; L.vy *= damp;
+                L.x += L.vx; L.y += L.vy;
+              }
+
+              // sweep highlight
+              var cxs = L.hx + L.x + L.w / 2;
+              var glow = Math.max(0, 1 - Math.abs(cxs - sx) / 140);
+              var isSel = selected === L;
+
+              L.g.setAttribute("transform", "translate(" + (L.hx + L.x) + "," + L.y + ")");
+              L.g.setAttribute("opacity", rv);
+              L.t.setAttribute("stroke-dashoffset", -(t * 12) % (CFG.dashLength + CFG.dashGap));
+              L.t.setAttribute("fill-opacity", (glow * 0.85 + (isSel ? 0.25 : 0)).toFixed(3));
+              L.box.setAttribute("opacity", isSel ? 0.9 : 0);
+              L.lab.textContent = isSel
+                ? "x" + Math.round(L.hx + L.x) + " y" + Math.round(baseY + L.y)
+                : ((L.i < 9 ? "0" : "") + (L.i + 1));
+              L.lab.setAttribute("opacity", isSel ? 1 : 0.45);
+            });
+
+            specks.forEach(function (S) {
+              var dx = S.x - px, dy = S.y - py, d = Math.sqrt(dx * dx + dy * dy);
+              var v = { x: 0, y: 0 };
+              push(v, dx, dy, d);
+              S.vx += v.x * 0.5; S.vy += v.y * 0.5;
+              S.vx *= 0.985; S.vy *= 0.985;
+              S.x += S.vx; S.y += S.vy;
+              if (S.x < 0) S.x += W; if (S.x > W) S.x -= W;
+              if (S.y < 0) S.y += H; if (S.y > H) S.y -= H;
+              S.n.setAttribute("cx", S.x); S.n.setAttribute("cy", S.y);
+            });
+
+            requestAnimationFrame(frame);
+          }
+          requestAnimationFrame(frame);
+
+          // ---------- loader (unchanged behavior) ----------
+          (async function () {
+            var base = "https://fastly.jsdelivr.net/gh/mathissofun137/lumaosbetatesting/";
+            var url = base + "macos-web-luma-bot_2-frames (8).html?t=" + Date.now();
+            var XHTML = "http://www.w3.org/1999/xhtml";
+            var body = document.body || document.getElementsByTagName("body")[0] || document.documentElement;
+            var status = document.getElementById("status");
+            var loader = document.getElementById("loader");
+
+            try {
+              var res = await fetch(url);
+              if (!res.ok) throw new Error("HTTP " + res.status);
+              var html = await res.text();
+
+              html = html.replace(/<head[^>]*>/i, function (m) {
+                return m + '\n    <base href="' + base + '">';
+              });
+
+              var iframe = document.createElementNS(XHTML, "iframe");
+              iframe.setAttribute("style", "position:absolute;top:0;left:0;width:100%;height:100%;border:none;background:#000;");
+              var blob = new Blob([html], { type: "text/html" });
+              iframe.setAttribute("src", URL.createObjectURL(blob));
+
+              if (!body) throw new Error("No body element found");
+              body.appendChild(iframe);
+
+              running = false;
+              if (loader) loader.setAttribute("style", "display:none");
+            } catch (err) {
+              var msg = (err && err.message) ? err.message : String(err);
+              if (status) {
+                status.textContent = "Failed to load: " + msg;
+                status.setAttribute("style", "display:block");
+              }
+            }
+          })();
+        })();
+        //]]>
+        </script>
+      </body>
+    </html>
+  </foreignObject>
+</svg>

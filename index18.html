@@ -13160,7 +13160,7 @@ alter publication supabase_realtime add table public.messages;</pre>
       <div class="msg-auth" id="msg-banned" role="dialog" aria-label="Banned">
         <div class="msg-auth-card" style="text-align:center">
           <div class="msg-auth-logo" style="background:#f23f42">!</div>
-          <h3>You are banned</h3>
+          <h3>Your account has been banned</h3>
           <p id="msg-banned-text"></p>
           <button type="button" class="msg-auth-go" id="msg-banned-retry">Check again</button>
           <button type="button" class="msg-auth-go" id="msg-banned-out" style="background:#4e5058!important;margin-top:8px!important">Sign out</button>
@@ -35088,10 +35088,10 @@ body.tl-right .calculator__top--taskabr {
 #messages-window .msg-gif-tabs button { border: 0; background: transparent; color: #b5bac1; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 16px; cursor: pointer; white-space: nowrap; }
 #messages-window .msg-gif-tabs button:hover { background: #404249; color: #fff; }
 #messages-window .msg-gif-tabs button.on { background: #5865f2; color: #fff; }
-#messages-window .msg-gif-grid { flex: 1; min-height: 0; overflow: auto; padding: 8px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; align-content: start; }
-#messages-window .msg-gif-grid button { border: 0; padding: 0; background: #1e1f22; border-radius: 6px; overflow: hidden; cursor: pointer; aspect-ratio: 1.2; position: relative; }
+#messages-window .msg-gif-grid { flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto !important; overflow-x: hidden !important; padding: 8px !important; display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-auto-rows: auto !important; gap: 8px !important; align-content: start !important; }
+#messages-window .msg-gif-grid button { display: block !important; width: 100% !important; height: 120px !important; min-height: 120px !important; max-height: 120px !important; aspect-ratio: auto !important; margin: 0 !important; border: 0 !important; padding: 0 !important; background: #1e1f22 !important; border-radius: 6px !important; overflow: hidden !important; cursor: pointer !important; position: relative !important; flex: none !important; }
 #messages-window .msg-gif-grid button:hover { outline: 2px solid #5865f2; outline-offset: -2px; }
-#messages-window .msg-gif-grid img { width: 100%; height: 100%; object-fit: cover; display: block; background: #1e1f22; }
+#messages-window .msg-gif-grid img { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; object-fit: cover !important; display: block !important; background: #1e1f22; border-radius: 0 !important; margin: 0 !important; }
 #messages-window .msg-gif-empty { grid-column: 1 / -1; text-align: center; color: #949ba4; font-size: 13px; padding: 28px 12px; }
 #messages-window .msg-gif-foot { padding: 6px 12px 8px; font-size: 11px; color: #6d6f78; border-top: 1px solid #1e1f22; text-align: right; flex-shrink: 0; }
 #messages-window .msg-composer textarea { padding-right: 130px !important; }
@@ -35132,6 +35132,7 @@ body.tl-right .calculator__top--taskabr {
 #messages-window .msg-shell .msg-side-foot .up-name { max-width: 84px !important; }
 #messages-window .msg-shell .msg-side-foot .up-info { margin-left: 4px; }
 #messages-window #msg-banned { z-index: 70 !important; }
+#messages-window .msg-banned-tag { color: #f23f42 !important; font-weight: 800; font-size: .85em; letter-spacing: .02em; margin-left: 4px; }
 #messages-window .ban-lbl { display: block; font-size: 12px; font-weight: 700; color: #b5bac1; margin: 12px 0 6px; }
 #messages-window #msg-ban-body select, #messages-window #msg-ban-body input[type=text], #messages-window #msg-ban-body input[type=number] { width: 100%; box-sizing: border-box; background: #1e1f22; color: #f2f3f5; border: 0; border-radius: 6px; padding: 10px 12px; font-size: 14px; outline: none; }
 #messages-window #msg-ban-body input, #messages-window #msg-ban-body select { margin: 0 !important; width: 100% !important; box-sizing: border-box !important; }
@@ -35675,7 +35676,8 @@ body.tl-right .calculator__top--taskabr {
     try {
       var res;
       if (mode === "signup") {
-        res = await client.auth.signUp({ email: email, password: pass, options: { data: { username: uname } } });
+        if (chat.signupBlocked && await chat.signupBlocked()) { msg("This device has been banned, so you can't make another account."); return; }
+        res = await client.auth.signUp({ email: email, password: pass, options: { data: { username: uname, device: chat.device ? chat.device() : undefined } } });
         if (res.error) throw res.error;
         if (!res.data.session) {
           res = await client.auth.signInWithPassword({ email: email, password: pass });
@@ -35693,7 +35695,7 @@ body.tl-right .calculator__top--taskabr {
       if (/invalid login/i.test(m)) m = "Wrong username or password.";
       else if (/already registered|already been registered/i.test(m)) m = "That username is taken. Try Sign in instead.";
       else if (/rate limit/i.test(m)) m = "Too many attempts. Wait a few minutes and try again.";
-      else if (/banned/i.test(m)) m = "This account is banned.";
+      else if (/banned/i.test(m) || /database error saving new user/i.test(m)) m = "This account or device is banned. You can't make another account.";
       else if (/not confirmed/i.test(m)) m = "Email confirmation is still on in Supabase (Auth > Providers > Email).";
       msg(m);
     } finally { go.disabled = false; }
@@ -35828,8 +35830,9 @@ body.tl-right .calculator__top--taskabr {
     var other = dmOther(state.channel, state.user.id);
     if (!other) return "";
     if (other === BOT_ID) return BOT_NAME;
+    var lp = state.profiles && state.profiles[other];
     var p = loadPeers()[other];
-    return (p && p.username) || "user";
+    return (lp && lp.username) || (p && p.username) || "user";
   }
   function updateHeader() {
     var title = $("msg-channel-title");
@@ -35910,6 +35913,10 @@ body.tl-right .calculator__top--taskabr {
 
   /* ---------- Spam alerts (written by the chat_spam_check trigger in full-chat-setup.sql) ---------- */
   function spamText(a) {
+    if (a.kind === "blacklist") {
+      var bwhere = a.is_dm ? "in a DM" + (a.dm_with ? " with " + a.dm_with : "") : "in #" + String(a.ch).replace(/^gc:/, "group ");
+      return "\uD83D\uDEAB Blacklisted word \"" + a.word + "\" from " + (a.username || "someone") + " " + bwhere + ". The message was deleted.\nMessage: \"" + String(a.sample || "").slice(0, 120) + "\"";
+    }
     var where = a.is_dm ? "in a DM" + (a.dm_with ? " with " + a.dm_with : "") : "in #" + String(a.ch).replace(/^gc:/, "group ");
     return "🚨 Spam alert: " + (a.username || "someone") + " sent the same message " + a.cnt + " times in 30 seconds " + where + ".\nMessage: \"" + String(a.sample || "").slice(0, 120) + "\"";
   }
@@ -36448,6 +36455,7 @@ body.tl-right .calculator__top--taskabr {
     "ai - show the page the AI app loads\n" +
     "ai set <url> - change the AI app's frame (everyone sees it)\n" +
     "ai reset - back to the default AI frame\n" +
+    "blacklist list / add <word> / add-any <text> / remove <word> - words that get a message deleted and reported to me\n" +
     "ping - check I'm awake\n" +
     "clear - wipe this chat";
   async function botRun(line) {
@@ -36455,6 +36463,30 @@ body.tl-right .calculator__top--taskabr {
     if (!state.isBot) return "Sorry, I only talk to admins.";
     if (cmd === "help" || cmd === "?" || cmd === "commands") return BOT_HELP;
     if (cmd === "ping") return "pong";
+    if (cmd === "blacklist" || cmd === "bl") {
+      var bc = ensureClient(); if (!bc) return "Not connected.";
+      var bsub = (parts.shift() || "list").toLowerCase();
+      var bword = parts.join(" ").trim().toLowerCase();
+      if (bsub === "list") {
+        var bl = await bc.from("chat_blacklist").select("word,anywhere").order("created_at");
+        if (bl.error) return "Could not read the blacklist: " + bl.error.message;
+        return (bl.data || []).length ? "Blacklisted:\n" + bl.data.map(function (r) { return "- " + r.word + (r.anywhere ? " (anywhere)" : ""); }).join("\n") : "The blacklist is empty.";
+      }
+      if (bsub === "add" || bsub === "add-any") {
+        if (!bword) return "Usage: blacklist add <word or phrase>";
+        if (bword.length > 64) return "That is too long (64 characters max).";
+        var bi = await bc.from("chat_blacklist").insert({ word: bword, anywhere: bsub === "add-any", added_by: state.user ? state.user.id : null });
+        if (bi.error) return bi.error.code === "23505" ? "Already blacklisted." : "Could not add it: " + bi.error.message;
+        return "Blacklisted \"" + bword + "\"" + (bsub === "add-any" ? " (matches inside words too)" : "") + ".";
+      }
+      if (bsub === "remove" || bsub === "rm" || bsub === "delete") {
+        if (!bword) return "Usage: blacklist remove <word or phrase>";
+        var bd = await bc.from("chat_blacklist").delete().ilike("word", bword).select();
+        if (bd.error) return "Could not remove it: " + bd.error.message;
+        return (bd.data || []).length ? "Removed \"" + bword + "\" from the blacklist." : "\"" + bword + "\" isn't on the blacklist.";
+      }
+      return "Usage: blacklist list | add <word> | add-any <text> | remove <word>";
+    }
     if (cmd === "me" || cmd === "perms" || cmd === "whoami") {
       return state.perms.owner ? "You are the owner (all permissions)." : "Your permissions: " + (state.perms.list.length ? state.perms.list.join(", ") : "none (admin only)");
     }
@@ -36608,6 +36640,10 @@ body.tl-right .calculator__top--taskabr {
     box.innerHTML = "";
     var me = state.user && state.user.id;
     var peers = Object.assign({}, loadPeers());
+    Object.keys(peers).forEach(function (id) {
+      var pp = state.profiles && state.profiles[id];
+      if (pp && pp.username) peers[id] = Object.assign({}, peers[id], { username: pp.username });
+    });
     if (state.user) peers[BOT_ID] = { username: BOT_NAME, ts: 9e15 }; else delete peers[BOT_ID];
     var botMode = !!(state.isBot && asBotOn());
     var ids = Object.keys(peers).filter(function (id) { return id !== me && (!botMode || id === BOT_ID); });
@@ -36626,7 +36662,7 @@ body.tl-right .calculator__top--taskabr {
       var po = id === BOT_ID ? { idle: false } : state.online[id];
       var isOn = !!po;
       b.innerHTML = '<span class="msg-av-wrap"><span class="msg-dm-av"' + avAttr(id) + ">" + escapeHtml(initials(peers[id].username)) + avImg(id) + '</span><i class="dot' + (isOn ? (po.idle ? " idle" : " on") : "") + '"></i></span>' +
-        '<span class="msg-dm-name">' + escapeHtml(peers[id].username) + (id === BOT_ID ? BOT_TAG : "") + "</span>" +
+        '<span class="msg-dm-name">' + escapeHtml(peers[id].username) + (id === BOT_ID ? BOT_TAG : bTag(id)) + "</span>" +
         (n ? '<span class="msg-badge">' + (n > 99 ? "99+" : n) + "</span>" : "");
       box.appendChild(b);
     });
@@ -36722,7 +36758,8 @@ body.tl-right .calculator__top--taskabr {
     var c = ensureClient();
     if (!c || !state.user) return;
     try {
-      var r = await c.from("chat_profiles").select("user_id,username,avatar_url,created_at");
+      var r = await c.from("chat_profiles").select("user_id,username,avatar_url,created_at,ban_permanent,ban_until");
+      if (r.error) r = await c.from("chat_profiles").select("user_id,username,avatar_url,created_at");
       if (r.error) r = await c.from("chat_profiles").select("user_id,username,avatar_url");
       if (r.error) throw r.error;
       var map = {}, pf = {};
@@ -36950,8 +36987,8 @@ body.tl-right .calculator__top--taskabr {
     }
     var pin = m.pinned ? '<span class="msg-pinned">pinned</span>' : "";
     var nameHtml = (m.user_id && !mine)
-      ? '<button type="button" class="msg-name msg-name-btn" data-uid="' + escapeHtml(m.user_id) + '" data-uname="' + escapeHtml(m.username) + '" title="Send a direct message"' + avAttr(uid) + ">" + escapeHtml(m.username) + "</button>"
-      : '<span class="msg-name"' + avAttr(uid) + ">" + escapeHtml(m.username) + "</span>";
+      ? '<button type="button" class="msg-name msg-name-btn" data-uid="' + escapeHtml(m.user_id) + '" data-uname="' + escapeHtml(m.username) + '" title="Send a direct message"' + avAttr(uid) + ">" + escapeHtml(m.username) + bTag(m.user_id) + "</button>"
+      : '<span class="msg-name"' + avAttr(uid) + ">" + escapeHtml(m.username) + bTag(m.user_id) + "</span>";
     return out +
       '<div class="msg-bubble' + mcls + '"' + attrs + ">" +
         '<div class="msg-av"' + avAttr(uid) + ">" + escapeHtml(initials(m.username)) + avImg(uid) + "</div>" +
@@ -37055,7 +37092,7 @@ body.tl-right .calculator__top--taskabr {
     var line = online ? actText(p) : "";
     return '<button type="button" class="msg-member' + (online ? " on" : "") + '" data-peer="' + escapeHtml(id) + '" data-uname="' + escapeHtml(name) + '">' +
       '<span class="msg-av-wrap"><span class="msg-dm-av"' + avAttr(id) + ">" + escapeHtml(initials(name)) + avImg(id) + '</span><i class="dot' + (online ? (idle ? " idle" : " on") : "") + '"></i></span>' +
-      '<span class="msg-mem-text"><span class="msg-dm-name">' + escapeHtml(name) + "</span>" +
+      '<span class="msg-mem-text"><span class="msg-dm-name">' + escapeHtml(name) + bTag(id) + "</span>" +
       (line ? '<span class="msg-act" title="' + escapeHtml(line) + '">' + escapeHtml(line) + "</span>" : "") + "</span></button>";
   }
   function renderMembers() {
@@ -37441,6 +37478,7 @@ body.tl-right .calculator__top--taskabr {
     var u = userFromSession(session);
     var prev = state.user && state.user.id;
     state.user = u;
+    try { if (u) registerDevice(u.id); } catch (e) {}
     try { if (window.nyxCloud) { if (u) window.nyxCloud.start(ensureClient(), u.id); else window.nyxCloud.stop(); } } catch (e) {}
     try { if (u) scheduleSetup(); } catch (e) {}
     if (u) {
@@ -37468,7 +37506,7 @@ body.tl-right .calculator__top--taskabr {
       state.user = userFromSession(res && res.data && res.data.session);
       try { if (state.user && window.nyxCloud) window.nyxCloud.start(client, state.user.id); } catch (e) {}
       try { if (state.user) scheduleSetup(); } catch (e) {}
-      if (state.user) subscribeInbox();
+      if (state.user) { subscribeInbox(); registerDevice(state.user.id); }
       client.auth.onAuthStateChange(function (event, session) {
         /* never await supabase calls inside this callback */
         setTimeout(function () { applySession(session); }, 0);
@@ -37491,7 +37529,8 @@ body.tl-right .calculator__top--taskabr {
     try {
       var res;
       if (authMode === "signup") {
-        res = await client.auth.signUp({ email: email, password: pass, options: { data: { username: uname } } });
+        if (await signupBlocked()) { showBannedPopup("This device has been banned, so you can't make another account.", true); setAuthMsg("This device is banned and can't create a new account."); return; }
+        res = await client.auth.signUp({ email: email, password: pass, options: { data: { username: uname, device: deviceId() } } });
         if (res.error) throw res.error;
         if (!res.data.session) {
           setAuthMode("signin");
@@ -37509,14 +37548,49 @@ body.tl-right .calculator__top--taskabr {
       if (/invalid login/i.test(m)) m = "Wrong username or password.";
       else if (/already registered|already been registered/i.test(m)) m = "That username is taken.";
       else if (/rate limit/i.test(m)) m = "Supabase is still trying to send a confirmation email. Turn off Confirm email (Auth > Providers > Email), then wait a few minutes and retry.";
-      else if (/banned/i.test(m)) m = "This account is banned.";
+      else if (/banned/i.test(m) || /database error saving new user/i.test(m)) { m = "This account or device is banned."; showBannedPopup("Your account has been banned. You can't make another account.", true); }
       else if (/not confirmed/i.test(m)) m = "Email confirmation is still on in Supabase. Turn it off (Auth > Providers > Email).";
       setAuthMsg(m);
     } finally {
       if (go) go.disabled = false;
     }
   }
-  window.nyxChat = { client: function () { return ensureClient(); }, init: function () { return initAuth(); }, domain: function () { return AUTH_DOMAIN; } };
+  /* ---------- Ban helpers: device id, (BANNED) tag, popup ---------- */
+  function deviceId() {
+    try {
+      var d = localStorage.getItem("nyx_device_id");
+      if (!d || d.length < 8) {
+        d = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (String(Math.random()).slice(2) + "-" + Date.now().toString(36) + "-" + String(Math.random()).slice(2));
+        localStorage.setItem("nyx_device_id", d);
+      }
+      return d;
+    } catch (e) { return ""; }
+  }
+  async function signupBlocked() {
+    var c = ensureClient(), d = deviceId();
+    if (!c || !d) return false;
+    try { var r = await c.rpc("chat_signup_blocked", { p_device: d }); return !r.error && r.data === true; } catch (e) { return false; }
+  }
+  async function registerDevice(uid) {
+    if (!uid || state.devReg === uid) return;
+    var c = ensureClient(), d = deviceId();
+    if (!c || !d) return;
+    state.devReg = uid;
+    try { var r = await c.rpc("chat_register_device", { p_device: d }); if (r.error) state.devReg = null; } catch (e) { state.devReg = null; }
+  }
+  function isBannedUid(uid) {
+    var p = state.profiles && state.profiles[uid];
+    return !!(p && (p.ban_permanent || (p.ban_until && new Date(p.ban_until) > new Date())));
+  }
+  function bTag(uid) { return isBannedUid(uid) ? '<span class="msg-banned-tag">(BANNED)</span>' : ""; }
+  function showBannedPopup(text, noRetry) {
+    var ov = $("msg-banned"); if (!ov) return;
+    var t = $("msg-banned-text"); if (t) t.textContent = text || "Your account has been banned.";
+    var rt = $("msg-banned-retry"); if (rt) rt.style.display = noRetry ? "none" : "";
+    ov.classList.add("open");
+    try { var w = $("messages-window"); if (w && !state.winOpen && typeof openWindow === "function") openWindow(); } catch (e) {}
+  }
+  window.nyxChat = { client: function () { return ensureClient(); }, init: function () { return initAuth(); }, domain: function () { return AUTH_DOMAIN; }, device: function () { return deviceId(); }, signupBlocked: function () { return signupBlocked(); } };
   function bindAuthUi() {
     var form = $("msg-auth-form");
     if (form && !form.__bound) {
@@ -37704,7 +37778,8 @@ body.tl-right .calculator__top--taskabr {
       [state.sub, state.inbox, state.presence].forEach(function (ch) { if (ch) { try { c.removeChannel(ch); } catch (e) {} } });
       state.sub = null; state.inbox = null; state.presence = null;
       var l = $("msg-list"); if (l) l.innerHTML = "";
-      $("msg-banned-text").textContent = "You are banned " + fmtUntil(b) + "." + (b.reason ? " Reason: " + b.reason : "");
+      $("msg-banned-text").textContent = "Your account has been banned " + fmtUntil(b) + "." + (b.reason ? " Reason: " + b.reason : "") + " You can't read or send messages, and you can't make another account.";
+      var rtb = $("msg-banned-retry"); if (rtb) rtb.style.display = "";
       if (ov) ov.classList.add("open");
     } else {
       state.banned = false;
@@ -37856,15 +37931,15 @@ body.tl-right .calculator__top--taskabr {
   function refreshGifKeyBtn() {
     var b = $("msg-gif-key");
     if (!b) return;
-    var has = !!getGiphyKey();
+    var has = false; try { has = !!(localStorage.getItem(LS_GIPHY) || "").trim(); } catch (e) {}
     b.classList.toggle("has-key", has);
     b.title = has ? "Giphy API key set (click to change)" : "Set Giphy API key to search millions of GIFs";
     b.textContent = has ? "Key ✓" : "Key";
     var foot = document.querySelector("#msg-gif-pop .msg-gif-foot");
     if (foot) {
       foot.innerHTML = has
-        ? 'Searching <b>Giphy</b> · full catalog'
-        : 'Add a free <a href="https://developers.giphy.com/dashboard/" target="_blank" rel="noopener">Giphy API key</a> to search all of Giphy';
+        ? 'Searching <b>Giphy</b> · your key'
+        : 'Using the shared key (may be rate limited) · add a free <a href="https://developers.giphy.com/dashboard/" target="_blank" rel="noopener">Giphy API key</a> for reliable search';
     }
   }
   function promptGiphyKey() {
@@ -37884,11 +37959,6 @@ body.tl-right .calculator__top--taskabr {
     var p = $("msg-gif-pop"), b = $("msg-gif"), ep = $("msg-emoji-pop");
     if (ep) ep.classList.remove("open");
     if (!p) return;
-    try {
-      if (!localStorage.getItem(LS_GIPHY) && DEFAULT_GIPHY_KEY) {
-        localStorage.setItem(LS_GIPHY, DEFAULT_GIPHY_KEY);
-      }
-    } catch (e) {}
     p.classList.add("open");
     if (b) b.classList.add("on");
     refreshGifKeyBtn();
@@ -37936,16 +38006,16 @@ body.tl-right .calculator__top--taskabr {
     var url;
     if (q) {
       url = "https://api.giphy.com/v1/gifs/search?api_key=" + encodeURIComponent(key) +
-        "&q=" + encodeURIComponent(q) + "&limit=36&rating=pg-13&lang=en&bundle=messaging_non_clips";
+        "&q=" + encodeURIComponent(q) + "&limit=36&rating=pg-13&lang=en";
     } else {
       // map tabs to Giphy search terms for variety, or use trending
       var tabQ = { funny: "funny", react: "reaction", love: "love", meme: "meme", trending: "" }[tab] || "";
       if (tabQ) {
         url = "https://api.giphy.com/v1/gifs/search?api_key=" + encodeURIComponent(key) +
-          "&q=" + encodeURIComponent(tabQ) + "&limit=36&rating=pg-13&lang=en&bundle=messaging_non_clips";
+          "&q=" + encodeURIComponent(tabQ) + "&limit=36&rating=pg-13&lang=en";
       } else {
         url = "https://api.giphy.com/v1/gifs/trending?api_key=" + encodeURIComponent(key) +
-          "&limit=36&rating=pg-13&bundle=messaging_non_clips";
+          "&limit=36&rating=pg-13";
       }
     }
     var res = await fetch(url);
@@ -37974,6 +38044,7 @@ body.tl-right .calculator__top--taskabr {
   async function loadGifs(query, tab) {
     var grid = $("msg-gif-grid");
     if (!grid) return;
+    var myReq = (gifState.req = (gifState.req || 0) + 1);
     gifState.loading = true;
     gifState.q = query || "";
     gifState.tab = tab || gifState.tab || "trending";
@@ -37987,18 +38058,27 @@ body.tl-right .calculator__top--taskabr {
     if (key) {
       try {
         results = await fetchGiphy(query, gifState.tab);
+        if (myReq !== gifState.req) return;
       } catch (e) {
+        if (myReq !== gifState.req) return;
         console.warn("[giphy]", e);
         if (e && e.status === 401) {
-          errMsg = "Invalid Giphy API key. Click Key to update it.";
+          errMsg = "Giphy rejected the API key. Click Key and paste your own free key.";
+        } else if (e && e.status === 403) {
+          errMsg = "Giphy blocked this key. Click Key and paste your own free key.";
         } else if (e && e.status === 429) {
-          errMsg = "Giphy rate limit hit (beta keys allow ~100/hour). Try again later.";
+          errMsg = "Giphy rate limit hit (the shared key runs out fast). Click Key and add your own free key.";
         } else {
-          errMsg = "Could not reach Giphy. Showing built-in GIFs.";
+          errMsg = "Could not reach Giphy (blocked or offline). Showing built-in GIFs.";
         }
       }
     }
 
+    if (key && results && !results.length && !errMsg && String(query || "").trim()) {
+      grid.innerHTML = '<div class="msg-gif-empty">No GIFs found for \u201c' + escapeHtml(String(query).trim().slice(0, 40)) + '\u201d. Try another search.</div>';
+      gifState.loading = false;
+      return;
+    }
     if (!results || !results.length) {
       // local fallback
       var local = filterGifLib(query, gifState.tab).map(function (g) {
@@ -38014,13 +38094,12 @@ body.tl-right .calculator__top--taskabr {
         gifState.loading = false;
         return;
       }
-      if (errMsg) {
-        // show note but still render local
-      }
       results = local;
     }
 
-    grid.innerHTML = results.slice(0, 36).map(function (g) {
+    if (myReq !== gifState.req) return;
+    var note = errMsg ? '<div class="msg-gif-empty" style="grid-column:1/-1;padding:8px 10px;color:#f0b232;font-size:12px">' + escapeHtml(errMsg) + '</div>' : "";
+    grid.innerHTML = note + results.slice(0, 36).map(function (g) {
       var title = escapeHtml(String(g.t || "GIF").slice(0, 48));
       return '<button type="button" data-gif="' + escapeHtml(g.u) + '" title="' + title + '"><img src="' + escapeHtml(g.p || g.u) + '" alt="' + title + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'" /></button>';
     }).join("");
@@ -38181,7 +38260,7 @@ body.tl-right .calculator__top--taskabr {
     if (pr.created_at) { try { since = new Date(pr.created_at).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" }); } catch (e) {} }
     box.innerHTML = '<div class="dm-prof"><div class="dm-banner" style="background:' + avColor(other) + '"></div>' +
       '<div class="dm-pav">' + avHtml(other, name, "msg-dm-av big") + "</div>" +
-      '<div class="dm-pbody"><div class="dm-pname">' + escapeHtml(name) + '</div><div class="dm-puser">' + escapeHtml(String(name).toLowerCase().replace(/\s+/g, "")) + "</div>" +
+      '<div class="dm-pbody"><div class="dm-pname">' + escapeHtml(name) + bTag(other) + '</div><div class="dm-puser">' + escapeHtml(String(name).toLowerCase().replace(/\s+/g, "")) + "</div>" +
       '<div class="dm-status">' + statusOf(other) + (po && actText(po) ? " · " + escapeHtml(actText(po)) : "") + "</div>" +
       (since ? '<div class="dm-sec"><h5>Member Since</h5><div>' + escapeHtml(since) + "</div></div>" : "") +
       (canMod() && other !== BOT_ID ? '<button type="button" class="dm-ban" data-ban="' + escapeHtml(other) + '" data-uname="' + escapeHtml(name) + '">Ban user</button>' : "") + "</div></div>";

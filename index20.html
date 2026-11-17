@@ -13031,8 +13031,9 @@ html[data-theme] .window-header.steam-popup-header,
           <div class="msg-nav" id="msg-nav"><button type="button" class="msg-ch" id="msg-nav-friends"><span class="nav-ic">&#128101;</span><span>Friends</span></button></div>
           <div class="msg-side-head">
             <h3>Discord</h3>
-            <span class="chev">&#8964;</span>
+            <span class="chev" id="msg-srv-chev">&#8964;</span>
           </div>
+          <button type="button" class="srv-cr" id="msg-srv-cr"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg><span>Channels &amp; Roles</span></button>
           <div class="msg-scroll">
             <div class="msg-side-sub" id="msg-sub-ch"><span>Text Channels</span><button type="button" id="msg-ch-new" title="Add channel" style="display:none">+</button></div>
             <div class="msg-channels" id="msg-channels"></div>
@@ -13059,6 +13060,7 @@ html[data-theme] .window-header.steam-popup-header,
               <span class="msg-status" id="msg-status">Not connected</span>
               <button type="button" class="tb" id="msg-tb-bans" title="Banned users" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2c1.85 0 3.55.63 4.9 1.69L5.69 16.9A7.95 7.95 0 0 1 4 12c0-4.42 3.58-8 8-8zm0 16c-1.85 0-3.55-.63-4.9-1.69L18.31 7.1A7.95 7.95 0 0 1 20 12c0 4.42-3.58 8-8 8z"/></svg></button>
               <button type="button" class="tb" id="msg-tb-admins" title="Manage admins" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4.2a2.3 2.3 0 1 1 0 4.6 2.3 2.3 0 0 1 0-4.6zM12 19c-2.2 0-4-1.1-4.6-2.6.03-1.5 3.1-2.3 4.6-2.3s4.57.8 4.6 2.3C16 17.9 14.2 19 12 19z"/></svg></button>
+              <button type="button" class="tb" id="msg-tb-roles" title="Manage roles" style="display:none"><svg viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9a2 2 0 0 0 2.82 0l7-7a2 2 0 0 0 0-2.84zM6.5 8A1.5 1.5 0 1 1 8 6.5 1.5 1.5 0 0 1 6.5 8z"/></svg></button>
               <button type="button" class="tb on" id="msg-tb-members" title="Member List"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></button>
               <div class="top-search"><input id="msg-search" type="text" placeholder="Search" autocomplete="off" spellcheck="false" /><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
             </div>
@@ -14732,6 +14734,17 @@ alter publication supabase_realtime add table public.messages;</pre>
           e.preventDefault();
           handleopen_spotlight();
           return;
+        }
+        // Shift + Enter → Spotlight (skipped in multi-line fields, where it inserts a newline, and when Spotlight is already open)
+        if (e.key === "Enter" && e.shiftKey && !e.metaKey && !e.ctrlKey && !e.altKey && !e.repeat) {
+          const t = e.target, tag = ((t && t.tagName) || "").toLowerCase();
+          const spEl = document.getElementById("spotlight") || spotlight_serach;
+          const spOpen = spEl && spEl.style.display === "flex";
+          if (tag !== "textarea" && !(t && t.isContentEditable) && !spOpen) {
+            e.preventDefault();
+            handleopen_spotlight();
+            return;
+          }
         }
         // Hold Caps Lock + F → Spotlight (does not require Caps Lock LED/state on)
         if (e.code === "KeyF" && capsModHeld && !e.metaKey && !e.ctrlKey && !e.altKey) {
@@ -35091,6 +35104,26 @@ body.tl-right .calculator__top--taskabr {
 #messages-window .msg-gif-grid { flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto !important; overflow-x: hidden !important; padding: 8px !important; display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-auto-rows: auto !important; gap: 8px !important; align-content: start !important; }
 #messages-window .msg-gif-grid button { display: block !important; width: 100% !important; height: 120px !important; min-height: 120px !important; max-height: 120px !important; aspect-ratio: auto !important; margin: 0 !important; border: 0 !important; padding: 0 !important; background: #1e1f22 !important; border-radius: 6px !important; overflow: hidden !important; cursor: pointer !important; position: relative !important; flex: none !important; }
 #messages-window .msg-gif-grid button:hover { outline: 2px solid #5865f2; outline-offset: -2px; }
+#messages-window .msg-side { position: relative; }
+#messages-window .msg-side-head .chev { transition: transform .15s; }
+#messages-window .msg-side-head.open .chev { transform: rotate(180deg); }
+#messages-window .srv-cr { display: flex; align-items: center; gap: 12px; width: calc(100% - 16px); margin: 8px 8px 4px; padding: 8px 10px; border: 0; border-radius: 6px; background: transparent; color: #949ba4; font-size: 15px; font-weight: 500; cursor: pointer; text-align: left; }
+#messages-window .srv-cr:hover { background: rgba(78,80,88,.3); color: #dbdee1; }
+#messages-window .msg-shell.mode-dm .srv-cr { display: none !important; }
+#messages-window .srv-menu { position: absolute; left: 8px; right: 8px; top: 54px; z-index: 60; background: #111214; border: 1px solid #1e1f22; border-radius: 8px; padding: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.5); display: none; max-height: 70vh; overflow-y: auto; }
+#messages-window .srv-menu.open { display: block; }
+#messages-window .srv-menu button { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 8px 10px; border: 0; border-radius: 4px; background: transparent; color: #b5bac1; font-size: 14px; font-weight: 500; cursor: pointer; text-align: left; }
+#messages-window .srv-menu button:hover { background: #5865f2; color: #fff; }
+#messages-window .srv-menu button.danger { color: #f23f42; }
+#messages-window .srv-menu button.danger:hover { background: #da373c; color: #fff; }
+#messages-window .srv-menu hr { border: 0; border-top: 1px solid #2b2d31; margin: 6px 4px; }
+#messages-window .srv-rrow { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #2b2d31; }
+#messages-window .srv-rrow:last-child { border-bottom: 0; }
+#messages-window #msg-ban .msg-dmpick-card { max-height: calc(100% - 24px) !important; }
+#messages-window #msg-ban-body { flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto !important; overflow-x: hidden !important; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-bottom: 20px !important; }
+#messages-window .role-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+#messages-window .role-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; border-radius: 6px; background: #1e1f22; color: #dbdee1; font-size: 12px; font-weight: 600; border: 1px solid #3f4147; }
+#messages-window .role-chip i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
 #messages-window .msg-gif-grid img { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; object-fit: cover !important; display: block !important; background: #1e1f22; border-radius: 0 !important; margin: 0 !important; }
 #messages-window .msg-gif-empty { grid-column: 1 / -1; text-align: center; color: #949ba4; font-size: 13px; padding: 28px 12px; }
 #messages-window .msg-gif-foot { padding: 6px 12px 8px; font-size: 11px; color: #6d6f78; border-top: 1px solid #1e1f22; text-align: right; flex-shrink: 0; }
@@ -35844,7 +35877,7 @@ body.tl-right .calculator__top--taskabr {
     if (dm) {
       var n = currentPeerName();
       var oid = botInboxUser(state.channel) || dmOther(state.channel, state.user && state.user.id);
-      if (title) title.innerHTML = '<span class="top-av">' + avHtml(oid, n, "msg-dm-av") + "</span>" + escapeHtml(n) + (oid === BOT_ID ? BOT_TAG : (isBotInbox() ? ' <span style="opacity:.6;font-size:12px;font-weight:500">via ' + BOT_NAME + "</span>" : ""));
+      if (title) title.innerHTML = '<span class="top-av">' + avHtml(oid, n, "msg-dm-av") + "</span><span" + nameAttr(oid) + ">" + escapeHtml(n) + "</span>" + (oid === BOT_ID ? BOT_TAG : (isBotInbox() ? ' <span style="opacity:.6;font-size:12px;font-weight:500">via ' + BOT_NAME + "</span>" : ""));
       if (input) input.placeholder = oid === BOT_ID && !(state.isBot) ? "Message " + BOT_NAME + " (admins can read this chat)" : "Message @" + n;
     } else if (isGroup(state.channel)) {
       var gobj = curGroup();
@@ -36456,13 +36489,79 @@ body.tl-right .calculator__top--taskabr {
     "ai set <url> - change the AI app's frame (everyone sees it)\n" +
     "ai reset - back to the default AI frame\n" +
     "blacklist list / add <word> / add-any <text> / remove <word> - words that get a message deleted and reported to me\n" +
+    "purge - clear the jsDelivr cache for the OS's frames, apps, sound, lightspeed1.svg and loaded icons\n" +
+    "purge list - show what purge would clear\n" +
+    "purge <url or /gh/user/repo@branch/file> ... - clear specific jsDelivr files\n" +
     "ping - check I'm awake\n" +
     "clear - wipe this chat";
+  /* ---------- jsDelivr cache purge (Luma BOT "purge") ----------
+     jsDelivr's purge API takes CDN paths like /gh/user/repo@branch/file.ext. Any jsDelivr mirror host
+     (cdn / fastly / testingcf / quantil / gcore ...) maps to the same path. */
+  var PURGE_SOUND = "https://fastly.jsdelivr.net/gh/mathissofun137/lumaicons@HEAD/discord-notification.mp3";
+  /* Always purged by a bare "purge", on top of the frames / apps / sound / loaded icons. */
+  var PURGE_EXTRA = ["https://cdn.jsdelivr.net/gh/mathissofun137/lumaosbetatesting/lightspeed1.svg"];
+  function purgePath(u) {
+    u = String(u || "").trim();
+    if (/^\/(gh|npm|wp)\//i.test(u)) return u.split(/[?#]/)[0];
+    var m = u.match(/^https?:\/\/(?:[a-z0-9-]+\.)*jsdelivr\.net(\/(?:gh|npm|wp)\/[^\s"'<>?#]+)/i);
+    return m ? m[1] : "";
+  }
+  function purgeDefaults() {
+    var urls = [LUMA_FRAME_DEFAULTS.safari_url, LUMA_FRAME_DEFAULTS.ai_url, PURGE_SOUND].concat(PURGE_EXTRA);
+    try { urls.push(osConfigCache.safari_url, osConfigCache.ai_url); } catch (e) {}
+    try { (customApps || []).forEach(function (a) { urls.push(a.frame_url, a.icon_url); }); } catch (e) {}
+    try { [].forEach.call(document.images, function (im) { urls.push(im.getAttribute("data-nyx-orig") || im.currentSrc || im.src); }); } catch (e) {}
+    var seen = {}, out = [];
+    urls.forEach(function (u) { var p = purgePath(u); if (p && !seen[p]) { seen[p] = 1; out.push(p); } });
+    return out;
+  }
+  async function purgeSend(paths) {
+    var ok = 0, failed = [], notes = [];
+    for (var i = 0; i < paths.length; i += 50) {
+      var chunk = paths.slice(i, i + 50);
+      try {
+        var r = await fetch("https://purge.jsdelivr.net/", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ path: chunk }) });
+        var j = null; try { j = await r.json(); } catch (e) {}
+        if (r.ok && (!j || j.status !== "error")) { ok += chunk.length; continue; }
+        notes.push((j && (j.message || j.error)) || ("HTTP " + r.status));
+      } catch (e) {
+        /* CORS or network error: fall back to fire-and-forget GET purges (can't read the reply) */
+        try {
+          await Promise.all(chunk.map(function (pt) { return fetch("https://purge.jsdelivr.net" + pt, { mode: "no-cors" }); }));
+          ok += chunk.length; notes.push("sent without confirmation (browser blocked reading the reply)");
+          continue;
+        } catch (e2) {}
+      }
+      failed = failed.concat(chunk);
+    }
+    return { ok: ok, failed: failed, notes: notes.filter(function (n, i, a) { return a.indexOf(n) === i; }) };
+  }
+  async function botPurge(arg) {
+    var a = (arg || "").trim(), paths;
+    if (/^(list|show)$/i.test(a)) {
+      paths = purgeDefaults();
+      return paths.length ? "purge would clear " + paths.length + " file(s):\n" + paths.slice(0, 40).map(function (x) { return "- " + x; }).join("\n") + (paths.length > 40 ? "\n...and " + (paths.length - 40) + " more" : "") : "Nothing to purge.";
+    }
+    if (a) {
+      var bad = [];
+      paths = a.split(/\s+/).map(function (t) { var p = purgePath(t); if (!p) bad.push(t); return p; }).filter(Boolean);
+      if (bad.length) return "Not a jsDelivr URL or /gh/... path: " + bad.join(", ") + "\nExample: purge /gh/mathissofun137/luma-os-apps@main/index.svg";
+      if (!paths.length) return "Usage: purge | purge list | purge <url or /gh/user/repo@branch/file> ...";
+    } else paths = purgeDefaults();
+    if (!paths.length) return "Nothing to purge.";
+    var r = await purgeSend(paths);
+    var msg = r.ok ? "Asked jsDelivr to purge " + r.ok + " file(s)." : "jsDelivr did not accept the purge.";
+    if (r.failed.length) msg += "\nFailed (" + r.failed.length + "):\n" + r.failed.slice(0, 10).map(function (x) { return "- " + x; }).join("\n");
+    if (r.notes.length) msg += "\n" + r.notes.join("\n");
+    if (r.ok) msg += "\nIt can take a minute or two to finish across the CDN; reload to see fresh files.";
+    return msg;
+  }
   async function botRun(line) {
     var parts = line.replace(/^\//, "").trim().split(/\s+/), cmd = (parts.shift() || "").toLowerCase(), arg = parts.join(" ");
     if (!state.isBot) return "Sorry, I only talk to admins.";
     if (cmd === "help" || cmd === "?" || cmd === "commands") return BOT_HELP;
     if (cmd === "ping") return "pong";
+    if (cmd === "purge" || cmd === "purgecache") return await botPurge(arg);
     if (cmd === "blacklist" || cmd === "bl") {
       var bc = ensureClient(); if (!bc) return "Not connected.";
       var bsub = (parts.shift() || "list").toLowerCase();
@@ -36662,7 +36761,7 @@ body.tl-right .calculator__top--taskabr {
       var po = id === BOT_ID ? { idle: false } : state.online[id];
       var isOn = !!po;
       b.innerHTML = '<span class="msg-av-wrap"><span class="msg-dm-av"' + avAttr(id) + ">" + escapeHtml(initials(peers[id].username)) + avImg(id) + '</span><i class="dot' + (isOn ? (po.idle ? " idle" : " on") : "") + '"></i></span>' +
-        '<span class="msg-dm-name">' + escapeHtml(peers[id].username) + (id === BOT_ID ? BOT_TAG : bTag(id)) + "</span>" +
+        '<span class="msg-dm-name"' + nameAttr(id) + ">" + escapeHtml(peers[id].username) + (id === BOT_ID ? BOT_TAG : bTag(id)) + "</span>" +
         (n ? '<span class="msg-badge">' + (n > 99 ? "99+" : n) + "</span>" : "");
       box.appendChild(b);
     });
@@ -36813,6 +36912,8 @@ body.tl-right .calculator__top--taskabr {
       var r2 = await client.from("chat_channel_writers").select("channel,user_id");
       var r4 = await client.from("chat_channel_members").select("channel,user_id");
       var r3 = await client.from("chat_admins").select("user_id,is_owner,perms").eq("user_id", state.user.id);
+      var r5 = await client.from("chat_roles").select("id,name,color,position,perms,hoist");
+      var r6 = await client.from("chat_user_roles").select("user_id,role_id");
       var list = [], rs = {}, ws = {}, pv = {}, vw = {};
       (r1.data || []).forEach(function (c) { list.push(c.name); if (c.restricted) rs[c.name] = true; if (c.is_private) pv[c.name] = true; });
       ((r4 && r4.data) || []).forEach(function (w) { (vw[w.channel] = vw[w.channel] || {})[w.user_id] = true; });
@@ -36820,12 +36921,26 @@ body.tl-right .calculator__top--taskabr {
       if (list.length) state.chList = list;
       state.restricted = rs; state.writers = ws; state.priv = pv; state.viewers = vw;
       var arow = r3 && r3.data && r3.data[0];
-      state.isAdmin = !!arow;
+      if (r5 && !r5.error) {
+        var rmap = {}, umap = {};
+        (r5.data || []).forEach(function (x) { rmap[x.id] = x; });
+        ((r6 && r6.data) || []).forEach(function (x) { (umap[x.user_id] = umap[x.user_id] || []).push(x.role_id); });
+        state.roles = rmap; state.userRoles = umap;
+      }
+      var rolePerms = [];
+      ((state.userRoles && state.userRoles[state.user.id]) || []).forEach(function (rid) {
+        var rr = state.roles && state.roles[rid];
+        if (rr) (rr.perms || []).forEach(function (pp) { if (rolePerms.indexOf(pp) < 0) rolePerms.push(pp); });
+      });
+      var permList = ((arow && arow.perms) || []).slice();
+      rolePerms.forEach(function (pp) { if (permList.indexOf(pp) < 0) permList.push(pp); });
+      state.isAdmin = !!arow || rolePerms.length > 0;
       var prevSig = state.permSig;
-      state.perms = { owner: !!(arow && arow.is_owner), list: (arow && arow.perms) || [] };
+      state.perms = { owner: !!(arow && arow.is_owner), list: permList };
       state.isBot = can("bot");
       if (state.isBot) loadBotInbox();
       state.permSig = JSON.stringify(state.perms);
+      try { renderChannels(); renderMembers(); recolorNames(); } catch (e) {}
       if (prevSig && prevSig !== state.permSig && state.winOpen) setTimeout(function () { loadMessages(); }, 0);
       if (!isDm(state.channel) && !isGroup(state.channel) && state.chList && state.chList.indexOf(state.channel) < 0) {
         state.channel = state.chList[0];
@@ -36908,6 +37023,8 @@ body.tl-right .calculator__top--taskabr {
     if (tbb) tbb.style.display = canMod() ? "" : "none";
     var tba = $("msg-tb-admins");
     if (tba) tba.style.display = state.perms.owner ? "" : "none";
+    var tbr = $("msg-tb-roles");
+    if (tbr) tbr.style.display = can("roles") ? "" : "none";
     chNames().forEach(function (ch) {
       var b = document.createElement("button");
       b.type = "button";
@@ -36942,6 +37059,42 @@ body.tl-right .calculator__top--taskabr {
     return false;
   }
   function avAttr(seed) { return ' style="--c:' + avColor(seed) + '"'; }
+  /* ---------- Roles: colors + helpers ---------- */
+  function safeColor(c) { return /^#[0-9a-fA-F]{6}$/.test(String(c || "")) ? String(c) : ""; }
+  function roleList() {
+    return Object.keys(state.roles || {}).map(function (k) { return state.roles[k]; }).sort(function (a, b) { return b.position - a.position; });
+  }
+  function userRolesOf(uid) {
+    var ids = (state.userRoles && state.userRoles[uid]) || [];
+    return ids.map(function (i) { return state.roles && state.roles[i]; }).filter(Boolean).sort(function (a, b) { return b.position - a.position; });
+  }
+  function roleColorOf(uid) {
+    if (!uid || uid === BOT_ID) return "";
+    try { if (isBannedUid(uid)) return ""; } catch (e) {}
+    var rs = userRolesOf(uid);
+    for (var i = 0; i < rs.length; i++) { var c = safeColor(rs[i].color); if (c) return c; }
+    return "";
+  }
+  /* style attribute for a person's NAME: role color wins over everything (inline !important) */
+  function nameAttr(uid) {
+    var rc = roleColorOf(uid);
+    return ' style="--c:' + avColor(uid) + (rc ? ";color:" + rc + " !important" : "") + '"';
+  }
+  function recolorNames() {
+    var win = $("messages-window"); if (!win) return;
+    Array.prototype.forEach.call(win.querySelectorAll(".msg-bubble[data-uid]"), function (b) {
+      var n = b.querySelector(".msg-name"); if (!n) return;
+      var rc = roleColorOf(b.getAttribute("data-uid"));
+      if (rc) n.style.setProperty("color", rc, "important"); else n.style.removeProperty("color");
+    });
+  }
+  function roleChipsHtml(uid) {
+    var rs = userRolesOf(uid); if (!rs.length) return "";
+    return '<div class="dm-sec"><h5>Roles</h5><div class="role-chips">' + rs.map(function (r) {
+      var c = safeColor(r.color) || "#99aab5";
+      return '<span class="role-chip"><i style="background:' + c + '"></i>' + escapeHtml(r.name) + "</span>";
+    }).join("") + "</div></div>";
+  }
   function avImg(id) {
     var u = safeImg(state.avatars[id]);
     return u ? '<img class="av-img" src="' + escapeHtml(u) + '" alt="" referrerpolicy="no-referrer" draggable="false" onerror="this.remove()">' : "";
@@ -36987,8 +37140,8 @@ body.tl-right .calculator__top--taskabr {
     }
     var pin = m.pinned ? '<span class="msg-pinned">pinned</span>' : "";
     var nameHtml = (m.user_id && !mine)
-      ? '<button type="button" class="msg-name msg-name-btn" data-uid="' + escapeHtml(m.user_id) + '" data-uname="' + escapeHtml(m.username) + '" title="Send a direct message"' + avAttr(uid) + ">" + escapeHtml(m.username) + bTag(m.user_id) + "</button>"
-      : '<span class="msg-name"' + avAttr(uid) + ">" + escapeHtml(m.username) + bTag(m.user_id) + "</span>";
+      ? '<button type="button" class="msg-name msg-name-btn" data-uid="' + escapeHtml(m.user_id) + '" data-uname="' + escapeHtml(m.username) + '" title="Send a direct message"' + nameAttr(uid) + ">" + escapeHtml(m.username) + bTag(m.user_id) + "</button>"
+      : '<span class="msg-name"' + nameAttr(uid) + ">" + escapeHtml(m.username) + bTag(m.user_id) + "</span>";
     return out +
       '<div class="msg-bubble' + mcls + '"' + attrs + ">" +
         '<div class="msg-av"' + avAttr(uid) + ">" + escapeHtml(initials(m.username)) + avImg(uid) + "</div>" +
@@ -37092,7 +37245,7 @@ body.tl-right .calculator__top--taskabr {
     var line = online ? actText(p) : "";
     return '<button type="button" class="msg-member' + (online ? " on" : "") + '" data-peer="' + escapeHtml(id) + '" data-uname="' + escapeHtml(name) + '">' +
       '<span class="msg-av-wrap"><span class="msg-dm-av"' + avAttr(id) + ">" + escapeHtml(initials(name)) + avImg(id) + '</span><i class="dot' + (online ? (idle ? " idle" : " on") : "") + '"></i></span>' +
-      '<span class="msg-mem-text"><span class="msg-dm-name">' + escapeHtml(name) + bTag(id) + "</span>" +
+      '<span class="msg-mem-text"><span class="msg-dm-name"' + nameAttr(id) + ">" + escapeHtml(name) + bTag(id) + "</span>" +
       (line ? '<span class="msg-act" title="' + escapeHtml(line) + '">' + escapeHtml(line) + "</span>" : "") + "</span></button>";
   }
   function renderMembers() {
@@ -37105,8 +37258,20 @@ body.tl-right .calculator__top--taskabr {
     if (me && state.user) on[me] = myPresence();
     Object.keys(state.members).forEach(function (id) { if (!on[id]) off[id] = state.members[id]; });
     var onIds = Object.keys(on), offIds = Object.keys(off);
-    var html = '<div class="msg-mem-head">Online — ' + onIds.length + "</div>";
-    onIds.forEach(function (id) { html += memberItem(id, on[id].username || "guest", true, on[id]); });
+    var html = "", groups = {}, rest = [];
+    onIds.forEach(function (id) {
+      var hr = null, rl = userRolesOf(id), banned = false;
+      try { banned = isBannedUid(id); } catch (e) {}
+      if (!banned) for (var k = 0; k < rl.length; k++) { if (rl[k].hoist) { hr = rl[k]; break; } }
+      if (hr) (groups[hr.id] = groups[hr.id] || []).push(id); else rest.push(id);
+    });
+    roleList().forEach(function (r) {
+      if (!r.hoist || !groups[r.id]) return;
+      html += '<div class="msg-mem-head">' + escapeHtml(r.name) + " — " + groups[r.id].length + "</div>";
+      groups[r.id].forEach(function (id) { html += memberItem(id, on[id].username || "guest", true, on[id]); });
+    });
+    html += '<div class="msg-mem-head">Online — ' + rest.length + "</div>";
+    rest.forEach(function (id) { html += memberItem(id, on[id].username || "guest", true, on[id]); });
     if (offIds.length) {
       html += '<div class="msg-mem-head">Offline — ' + offIds.length + "</div>";
       offIds.forEach(function (id) { html += memberItem(id, off[id], false, null); });
@@ -37457,7 +37622,7 @@ body.tl-right .calculator__top--taskabr {
     if (c) {
       [state.sub, state.inbox, state.presence, state.meta].forEach(function (ch) { if (ch) { try { c.removeChannel(ch); } catch (e) {} } });
     }
-    state.botInbox = {}; _inboxUid = null; state.sub = null; state.inbox = null; state.presence = null; state.meta = null; state.isAdmin = false; state.isBot = false; state.perms = { owner: false, list: [] }; state.permSig = null; state.restricted = {}; state.writers = {}; state.priv = {}; state.viewers = {}; state.mute = null; state.avatars = {}; state.profiles = {}; state.groups = {}; state.home = false; state.chList = null;
+    state.botInbox = {}; _inboxUid = null; state.sub = null; state.inbox = null; state.presence = null; state.meta = null; state.isAdmin = false; state.isBot = false; state.roles = {}; state.userRoles = {}; state.perms = { owner: false, list: [] }; state.permSig = null; state.restricted = {}; state.writers = {}; state.priv = {}; state.viewers = {}; state.mute = null; state.avatars = {}; state.profiles = {}; state.groups = {}; state.home = false; state.chList = null;
     state.online = {}; updateStats(); state.members = {}; state.unread = {}; state.myAct = "";
     if (state.actTimer) { clearInterval(state.actTimer); state.actTimer = null; }
   }
@@ -37618,7 +37783,8 @@ body.tl-right .calculator__top--taskabr {
     ["delete_messages", "Delete any message"],
     ["timeout", "Time people out"],
     ["ban", "Ban and unban accounts"],
-    ["bot", "Use Luma BOT (DM and chat as the bot, bot commands, custom apps, frames)"]
+    ["bot", "Use Luma BOT (DM and chat as the bot, bot commands, custom apps, frames)"],
+    ["roles", "Manage roles (create roles, give roles to people)"]
   ];
   async function openAdmins() {
     var c = ensureClient();
@@ -37693,6 +37859,199 @@ body.tl-right .calculator__top--taskabr {
       var res = await c.rpc("chat_remove_admin", { p_target: uid });
       if (res.error) { alert("Could not remove: " + res.error.message); return; }
       openAdmins();
+    });
+  }
+
+  /* ---------- Server dropdown (like Discord's server-name menu) ---------- */
+  var SRV_ICONS = {
+    roles: "M21.41 11.58l-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9a2 2 0 0 0 2.82 0l7-7a2 2 0 0 0 0-2.84zM6.5 8A1.5 1.5 0 1 1 8 6.5 1.5 1.5 0 0 1 6.5 8z",
+    admins: "M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z",
+    ban: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 2c1.85 0 3.55.63 4.9 1.69L5.69 16.9A7.95 7.95 0 0 1 4 12c0-4.42 3.58-8 8-8zm0 16c-1.85 0-3.55-.63-4.9-1.69L18.31 7.1A7.95 7.95 0 0 1 20 12c0 4.42-3.58 8-8 8z",
+    plus: "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z",
+    pencil: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z",
+    image: "M21 19V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2zM8.5 13.5l2.5 3 3.5-4.5 4.5 6H5l3.5-4.5z",
+    list: "M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z",
+    out: "M10 17l1.41-1.41L8.83 13H20v-2H8.83l2.58-2.59L10 7l-5 5 5 5zM4 5h8V3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8v-2H4V5z"
+  };
+  function srvIcon(k) { return '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="' + SRV_ICONS[k] + '"/></svg>'; }
+  function closeServerMenu() {
+    var m = $("msg-srv-menu"); if (m) m.classList.remove("open");
+    var h = document.querySelector("#messages-window .msg-side-head"); if (h) h.classList.remove("open");
+  }
+  function toggleServerMenu(ev) {
+    if (ev) ev.stopPropagation();
+    var head = document.querySelector("#messages-window .msg-side-head");
+    if (!head) return;
+    var m = $("msg-srv-menu");
+    if (!m) { m = document.createElement("div"); m.id = "msg-srv-menu"; m.className = "srv-menu"; head.parentNode.insertBefore(m, head.nextSibling); }
+    if (m.classList.contains("open")) { closeServerMenu(); return; }
+    var items = [];
+    function add(k, label, fn, cls) { items.push({ k: k, label: label, fn: fn, cls: cls || "" }); }
+    var admin = [];
+    if (can("roles")) admin.push(["roles", "Roles", openRoles]);
+    if (can("channels")) admin.push(["plus", "Create Channel", function () { addChannel(); }]);
+    if (canMod()) admin.push(["ban", "Banned Users", openBanList]);
+    if (state.perms.owner) admin.push(["admins", "Manage Admins", openAdmins]);
+    var html = "";
+    function btn(i, k, label, cls) { return '<button type="button" data-i="' + i + '" class="' + (cls || "") + '"><span>' + escapeHtml(label) + "</span>" + srvIcon(k) + "</button>"; }
+    var acts = [];
+    if (admin.length) {
+      admin.forEach(function (a) { html += btn(acts.length, a[0], a[1]); acts.push(a[2]); });
+      html += "<hr />";
+    }
+    html += btn(acts.length, "list", "Channels & Roles"); acts.push(openChannelsRoles);
+    html += "<hr />";
+    html += btn(acts.length, "pencil", "Change Username"); acts.push(function () { var b = $("msg-rename-btn"); if (b) b.click(); });
+    html += btn(acts.length, "image", "Profile Picture"); acts.push(function () { var b = $("msg-avatar-btn"); if (b) b.click(); });
+    html += "<hr />";
+    html += btn(acts.length, "out", "Sign Out", "danger"); acts.push(function () { var b = $("msg-signout-btn"); if (b) b.click(); });
+    m.innerHTML = html;
+    Array.prototype.forEach.call(m.querySelectorAll("button[data-i]"), function (b) {
+      b.addEventListener("click", function (e) { e.stopPropagation(); var f = acts[+b.getAttribute("data-i")]; closeServerMenu(); if (f) f(); });
+    });
+    m.classList.add("open"); head.classList.add("open");
+  }
+  /* "Channels & Roles": everyone can see the roles; managers get a button to edit them */
+  async function openChannelsRoles() {
+    var c = ensureClient(); if (!c || !state.user) return;
+    $("msg-ban-title").textContent = "Channels & Roles";
+    var body = $("msg-ban-body");
+    body.innerHTML = '<div class="msg-dm-empty">Loading…</div>';
+    $("msg-ban").classList.add("open");
+    await loadAvatars();
+    await loadChannels();
+    var rs = roleList(), byRole = {};
+    Object.keys(state.userRoles || {}).forEach(function (u) {
+      (state.userRoles[u] || []).forEach(function (rid) { (byRole[rid] = byRole[rid] || []).push(u); });
+    });
+    var chs = (state.chList || []).map(function (n) {
+      return '<span class="role-chip">#' + escapeHtml(n) + (state.priv[n] ? " 👁" : state.restricted[n] ? " 🔒" : "") + "</span>";
+    }).join("");
+    body.innerHTML = '<label class="ban-lbl">Channels</label><div class="role-chips" style="margin-bottom:14px">' + (chs || '<span class="sub">No channels</span>') + "</div>" +
+      '<label class="ban-lbl">Roles</label>' +
+      (rs.length ? rs.map(function (r) {
+        var col = safeColor(r.color) || "#99aab5", ms = (byRole[r.id] || []).filter(function (u) { try { return !isBannedUid(u); } catch (e) { return true; } });
+        var names = ms.slice(0, 6).map(function (u) { return (state.profiles[u] && state.profiles[u].username) || "user"; });
+        return '<div class="srv-rrow"><span style="width:12px;height:12px;border-radius:50%;flex:none;background:' + col + '"></span><div class="grow" style="min-width:0"><div style="font-weight:600;color:' + (safeColor(r.color) || "#f2f3f5") + '">' + escapeHtml(r.name) + '</div><div class="sub" style="font-size:12px">' + ms.length + " member" + (ms.length === 1 ? "" : "s") + (names.length ? " · " + escapeHtml(names.join(", ")) + (ms.length > 6 ? "…" : "") : "") + "</div></div></div>";
+      }).join("") : '<div class="msg-dm-empty">No roles have been created yet.</div>') +
+      (can("roles") ? '<button type="button" class="ban-go" id="cr-manage" style="background:#5865f2;margin-top:12px">Manage roles</button>' : "");
+    var mb = $("cr-manage"); if (mb) mb.addEventListener("click", openRoles);
+  }
+
+  /* ---------- Roles manager ---------- */
+  var ROLE_INPUT_CSS = "width:100%;box-sizing:border-box;margin:0 0 10px;padding:9px 12px;border:0;border-radius:6px;background:#1e1f22;color:#f2f3f5;font-size:14px";
+  function roleErr(e) {
+    var m = (e && e.message) || String(e || "");
+    if (/Could not find the function|does not exist|schema cache/i.test(m)) return m + "\n\nRun the updated full SQL setup in Supabase first.";
+    return m;
+  }
+  async function openRoles() {
+    var c = ensureClient();
+    if (!c || !can("roles")) return;
+    $("msg-ban-title").textContent = "Roles";
+    var body = $("msg-ban-body");
+    body.innerHTML = '<div class="msg-dm-empty">Loading…</div>';
+    $("msg-ban").classList.add("open");
+    await loadAvatars();
+    await loadChannels();
+    var rs = roleList(), counts = {};
+    Object.keys(state.userRoles || {}).forEach(function (u) { (state.userRoles[u] || []).forEach(function (rid) { counts[rid] = (counts[rid] || 0) + 1; }); });
+    body.innerHTML = '<button type="button" class="ban-go" id="rl-new" style="background:#5865f2;margin:0 0 12px">Create role</button>' +
+      (rs.length ? rs.map(function (r) {
+        var col = safeColor(r.color);
+        return '<div class="ban-row"><span style="width:12px;height:12px;border-radius:50%;flex:none;margin-right:10px;background:' + (col || "#99aab5") + '"></span><div class="grow"><div style="font-weight:600' + (col ? ";color:" + col : "") + '">' + escapeHtml(r.name) + (r.hoist ? ' <span style="font-size:11px;color:#949ba4;font-weight:400">· shown separately</span>' : "") + '</div><div class="sub">' + (counts[r.id] || 0) + " member(s) · " + (r.perms || []).length + ' permission(s)</div></div><button type="button" class="ban-row-btn" data-role="' + escapeHtml(r.id) + '">Edit</button></div>';
+      }).join("") : '<div class="msg-dm-empty">No roles yet. Create one to give people colored names.</div>') +
+      '<div class="sub" style="margin-top:10px;font-size:12px;color:#949ba4">Roles at the top outrank the ones below. You can only manage roles below your own highest role.</div>';
+    $("rl-new").addEventListener("click", function () { editRole(null); });
+    Array.prototype.forEach.call(body.querySelectorAll("[data-role]"), function (b) {
+      b.addEventListener("click", function () { editRole(b.getAttribute("data-role")); });
+    });
+  }
+  function editRole(id) {
+    var c = ensureClient();
+    var r = id ? (state.roles || {})[id] : null;
+    if (id && !r) { openRoles(); return; }
+    r = r || { name: "", color: "", hoist: false, perms: [] };
+    var cur = r.perms || [], col = safeColor(r.color);
+    $("msg-ban-title").textContent = id ? "Edit role: " + r.name : "New role";
+    var body = $("msg-ban-body");
+    body.innerHTML = '<label class="ban-lbl">Role name</label><input id="rl-name" type="text" maxlength="32" autocomplete="off" spellcheck="false" value="' + escapeHtml(r.name) + '" style="' + ROLE_INPUT_CSS + '" />' +
+      '<label class="ban-lbl">Color</label><div style="display:flex;align-items:center;gap:12px;margin:0 0 10px"><input id="rl-color" type="color" value="' + (col || "#99aab5") + '" style="width:44px;height:32px;border:0;padding:0;background:none;cursor:pointer" /><label class="msg-perm-row" style="margin:0"><input id="rl-nocolor" type="checkbox"' + (col ? "" : " checked") + ' /> <span>No color (default name color)</span></label></div>' +
+      '<label class="msg-perm-row"><input id="rl-hoist" type="checkbox"' + (r.hoist ? " checked" : "") + ' /> <span>Show members with this role separately in the member list</span></label>' +
+      '<label class="ban-lbl" style="margin-top:10px">Permissions</label>' + PERM_LABELS.map(function (pl) {
+        var dis = !(state.perms.owner || can(pl[0]));
+        return '<label class="msg-perm-row"' + (dis ? ' style="opacity:.5"' : "") + '><input type="checkbox" data-p="' + pl[0] + '"' + (cur.indexOf(pl[0]) >= 0 ? " checked" : "") + (dis ? " disabled" : "") + ' /> <span>' + escapeHtml(pl[1]) + "</span></label>";
+      }).join("") +
+      '<button type="button" class="ban-go" id="rl-save" style="background:#5865f2;margin-top:12px">' + (id ? "Save role" : "Create role") + "</button>" +
+      (id ? '<div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="ban-row-btn" id="rl-members">Members</button><button type="button" class="ban-row-btn" id="rl-up">Move up</button><button type="button" class="ban-row-btn" id="rl-down">Move down</button></div><button type="button" class="ban-go" id="rl-del" style="margin-top:8px">Delete role</button>' : "") +
+      '<button type="button" class="ban-row-btn" id="rl-back" style="margin-top:8px">Back</button>' +
+      '<div class="sub" style="margin-top:10px;font-size:12px;color:#949ba4">You can only give permissions you have yourself.</div>';
+    $("rl-back").addEventListener("click", openRoles);
+    $("rl-save").addEventListener("click", async function () {
+      var btn = this; btn.disabled = true;
+      var perms = Array.prototype.map.call(body.querySelectorAll("input[data-p]:checked"), function (i) { return i.getAttribute("data-p"); });
+      var res = await c.rpc("chat_role_save", {
+        p_id: id || null,
+        p_name: $("rl-name").value.trim(),
+        p_color: $("rl-nocolor").checked ? null : $("rl-color").value,
+        p_perms: perms,
+        p_hoist: $("rl-hoist").checked
+      });
+      if (res.error) { alert("Could not save: " + roleErr(res.error)); btn.disabled = false; return; }
+      await loadChannels();
+      if (id) openRoles(); else roleMembers(res.data);
+    });
+    if (id) {
+      $("rl-members").addEventListener("click", function () { roleMembers(id); });
+      $("rl-up").addEventListener("click", function () { moveRole(id, 1); });
+      $("rl-down").addEventListener("click", function () { moveRole(id, -1); });
+      $("rl-del").addEventListener("click", async function () {
+        if (!confirm("Delete the role \"" + r.name + "\"? People lose its color and permissions.")) return;
+        var res = await c.rpc("chat_role_delete", { p_id: id });
+        if (res.error) { alert("Could not delete: " + roleErr(res.error)); return; }
+        await loadChannels(); openRoles();
+      });
+    }
+  }
+  async function moveRole(id, dir) {
+    var c = ensureClient();
+    var res = await c.rpc("chat_role_move", { p_id: id, p_dir: dir });
+    if (res.error) { alert("Could not move it: " + roleErr(res.error)); return; }
+    await loadChannels(); openRoles();
+  }
+  async function roleMembers(id) {
+    var c = ensureClient(), r = (state.roles || {})[id];
+    if (!r) { openRoles(); return; }
+    await loadAvatars();
+    $("msg-ban-title").textContent = "Members: " + r.name;
+    var body = $("msg-ban-body");
+    var has = function (u) { return ((state.userRoles || {})[u] || []).indexOf(id) >= 0; };
+    var ids = Object.keys(state.profiles || {}).filter(function (u) { try { return !isBannedUid(u); } catch (e) { return true; } });
+    ids.sort(function (a, b) { return (has(b) ? 1 : 0) - (has(a) ? 1 : 0) || (state.profiles[a].username || "").localeCompare(state.profiles[b].username || ""); });
+    body.innerHTML = '<input id="rm-search" type="text" placeholder="Search people…" autocomplete="off" spellcheck="false" style="' + ROLE_INPUT_CSS + '" />' +
+      '<div id="rm-list" style="max-height:46vh;overflow:auto">' + (ids.length ? ids.map(function (u) {
+        var nm = state.profiles[u].username || u.slice(0, 8);
+        return '<label class="msg-perm-row" data-nm="' + escapeHtml(nm.toLowerCase()) + '"><input type="checkbox" data-u="' + escapeHtml(u) + '"' + (has(u) ? " checked" : "") + ' /> <span>' + escapeHtml(nm) + "</span></label>";
+      }).join("") : '<div class="msg-dm-empty">No accounts yet.</div>') + "</div>" +
+      '<button type="button" class="ban-row-btn" id="rm-back" style="margin-top:10px">Back</button>';
+    $("rm-back").addEventListener("click", function () { editRole(id); });
+    var sr = $("rm-search");
+    sr.addEventListener("input", function () {
+      var q = sr.value.trim().toLowerCase();
+      Array.prototype.forEach.call(body.querySelectorAll("#rm-list [data-nm]"), function (row) { row.style.display = (!q || row.getAttribute("data-nm").indexOf(q) >= 0) ? "" : "none"; });
+    });
+    Array.prototype.forEach.call(body.querySelectorAll("input[data-u]"), function (cb) {
+      cb.addEventListener("change", async function () {
+        var u = cb.getAttribute("data-u"), on = cb.checked;
+        cb.disabled = true;
+        var res = await c.rpc("chat_role_assign", { p_role: id, p_user: u, p_on: on });
+        cb.disabled = false;
+        if (res.error) { cb.checked = !on; alert("Could not change that: " + roleErr(res.error)); return; }
+        var arr = state.userRoles[u] = state.userRoles[u] || [], ix = arr.indexOf(id);
+        if (on && ix < 0) arr.push(id);
+        if (!on && ix >= 0) arr.splice(ix, 1);
+        try { renderMembers(); recolorNames(); } catch (e) {}
+      });
     });
   }
 
@@ -37791,6 +38150,7 @@ body.tl-right .calculator__top--taskabr {
     var x = $("msg-ban-close"); if (x && !x.__b) { x.__b = true; x.addEventListener("click", function () { $("msg-ban").classList.remove("open"); }); }
     var tb = $("msg-tb-bans"); if (tb && !tb.__b) { tb.__b = true; tb.addEventListener("click", openBanList); }
     var ta = $("msg-tb-admins"); if (ta && !ta.__b) { ta.__b = true; ta.addEventListener("click", openAdmins); }
+    var trl = $("msg-tb-roles"); if (trl && !trl.__b) { trl.__b = true; trl.addEventListener("click", openRoles); }
     var rt = $("msg-banned-retry"); if (rt && !rt.__b) { rt.__b = true; rt.addEventListener("click", function () { startSession(); }); }
     var bo = $("msg-banned-out"); if (bo && !bo.__b) { bo.__b = true; bo.addEventListener("click", async function () { var c = ensureClient(); if (c) { try { await c.auth.signOut(); } catch (e) {} } $("msg-banned").classList.remove("open"); applySession(null); }); }
     var mem = $("msg-members");
@@ -38262,6 +38622,7 @@ body.tl-right .calculator__top--taskabr {
       '<div class="dm-pav">' + avHtml(other, name, "msg-dm-av big") + "</div>" +
       '<div class="dm-pbody"><div class="dm-pname">' + escapeHtml(name) + bTag(other) + '</div><div class="dm-puser">' + escapeHtml(String(name).toLowerCase().replace(/\s+/g, "")) + "</div>" +
       '<div class="dm-status">' + statusOf(other) + (po && actText(po) ? " · " + escapeHtml(actText(po)) : "") + "</div>" +
+      roleChipsHtml(other) +
       (since ? '<div class="dm-sec"><h5>Member Since</h5><div>' + escapeHtml(since) + "</div></div>" : "") +
       (canMod() && other !== BOT_ID ? '<button type="button" class="dm-ban" data-ban="' + escapeHtml(other) + '" data-uname="' + escapeHtml(name) + '">Ban user</button>' : "") + "</div></div>";
   }
@@ -38911,6 +39272,8 @@ body.tl-right .calculator__top--taskabr {
           if (state.winOpen) loadMessages();
         })
         .on("postgres_changes", { event: "*", schema: "public", table: "chat_admins" }, function () { loadChannels(); })
+        .on("postgres_changes", { event: "*", schema: "public", table: "chat_roles" }, function () { loadChannels(); })
+        .on("postgres_changes", { event: "*", schema: "public", table: "chat_user_roles" }, function () { loadChannels(); })
         .on("postgres_changes", { event: "*", schema: "public", table: "chat_mutes" }, function () { if (state.user) checkMute(); })
         .on("postgres_changes", { event: "*", schema: "public", table: "chat_bans" }, function () { if (state.user) checkBan(); })
         .on("postgres_changes", { event: "*", schema: "public", table: "chat_profiles" }, function () { refreshAvatars(); })
@@ -39167,8 +39530,20 @@ body.tl-right .calculator__top--taskabr {
     } catch (e) {}
   }
   var audioCtx = null;
+  var NOTIF_SOUND_URL = "https://fastly.jsdelivr.net/gh/mathissofun137/lumaicons@HEAD/discord-notification.mp3";
+  var notifAudio = null;
   function beep() {
     try { if (getPrefs().sound === false) return; } catch (e) {}
+    try {
+      if (!notifAudio) { notifAudio = new Audio(NOTIF_SOUND_URL); notifAudio.preload = "auto"; notifAudio.volume = 0.7; }
+      notifAudio.currentTime = 0;
+      var pr = notifAudio.play();
+      if (pr && pr.catch) pr.catch(function () { beepSynth(); });   /* blocked / failed to load → old chime */
+      return;
+    } catch (e) {}
+    beepSynth();
+  }
+  function beepSynth() {
     try {
       var AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return;
@@ -39474,6 +39849,9 @@ body.tl-right .calculator__top--taskabr {
     bindBanUi();
     var ab = $("msg-avatar-btn"); if (ab && !ab.__b) { ab.__b = true; ab.addEventListener("click", changeAvatar); }
     var cn = $("msg-ch-new"); if (cn && !cn.__b) { cn.__b = true; cn.addEventListener("click", addChannel); }
+    var srvHead = document.querySelector("#messages-window .msg-side-head");
+    if (srvHead && !srvHead.__b) { srvHead.__b = true; srvHead.addEventListener("click", toggleServerMenu); document.addEventListener("click", closeServerMenu); }
+    var srvCr = $("msg-srv-cr"); if (srvCr && !srvCr.__b) { srvCr.__b = true; srvCr.addEventListener("click", openChannelsRoles); }
     var pc = $("msg-perm-close"); if (pc && !pc.__b) { pc.__b = true; pc.addEventListener("click", function () { $("msg-perm").classList.remove("open"); }); }
     var ps = $("msg-perm-save"); if (ps && !ps.__b) { ps.__b = true; ps.addEventListener("click", savePerm); }
     bindDm();
@@ -42520,5 +42898,255 @@ html.cc-dark .window.note :is(img,video,canvas,iframe,picture){filter:invert(1) 
 /* Dock bar: raise the top edge ~10px so the icons sit inside the bar with breathing room above them.
    Bottom edge and icon positions stay put (icons are bottom-aligned). Bottom-docked layout only. */
 body:not(.dock-left):not(.dock-right) .dock-container{height:5.85rem !important}
+</style>
+
+<!-- ===================== SETTINGS — macOS "System Settings" page layout ===================== -->
+<style id="mp-settings-style">
+/* Applies to the default (macOS) skin; Windows / Ubuntu / Kali / PS5 skins keep their own look. */
+body:not([data-os-style]) #settings-window{
+  --mp-bg:#e4e4e7;--mp-side:#f8f8f9;--mp-card:#fbfbfc;--mp-text:#1d1d1f;--mp-sub:#86868b;--mp-sep:rgba(0,0,0,.09);
+  --mp-btn:#ececef;--mp-btn-h:#e2e2e6;--mp-hover:rgba(0,0,0,.045);--mp-tint:#64646f;--mp-tint2:#797984;--mp-track:rgba(120,120,128,.22);
+  --mp-pill:#f8f8f9;--mp-shadow:0 0 0 .5px rgba(0,0,0,.06);
+}
+body:not([data-os-style]) #settings-window.dark{
+  --mp-bg:#1b1b1d;--mp-side:#2a2a2d;--mp-card:#2a2a2d;--mp-text:#f5f5f7;--mp-sub:#98989f;--mp-sep:rgba(255,255,255,.09);
+  --mp-btn:rgba(255,255,255,.11);--mp-btn-h:rgba(255,255,255,.17);--mp-hover:rgba(255,255,255,.06);--mp-tint:#7d7d8a;--mp-tint2:#92929f;--mp-track:rgba(255,255,255,.18);
+  --mp-pill:#2a2a2d;--mp-shadow:0 0 0 .5px rgba(255,255,255,.06);
+}
+
+/* ---- window shell ---- */
+body:not([data-os-style]) #settings-window:not(.is-maximized):not(.maximized){width:min(860px,94vw) !important;height:min(600px,90vh) !important}
+body:not([data-os-style]) #settings-window{background:var(--mp-bg) !important;border-radius:22px !important;border:.5px solid rgba(0,0,0,.2) !important;
+  box-shadow:0 0 0 .5px rgba(255,255,255,.4) inset,0 26px 70px rgba(0,0,0,.34),0 3px 10px rgba(0,0,0,.14) !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;color:var(--mp-text) !important;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Inter","Helvetica Neue",system-ui,sans-serif !important;font-size:14px}
+body:not([data-os-style]) #settings-window.is-maximized,body:not([data-os-style]) #settings-window.maximized{border-radius:0 !important}
+/* title bar → just the traffic lights, sitting on top of the sidebar */
+body:not([data-os-style]) #settings-window .window__taskbar{position:absolute !important;top:0;left:0;width:236px;height:52px !important;min-height:0 !important;
+  padding:0 0 0 22px !important;background:transparent !important;border:0 !important;box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;z-index:30;display:flex !important;align-items:center !important}
+body:not([data-os-style]) #settings-window .window__taskbar--content{display:none !important}
+body:not([data-os-style]) #settings-window .window__taskbar--actions{gap:8px !important;margin:0 !important}
+body:not([data-os-style]) #settings-window .settings-body{height:100% !important;padding:8px;gap:8px;background:transparent !important;box-sizing:border-box}
+
+/* ---- floating sidebar ---- */
+body:not([data-os-style]) #settings-window .settings-sidebar{width:236px !important;min-width:236px !important;max-width:236px !important;box-sizing:border-box;
+  padding:0 10px 12px !important;background:var(--mp-side) !important;border:0 !important;border-radius:16px;box-shadow:var(--mp-shadow);gap:2px !important;
+  scrollbar-width:none}
+body:not([data-os-style]) #settings-window .settings-sidebar::-webkit-scrollbar{display:none}
+body:not([data-os-style]) #settings-window .settings-sidebar::before{content:"";order:-3;position:sticky;top:0;z-index:6;flex:0 0 44px;margin:0 -10px;background:var(--mp-side)}
+body:not([data-os-style]) #settings-window .settings-sidebar .settings-search{order:-2;height:34px !important;margin:0 0 8px !important;width:100% !important;border-radius:12px !important;
+  border:0 !important;background-color:var(--mp-btn) !important;font-size:14px !important;color:var(--mp-text) !important;padding:0 10px 0 34px !important;box-shadow:none !important}
+body:not([data-os-style]) #settings-window .settings-sidebar .settings-search::placeholder{color:var(--mp-sub)}
+body:not([data-os-style]) #settings-window .settings-sidebar .settings-search:focus{box-shadow:0 0 0 3px color-mix(in srgb,var(--mp-tint) 35%,transparent) !important;outline:0 !important}
+body:not([data-os-style]) #settings-window .settings-profile{order:-1;background:transparent !important;border:0 !important;box-shadow:none !important;border-radius:12px !important;
+  padding:8px 8px !important;margin:0 0 6px !important;gap:12px !important;transform:none !important}
+body:not([data-os-style]) #settings-window .settings-profile:hover{background:var(--mp-hover) !important;transform:none !important}
+body:not([data-os-style]) #settings-window .settings-profile-avatar{width:46px !important;height:46px !important;font-size:19px !important;font-weight:500 !important;
+  background:linear-gradient(160deg,#8fe56a,#2fb83c) !important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25),0 1px 3px rgba(0,0,0,.18)}
+body:not([data-os-style]) #settings-window .settings-profile-text strong{font-size:15px !important;font-weight:600 !important;color:var(--mp-text) !important}
+body:not([data-os-style]) #settings-window .settings-profile-text span{font-size:12px !important;color:var(--mp-sub) !important}
+/* section labels become quiet gaps */
+body:not([data-os-style]) #settings-window .settings-nav-label{font-size:0 !important;line-height:0 !important;height:1px;padding:0 !important;margin:7px 6px !important;color:transparent !important;
+  background:var(--mp-sep);letter-spacing:0;text-transform:none}
+body:not([data-os-style]) #settings-window .settings-sidebar button.settings-nav{min-height:38px !important;height:38px !important;padding:0 10px !important;gap:11px !important;border-radius:12px !important;
+  font-size:14px !important;font-weight:400 !important;color:var(--mp-text) !important;background:transparent !important;box-shadow:none !important;letter-spacing:0}
+body:not([data-os-style]) #settings-window .settings-sidebar button.settings-nav:hover{background:var(--mp-hover) !important}
+body:not([data-os-style]) #settings-window .settings-sidebar button.settings-nav.active{background:linear-gradient(180deg,var(--mp-tint2),var(--mp-tint)) !important;color:#fff !important;font-weight:500 !important;box-shadow:none !important}
+body:not([data-os-style]) #settings-window .settings-sidebar button.settings-nav.active::before{display:none !important}
+body:not([data-os-style]) #settings-window .settings-sidebar button.settings-nav .nav-icon{width:26px !important;height:26px !important;min-width:26px;border-radius:7px !important;
+  background:var(--mp-ic,#8e8e93) !important;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.18),0 .5px 1px rgba(0,0,0,.15) !important;font-size:0 !important;filter:none !important}
+body:not([data-os-style]) #settings-window .nav-icon svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---- content column ---- */
+body:not([data-os-style]) #settings-window .settings-content{padding:0 6px 22px 0 !important;background:transparent !important;scroll-behavior:auto;position:relative;
+  scrollbar-width:thin;scrollbar-color:rgba(120,120,128,.4) transparent}
+body:not([data-os-style]) #settings-window .settings-content::-webkit-scrollbar{width:12px}
+body:not([data-os-style]) #settings-window .settings-content::-webkit-scrollbar-thumb{background:rgba(120,120,128,.4);border:4px solid transparent;background-clip:padding-box;border-radius:10px}
+body:not([data-os-style]) #settings-window .nx-set-head{display:none !important}
+body:not([data-os-style]) #settings-window .mp-toolbar{position:sticky;top:0;z-index:8;height:48px;display:flex;align-items:center;padding:0 0 0 4px;margin:0 0 4px;cursor:default;
+  background:linear-gradient(var(--mp-bg) 70%,transparent)}
+body:not([data-os-style]) #settings-window .mp-pill{display:flex;align-items:center;height:34px;padding:0 4px;border-radius:17px;background:var(--mp-pill);box-shadow:var(--mp-shadow)}
+body:not([data-os-style]) #settings-window .mp-pill button{width:32px;height:30px;border:0;background:transparent;border-radius:15px;display:grid;place-items:center;color:var(--mp-text);cursor:pointer;padding:0}
+body:not([data-os-style]) #settings-window .mp-pill button svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+body:not([data-os-style]) #settings-window .mp-pill button:disabled{opacity:.3;cursor:default}
+body:not([data-os-style]) #settings-window .mp-pill button:not(:disabled):hover{background:var(--mp-hover)}
+
+/* only one page at a time (all pages while searching) */
+body:not([data-os-style]) #settings-window .settings-content > [id^="settings-panel-"]{display:none !important;max-width:none !important;margin:0 0 6px !important;padding:0 !important;border:0 !important}
+body:not([data-os-style]) #settings-window .settings-content > [id^="settings-panel-"].mp-on:not(.nx-hide),
+body:not([data-os-style]) #settings-window.mp-searching .settings-content > [id^="settings-panel-"]:not(.nx-hide){display:block !important}
+body:not([data-os-style]) #settings-window .settings-content > .mp-on:not(.nx-hide){animation:mp-in .22s cubic-bezier(.2,.8,.2,1)}
+@keyframes mp-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* header card */
+body:not([data-os-style]) #settings-window .settings-content > [id^="settings-panel-"] > h3,
+body:not([data-os-style]) #settings-window .settings-content > [id^="settings-panel-"] > p.sub:first-of-type{display:none !important}
+body:not([data-os-style]) #settings-window .mp-hero{background:var(--mp-card);border-radius:20px;box-shadow:var(--mp-shadow);padding:26px 28px 24px;margin:0 0 14px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:6px}
+body:not([data-os-style]) #settings-window .mp-hero .mp-tile{width:64px;height:64px;border-radius:16px;display:grid;place-items:center;background:var(--mp-ic,#8e8e93);
+  box-shadow:inset 0 0 0 .5px rgba(255,255,255,.2),0 2px 6px rgba(0,0,0,.18);margin-bottom:6px}
+body:not([data-os-style]) #settings-window .mp-hero .mp-tile svg{width:36px;height:36px;stroke:#fff;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+body:not([data-os-style]) #settings-window .mp-hero .mp-title{font-size:27px;font-weight:700;letter-spacing:-.02em;color:var(--mp-text);line-height:1.15}
+body:not([data-os-style]) #settings-window .mp-hero .mp-desc{font-size:13.5px;line-height:1.45;color:var(--mp-sub);max-width:420px}
+
+/* ---- grouped rows ---- */
+body:not([data-os-style]) #settings-window .settings-group{background:var(--mp-card) !important;border:0 !important;border-radius:18px !important;box-shadow:var(--mp-shadow) !important;margin:0 0 14px !important;padding:0 !important;overflow:hidden}
+body:not([data-os-style]) #settings-window .settings-row{min-height:50px;padding:10px 16px !important;gap:16px !important;border:0 !important;border-top:.5px solid var(--mp-sep) !important;background:transparent !important}
+body:not([data-os-style]) #settings-window .settings-row:first-child,body:not([data-os-style]) #settings-window .settings-section-label + .settings-row{border-top:0 !important}
+body:not([data-os-style]) #settings-window .settings-row:hover{background:transparent !important}
+body:not([data-os-style]) #settings-window .settings-row .row-label strong{font-size:14px !important;font-weight:400 !important;color:var(--mp-text) !important}
+body:not([data-os-style]) #settings-window .settings-row .row-label span{font-size:12px !important;color:var(--mp-sub) !important}
+body:not([data-os-style]) #settings-window .settings-section-label{padding:12px 16px 4px !important;font-size:12px !important;font-weight:600 !important;letter-spacing:0 !important;text-transform:none !important;color:var(--mp-sub) !important}
+body:not([data-os-style]) #settings-window .settings-content p.sub,
+body:not([data-os-style]) #settings-window .settings-content .cloak-note,
+body:not([data-os-style]) #settings-window .settings-content > [id^="settings-panel-"] > p{font-size:11.5px !important;line-height:1.4 !important;color:var(--mp-sub) !important;margin:-4px 14px 14px !important;max-width:none !important}
+body:not([data-os-style]) #settings-window .settings-content code{background:var(--mp-btn);border-radius:5px;padding:1px 5px;color:var(--mp-text)}
+
+/* ---- controls ---- */
+body:not([data-os-style]) #settings-window .settings-toggle{width:44px !important;min-width:44px !important;height:26px !important;background:var(--mp-track) !important;box-shadow:none !important}
+body:not([data-os-style]) #settings-window .settings-toggle::after{width:22px !important;height:22px !important;top:2px !important;left:2px !important;box-shadow:0 1px 3px rgba(0,0,0,.3) !important}
+body:not([data-os-style]) #settings-window .settings-toggle.on,body:not([data-os-style]) #settings-window .settings-toggle[aria-pressed="true"]{background:var(--mp-tint) !important}
+body:not([data-os-style]) #settings-window .settings-toggle.on::after,body:not([data-os-style]) #settings-window .settings-toggle[aria-pressed="true"]::after{transform:translateX(18px) !important}
+body:not([data-os-style]) #settings-window .settings-toggle:focus-visible{outline:2px solid var(--mp-tint);outline-offset:2px}
+body:not([data-os-style]) #settings-window .settings-content select{height:30px !important;min-width:120px;border-radius:10px !important;border:0 !important;background-color:var(--mp-btn) !important;color:var(--mp-text) !important;font-size:13.5px !important;padding:0 28px 0 12px !important}
+body:not([data-os-style]) #settings-window .settings-content select:hover{background-color:var(--mp-btn-h) !important}
+body:not([data-os-style]) #settings-window .settings-content input[type="text"],
+body:not([data-os-style]) #settings-window .settings-content input[type="search"]{height:32px !important;border-radius:10px !important;border:0 !important;background:var(--mp-btn) !important;color:var(--mp-text) !important}
+body:not([data-os-style]) #settings-window .settings-content .cloak-btn,
+body:not([data-os-style]) #settings-window .settings-content button.cloak-btn{height:30px !important;padding:0 14px !important;border-radius:10px !important;border:0 !important;background:var(--mp-btn) !important;color:var(--mp-text) !important;
+  font:500 13.5px -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,sans-serif !important;transform:none !important;filter:none !important}
+body:not([data-os-style]) #settings-window .settings-content .cloak-btn:hover{background:var(--mp-btn-h) !important}
+body:not([data-os-style]) #settings-window #btn-reset-all-settings{background:rgba(255,59,48,.13) !important;color:#e0352b !important}
+body:not([data-os-style]) #settings-window #btn-reset-all-settings:hover{background:rgba(255,59,48,.2) !important}
+/* sliders */
+body:not([data-os-style]) #settings-window .settings-content input[type="range"]{-webkit-appearance:none;appearance:none;height:4px !important;border-radius:2px;background:var(--mp-track);outline:0;accent-color:var(--mp-tint)}
+body:not([data-os-style]) #settings-window .settings-content input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:0;box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 4px rgba(0,0,0,.3);cursor:pointer}
+body:not([data-os-style]) #settings-window .settings-content input[type="range"]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:0;box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 4px rgba(0,0,0,.3)}
+body:not([data-os-style]) #settings-window .accent-swatch{border-color:var(--mp-card) !important}
+body:not([data-os-style]) #settings-window .os-card,body:not([data-os-style]) #settings-window .perf-mode-card{border-radius:14px !important}
+body:not([data-os-style]) #settings-window.dark .settings-content #wallpaper-search{background:var(--mp-btn) !important;color:var(--mp-text) !important;border-color:transparent !important}
+body:not([data-os-style]) #settings-window #wallpaper-search{background:var(--mp-btn) !important;border:0 !important;border-radius:12px !important;margin:0 0 12px !important;max-width:none !important}
+body:not([data-os-style]) #settings-window .wallpaper-grid{padding:0 2px 8px}
+@media (prefers-reduced-motion:reduce){body:not([data-os-style]) #settings-window .mp-on{animation:none !important}}
+</style>
+<script id="mp-settings-js">
+(function () {
+  "use strict";
+  if (window.__mpSettings) return; window.__mpSettings = true;
+  var svg = function (d) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>'; };
+  var ICONS = {
+    wallpaper:     ["#2fa8e0", svg('<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-5 4 4 3-3 4 4"/>')],
+    general:       ["#8e8e93", svg('<circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/>')],
+    appearance:    ["#1c1c1e", svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="#fff"/>')],
+    displays:      ["#1e8cf5", svg('<rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M9 20h6M12 16.5V20"/>')],
+    sound:         ["#ff2d6a", svg('<path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/>')],
+    dock:          ["#1c1c1e", svg('<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M7.5 16h9"/>')],
+    widgets:       ["#ff9f0a", svg('<rect x="4" y="4" width="7" height="7" rx="1.8"/><rect x="13" y="4" width="7" height="7" rx="1.8"/><rect x="4" y="13" width="7" height="7" rx="1.8"/><rect x="13" y="13" width="7" height="7" rx="1.8"/>')],
+    multitasking:  ["#5e5ce6", svg('<rect x="3.5" y="6.5" width="12" height="11" rx="2"/><path d="M8 4.5h11a1.5 1.5 0 0 1 1.5 1.5v9"/>')],
+    controlcenter: ["#8e8e93", svg('<path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/>')],
+    notifications: ["#ff3b30", svg('<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>')],
+    privacy:       ["#30b158", svg('<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>')],
+    styles:        ["#af52de", svg('<path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.4 0 2-1 1.5-2.2-.5-1.2.2-2.3 1.5-2.3H17a3.5 3.5 0 0 0 3.5-3.5C20.5 7 16.8 3.5 12 3.5z"/><circle cx="8" cy="11" r=".8" fill="#fff"/><circle cx="11" cy="7.5" r=".8" fill="#fff"/><circle cx="15.5" cy="8.5" r=".8" fill="#fff"/>')],
+    menubar:       ["#0a84ff", svg('<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 9.5h18"/><circle cx="6.5" cy="7.3" r=".5" fill="#fff"/><circle cx="9" cy="7.3" r=".5" fill="#fff"/>')],
+    music:         ["#fa2d48", svg('<path d="M9 17.5V6.5l10-2v11"/><circle cx="6.8" cy="17.5" r="2.2"/><circle cx="16.8" cy="15.5" r="2.2"/>')],
+    about:         ["#0a84ff", svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r=".6" fill="#fff"/>')]
+  };
+  var DESCR = {
+    wallpaper: "Pick a still or live wallpaper for your desktop.",
+    general: "Manage your overall setup and everyday desktop preferences.",
+    appearance: "Choose a look for windows, buttons, and accent colors.",
+    displays: "Adjust brightness and how the display is shown.",
+    sound: "Control output volume and sound effects.",
+    dock: "Change the size of the Dock and how icons grow when you point at them.",
+    widgets: "Customize the desktop day widget — font, size, color, and layout.",
+    multitasking: "Mission Control, Stage Manager, and window management.",
+    controlcenter: "Choose what appears in Control Center and the menu bar.",
+    notifications: "Decide when notifications can interrupt you.",
+    privacy: "Disguise this tab and open the desktop in a cloaked window.",
+    styles: "Pick the overall look and feel of this desktop.",
+    about: "Details about this desktop and its version."
+  };
+  var win, content, hist = [], hi = -1, pb, pf, started = false;
+  var isMac = function () { return !document.body.hasAttribute("data-os-style"); };
+  function pid(p) { return p.id.replace("settings-panel-", ""); }
+  function panels() { return [].slice.call(content.querySelectorAll(":scope > [id^='settings-panel-']")); }
+
+  function decorateNavs() {
+    [].slice.call(win.querySelectorAll(".settings-sidebar .settings-nav")).forEach(function (b) {
+      var ic = ICONS[b.getAttribute("data-panel")], t = b.querySelector(".nav-icon");
+      if (!ic || !t || t.getAttribute("data-mp")) return;
+      t.setAttribute("data-mp", "1"); t.innerHTML = ic[1]; b.style.setProperty("--mp-ic", ic[0]);
+      t.style.background = ""; t.removeAttribute("style"); // drop old gradient; colour comes from --mp-ic
+    });
+  }
+  function hero(p) {
+    if (p.querySelector(":scope > .mp-hero")) return;
+    var h3 = p.querySelector(":scope > h3"), sub = p.querySelector(":scope > p.sub"), id = pid(p), ic = ICONS[id] || ["#8e8e93", ICONS.general[1]];
+    var d = document.createElement("div"); d.className = "mp-hero"; d.style.setProperty("--mp-ic", ic[0]);
+    var desc = (sub && sub.id !== "os-about-sub" ? sub.textContent : "") || DESCR[id] || (sub ? sub.textContent : "");
+    d.innerHTML = '<div class="mp-tile">' + ic[1] + '</div><div class="mp-title"></div><div class="mp-desc"></div>';
+    d.querySelector(".mp-title").textContent = h3 ? h3.textContent : id;
+    d.querySelector(".mp-desc").textContent = desc;
+    if (id === "about" && sub) { sub.removeAttribute("class"); sub.style.display = "none"; d.setAttribute("data-about", "1"); }
+    p.insertBefore(d, p.firstChild);
+    if (sub && id !== "about") sub.classList.add("mp-hidden-sub");
+  }
+  function show(id, push, dir) {
+    var ps = panels(), found = ps.some(function (p) { return pid(p) === id; });
+    if (!found) return;
+    ps.forEach(function (p) { p.classList.toggle("mp-on", pid(p) === id); });
+    [].slice.call(win.querySelectorAll(".settings-sidebar .settings-nav")).forEach(function (b) { b.classList.toggle("active", b.getAttribute("data-panel") === id); });
+    if (push) { hist = hist.slice(0, hi + 1); if (hist[hist.length - 1] !== id) hist.push(id); hi = hist.length - 1; }
+    content.scrollTop = 0; syncPill();
+    // the legacy nav handler smooth-scrolls to the panel; cancel that leftover scroll
+    requestAnimationFrame(function () { content.scrollTop = 0; }); setTimeout(function () { content.scrollTop = 0; }, 40);
+  }
+  function syncPill() { if (pb) pb.disabled = hi <= 0; if (pf) pf.disabled = hi >= hist.length - 1; }
+  function go(step) { var n = hi + step; if (n < 0 || n >= hist.length) return; hi = n; show(hist[hi], false); }
+
+  function init() {
+    win = document.getElementById("settings-window"); if (!win) return false;
+    content = win.querySelector(".settings-content"); if (!content) return false;
+    if (started) return true; started = true;
+    decorateNavs();
+    panels().forEach(hero);
+    var tb = document.createElement("div"); tb.className = "mp-toolbar";
+    tb.innerHTML = '<div class="mp-pill"><button type="button" class="mp-back" aria-label="Back" disabled><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><button type="button" class="mp-fwd" aria-label="Forward" disabled><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div>';
+    content.insertBefore(tb, content.firstChild);
+    pb = tb.querySelector(".mp-back"); pf = tb.querySelector(".mp-fwd");
+    pb.addEventListener("click", function () { go(-1); }); pf.addEventListener("click", function () { go(1); });
+    // sidebar navigation → page switch (capture so it wins over the old scroll-to behaviour)
+    win.addEventListener("click", function (e) {
+      var b = e.target.closest && e.target.closest(".settings-nav"); if (!b || !isMac()) return;
+      var si = win.querySelector(".settings-search");
+      if (si && si.value) { si.value = ""; si.dispatchEvent(new Event("input")); }
+      show(b.getAttribute("data-panel"), true);
+    }, true);
+    var si = win.querySelector(".settings-search");
+    if (si) si.addEventListener("input", function () { win.classList.toggle("mp-searching", !!si.value.trim()); if (!si.value.trim()) { var a = win.querySelector(".settings-nav.active"); show(a ? a.getAttribute("data-panel") : "general", false); } });
+    // later-injected nav entries (e.g. Styles) get icons too
+    new MutationObserver(decorateNavs).observe(win.querySelector(".settings-sidebar"), { childList: true });
+    new MutationObserver(function () { panels().forEach(function (p) { if (!p.querySelector(":scope > .mp-hero")) hero(p); }); }).observe(content, { childList: true });
+    // drag the window from the toolbar strip too
+    function wireDrag() { try { if (window.jQuery && $(win).data("ui-draggable")) $(win).draggable("option", "handle", ".window__taskbar, .mp-toolbar"); } catch (e) {} }
+    wireDrag(); setTimeout(wireDrag, 1500); setTimeout(wireDrag, 5000);
+    var open = document.querySelectorAll(".open_settings, .open_settings_menu"); [].forEach.call(open, function (o) { o.addEventListener("click", function () { setTimeout(wireDrag, 50); }); });
+    show("general", true);
+    return true;
+  }
+  function boot() { if (!init()) setTimeout(boot, 400); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+  window.mpOpenSettingsPanel = function (id) { if (started) show(id, true); };
+})();
+</script>
+<style>
+body:not([data-os-style]) #settings-window .settings-content > [id^="settings-panel-"] > p.sub.mp-hidden-sub{display:none !important}
+</style>
+
+
+<style id="ubuntu-dock-fix">
+/* Ubuntu skin: the generic "dock headroom" rule forced height:5.85rem on the container, collapsing the left dock. Restore full-height. */
+html body[data-os-style="ubuntu"]:not(.dock-left):not(.dock-right) .dock-container{height:auto !important;top:28px !important;bottom:0 !important}
+html body[data-os-style="ubuntu"] .dock-el.dock,html body[data-os-style="ubuntu"] #macos-dock{height:100% !important;max-height:none !important}
 </style>
 </html>

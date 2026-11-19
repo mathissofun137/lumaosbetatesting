@@ -12340,10 +12340,18 @@ html[data-theme] .window-header.steam-popup-header,
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-duckduckgo" style="display:none"></div>
       </button>
-      <button type="button" class="dock-open-app-button icon open_betaai" data-dock-id="betaai" title="AI" aria-label="Launch AI" >
+      <button type="button" class="dock-open-app-button icon open_ai" data-dock-id="ai" title="AI" aria-label="Launch AI" >
         <p class="tooltip">AI</p>
         <span class="dock-icon-wrap">
           <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png" alt="AI" draggable="false" />
+        </span>
+        <div class="dot" data-open-dot></div>
+        <div class="point" id="point-ai" style="display:none"></div>
+      </button>
+      <button type="button" class="dock-open-app-button icon open_betaai" data-dock-id="betaai" title="Beta AI" aria-label="Launch Beta AI" >
+        <p class="tooltip">Beta AI</p>
+        <span class="dock-icon-wrap">
+          <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22128%22%20height%3D%22128%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236366f1%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a855f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2223%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M50%2018l7.5%2022.5L80%2048l-22.5%207.5L50%2078l-7.5-22.5L20%2048l22.5-7.5z%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20opacity%3D%22.9%22%20d%3D%22M77%2062l3%208.5%208.5%203-8.5%203-3%208.5-3-8.5-8.5-3%208.5-3z%22%2F%3E%3C%2Fsvg%3E" alt="Beta AI" draggable="false" />
         </span>
         <div class="dot" data-open-dot></div>
         <div class="point" id="point-betaai" style="display:none"></div>
@@ -12802,9 +12810,13 @@ html[data-theme] .window-header.steam-popup-header,
         <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png" alt="DuckDuckGo" draggable="false">
         <strong>DuckDuckGo</strong>
       </div>
-      <div class="child-launchpad" data-lp-app="betaai" data-keywords="AI assistant chatgpt chat gpt beta ai chatbot ask questions homework write code">
+      <div class="child-launchpad" data-lp-app="ai" data-keywords="AI assistant chatgpt chat gpt">
         <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png" alt="AI" draggable="false">
         <strong>AI</strong>
+      </div>
+      <div class="child-launchpad" data-lp-app="betaai" data-keywords="Beta AI assistant chatbot chat gpt ask questions">
+        <img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22128%22%20height%3D%22128%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236366f1%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a855f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2223%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M50%2018l7.5%2022.5L80%2048l-22.5%207.5L50%2078l-7.5-22.5L20%2048l22.5-7.5z%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20opacity%3D%22.9%22%20d%3D%22M77%2062l3%208.5%208.5%203-8.5%203-3%208.5-3-8.5-8.5-3%208.5-3z%22%2F%3E%3C%2Fsvg%3E" alt="Beta AI" draggable="false">
+        <strong>Beta AI</strong>
       </div>
       <div class="child-launchpad" data-lp-app="settings" data-keywords="System Settings preferences system">
         <img src="https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/SystemSettings.png" alt="System Settings" draggable="false">
@@ -13314,7 +13326,7 @@ alter publication supabase_realtime add table public.messages;</pre>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI</title>
+<title>Beta AI</title>
 <link rel="preconnect" href="https://text.pollinations.ai" crossorigin>
 <link rel="dns-prefetch" href="https://text.pollinations.ai">
 <style>
@@ -13467,7 +13479,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 </head>
 <body>
 <aside id="side">
-  <div class="brand"><div class="logo"><svg viewBox="0 0 24 24"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9zM5 15l.7 1.8 1.8.7-1.8.7L5 20l-.7-1.8L2.5 17.5l1.8-.7z"/></svg></div><b>AI</b></div>
+  <div class="brand"><div class="logo"><svg viewBox="0 0 24 24"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9zM5 15l.7 1.8 1.8.7-1.8.7L5 20l-.7-1.8L2.5 17.5l1.8-.7z"/></svg></div><b>Beta AI</b><span class="badge">BETA</span></div>
   <button id="newchat" type="button"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New chat</button>
   <div id="list"></div>
   <div class="side-foot"><button id="openset" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span><em><i class="dot"></i><b id="stat" style="font-weight:550"></b></em></button></div>
@@ -13477,13 +13489,13 @@ button{font:inherit;color:inherit;cursor:pointer}
   <div id="msgs"></div>
   <div id="comp">
     <button id="down" type="button" aria-label="Scroll to latest"><svg viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg></button>
-    <div id="box"><textarea id="in" rows="1" placeholder="Message AI…" autofocus></textarea><button id="send" type="button" aria-label="Send"></button></div>
-    <div id="foot"><kbd>Enter</kbd> to send · <kbd>Shift</kbd>+<kbd>Enter</kbd> for a new line · AI can make mistakes</div>
+    <div id="box"><textarea id="in" rows="1" placeholder="Message Beta AI…" autofocus></textarea><button id="send" type="button" aria-label="Send"></button></div>
+    <div id="foot"><kbd>Enter</kbd> to send · <kbd>Shift</kbd>+<kbd>Enter</kbd> for a new line · Beta AI can make mistakes</div>
   </div>
   <div id="modal"><div id="sheet" role="dialog" aria-label="Settings">
     <h2>Settings</h2>
     <label for="s-prov">Provider</label>
-    <select id="s-prov"><option value="pollinations">Pollinations — free, no key</option><option value="puter">Puter AI — free, no key (different service)</option><option value="ondevice">On-device — Chrome built-in AI (offline)</option><option value="openai">OpenAI</option><option value="openrouter">OpenRouter</option><option value="custom">Custom (OpenAI-compatible)</option></select>
+    <select id="s-prov"><option value="groq">Groq</option><option value="pollinations">Pollinations — free, no key</option><option value="puter">Puter AI — free, no key (different service)</option><option value="ondevice">On-device — Chrome built-in AI (offline)</option><option value="openai">OpenAI</option><option value="openrouter">OpenRouter</option><option value="custom">Custom (OpenAI-compatible)</option></select>
     <div id="s-http"><label for="s-url">Endpoint (chat completions URL)</label><input id="s-url" spellcheck="false" autocomplete="off">
     <label for="s-key">API key</label><input id="s-key" type="password" spellcheck="false" autocomplete="off" placeholder="Not needed for Pollinations"></div>
     <p class="hint" id="s-note" style="display:none"></p>
@@ -13502,7 +13514,9 @@ button{font:inherit;color:inherit;cursor:pointer}
   var STOP = '<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>';
   var SPARK = '<svg viewBox="0 0 24 24"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z"/></svg>';
   var KEY = "betaai_v1", mem = null;
+  var GROQ_KEY = "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";
   var PRESETS = {
+    groq: { url: "https://api.groq.com/openai/v1/chat/completions", model: "openai/gpt-oss-120b", models: ["openai/gpt-oss-120b", "llama-3.3-70b-versatile", "llama-3.1-8b-instant", "llama-3.1-70b-versatile", "gemma2-9b-it", "mixtral-8x7b-32768", "qwen-qwq-32b"] },
     pollinations: { url: "https://text.pollinations.ai/openai", model: "openai-fast", models: ["openai-fast", "openai", "mistral", "llama", "deepseek", "gemini"] },
     openai: { url: "https://api.openai.com/v1/chat/completions", model: "gpt-4o-mini", models: ["gpt-4o-mini", "gpt-4o", "gpt-4.1-mini", "gpt-4.1"] },
     openrouter: { url: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-4o-mini", models: ["openai/gpt-4o-mini", "anthropic/claude-3.5-sonnet", "google/gemini-flash-1.5", "meta-llama/llama-3.1-70b-instruct"] },
@@ -13515,9 +13529,20 @@ button{font:inherit;color:inherit;cursor:pointer}
   var S = { chats: [], cur: null, set: {} }, viaParent = false;
   function defaults() {
     S.chats = S.chats || []; S.cur = S.cur || null;
-    S.set = S.set && S.set.url !== undefined ? S.set : { provider: "pollinations", url: PRESETS.pollinations.url, model: PRESETS.pollinations.model, key: "", system: "", temp: "" };
+    S.set = S.set && S.set.url !== undefined ? S.set : { provider: "groq", url: PRESETS.groq.url, model: PRESETS.groq.model, key: GROQ_KEY, system: "", temp: "", v: 4 };
     /* one-time speed migration: older saved default "openai" -> the faster model */
-    if (S.set.v !== 2) { if (S.set.provider === "pollinations" && S.set.model === "openai") S.set.model = "openai-fast"; S.set.v = 2; }
+    if (S.set.v !== 2 && S.set.v !== 3 && S.set.v !== 4) { if (S.set.provider === "pollinations" && S.set.model === "openai") S.set.model = "openai-fast"; S.set.v = 2; }
+    /* force Groq + key + model once */
+    if (S.set.v !== 4) {
+      S.set.provider = "groq";
+      S.set.url = PRESETS.groq.url;
+      S.set.model = "openai/gpt-oss-120b";
+      S.set.key = GROQ_KEY;
+      S.set.v = 4;
+    }
+    if (S.set.provider === "groq" && !S.set.key) S.set.key = GROQ_KEY;
+    if (S.set.provider === "groq" && !S.set.url) S.set.url = PRESETS.groq.url;
+    if (S.set.provider === "groq" && !S.set.model) S.set.model = "openai/gpt-oss-120b";
   }
   function getStored(cb) {
     try { var r = localStorage.getItem(KEY); localStorage.setItem(KEY + "_t", "1"); localStorage.removeItem(KEY + "_t"); cb(r ? JSON.parse(r) : null, false); return; } catch (e) {}
@@ -13655,7 +13680,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     box.appendChild(w);
     box.scrollTop = keepScroll ? y : box.scrollHeight;
   }
-  var PNAME = { pollinations: "Pollinations", puter: "Puter", ondevice: "On-device", openai: "OpenAI", openrouter: "OpenRouter", custom: "Custom" };
+  var PNAME = { groq: "Groq", pollinations: "Pollinations", puter: "Puter", ondevice: "On-device", openai: "OpenAI", openrouter: "OpenRouter", custom: "Custom" };
   function renderTop() {
     var c = cur(); $("title").textContent = c ? c.title : "New chat";
     var pn = PNAME[S.set.provider] || "AI";
@@ -13668,7 +13693,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 
   /* ---------- chat ---------- */
   function sysPrompt() {
-    var base = "You are AI, a friendly, capable assistant built into Luma OS. Be clear and concise, use Markdown for formatting and fenced code blocks for code. Today is " + new Date().toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" }) + ".";
+    var base = "You are Beta AI, a friendly, capable assistant built into Luma OS. Be clear and concise, use Markdown for formatting and fenced code blocks for code. Today is " + new Date().toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" }) + ".";
     return S.set.system ? base + "\n\n" + S.set.system : base;
   }
   function send(text) {
@@ -13694,7 +13719,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     var tp = parseFloat(st.temp); if (isFinite(tp)) body.temperature = tp;
     var headers = { "Content-Type": "application/json" };
     if (st.key) headers.Authorization = "Bearer " + st.key;
-    if (st.provider === "openrouter") headers["X-Title"] = "AI";
+    if (st.provider === "openrouter") headers["X-Title"] = "Beta AI";
     var node = null, raf = 0;
     function paint() { raf = 0; if (!node) node = $("msgs").querySelector(".msg.ai:last-child"); if (node) { fillAi(node, a, true); var b = $("msgs"); if (b.scrollHeight - b.scrollTop - b.clientHeight < 140) b.scrollTop = b.scrollHeight; } }
     function sched() { if (!raf) raf = requestAnimationFrame(paint); }
@@ -13781,13 +13806,23 @@ button{font:inherit;color:inherit;cursor:pointer}
   };
   function showProv(p) { $("s-http").style.display = (p === "puter" || p === "ondevice") ? "none" : ""; var n = $("s-note"); n.style.display = NOTES[p] ? "" : "none"; n.textContent = NOTES[p] || ""; }
   function fillModels(p) { $("s-models").innerHTML = (PRESETS[p] ? PRESETS[p].models : []).map(function (m) { return '<option value="' + esc(m) + '">'; }).join(""); $("s-key").placeholder = p === "pollinations" ? "Not needed for Pollinations" : "Paste your API key"; }
-  $("s-prov").addEventListener("change", function () { var p = PRESETS[this.value]; if (this.value !== "custom") { $("s-url").value = p.url; $("s-model").value = p.model; } fillModels(this.value); showProv(this.value); });
+  $("s-prov").addEventListener("change", function () {
+    var p = PRESETS[this.value];
+    if (this.value !== "custom") {
+      $("s-url").value = p.url;
+      $("s-model").value = p.model;
+      if (this.value === "groq" && !$("s-key").value) $("s-key").value = GROQ_KEY;
+    }
+    fillModels(this.value);
+    showProv(this.value);
+  });
   $("s-save").addEventListener("click", function () {
-    S.set = { v: 2, provider: $("s-prov").value, url: $("s-url").value.trim(), key: $("s-key").value.trim(), model: $("s-model").value.trim(), system: $("s-sys").value.trim(), temp: $("s-temp").value.trim() };
+    S.set = { v: 4, provider: $("s-prov").value, url: $("s-url").value.trim(), key: $("s-key").value.trim(), model: $("s-model").value.trim(), system: $("s-sys").value.trim(), temp: $("s-temp").value.trim() };
+    if (S.set.provider === "groq" && !S.set.key) S.set.key = GROQ_KEY;
     save(); $("modal").classList.remove("on"); renderTop();
   });
   $("s-cancel").addEventListener("click", function () { $("modal").classList.remove("on"); });
-  $("s-clear").addEventListener("click", function () { if (confirm("Delete all AI chats on this device?")) { if (busy) stop(); S.chats = []; S.cur = null; save(); $("modal").classList.remove("on"); renderAll(); } });
+  $("s-clear").addEventListener("click", function () { if (confirm("Delete all Beta AI chats on this device?")) { if (busy) stop(); S.chats = []; S.cur = null; save(); $("modal").classList.remove("on"); renderAll(); } });
   $("modal").addEventListener("mousedown", function (e) { if (e.target === this) this.classList.remove("on"); });
   $("openset").addEventListener("click", openSet); $("modelpill").addEventListener("click", openSet);
 
@@ -13820,7 +13855,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   function go() { if (busy) { stop(); return; } var t = inp.value; if (!t.trim()) return; inp.value = ""; grow(); send(t); }
   $("send").addEventListener("click", go);
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") { if ($("modal").classList.contains("on")) $("modal").classList.remove("on"); else if (busy) stop(); } });
-  getStored(function (d, vp) { S = d || S; viaParent = vp; defaults(); renderAll(); inp.focus(); });
+  getStored(function (d, vp) { S = d || S; viaParent = vp; defaults(); save(); renderAll(); inp.focus(); });
   window.__betaai = { send: send };
 })();
 </script>
@@ -13834,7 +13869,7 @@ button{font:inherit;color:inherit;cursor:pointer}
           <button type="button" class="backfull-betaai" title="Minimize"></button>
           <button type="button" class="full-betaai" title="Maximize"></button>
         </div>
-        <div class="window__taskbar--content"><h2>AI</h2></div>
+        <div class="window__taskbar--content"><h2>Beta AI</h2></div>
       </div>
       <iframe id="betaai-frame" data-nyx-src="about:blank#betaai" src="about:blank" allow="fullscreen; clipboard-write" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#1a1a1d;display:block"></iframe>
       <script>
@@ -14927,7 +14962,7 @@ button{font:inherit;color:inherit;cursor:pointer}
         instagram: () => { try { if (typeof window.openInstagram === "function") window.openInstagram(); else clickDock("instagram"); } catch (e) {} },
         google: () => { try { if (typeof window.openGoogle === "function") window.openGoogle(); else clickDock("google"); } catch (e) {} },
         duckduckgo: () => { try { if (typeof window.openDuckduckgo === "function") window.openDuckduckgo(); else clickDock("duckduckgo"); } catch (e) {} },
-        ai: () => { try { if (typeof window.openBetaai === "function") window.openBetaai(); else clickDock("betaai"); } catch (e) {} },
+        ai: () => { try { if (typeof window.openAi === "function") window.openAi(); else clickDock("ai"); } catch (e) {} },
         betaai: () => { try { if (typeof window.openBetaai === "function") window.openBetaai(); else clickDock("betaai"); } catch (e) {} },
         devhub: () => { try { if (typeof openDevHub === "function") openDevHub(); else clickDock("devhub"); } catch (e) {} }
       };
@@ -14958,7 +14993,7 @@ button{font:inherit;color:inherit;cursor:pointer}
         google: dockIcon("google", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/google.png"),
         duckduckgo: dockIcon("duckduckgo", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png"),
         ai: dockIcon("ai", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png"),
-        betaai: dockIcon("betaai", "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png"),
+        betaai: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22128%22%20height%3D%22128%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236366f1%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a855f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2223%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M50%2018l7.5%2022.5L80%2048l-22.5%207.5L50%2078l-7.5-22.5L20%2048l22.5-7.5z%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20opacity%3D%22.9%22%20d%3D%22M77%2062l3%208.5%208.5%203-8.5%203-3%208.5-3-8.5-8.5-3%208.5-3z%22%2F%3E%3C%2Fsvg%3E",
         messages: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/discord.png",
         music: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Music.png",
         mail: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Mail.png",
@@ -14991,7 +15026,8 @@ button{font:inherit;color:inherit;cursor:pointer}
         { name: "Instagram", kind: "Application", section: "Applications", keywords: "instagram ig social photo reels stories", icon: ICON.instagram, action: openApp.instagram },
         { name: "Google", kind: "Application", section: "Applications", keywords: "google search web", icon: ICON.google, action: openApp.google },
         { name: "DuckDuckGo", kind: "Application", section: "Applications", keywords: "duckduckgo ddg search privacy", icon: ICON.duckduckgo, action: openApp.duckduckgo },
-        { name: "AI", kind: "Application", section: "Applications", keywords: "ai assistant chatgpt chat gpt openai beta ai chatbot ask questions homework write code", icon: ICON.betaai, action: openApp.betaai },
+        { name: "AI", kind: "Application", section: "Applications", keywords: "ai assistant chatgpt chat gpt openai", icon: ICON.ai, action: openApp.ai },
+        { name: "Beta AI", kind: "Application", section: "Applications", keywords: "beta ai assistant chatbot chat gpt ask questions homework write code", icon: ICON.betaai, action: openApp.betaai },
         { name: "Discord", kind: "Application", section: "Applications", keywords: "chat discord text messages", icon: ICON.messages, action: () => { try { clickDock("messages"); } catch (e) {} } },
         { name: "Music", kind: "Application", section: "Applications", keywords: "songs apple music audio player", icon: ICON.music, action: () => { try { clickDock("music"); } catch (e) {} } },
         { name: "Mail", kind: "Application", section: "Applications", keywords: "email inbox mail", icon: ICON.mail, action: () => { try { clickDock("mail"); } catch (e) {} } },
@@ -15966,7 +16002,7 @@ button{font:inherit;color:inherit;cursor:pointer}
       if (win.classList.contains("snapchat-app") || win.id === "snapchat-window") return "Snapchat";
       if (win.classList.contains("instagram-app") || win.id === "instagram-window") return "Instagram";
       if (win.classList.contains("google-app") || win.id === "google-window") return "Google";
-      if (win.classList.contains("betaai-app") || win.id === "betaai-window") return "AI";
+      if (win.classList.contains("betaai-app") || win.id === "betaai-window") return "Beta AI";
       if (win.classList.contains("ai-app") || win.id === "ai-window") return "AI";
       if (win.classList.contains("duckduckgo-app") || win.id === "duckduckgo-window") return "DuckDuckGo";
       return "Finder";
@@ -16157,7 +16193,8 @@ button{font:inherit;color:inherit;cursor:pointer}
         { name: "Instagram", winId: "instagram-window", pointId: "point-instagram", frameId: "instagram-frame", openSel: ".open_instagram, [data-dock-id='instagram'], .child-launchpad[data-lp-app='instagram']", title: "Instagram", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons/instagram.png", accent: "225, 48, 108" },
         { name: "Google", winId: "google-window", pointId: "point-google", frameId: "google-frame", openSel: ".open_google, [data-dock-id='google'], .child-launchpad[data-lp-app='google']", title: "Google", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/google.png", accent: "66, 133, 244" },
         { name: "Duckduckgo", winId: "duckduckgo-window", pointId: "point-duckduckgo", frameId: "duckduckgo-frame", openSel: ".open_duckduckgo, [data-dock-id='duckduckgo'], .child-launchpad[data-lp-app='duckduckgo']", title: "DuckDuckGo", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/duckduckgo.png", accent: "222, 88, 51" },
-        { name: "Betaai", winId: "betaai-window", pointId: "point-betaai", frameId: "betaai-frame", openSel: ".open_betaai, [data-dock-id='betaai'], .child-launchpad[data-lp-app='betaai'], .open_ai, [data-dock-id='ai'], .child-launchpad[data-lp-app='ai']", title: "AI", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png", accent: "16, 163, 127" }
+        { name: "Betaai", winId: "betaai-window", pointId: "point-betaai", frameId: "betaai-frame", openSel: ".open_betaai, [data-dock-id='betaai'], .child-launchpad[data-lp-app='betaai']", title: "Beta AI", icon: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22128%22%20height%3D%22128%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236366f1%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a855f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2223%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M50%2018l7.5%2022.5L80%2048l-22.5%207.5L50%2078l-7.5-22.5L20%2048l22.5-7.5z%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20opacity%3D%22.9%22%20d%3D%22M77%2062l3%208.5%208.5%203-8.5%203-3%208.5-3-8.5-8.5-3%208.5-3z%22%2F%3E%3C%2Fsvg%3E", accent: "99, 102, 241" },
+        { name: "Ai", winId: "ai-window", pointId: "point-ai", frameId: "ai-frame", openSel: ".open_ai, [data-dock-id='ai'], .child-launchpad[data-lp-app='ai']", title: "AI", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png", accent: "16, 163, 127" }
       ];
 
       function getFrame(opts) {
@@ -29675,7 +29712,8 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
     { id: "instagram", name: "Instagram", sub: "Photos, reels & stories", cats: ["play", "create"], icon: INSTAGRAM_ICON, dock: "instagram", inst: true, win: "#instagram-window,.instagram-app" },
     { id: "google", name: "Google", sub: "Search the web", cats: ["work"], icon: GOOGLE_ICON, dock: "google", inst: true, win: "#google-window,.google-app" },
     { id: "duckduckgo", name: "DuckDuckGo", sub: "Private search", cats: ["work"], icon: DUCKDUCKGO_ICON, dock: "duckduckgo", inst: true, win: "#duckduckgo-window,.duckduckgo-app" },
-    { id: "betaai", name: "AI", sub: "Chat assistant", cats: ["work", "create"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png", dock: "betaai", inst: true, win: "#betaai-window,.betaai-app" },
+    { id: "ai", name: "AI", sub: "Chat assistant", cats: ["work", "create"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/chatgpt.png", dock: "ai", inst: true, win: "#ai-window,.ai-app:not(.betaai-app)" },
+    { id: "betaai", name: "Beta AI", sub: "AI chat assistant", cats: ["work", "create"], icon: "data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22128%22%20height%3D%22128%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236366f1%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a855f7%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2223%22%20fill%3D%22url%28%23g%29%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20d%3D%22M50%2018l7.5%2022.5L80%2048l-22.5%207.5L50%2078l-7.5-22.5L20%2048l22.5-7.5z%22%2F%3E%3Cpath%20fill%3D%22%23fff%22%20opacity%3D%22.9%22%20d%3D%22M77%2062l3%208.5%208.5%203-8.5%203-3%208.5-3-8.5-8.5-3%208.5-3z%22%2F%3E%3C%2Fsvg%3E", dock: "betaai", inst: true, win: "#betaai-window,.betaai-app" },
     { id: "safari", name: "Safari", sub: "Web browser", cats: ["work"], dock: "safari" },
     { id: "messages", name: "Discord", sub: "Chat, DMs & servers", cats: ["play", "work"], icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/discord.png", dock: "messages", win: "#messages-window,.messages-app" },
     { id: "steam", name: "Steam", sub: "Games & community", cats: ["arcade", "play"], dock: "steam" },
@@ -29922,7 +29960,7 @@ setToggle("safari-status-toggle", KEYS.safariStatus, true);
   var NAMES = [
     [".appstore-window", "App Store"], [".devhub-window", "Dev Hub"], [".Vscode", "Code"], [".terminal", "Terminal"],
     [".note", "Notes"], [".calculator", "Calculator"], [".maps", "Maps"], [".steam", "Steam"],
-    [".tiktok-app", "TikTok"], [".youtube-app", "YouTube"], [".gdash-app", "Geometry Dash"], [".minecraft-app", "Minecraft 26.2"], [".twitch-app", "Twitch"], [".gfn-app", "GeForce Now"], [".snapchat-app", "Snapchat"], [".instagram-app", "Instagram"], [".google-app", "Google"], [".duckduckgo-app", "DuckDuckGo"], [".betaai-app", "AI"], [".ai-app:not(.betaai-app)", "AI"],
+    [".tiktok-app", "TikTok"], [".youtube-app", "YouTube"], [".gdash-app", "Geometry Dash"], [".minecraft-app", "Minecraft 26.2"], [".twitch-app", "Twitch"], [".gfn-app", "GeForce Now"], [".snapchat-app", "Snapchat"], [".instagram-app", "Instagram"], [".google-app", "Google"], [".duckduckgo-app", "DuckDuckGo"], [".betaai-app", "Beta AI"], [".ai-app:not(.betaai-app)", "AI"],
     [".settings-window", "System Settings"], [".imovie-window", "Netflix"], [".safari", "Safari"], [".finder-window", "Finder"]
   ];
   function visible(el) {
@@ -37765,7 +37803,7 @@ body.tl-right .calculator__top--taskabr {
     "devhub-window": "DevHub", "vibe-window": "Vibe", "steam-window": "Steam", "messages-window": "Discord",
     "spotify-window": "Spotify", "youtube-window": "YouTube", "tiktok-window": "TikTok", "twitch-window": "Twitch",
     "snapchat-window": "Snapchat", "instagram-window": "Instagram", "google-window": "Google",
-    "duckduckgo-window": "DuckDuckGo", "gfn-window": "GeForce Now", "gdash-window": "Geometry Dash", "ai-window": "AI", "betaai-window": "AI"
+    "duckduckgo-window": "DuckDuckGo", "gfn-window": "GeForce Now", "gdash-window": "Geometry Dash", "ai-window": "AI", "betaai-window": "Beta AI"
   };
   function winVisible(el) {
     try {

@@ -2,6 +2,53 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+<script id="nyx-auto-cloak">/* Auto cloak: runs before the OS loads. Settings > Tab Cloak > Window cloak */
+(function(){try{
+  var mode=localStorage.getItem("nyx_auto_cloak");
+  if(mode!=="about"&&mode!=="blob")return;
+  if(window.top!==window.self)return;            /* already inside a cloak */
+  if(/nocloak/i.test(location.hash))return;       /* escape hatch: add #nocloak to the address */
+  var url=location.href.replace(/#.*$/,"");
+  var title=document.title||"Mac OS";
+  function esc(t){return String(t).replace(/[<>&"]/g,function(c){return {"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c];});}
+  function shell(src){
+    return "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>"+esc(title)+"</title>"
+      +"<style>html,body{margin:0;height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100%;display:block}</style></head><body>"
+      +"<iframe id=\"f\" src=\""+esc(src)+"\" allow=\"fullscreen *; autoplay; clipboard-write; microphone; camera; gamepad\" allowfullscreen></iframe>"
+      +"<script>var f=document.getElementById(\"f\");setInterval(function(){try{var d=f.contentDocument;if(!d)return;if(d.title&&document.title!==d.title)document.title=d.title;"
+      +"var l=d.querySelector('link[rel~=\"icon\"]');if(l&&l.href){var m=document.querySelector('link[rel~=\"icon\"]');if(!m){m=document.createElement(\"link\");m.rel=\"icon\";document.head.appendChild(m);}if(m.href!==l.href)m.href=l.href;}}catch(e){}},1000);<\/script></body></html>";
+  }
+  if(mode==="blob"){
+    /* instant, no pop-up needed: this tab itself becomes a blob: page that hosts the OS */
+    location.replace(URL.createObjectURL(new Blob([shell(url)],{type:"text/html"})));
+    return;
+  }
+  var redirect=localStorage.getItem("nyx_auto_cloak_redirect")||"https://classroom.google.com";
+  var done=false;
+  function openAboutBlank(){
+    if(done)return true;
+    var w=null;try{w=window.open("about:blank","_blank");}catch(e){}
+    if(!w)return false;
+    done=true;
+    try{w.document.open();w.document.write(shell(url));w.document.close();}
+    catch(e){try{w.location.href=url;}catch(e2){}}
+    try{location.replace(redirect);}catch(e){}
+    return true;
+  }
+  if(!openAboutBlank()){
+    /* pop-up blocked without a click: finish on the very first click / key press */
+    var fire=function(){if(openAboutBlank()){["pointerdown","keydown","touchstart"].forEach(function(t){window.removeEventListener(t,fire,true);});}};
+    ["pointerdown","keydown","touchstart"].forEach(function(t){window.addEventListener(t,fire,true);});
+    document.addEventListener("DOMContentLoaded",function(){
+      var d=document.createElement("div");
+      d.style.cssText="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:2147483647;background:rgba(20,20,22,.92);color:#fff;font:500 14px/1.3 -apple-system,system-ui,sans-serif;padding:12px 18px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.4);pointer-events:none";
+      d.textContent="Click anywhere to open the about:blank cloak";
+      document.body.appendChild(d);
+    });
+  }
+}catch(e){}})();
+</script>
+
 
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14361,8 +14408,20 @@ button{font:inherit;color:inherit;cursor:pointer}
                 <div class="row-label"><strong>Blob URL</strong><span>Open in a new window with a blob: address</span></div>
                 <button type="button" class="cloak-btn" id="cloak-blob">Open</button>
               </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Auto about:blank cloak</strong><span>Every time you open this OS, it instantly launches in an about:blank window and sends this tab away. Allow pop-ups for this site.</span></div>
+                <button type="button" class="settings-toggle" id="auto-cloak-about" aria-pressed="false"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Auto blob cloak</strong><span>Every time you open this OS, this tab instantly becomes a blob: page that hosts it. No pop-up needed.</span></div>
+                <button type="button" class="settings-toggle" id="auto-cloak-blob" aria-pressed="false"></button>
+              </div>
+              <div class="settings-row">
+                <div class="row-label"><strong>Redirect original tab to</strong><span>Used by the auto about:blank cloak</span></div>
+                <input type="text" id="auto-cloak-redirect" placeholder="https://classroom.google.com" spellcheck="false">
+              </div>
             </div>
-            <p class="cloak-note">Allow pop-ups if a cloaked window is blocked. Title and icon changes apply to this tab right away.</p>
+            <p class="cloak-note">Allow pop-ups if a cloaked window is blocked. Title and icon changes apply to this tab right away. Only one auto cloak can be on at a time. To get back in with an auto cloak on, open the site with <b>#nocloak</b> on the end of the address.</p>
           </div>
           <div id="settings-panel-dock" style="display:block">
             <h3>Desktop & Dock</h3>
@@ -36570,6 +36629,7 @@ body.tl-right .calculator__top--taskabr {
       return "\uD83D\uDEAB Blacklisted word \"" + a.word + "\" from " + (a.username || "someone") + " " + bwhere + ". The message was deleted.\nMessage: \"" + String(a.sample || "").slice(0, 120) + "\"";
     }
     var where = a.is_dm ? "in a DM" + (a.dm_with ? " with " + a.dm_with : "") : "in #" + String(a.ch).replace(/^gc:/, "group ");
+    if (a.kind === "timeout") return "\u23F1\uFE0F " + (a.username || "Someone") + " was automatically timed out for 1 hour for spamming (the same message 4 times in 30 seconds " + where + "). They were told in their Luma BOT DM.\nMessage: \"" + String(a.sample || "").slice(0, 120) + "\"";
     return "🚨 Spam alert: " + (a.username || "someone") + " sent the same message " + a.cnt + " times in 30 seconds " + where + ".\nMessage: \"" + String(a.sample || "").slice(0, 120) + "\"";
   }
   function spamSeen() { try { return JSON.parse(localStorage.getItem("luma_spam_seen") || "[]"); } catch (e) { return []; } }
@@ -37644,13 +37704,15 @@ body.tl-right .calculator__top--taskabr {
     if (tba) tba.style.display = state.perms.owner ? "" : "none";
     var tbr = $("msg-tb-roles");
     if (tbr) tbr.style.display = can("roles") ? "" : "none";
+    try { syncNotifRead(); } catch (e) {}
     chNames().forEach(function (ch) {
       var b = document.createElement("button");
       b.type = "button";
-      b.className = "msg-ch" + (ch === state.channel ? " on" : "");
+      var chMen = (state.mentions && state.mentions[ch]) || 0, chUn = (state.chUnread && state.chUnread[ch]) || 0;
+      b.className = "msg-ch" + (ch === state.channel ? " on" : "") + (chUn && ch !== state.channel ? " unread" : "");
       var extra = (state.priv[ch] || state.restricted[ch]) ? '<span class="ch-lock" title="' + (state.priv[ch] ? "Private" : "Restricted") + '">' + (state.priv[ch] ? "&#128065;" : "&#128274;") + "</span>" : "";
       if (can("channel_access") || can("channels")) extra += '<span class="ch-act">' + (can("channel_access") ? '<span data-act="perm" title="Permissions">&#9881;</span>' : "") + (can("channels") ? '<span data-act="del" title="Delete channel">&#10005;</span>' : "") + "</span>";
-      b.innerHTML = '<span class="hash">#</span><span>' + escapeHtml(ch) + "</span>" + extra;
+      b.innerHTML = '<span class="hash">#</span><span>' + escapeHtml(ch) + "</span>" + (chMen && ch !== state.channel ? '<span class="ch-ping">' + (chMen > 99 ? "99+" : chMen) + "</span>" : "") + extra;
       b.addEventListener("click", function (e) {
         var a = e.target.closest && e.target.closest("[data-act]");
         if (a) { e.stopPropagation(); if (a.getAttribute("data-act") === "del") removeChannel(ch); else openPerm(ch); return; }
@@ -38126,6 +38188,36 @@ body.tl-right .calculator__top--taskabr {
     await loadMessages();
     subscribeRealtime();
   }
+  /* Built-in word filter (n-word / f-word, any variation). Mirrors chat_filter_hit() in the SQL file. */
+  var LUMA_LEET_FROM = "0134578@$!|¡€96øłđаеосріѕхкуƒιοαε", LUMA_LEET_TO = "oieastbasiiieggoldaeocpisxkyfioae";
+  var LUMA_FILTER = [
+    ["n-word", "S", /n+[il]+[gq]{2,}/],
+    ["n-word", "W", /\bn+[il]+[gq]+(a|ah|az|as|uh|s|z|r)?\b/],
+    ["n-word", "W", /\bn+[gq]{2,}(a|ah|az|as|er|ers|uh|r)\b/],
+    ["n-word", "W", /\bn+[il]+bb+(a|ah|az|as|er|ers|uh)\b/],
+    ["n-word", "W", /\bn+[il]+kk+(a|ah|az|as|er|ers)\b/],
+    ["f-word", "S", /(f|ph)[uv]+c+k/],
+    ["f-word", "W", /\b(mother|motha|mutha)?(f|ph)[uv]+[kq]+(s|ed|er|ers|in|ing|n|r|z)?\b/],
+    ["f-word", "W", /\bf[uv]+x+(s|ed|er|ers)?\b|f[uv]+x+k+/],
+    ["f-word", "W", /\bf+(c+k+(s|ed|er|ers|ing|in|n)?|k+(in|ing|n))\b/],
+    ["f-word", "W", /\b(f|ph)[uv]+cc+/],
+    ["f-word", "W", /\b(f|ph)[uv]+c+(in|ing|ed|er|ers)\b/],
+    ["f-word", "S", /fa+g{2,}[oeiu]+t/],
+    ["f-word", "W", /\bfa+g+(s|ot|ots|et|ets|it|its|y|ies|ing)?\b/],
+  ];
+  function lumaFilterHit(t) {
+    t = String(t == null ? "" : t);
+    if (!t.trim()) return null;
+    var s = t.normalize("NFKD").toLowerCase(), o = "";
+    for (var i = 0; i < s.length; i++) { var k = LUMA_LEET_FROM.indexOf(s[i]); o += k >= 0 ? LUMA_LEET_TO[k] : s[i]; }
+    var strong = o.replace(/[^a-z]/g, "");
+    var weak = o.replace(/[*'\u2019`]/g, "").replace(/[^a-z]+/g, " ").trim();
+    for (var j = 0; j < LUMA_FILTER.length; j++) {
+      var p = LUMA_FILTER[j];
+      if (p[2].test(p[1] === "S" ? strong : weak)) return p[0];
+    }
+    return null;
+  }
   async function sendMessage() {
     var input = $("msg-input");
     var btn = $("msg-send");
@@ -38138,6 +38230,12 @@ body.tl-right .calculator__top--taskabr {
     if (!client) { setStatus("Not connected", "err"); return; }
     if (!state.user) { showAuth(); return; }
     if (!canPost()) { setStatus("You can't type in this channel", "err"); return; }
+    if (!asBotActive() && lumaFilterHit(text)) {
+      setStatus("That word isn't allowed", "err");
+      alert("Your message wasn't sent because it contains a word that isn't allowed.");
+      input.focus();
+      return;
+    }
     if (btn) btn.disabled = true;
     var asBot = asBotActive();
     var firstPath = null;
@@ -38242,7 +38340,7 @@ body.tl-right .calculator__top--taskabr {
       [state.sub, state.inbox, state.presence, state.meta].forEach(function (ch) { if (ch) { try { c.removeChannel(ch); } catch (e) {} } });
     }
     state.botInbox = {}; _inboxUid = null; state.sub = null; state.inbox = null; state.presence = null; state.meta = null; state.isAdmin = false; state.isBot = false; state.roles = {}; state.userRoles = {}; state.perms = { owner: false, list: [] }; state.permSig = null; state.restricted = {}; state.writers = {}; state.priv = {}; state.viewers = {}; state.mute = null; state.avatars = {}; state.profiles = {}; state.groups = {}; state.home = false; state.chList = null;
-    state.online = {}; updateStats(); state.members = {}; state.unread = {}; state.myAct = "";
+    state.online = {}; updateStats(); state.members = {}; state.unread = {}; state.chUnread = {}; state.mentions = {}; try { notifHist = null; notifHistUid = null; } catch (e) {} state.myAct = "";
     if (state.actTimer) { clearInterval(state.actTimer); state.actTimer = null; }
   }
   function startSession() {
@@ -39562,12 +39660,10 @@ body.tl-right .calculator__top--taskabr {
     }
   }
   function notifyGroup(m, gid) {
-    if (!notifOn() || !shouldNotify("group", m)) return;
+    if (!shouldNotify("group", m)) return;
     var g = state.groups && state.groups[gid];
     var raw = String(m.content != null ? m.content : (m.x != null ? m.x : ""));
-    var text = (m.username || "Someone") + ": " + (raw.length > 80 ? raw.slice(0, 80) + "…" : raw);
-    beep();
-    showToast(g ? g.name : "Group chat", text, function () { if (!state.winOpen) openWindow(); openGroup(gid); });
+    lumaNotify({ kind: "group", key: m.ch || m.channel || groupKey(gid), gid: gid, name: m.username || "Someone", sub: g ? g.name : "Group chat", text: msgPreview(raw), mention: mentionsMe(raw) && getPrefs().mentions !== false, uid: m.user_id });
   }
   (function () {
     var st = document.createElement("style");
@@ -39610,7 +39706,7 @@ body.tl-right .calculator__top--taskabr {
 
   /* ---------- Notification preferences + first-run setup wizard ---------- */
   var LS_PREFS = "nyx_notif_prefs", LS_SETUP = "nyx_setup_done";
-  function defaultPrefs() { return { v: 1, sound: true, dms: "all", groups: "all", channels: {}, people: {} }; }
+  function defaultPrefs() { return { v: 1, sound: true, desktop: true, preview: true, mentions: true, dms: "all", groups: "all", channels: {}, people: {} }; }
   function getPrefs() {
     try {
       var p = JSON.parse(localStorage.getItem(LS_PREFS) || "null");
@@ -39627,12 +39723,11 @@ body.tl-right .calculator__top--taskabr {
     if (mode === "people") return !!(p.people && m && p.people[m.user_id]);
     return true;
   }
-  function notifyChannel(m, ch) {
-    if (!notifOn() || !shouldNotify("channel", m, ch)) return;
+  function notifyChannel(m, ch, mention) {
     var raw = String(m.content != null ? m.content : (m.x != null ? m.x : ""));
-    var text = "#" + ch + "  " + (raw.length > 80 ? raw.slice(0, 80) + "\u2026" : raw);
-    beep();
-    showToast(m.username || "Someone", text, function () { if (!state.winOpen) openWindow(); switchChannel(ch); });
+    if (mention == null) mention = mentionsMe(raw) && getPrefs().mentions !== false;
+    if (!mention && !shouldNotify("channel", m, ch)) return;     /* @mentions always get through */
+    lumaNotify({ kind: "channel", key: ch, ch: ch, name: m.username || "Someone", sub: "#" + ch, text: msgPreview(raw), mention: !!mention, uid: m.user_id });
   }
 
   var wiz = null;
@@ -39921,7 +40016,14 @@ body.tl-right .calculator__top--taskabr {
         if (!isDm(ch)) {
           var mtxt = String(m.content != null ? m.content : (m.x || ""));
           if (state.isBot && m.user_id !== BOT_ID && m.user_id !== state.user.id && /@luma[\s_-]?bot\b/i.test(mtxt)) botNote(m, "\u{1F44B} " + (m.username || "Someone") + " mentioned me in #" + ch + ": \"" + mtxt.slice(0, 160) + "\"\nAnswer with:  say " + ch + " <message>");
-          if (m.user_id !== state.user.id && !(state.winOpen && !document.hidden && ch === state.channel)) notifyChannel(m, ch);
+          if (m.user_id !== state.user.id && !(state.winOpen && !document.hidden && ch === state.channel)) {
+            state.chUnread = state.chUnread || {}; state.mentions = state.mentions || {};
+            state.chUnread[ch] = (state.chUnread[ch] || 0) + 1;
+            var isMen = mentionsMe(mtxt) && getPrefs().mentions !== false;
+            if (isMen) state.mentions[ch] = (state.mentions[ch] || 0) + 1;
+            renderChannels();
+            notifyChannel(m, ch, isMen);
+          }
           return;
         }
         var bu = botInboxUser(ch);
@@ -40117,16 +40219,14 @@ body.tl-right .calculator__top--taskabr {
 
   /* ---------- DM notifications ---------- */
   function notifOn() { try { return localStorage.getItem(LS_NOTIF) !== "0"; } catch (e) { return true; } }
-  function refreshNotifBtn() {
-    var b = $("msg-notif-btn");
-    if (b) { b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3.07-1.63-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>' + (notifOn() ? "" : '<path d="M3 3l18 18" stroke="currentColor" stroke-width="2" fill="none"/>') + "</svg>"; b.title = "Notifications: " + (notifOn() ? "On" : "Off"); }
-  }
   function totalUnread() {
     var n = 0;
     Object.keys(state.unread).forEach(function (k) { n += state.unread[k] || 0; });
+    Object.keys(state.mentions || {}).forEach(function (k) { n += state.mentions[k] || 0; });   /* @mentions in channels count too */
     return n;
   }
   function updateBadges() {
+    try { syncNotifRead(); } catch (e) {}
     var n = totalUnread();
     try {
       var btn = document.querySelector('.dock-open-app-button[data-dock-id="messages"]');
@@ -40183,38 +40283,354 @@ body.tl-right .calculator__top--taskabr {
       });
     } catch (e) {}
   }
-  function showToast(name, text, onClick) {
+  /* NOTIF-V2 BEGIN ---------- Discord-style notifications ----------
+     * pop-ups with the sender's pfp, where it came from, a message preview, a countdown bar (pauses on hover) and a close button
+     * several messages from the same chat merge into one pop-up ("3 new messages")
+     * @name / @everyone / @here mentions are highlighted and always notify
+     * red badges for mentions and a white "unread" marker on channels
+     * the bell opens a notification inbox (All / Mentions) with quick settings
+     * desktop notifications while the tab is in the background */
+  var NOTIF_HIST_MAX = 40, notifHist = null, notifHistUid = null, npTab = "all", npSet = false;
+  function histKey() { return "luma_notif_hist_" + (state.user ? state.user.id : "x"); }
+  function histGet() {
+    if (!state.user) return [];
+    if (notifHist && notifHistUid === state.user.id) return notifHist;
+    notifHistUid = state.user.id;
+    try { notifHist = JSON.parse(localStorage.getItem(histKey()) || "[]") || []; } catch (e) { notifHist = []; }
+    return notifHist;
+  }
+  function histSave() { try { localStorage.setItem(histKey(), JSON.stringify((notifHist || []).slice(0, NOTIF_HIST_MAX))); } catch (e) {} }
+  function histUnread() { return histGet().filter(function (n) { return !n.read; }).length; }
+  function histAdd(o) {
+    if (!state.user) return;
+    var h = histGet();
+    h.unshift({ id: Date.now() + Math.random().toString(36).slice(2, 6), ts: Date.now(), kind: o.kind, key: o.key || "", name: o.name || "Someone", sub: o.sub || "",
+      text: o.text || "", mention: !!o.mention, read: false, uid: o.uid || "", other: o.other || "", gid: o.gid || "", ch: o.ch || "" });
+    if (h.length > NOTIF_HIST_MAX) h.length = NOTIF_HIST_MAX;
+    histSave(); refreshNotifBtn();
+  }
+  function histMarkKey(key) {
+    var changed = false;
+    histGet().forEach(function (n) { if (!n.read && n.key === key) { n.read = true; changed = true; } });
+    if (changed) { histSave(); refreshNotifBtn(); }
+  }
+  /* what you are looking at is read: clears the unread / mention badges + inbox entries of the open chat */
+  function syncNotifRead() {
+    if (!state.user || !state.winOpen || document.hidden || !state.channel) return;
+    var ch = state.channel;
+    if (state.chUnread) delete state.chUnread[ch];
+    if (state.mentions) delete state.mentions[ch];
+    histMarkKey(ch);
+  }
+  function mentionsMe(raw) {
+    raw = String(raw || "");
+    if (!raw) return false;
+    if (/(^|[^\w])@(everyone|here)(?![\w])/i.test(raw)) return true;
+    var me = state.user && state.user.username;
+    if (!me) return false;
+    return new RegExp("(^|[^\\w])@" + me.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\w-])", "i").test(raw);
+  }
+  function msgPreview(raw) {
+    var s = String(raw == null ? "" : raw)
+      .replace(/https?:\/\/\S+\/chat-images\/\S+/gi, "🖼️ Image")
+      .replace(/https?:\/\/\S+?\.gif(\?\S*)?/gi, "GIF")
+      .replace(/\s+/g, " ").trim();
+    s = s.replace(/(🖼️ Image ?){2,}/g, "🖼️ Images ").trim();
+    if (!s) s = "Sent an attachment";
+    return s.length > 140 ? s.slice(0, 140) + "…" : s;
+  }
+  function agoShort(ts) {
+    var s = Math.max(0, Math.round((Date.now() - ts) / 1000));
+    if (s < 45) return "now";
+    if (s < 3600) return Math.round(s / 60) + "m";
+    if (s < 86400) return Math.round(s / 3600) + "h";
+    return Math.round(s / 86400) + "d";
+  }
+  function nvAv(uid, name) {
+    var u = uid && state.avatars && state.avatars[uid], safe = u ? safeImg(u) : "";
+    return '<span class="nv-av" style="--c:' + avColor(name) + '">' + (safe ? '<img alt="" src="' + safe + '">' : escapeHtml(initials(name))) + "</span>";
+  }
+  function nvText(t) { return escapeHtml(t).replace(/@(everyone|here|[\w.-]{1,24})/gi, '<span class="nv-m">@$1</span>'); }
+  function dndOn() { try { return document.documentElement.classList.contains("cc-dnd-on"); } catch (e) { return false; } }
+
+  (function () {
+    if (document.getElementById("luma-notif-css")) return;
+    var st = document.createElement("style"); st.id = "luma-notif-css";
+    st.textContent =
+      /* toast stack */
+      ".nyx-dm-toast-wrap{top:48px!important;right:16px!important;gap:8px!important;width:360px;max-width:calc(100vw - 32px)}" +
+      ".nyx-dm-toast.v2{position:relative;width:auto!important;display:grid!important;grid-template-columns:40px minmax(0,1fr) 20px!important;gap:12px!important;align-items:start!important;" +
+        "padding:12px 10px 15px 12px!important;background:#1e1f22!important;border:1px solid #2e2f34!important;border-left:4px solid #5865f2!important;border-radius:8px!important;" +
+        "box-shadow:0 10px 30px rgba(0,0,0,.55)!important;overflow:hidden;font-family:'gg sans','Noto Sans','Segoe UI',system-ui,sans-serif!important;animation:lumaNIn .3s cubic-bezier(.2,.9,.3,1.15)!important}" +
+      ".nyx-dm-toast.v2:hover{background:#232428!important}" +
+      ".nyx-dm-toast.v2.mention{border-left-color:#faa61a!important;background:#2b2620!important}" +
+      ".nyx-dm-toast.v2.mention:hover{background:#322b22!important}" +
+      ".nyx-dm-toast.v2.out{opacity:0;transform:translateX(24px);transition:all .28s ease}" +
+      ".nv-av{position:relative;width:40px;height:40px;border-radius:50%;background:var(--c,#5865f2);color:#fff;display:flex;align-items:center;justify-content:center;font:700 14px/1 sans-serif;overflow:hidden;flex:none}" +
+      ".nv-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}" +
+      ".nyx-dm-toast.v2 .bd,#luma-np .bd{min-width:0}" +
+      ".nyx-dm-toast.v2 .hd,#luma-np .hd{display:flex;align-items:baseline;gap:6px;min-width:0}" +
+      ".nyx-dm-toast.v2 .who,#luma-np .who{font-size:14px;font-weight:700;color:#f2f3f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}" +
+      ".nyx-dm-toast.v2 .sub,#luma-np .sub{font-size:12px;color:#949ba4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto;min-width:0}" +
+      ".nyx-dm-toast.v2 .time,#luma-np .time{margin-left:auto;font-size:11px;color:#80848e;flex:none}" +
+      ".nyx-dm-toast.v2 .tag,#luma-np .tag{display:none;margin-top:2px;font-size:11px;font-weight:700;color:#faa61a;letter-spacing:.02em}" +
+      ".nyx-dm-toast.v2.mention .tag,#luma-np .np-item .tag{display:block}" +
+      ".nyx-dm-toast.v2 .txt,#luma-np .txt{margin-top:2px;font-size:13.5px;line-height:1.35;color:#dbdee1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:normal!important;word-break:break-word}" +
+      ".nv-m{color:#c9cdfb;background:rgba(88,101,242,.3);border-radius:3px;padding:0 2px;font-weight:600}" +
+      ".nyx-dm-toast.v2 .cnt{margin-top:5px;display:inline-block;font-size:11px;font-weight:700;color:#fff;background:#5865f2;border-radius:999px;padding:1px 8px}" +
+      ".nyx-dm-toast.v2 .x{border:0;background:transparent;color:#949ba4;font-size:18px;line-height:1;cursor:pointer;padding:0;width:20px;height:20px;border-radius:4px;opacity:0;transition:opacity .15s}" +
+      ".nyx-dm-toast.v2:hover .x{opacity:1}.nyx-dm-toast.v2 .x:hover{color:#fff;background:rgba(255,255,255,.1)}" +
+      ".nyx-dm-toast.v2 .bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:#5865f2;transform-origin:left;animation:lumaNBar 7s linear forwards}" +
+      ".nyx-dm-toast.v2.mention .bar{background:#faa61a;animation-duration:10s}" +
+      ".nyx-dm-toast.v2:hover .bar{animation-play-state:paused}" +
+      "@keyframes lumaNIn{from{opacity:0;transform:translateX(34px) scale(.96)}to{opacity:1;transform:none}}" +
+      "@keyframes lumaNBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}" +
+      /* channel list markers */
+      "#messages-window .msg-ch{position:relative}" +
+      "#messages-window .msg-ch.unread{color:#fff!important}#messages-window .msg-ch.unread>span:nth-child(2){font-weight:700}" +
+      "#messages-window .msg-ch.unread::before{content:'';position:absolute;left:-8px;top:50%;width:4px;height:8px;margin-top:-4px;background:#fff;border-radius:0 4px 4px 0}" +
+      "#messages-window .msg-ch .ch-ping{margin-left:auto;min-width:16px;height:16px;padding:0 5px;border-radius:8px;background:#f23f42;color:#fff;font:700 11px/16px sans-serif;text-align:center;flex:none}" +
+      /* bell */
+      "#msg-notif-btn{position:relative}" +
+      "#msg-notif-btn .nb{position:absolute;top:-4px;right:-5px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:#f23f42;color:#fff;font:700 10px/15px sans-serif;text-align:center;box-shadow:0 0 0 2px #1e1f22}" +
+      /* inbox panel */
+      "#luma-np{position:fixed;z-index:2147483000;display:flex;flex-direction:column;max-height:min(560px,calc(100vh - 80px));background:#2b2d31;color:#dbdee1;border:1px solid #1e1f22;border-radius:10px;" +
+        "box-shadow:0 14px 44px rgba(0,0,0,.6);overflow:hidden;font-family:'gg sans','Noto Sans','Segoe UI',system-ui,sans-serif;animation:lumaNIn .18s ease-out}" +
+      "#luma-np .np-h{display:flex;align-items:center;gap:8px;padding:13px 14px 10px}#luma-np .np-h b{font-size:16px;color:#f2f3f5;flex:1}" +
+      "#luma-np .np-h button{border:0;background:transparent;color:#b5bac1;font-size:12px;font-weight:600;cursor:pointer;border-radius:5px;padding:5px 8px}" +
+      "#luma-np .np-h button:hover:not(:disabled){background:#35373c;color:#fff}#luma-np .np-h button:disabled{opacity:.4;cursor:default}" +
+      "#luma-np .np-tabs{display:flex;gap:4px;padding:0 12px 8px;border-bottom:1px solid #1e1f22}" +
+      "#luma-np .np-tabs button{border:0;background:transparent;color:#b5bac1;font-size:13px;font-weight:600;padding:6px 12px;border-radius:5px;cursor:pointer}" +
+      "#luma-np .np-tabs button:hover{background:#35373c}#luma-np .np-tabs button.on{background:#404249;color:#fff}" +
+      "#luma-np .np-list,#luma-np .np-setbox{overflow:auto;min-height:90px;padding:6px}" +
+      "#luma-np .np-item{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr) 10px;gap:12px;align-items:start;padding:10px;border-radius:8px;cursor:pointer}" +
+      "#luma-np .np-item:hover{background:#35373c}#luma-np .np-item.un{background:rgba(88,101,242,.1)}#luma-np .np-item.un:hover{background:rgba(88,101,242,.18)}" +
+      "#luma-np .np-item .dot{width:8px;height:8px;border-radius:50%;background:#f23f42;margin-top:6px}" +
+      "#luma-np .np-empty{padding:34px 20px;text-align:center;font-size:13px;color:#949ba4;line-height:1.5}" +
+      "#luma-np .np-row{display:flex;align-items:center;gap:12px;padding:10px 10px;border-radius:8px}#luma-np .np-row:hover{background:#35373c}" +
+      "#luma-np .np-row .t{flex:1;min-width:0}#luma-np .np-row b{display:block;font-size:14px;color:#f2f3f5}#luma-np .np-row span{font-size:12px;color:#949ba4}" +
+      "#luma-np .np-sw{width:40px;height:22px;border-radius:11px;background:#80848e;position:relative;cursor:pointer;flex:none;transition:background .15s}" +
+      "#luma-np .np-sw::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s}" +
+      "#luma-np .np-sw.on{background:#23a55a}#luma-np .np-sw.on::after{left:21px}" +
+      "#luma-np .np-test{margin:6px 10px 10px;width:calc(100% - 20px);border:0;border-radius:6px;padding:9px 0;background:#5865f2;color:#fff;font-size:13px;font-weight:600;cursor:pointer}#luma-np .np-test:hover{background:#4752c4}";
+    document.head.appendChild(st);
+  })();
+
+  function refreshNotifBtn() {
+    var b = $("msg-notif-btn");
+    if (!b) return;
+    var u = histUnread();
+    b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3.07-1.63-5.64-4.5-6.32V4a1.5 1.5 0 0 0-3 0v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>' +
+      (notifOn() ? "" : '<path d="M3 3l18 18" stroke="currentColor" stroke-width="2" fill="none"/>') + "</svg>" +
+      (u > 0 ? '<span class="nb">' + (u > 99 ? "99+" : u) + "</span>" : "");
+    b.title = "Notifications: " + (notifOn() ? "On" : "Off") + (u > 0 ? " (" + u + " unread)" : "");
+  }
+
+  function restartBar(t) {
+    var bar = t.querySelector(".bar");
+    if (!bar) return;
+    bar.style.animation = "none"; void bar.offsetWidth; bar.style.animation = "";
+  }
+  function showToast(name, text, onClick, o) {
+    o = o || {};
     var wrap = document.querySelector(".nyx-dm-toast-wrap");
     if (!wrap) {
       wrap = document.createElement("div");
       wrap.className = "nyx-dm-toast-wrap";
       document.body.appendChild(wrap);
     }
+    var key = o.key || "", found = null;
+    if (key) Array.prototype.forEach.call(wrap.children, function (c) { if (c.getAttribute("data-key") === key && !c.classList.contains("out")) found = c; });
+    if (found) {                                   /* same chat: update the pop-up instead of stacking another one */
+      var n = (parseInt(found.getAttribute("data-n"), 10) || 1) + 1;
+      found.setAttribute("data-n", n);
+      found.querySelector(".who").textContent = name;
+      found.querySelector(".txt").innerHTML = nvText(text);
+      found.querySelector(".time").textContent = "now";
+      var av = found.querySelector(".nv-av"); if (av) av.outerHTML = nvAv(o.uid, name);
+      var c = found.querySelector(".cnt"); c.textContent = n + " new messages"; c.style.display = "";
+      if (o.mention) { found.classList.add("mention"); found.__life = 10000; }
+      restartBar(found);
+      if (found.__arm) found.__arm(true);
+      return;
+    }
     var t = document.createElement("div");
-    t.className = "nyx-dm-toast";
-    t.innerHTML = '<div class="av" style="--c:' + avColor(name) + '">' + escapeHtml(initials(name)) + '</div><div><div class="who">' +
-      escapeHtml(name) + '</div><div class="txt">' + escapeHtml(text) + "</div></div>";
+    t.className = "nyx-dm-toast v2" + (o.mention ? " mention" : "");
+    t.setAttribute("data-key", key); t.setAttribute("data-n", "1");
+    t.innerHTML = nvAv(o.uid, name) +
+      '<div class="bd"><div class="hd"><span class="who">' + escapeHtml(name) + "</span>" + (o.sub ? '<span class="sub">' + escapeHtml(o.sub) + "</span>" : "") + '<span class="time">now</span></div>' +
+      '<div class="tag">@ Mentioned you</div><div class="txt">' + nvText(text) + '</div><div class="cnt" style="display:none"></div></div>' +
+      '<button type="button" class="x" aria-label="Dismiss">×</button><i class="bar"></i>';
     function dismiss() {
+      if (t.classList.contains("out")) return;
       t.classList.add("out");
       setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 300);
     }
-    t.addEventListener("click", function () { dismiss(); onClick(); });
+    t.addEventListener("click", function (e) {
+      if (e.target.closest && e.target.closest(".x")) { e.stopPropagation(); dismiss(); return; }
+      dismiss();
+      try { if (onClick) onClick(); } catch (er) {}
+    });
+    /* closes itself after a few seconds (a bit longer for mentions); hovering pauses the timer + the bar */
+    var timer = null, left = 0, started = 0;
+    t.__life = o.mention ? 10000 : 7000;
+    t.__arm = function (reset) { if (reset) left = t.__life; clearTimeout(timer); started = Date.now(); timer = setTimeout(dismiss, left); };
+    t.addEventListener("mouseenter", function () { clearTimeout(timer); left = Math.max(1500, left - (Date.now() - started)); });
+    t.addEventListener("mouseleave", function () { t.__arm(false); });
+    t.__arm(true);
     wrap.appendChild(t);
-    while (wrap.children.length > 3) wrap.removeChild(wrap.firstChild);
-    setTimeout(dismiss, 6000);
+    while (wrap.children.length > 4) wrap.removeChild(wrap.firstChild);
   }
   function goToDm(id, name) {
     if (!state.winOpen) openWindow();
     openDm(id, name);
   }
-  function notifyDm(m, other) {
-    if (!notifOn() || !shouldNotify("dm", m)) return;
-    var name = m.username || "Someone";
-    var raw = String(m.content != null ? m.content : (m.x != null ? m.x : ""));
-    var text = raw.length > 90 ? raw.slice(0, 90) + "…" : raw;
-    beep();
-    showToast(name, text, function () { goToDm(other, name); });
+  function openNotif(o) {
+    if (!o) return;
+    if (o.key) histMarkKey(o.key);
+    if (o.kind === "test") return;
+    if (!state.winOpen) openWindow();
+    if (o.kind === "dm") openDm(o.other, o.name);
+    else if (o.kind === "group") openGroup(o.gid);
+    else if (o.kind === "channel") switchChannel(o.ch);
   }
+  function desktopNotify(o, P) {
+    try {
+      if (P.desktop === false || !("Notification" in window) || Notification.permission !== "granted") return;
+      if (!document.hidden && document.hasFocus()) return;   /* only when you are not looking at the page */
+      var title = o.name + (o.sub ? " (" + o.sub + ")" : "");
+      var body = P.preview === false ? (o.mention ? "Mentioned you" : "New message") : o.text;
+      var av = o.uid && state.avatars && state.avatars[o.uid];
+      var n = new Notification(title, { body: body, tag: o.key || "luma", renotify: true, silent: true, icon: (av && /^https?:\/\//i.test(av)) ? av : undefined });
+      n.onclick = function () { try { window.focus(); } catch (e) {} openNotif(o); try { n.close(); } catch (e) {} };
+      setTimeout(function () { try { n.close(); } catch (e) {} }, 8000);
+    } catch (e) {}
+  }
+  /* one entry point for every kind of notification */
+  function plainToast(name, text, onClick) {
+    var wrap = document.querySelector(".nyx-dm-toast-wrap");
+    if (!wrap) { wrap = document.createElement("div"); wrap.className = "nyx-dm-toast-wrap"; document.body.appendChild(wrap); }
+    var t = document.createElement("div");
+    t.className = "nyx-dm-toast";
+    t.innerHTML = '<div class="av">' + escapeHtml(initials(name)) + '</div><div><div class="who">' + escapeHtml(name) + '</div><div class="txt">' + escapeHtml(text) + "</div></div>";
+    function gone() { if (t.parentNode) t.parentNode.removeChild(t); }
+    t.addEventListener("click", function () { gone(); try { onClick(); } catch (e) {} });
+    wrap.appendChild(t);
+    while (wrap.children.length > 3) wrap.removeChild(wrap.firstChild);
+    setTimeout(gone, 6000);
+  }
+  function lumaNotify(o) {
+    try { lumaNotifyRich(o); }
+    catch (err) {                                   /* never lose a notification because of a bug in the fancy one */
+      try { console.error("[notify]", err); } catch (e) {}
+      try { if ((notifOn() || o.force) && !dndOn()) { beep(); plainToast(o.name, o.text, function () { openNotif(o); }); } } catch (e2) {}
+    }
+  }
+  function lumaNotifyRich(o) {
+    var P = getPrefs();
+    if (o.kind !== "test") histAdd(o);                 /* the inbox always keeps it */
+    if ((!notifOn() && !o.force) || dndOn()) return;   /* bell off / Do Not Disturb: silent */
+    beep();
+    showToast(o.name, P.preview === false && !o.force ? (o.mention ? "mentioned you" : "sent a message") : o.text, function () { openNotif(o); }, o);
+    desktopNotify(o, P);
+  }
+  function notifyDm(m, other) {
+    if (!shouldNotify("dm", m)) return;
+    var raw = String(m.content != null ? m.content : (m.x != null ? m.x : ""));
+    lumaNotify({ kind: "dm", key: m.ch || m.channel || "", other: other, name: m.username || "Someone", sub: "", text: msgPreview(raw), mention: false, uid: m.user_id });
+  }
+
+  /* ---- bell: notification inbox ---- */
+  function closeNotifPanel() {
+    var p = document.getElementById("luma-np");
+    if (p) p.remove();
+    document.removeEventListener("mousedown", npOutside, true);
+    document.removeEventListener("keydown", npKey, true);
+  }
+  function npOutside(e) {
+    var p = document.getElementById("luma-np");
+    if (p && !p.contains(e.target) && !(e.target.closest && e.target.closest("#msg-notif-btn"))) closeNotifPanel();
+  }
+  function npKey(e) { if (e.key === "Escape") closeNotifPanel(); }
+  function toggleNotifPanel() {
+    if (document.getElementById("luma-np")) { closeNotifPanel(); return; }
+    var btn = $("msg-notif-btn");
+    if (!btn) return;
+    var p = document.createElement("div"); p.id = "luma-np";
+    document.body.appendChild(p);
+    var r = btn.getBoundingClientRect(), w = Math.min(380, window.innerWidth - 16);
+    p.style.width = w + "px";
+    if (r.top > window.innerHeight * 0.55) {         /* bell near the bottom: open upwards */
+      p.style.bottom = Math.max(8, window.innerHeight - r.top + 8) + "px";
+      p.style.maxHeight = Math.max(240, r.top - 16) + "px";
+    } else {
+      p.style.top = Math.max(8, r.bottom + 8) + "px";
+      p.style.maxHeight = Math.max(240, window.innerHeight - r.bottom - 16) + "px";
+    }
+    p.style.left = Math.max(8, Math.min(r.right - w, window.innerWidth - w - 8)) + "px";
+    p.addEventListener("click", npClick);
+    document.addEventListener("mousedown", npOutside, true);
+    document.addEventListener("keydown", npKey, true);
+    renderNotifPanel();
+    try { if ("Notification" in window && Notification.permission === "default" && getPrefs().desktop !== false) Notification.requestPermission(); } catch (e) {}
+  }
+  function npRow(n) {
+    return '<div class="np-item' + (n.read ? "" : " un") + '" data-id="' + escapeHtml(n.id) + '">' + nvAv(n.uid, n.name) +
+      '<div class="bd"><div class="hd"><span class="who">' + escapeHtml(n.name) + "</span>" + (n.sub ? '<span class="sub">' + escapeHtml(n.sub) + "</span>" : "") +
+      '<span class="time">' + agoShort(n.ts) + "</span></div>" + (n.mention ? '<div class="tag">@ Mentioned you</div>' : "") +
+      '<div class="txt">' + nvText(n.text || "") + "</div></div>" + (n.read ? "<span></span>" : '<i class="dot"></i>') + "</div>";
+  }
+  function renderNotifPanel() {
+    var p = document.getElementById("luma-np");
+    if (!p) return;
+    var P = getPrefs(), h = histGet(), un = h.filter(function (n) { return !n.read; }).length, body;
+    function sw(k, on, label, sub) {
+      return '<div class="np-row"><div class="t"><b>' + label + "</b>" + (sub ? "<span>" + sub + "</span>" : "") + '</div><div class="np-sw' + (on ? " on" : "") + '" data-sw="' + k + '"></div></div>';
+    }
+    if (npSet) {
+      body = '<div class="np-setbox">' + sw("on", notifOn(), "Notifications", "Pop-ups and sound for new messages") + sw("sound", P.sound !== false, "Sound") +
+        sw("desktop", P.desktop !== false, "Desktop alerts", "When this tab is in the background") + sw("preview", P.preview !== false, "Message previews", "Show what the message says") +
+        sw("mentions", P.mentions !== false, "@mention alerts", "Always notify when someone @mentions you") +
+        '<button type="button" class="np-test" data-np="test">Send a test notification</button></div>';
+    } else {
+      var list = npTab === "mentions" ? h.filter(function (n) { return n.mention; }) : h;
+      body = '<div class="np-tabs"><button type="button" class="' + (npTab === "all" ? "on" : "") + '" data-tab="all">All</button><button type="button" class="' + (npTab === "mentions" ? "on" : "") + '" data-tab="mentions">Mentions</button></div>' +
+        '<div class="np-list">' + (list.length ? list.map(npRow).join("") :
+          '<div class="np-empty">' + (npTab === "mentions" ? "No mentions yet.<br>When someone @mentions you it shows up here." : "You’re all caught up.<br>New messages will show up here.") + "</div>") + "</div>";
+    }
+    p.innerHTML = '<div class="np-h">' + (npSet ? '<button type="button" data-np="settings">← Back</button><b>Settings</b>' : "<b>Notifications</b>" +
+      '<button type="button" data-np="readall"' + (un ? "" : " disabled") + '>Mark all as read</button><button type="button" data-np="settings" title="Notification settings">⚙ Settings</button>') + "</div>" + body;
+  }
+  function npClick(e) {
+    var t = e.target, el;
+    if (!t.closest) return;
+    if ((el = t.closest("[data-tab]"))) { npTab = el.getAttribute("data-tab"); renderNotifPanel(); return; }
+    if ((el = t.closest("[data-np]"))) {
+      var a = el.getAttribute("data-np");
+      if (a === "readall") { histGet().forEach(function (n) { n.read = true; }); histSave(); refreshNotifBtn(); renderNotifPanel(); }
+      else if (a === "settings") { npSet = !npSet; renderNotifPanel(); }
+      else if (a === "test") {
+        var me = (state.user && state.user.username) || "you";
+        lumaNotify({ kind: "test", force: true, key: "__test", name: "Luma", sub: "Test", mention: false, uid: "", text: "This is what a notification looks like. Mentions like @" + me + " get highlighted." });
+      }
+      return;
+    }
+    if ((el = t.closest("[data-sw]"))) {
+      var k = el.getAttribute("data-sw"), P = getPrefs();
+      if (k === "on") { var on = !notifOn(); try { localStorage.setItem(LS_NOTIF, on ? "1" : "0"); } catch (e2) {} refreshNotifBtn(); }
+      else {
+        P[k] = (P[k] === false); savePrefs(P);
+        if (k === "desktop" && P.desktop) { try { if ("Notification" in window && Notification.permission === "default") Notification.requestPermission(); } catch (e3) {} }
+      }
+      renderNotifPanel();
+      return;
+    }
+    if ((el = t.closest(".np-item"))) {
+      var id = el.getAttribute("data-id"), ent = histGet().filter(function (n) { return n.id === id; })[0];
+      if (ent) { ent.read = true; histSave(); refreshNotifBtn(); closeNotifPanel(); openNotif(ent); }
+    }
+  }
+  /* NOTIF-V2 END */
   function startInboxWhenReady(n) {
     n = n || 0;
     if (window.supabase && window.supabase.createClient) { initAuth(); return; }
@@ -40225,21 +40641,15 @@ body.tl-right .calculator__top--taskabr {
     var b = $("msg-notif-btn");
     if (b && !b.__nBound) {
       b.__nBound = true;
-      b.addEventListener("click", function () {
-        var on = !notifOn();
-        try { localStorage.setItem(LS_NOTIF, on ? "1" : "0"); } catch (e) {}
-        refreshNotifBtn();
-        if (on) {
-          beep();
-        }
-      });
+      b.addEventListener("click", function (e) { e.stopPropagation(); toggleNotifPanel(); });
     }
     if (!document.__dmVisBound) {
       document.__dmVisBound = true;
       document.addEventListener("visibilitychange", function () {
-        if (!document.hidden && state.winOpen && state.unread[state.channel]) {
+        if (!document.hidden && state.winOpen) {
           delete state.unread[state.channel];
-          renderDms();
+          syncNotifRead();
+          renderChannels();
         }
       });
     }
@@ -43936,4 +44346,253 @@ html body[data-os-style="chromeos"]:not(#_) #os-cros-tray .cr-ico:nth-child(2){d
 html body[data-os-style="chromeos"]:not(#_) #os-cros-clock{order:-1;margin-right:2px}
 html body[data-os-style="chromeos"]:not(#_) #os-cros-tray svg{width:15px;height:15px}
 </style>
+<style id="chromeos-anura-skin">
+/* CHROME OS · light frosted shelf, centered apps, date/time pills, bubble launcher */
+html body[data-os-style="chromeos"]:not(#_){--cr-shelf-h:52px;--cr-shelf-bg:rgba(220,230,248,.80);--cr-pill:rgba(255,255,255,.55);--cr-ink:#1f1f1f}
+.os-prev.chromeos .p-dock{background:rgba(226,235,250,.92) !important}
+.os-prev.chromeos .p-dock::before{left:30% !important;background:#5f6368 !important;box-shadow:12px 0 0 0 #ea4335,22px 0 0 0 #fbbc04,32px 0 0 0 #34a853,42px 0 0 0 #1a73e8 !important}
+.os-prev.chromeos .p-dock::after{background:rgba(255,255,255,.7) !important}
+
+/* shelf */
+html body[data-os-style="chromeos"]:not(#_) .dock-container{left:0 !important;right:0 !important;bottom:0 !important;width:100% !important;height:var(--cr-shelf-h) !important;padding:0 !important;margin:0 !important;background:transparent !important;justify-content:center !important;align-items:flex-end !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el.dock,html body[data-os-style="chromeos"]:not(#_) #macos-dock{position:relative !important;width:100% !important;max-width:100% !important;height:var(--cr-shelf-h) !important;margin:0 !important;padding:0 !important;gap:6px !important;
+  justify-content:center !important;align-items:center !important;overflow:visible !important;border-radius:0 !important;
+  background:var(--cr-shelf-bg) !important;border:0 !important;border-top:1px solid rgba(255,255,255,.6) !important;box-shadow:0 -2px 14px rgba(40,70,130,.12) !important;
+  -webkit-backdrop-filter:blur(36px) saturate(180%) !important;backdrop-filter:blur(36px) saturate(180%) !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el .dock-open-app-button{width:42px !important;height:42px !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el .dock-open-app-button:hover{background:rgba(0,0,0,.07) !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el .dock-open-app-button img{width:32px !important;height:32px !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el [data-dock-id="safari"],html body[data-os-style="chromeos"]:not(#_) .dock-el [data-dock-id="proxy-safari"]{order:-60 !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el .dot.is-open,html body[data-os-style="chromeos"]:not(#_) .dock-el .os-open .dot{background:#5f6368 !important;bottom:2px !important}
+
+/* shelf cleanup: only real Chrome OS shelf apps (the base skin's display:flex !important was un-hiding the rest) */
+html body[data-os-style="chromeos"]:not(#_) .dock-el .dock-open-app-button.os-hidden,html body[data-os-style="chromeos"]:not(#_) .dock-el .os-dock-btn:not(.os-only-cros),html body[data-os-style="chromeos"]:not(#_) .dock-el .divider,
+html body[data-os-style="chromeos"]:not(#_) .dock-el [data-dock-id="launchpad"],html body[data-os-style="chromeos"]:not(#_) .dock-el [data-dock-id="appletv"],html body[data-os-style="chromeos"]:not(#_) .dock-el [data-dock-id="trash"]{display:none !important}
+/* round white app chips like the Chrome OS shelf */
+html body[data-os-style="chromeos"]:not(#_) .dock-el .dock-open-app-button{border-radius:50% !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el .dock-open-app-button:not(#os-launcher) img{width:32px !important;height:32px !important;border-radius:50% !important;object-fit:cover;background:#fff !important;box-shadow:0 1px 3px rgba(0,0,0,.22) !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el .dock-open-app-button:not(#os-launcher):hover{background:transparent !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el .dock-open-app-button:not(#os-launcher):hover img{box-shadow:0 0 0 3px rgba(0,0,0,.08),0 1px 3px rgba(0,0,0,.22) !important}
+
+/* launcher button: dark round button, far left of the shelf */
+html body[data-os-style="chromeos"]:not(#_) .dock-el #os-launcher{position:absolute !important;left:10px !important;top:50% !important;transform:translateY(-50%) !important;order:0 !important;
+  width:34px !important;height:34px !important;margin:0 !important;border-radius:50% !important;background:#5f6368 !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el #os-launcher:hover{background:#3c4043 !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el #os-launcher:active{transform:translateY(-50%) scale(.94) !important}
+html body[data-os-style="chromeos"]:not(#_) .dock-el #os-launcher img{width:20px !important;height:20px !important}
+
+html body[data-os-style="chromeos"]:not(#_) .dock-el #os-launcher .tooltip{left:0 !important;right:auto !important;transform:none !important}
+/* status area: two light pills on the right */
+html body[data-os-style="chromeos"]:not(#_) #os-cros-tray{right:10px !important;bottom:8px !important;height:36px !important;padding:0 !important;gap:8px !important;background:transparent !important;border:0 !important;box-shadow:none !important;color:var(--cr-ink) !important;-webkit-backdrop-filter:none !important;backdrop-filter:none !important}
+html body[data-os-style="chromeos"]:not(#_) #os-cros-tray:hover{background:transparent !important}
+html body[data-os-style="chromeos"]:not(#_) #os-cros-tray .cr-ico,html body[data-os-style="chromeos"]:not(#_) #os-cros-clock{display:none !important}
+html body[data-os-style="chromeos"]:not(#_) #os-cros-tray .cr2-pill{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:18px;background:var(--cr-pill);font:500 14px/1 var(--cr-font);color:var(--cr-ink);transition:background .15s}
+html body[data-os-style="chromeos"]:not(#_) #os-cros-tray .cr2-pill:hover{background:rgba(255,255,255,.85)}
+html body[data-os-style="chromeos"]:not(#_) #os-cros-tray .cr2-pill svg{width:16px;height:16px;color:var(--cr-ink)}
+
+/* windows */
+html body[data-os-style="chromeos"]:not(#_) .window,html body[data-os-style="chromeos"]:not(#_) .safari,html body[data-os-style="chromeos"]:not(#_) .settings-window,html body[data-os-style="chromeos"]:not(#_) .finder-window{border-radius:12px !important;box-shadow:0 0 0 1px rgba(0,0,0,.12),0 8px 28px rgba(0,0,0,.28) !important}
+html body[data-os-style="chromeos"]:not(#_) .window.is-maximized,html body[data-os-style="chromeos"]:not(#_) .safari.is-maximized,html body[data-os-style="chromeos"]:not(#_) .settings-window.is-maximized,html body[data-os-style="chromeos"]:not(#_) .finder-window.is-maximized,html body[data-os-style="chromeos"]:not(#_) .window.appstore-window.is-maximized{height:calc(100vh - var(--cr-shelf-h)) !important;border-radius:0 !important}
+
+/* bubble launcher */
+#cr-launcher{display:none}
+body[data-os-style="chromeos"] #cr-launcher.open{display:flex}
+#cr-launcher{position:fixed;left:8px;bottom:60px;width:684px;max-width:calc(100vw - 16px);height:min(734px,calc(100vh - 80px));z-index:2147483000;flex-direction:column;overflow:hidden;
+  border-radius:20px;background:linear-gradient(135deg,rgba(236,242,252,.9),rgba(212,223,245,.88));
+  -webkit-backdrop-filter:blur(44px) saturate(180%);backdrop-filter:blur(44px) saturate(180%);box-shadow:0 0 0 1px rgba(255,255,255,.5) inset,0 10px 40px rgba(20,40,90,.34);
+  font-family:"Google Sans","Roboto","Noto Sans",system-ui,sans-serif;color:#202124;animation:crLaunch .16s ease-out}
+@keyframes crLaunch{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+#cr-launcher .crl-search{display:flex;align-items:center;gap:14px;height:62px;flex:0 0 62px;padding:0 20px;border-bottom:1px solid rgba(60,64,67,.14)}
+#cr-launcher .crl-search svg{flex:0 0 auto}
+#cr-launcher .crl-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:400 16px/1 inherit;font-family:inherit;color:#202124}
+#cr-launcher .crl-search input::placeholder{color:#5f6368}
+#cr-launcher .crl-body{flex:1;overflow-y:auto;padding:0 36px 24px;scrollbar-width:thin}
+#cr-launcher .crl-sec{display:flex;align-items:center;justify-content:space-between;margin:22px 0 8px;font-size:13px;color:#5f6368}
+#cr-launcher .crl-sec button{border:0;background:transparent;cursor:pointer;color:#202124;display:flex;padding:2px;border-radius:50%}
+#cr-launcher .crl-sec button:hover{background:rgba(0,0,0,.08)}
+#cr-launcher .crl-recents{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px}
+#cr-launcher .crl-rec{display:flex;align-items:center;gap:14px;padding:8px 6px;border-radius:12px;cursor:pointer}
+#cr-launcher .crl-rec:hover{background:rgba(0,0,0,.06)}
+#cr-launcher .crl-rec i{flex:0 0 40px;height:40px;border-radius:50%;background:rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center}
+#cr-launcher .crl-rec i img{width:24px;height:24px}
+#cr-launcher .crl-rec b{display:block;font:400 15px/1.25 inherit;font-family:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+#cr-launcher .crl-rec span{display:block;font-size:13px;color:#5f6368}
+#cr-launcher .crl-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px 0;margin-top:20px}
+#cr-launcher .crl-app{display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 0;border-radius:12px;cursor:pointer;background:transparent;border:0;font-family:inherit;color:#202124;min-width:0}
+#cr-launcher .crl-app:hover,#cr-launcher .crl-app:focus-visible{background:rgba(0,0,0,.07);outline:0}
+#cr-launcher .crl-app i{width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;overflow:hidden}
+#cr-launcher .crl-app i img{width:34px;height:34px;object-fit:contain}
+#cr-launcher .crl-app span{max-width:112px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#cr-launcher .crl-div{height:1px;background:rgba(60,64,67,.2);margin:22px 0 4px}
+#cr-launcher .crl-empty{padding:40px 0;text-align:center;color:#5f6368;font-size:14px}
+</style>
+<script id="chromeos-anura-js">
+(function(){
+  var recents=[];
+  function cros(){return document.body.getAttribute("data-os-style")==="chromeos";}
+  function qa(sel,root){return Array.prototype.slice.call((root||document).querySelectorAll(sel));}
+  var SEARCH='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#202124" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>';
+  var ASSIST='<svg width="26" height="26" viewBox="0 0 28 28"><circle cx="10" cy="14" r="6" fill="#4285f4"/><circle cx="19" cy="8" r="2.6" fill="#ea4335"/><circle cx="21" cy="15.5" r="2.4" fill="#fbbc04"/><circle cx="17.5" cy="21.5" r="2.4" fill="#34a853"/></svg>';
+  var CHEV='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>';
+  var WIFI='<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21 .6 8.6C3.6 5.9 7.6 4.2 12 4.2s8.4 1.7 11.4 4.4z"/></svg>';
+  var BATT='<svg viewBox="0 0 24 24"><rect x="7" y="4.5" width="10" height="17" rx="2" fill="currentColor"/><rect x="10" y="2" width="4" height="3" rx="1" fill="currentColor"/></svg>';
+
+  function collect(){
+    var out=[],seen={};
+    var dock=qa('#macos-dock [data-dock-id]').filter(function(b){return b.tagName==="BUTTON";});
+    var pool=qa('#nyx-app-pool [data-dock-id]').filter(function(b){return b.tagName==="BUTTON";});
+    dock.forEach(function(b){var id=b.getAttribute("data-dock-id");if(id.indexOf("proxy-")===0)seen[id.slice(6)]=1;});
+    function add(b){
+      var id=b.getAttribute("data-dock-id");
+      if(!id||seen[id]===2||/^(launchpad|trash|__divider__)$/.test(id)||(b.id&&b.id.indexOf("os-")===0))return;
+      if(seen[id]===1)return;
+      var img=b.querySelector("img");
+      out.push({id:id,title:b.getAttribute("title")||id,src:img?img.getAttribute("src"):"",el:b});
+      seen[id]=2;
+    }
+    dock.forEach(add);pool.forEach(add);
+    var pin=["safari","finder","settings","appstore","proxy-terminal"];
+    var pinned=[];
+    pin.forEach(function(p){out.forEach(function(a,i){if(a&&a.id===p){pinned.push(a);out[i]=null;}});});
+    return {pinned:pinned,rest:out.filter(Boolean)};
+  }
+
+  var panel;
+  function launch(app){
+    close();
+    recents=recents.filter(function(r){return r.id!==app.id;});recents.unshift(app);recents=recents.slice(0,4);
+    try{app.el.click();}catch(e){}
+  }
+  function appBtn(app){
+    var b=document.createElement("button");b.type="button";b.className="crl-app";b.title=app.title;
+    var i=document.createElement("i"),im=document.createElement("img");im.alt="";im.draggable=false;if(app.src)im.src=app.src;i.appendChild(im);
+    var sp=document.createElement("span");sp.textContent=app.title;b.appendChild(i);b.appendChild(sp);
+    b.addEventListener("click",function(){launch(app);});return b;
+  }
+  function render(q){
+    var body=panel.querySelector(".crl-body");body.innerHTML="";
+    var d=collect(),all=d.pinned.concat(d.rest);
+    q=(q||"").trim().toLowerCase();
+    if(q){
+      var hits=all.filter(function(a){return a.title.toLowerCase().indexOf(q)>-1;});
+      panel._first=hits[0]||null;
+      if(!hits.length){var e=document.createElement("div");e.className="crl-empty";e.textContent="No results for \u201c"+q+"\u201d";body.appendChild(e);return;}
+      var g=document.createElement("div");g.className="crl-grid";hits.forEach(function(a){g.appendChild(appBtn(a));});body.appendChild(g);return;
+    }
+    panel._first=all[0]||null;
+    if(recents.length){
+      var sec=document.createElement("div");sec.className="crl-sec";
+      sec.innerHTML='<span>Continue where you left off</span><button type="button" aria-label="Collapse">'+CHEV+'</button>';
+      var list=document.createElement("div");list.className="crl-recents";
+      recents.forEach(function(a){
+        var r=document.createElement("div");r.className="crl-rec";
+        var i=document.createElement("i"),im=document.createElement("img");im.alt="";if(a.src)im.src=a.src;i.appendChild(im);
+        var t=document.createElement("div"),b=document.createElement("b"),s2=document.createElement("span");b.textContent=a.title;s2.textContent="You opened today";t.appendChild(b);t.appendChild(s2);
+        r.appendChild(i);r.appendChild(t);r.addEventListener("click",function(){launch(a);});list.appendChild(r);
+      });
+      sec.querySelector("button").addEventListener("click",function(){var h=list.style.display==="none";list.style.display=h?"":"none";this.style.transform=h?"":"rotate(180deg)";});
+      body.appendChild(sec);body.appendChild(list);
+    }
+    var g1=document.createElement("div");g1.className="crl-grid";d.pinned.forEach(function(a){g1.appendChild(appBtn(a));});body.appendChild(g1);
+    if(d.rest.length){
+      var dv=document.createElement("div");dv.className="crl-div";body.appendChild(dv);
+      var g2=document.createElement("div");g2.className="crl-grid";g2.style.marginTop="16px";d.rest.forEach(function(a){g2.appendChild(appBtn(a));});body.appendChild(g2);
+    }
+  }
+  function build(){
+    if(panel)return;
+    panel=document.createElement("div");panel.id="cr-launcher";
+    panel.innerHTML='<div class="crl-search">'+SEARCH+'<input type="text" placeholder="Search your tabs, files, apps, and more\u2026" spellcheck="false" autocomplete="off">'+ASSIST+'</div><div class="crl-body"></div>';
+    document.body.appendChild(panel);
+    var inp=panel.querySelector("input");
+    inp.addEventListener("input",function(){render(inp.value);});
+    inp.addEventListener("keydown",function(e){if(e.key==="Enter"&&panel._first)launch(panel._first);});
+  }
+  function open(){if(!cros())return;build();panel.querySelector("input").value="";render("");panel.classList.add("open");setTimeout(function(){panel.querySelector("input").focus();},30);}
+  function close(){if(panel)panel.classList.remove("open");}
+  function isOpen(){return panel&&panel.classList.contains("open");}
+
+  document.addEventListener("click",function(e){
+    var l=e.target.closest&&e.target.closest("#os-launcher");
+    if(l&&cros()){e.stopImmediatePropagation();e.preventDefault();isOpen()?close():open();return;}
+  },true);
+  document.addEventListener("mousedown",function(e){
+    if(isOpen()&&!panel.contains(e.target)&&!(e.target.closest&&e.target.closest("#os-launcher")))close();
+  },true);
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&isOpen())close();});
+
+  function tick(){
+    if(!cros()&&isOpen())close();
+    var t=document.getElementById("os-cros-tray");
+    if(t&&!t.getAttribute("data-cr2")){
+      t.setAttribute("data-cr2","1");
+      t.innerHTML='<span class="cr2-pill" id="cr2-date"></span><span class="cr2-pill"><span id="cr2-time"></span>'+WIFI+BATT+'</span><span id="os-cros-clock"></span>';
+    }
+    var d=new Date(),dt=document.getElementById("cr2-date"),tm=document.getElementById("cr2-time");
+    if(dt)dt.textContent=d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+    if(tm)tm.textContent=d.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit",hour12:true}).replace(/\s?[AP]M/i,"");
+  }
+  tick();setInterval(tick,1000);
+})();
+</script>
+<style id="chromeos-anura-corners">
+/* rounded top corners on the shelf, like Chrome OS */
+html body[data-os-style="chromeos"]:not(#_) .dock-el.dock,html body[data-os-style="chromeos"]:not(#_) #macos-dock{border-radius:20px 20px 0 0 !important;border-top:1px solid rgba(255,255,255,.7) !important;border-left:1px solid rgba(255,255,255,.5) !important;border-right:1px solid rgba(255,255,255,.5) !important}
+</style>
+<style id="safari-traffic-fix">
+/* Safari: dedicated title strip + real close / minimize / zoom buttons in every OS style */
+html body #safari-window.safari:not(#_){--saf-strip:#e9e9ed;--saf-strip-line:rgba(0,0,0,.12)}
+html body #safari-window.safari:not(#_).dark-mode{--saf-strip:#2b2b2e;--saf-strip-line:rgba(255,255,255,.1)}
+html body #safari-window.safari:not(#_) .safari-chrome-top{position:absolute !important;top:0 !important;left:0 !important;right:0 !important;height:36px !important;min-height:36px !important;padding:0 !important;
+  display:block !important;background:var(--saf-strip) !important;border-bottom:1px solid var(--saf-strip-line) !important;z-index:300 !important;pointer-events:auto !important}
+html body #safari-window.safari:not(#_) .safari-chrome-top > :not(.safari-traffic){display:none !important}
+html body #safari-window.safari:not(#_) .safari-traffic{position:absolute !important;top:0 !important;left:0 !important;right:auto !important;height:36px !important;width:auto !important;margin:0 !important;padding:0 14px !important;
+  display:flex !important;flex-direction:row !important;align-items:center !important;justify-content:flex-start !important;gap:8px !important;z-index:310 !important;pointer-events:auto !important;background:transparent !important}
+html body #safari-window.safari:not(#_) .safari-traffic button{position:relative !important;flex:0 0 auto !important;width:14px !important;min-width:14px !important;height:14px !important;min-height:14px !important;margin:0 !important;padding:0 !important;
+  border:0 !important;border-radius:50% !important;display:inline-flex !important;align-items:center !important;justify-content:center !important;
+  font-size:0 !important;line-height:0 !important;color:transparent !important;cursor:pointer !important;pointer-events:auto !important;
+  box-shadow:0 0 0 .5px rgba(0,0,0,.28) inset,0 0 0 .5px rgba(0,0,0,.12) !important;transition:filter .1s ease,transform .08s ease}
+html body #safari-window.safari:not(#_) .safari-traffic button.close-safari{background:#ff5f57 !important}
+html body #safari-window.safari:not(#_) .safari-traffic button.min-safari{background:#febc2e !important}
+html body #safari-window.safari:not(#_) .safari-traffic button.full-safari{background:#28c840 !important}
+html body #safari-window.safari:not(#_) .safari-traffic button:hover{filter:brightness(.92) !important;background-color:inherit}
+html body #safari-window.safari:not(#_) .safari-traffic button:active{transform:scale(.9)}
+html body #safari-window.safari:not(#_) .safari-traffic button::after{content:none !important;display:none !important}
+html body #safari-window.safari:not(#_) .safari-traffic button::before{content:"" !important;position:absolute !important;display:none !important}
+html body #safari-window.safari:not(#_) .safari-traffic:hover button::before{display:block !important}
+html body #safari-window.safari:not(#_) .safari-traffic:hover button.close-safari::before{content:"\00d7" !important;font:700 11px/1 Arial,sans-serif !important;color:#4a0000 !important;background:none !important;width:auto !important;height:auto !important;transform:translateY(-.5px)}
+html body #safari-window.safari:not(#_) .safari-traffic:hover button.min-safari::before{content:"" !important;width:7px !important;height:1.5px !important;background:#985700 !important;border-radius:1px}
+html body #safari-window.safari:not(#_) .safari-traffic:hover button.full-safari::before{content:"+" !important;font:700 11px/1 Arial,sans-serif !important;color:#006500 !important;background:none !important;width:auto !important;height:auto !important;transform:translateY(-.5px)}
+html body #safari-window.safari:not(#_) .safari-traffic button.close-safari{order:1 !important}
+html body #safari-window.safari:not(#_) .safari-traffic button.min-safari{order:2 !important}
+html body #safari-window.safari:not(#_) .safari-traffic button.full-safari{order:3 !important}
+/* page content starts below the strip so nothing covers the buttons */
+html body #safari-window.safari:not(#_) .safari-frames,html body #safari-window.safari:not(#_) #safari-frames{margin-top:36px !important;height:calc(100% - 36px) !important;flex:1 1 auto !important}
+/* traffic lights on the right when that setting is on */
+html body.tl-right #safari-window.safari:not(#_) .safari-traffic{left:auto !important;right:0 !important;flex-direction:row-reverse !important}
+</style>
+<script id="nyx-auto-cloak-ui">
+(function(){
+  var KEY="nyx_auto_cloak",RED="nyx_auto_cloak_redirect";
+  function get(k){try{return localStorage.getItem(k)||""}catch(e){return ""}}
+  function set(k,v){try{v?localStorage.setItem(k,v):localStorage.removeItem(k)}catch(e){}}
+  function paint(){
+    var m=get(KEY),a=document.getElementById("auto-cloak-about"),b=document.getElementById("auto-cloak-blob"),r=document.getElementById("auto-cloak-redirect");
+    if(a){a.classList.toggle("on",m==="about");a.setAttribute("aria-pressed",m==="about")}
+    if(b){b.classList.toggle("on",m==="blob");b.setAttribute("aria-pressed",m==="blob")}
+    if(r&&document.activeElement!==r)r.value=get(RED);
+  }
+  document.addEventListener("click",function(e){
+    var t=e.target.closest&&e.target.closest("#auto-cloak-about,#auto-cloak-blob");
+    if(!t)return;
+    e.stopImmediatePropagation();e.preventDefault();
+    var want=t.id==="auto-cloak-about"?"about":"blob";
+    set(KEY,get(KEY)===want?"":want);paint();
+  },true);
+  document.addEventListener("input",function(e){
+    if(e.target&&e.target.id==="auto-cloak-redirect"){var v=e.target.value.trim();if(v&&!/^[a-z]+:\/\//i.test(v))v="https://"+v;set(RED,v)}
+  });
+  paint();setTimeout(paint,600);
+})();
+</script>
 </html>

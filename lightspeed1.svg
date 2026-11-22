@@ -32,12 +32,12 @@
         </style>
       </head>
       <body>
-        <p id="status">Fetching html 0.14…</p>
+        <p id="status">Fetching html 0.15…</p>
         <script>
         //<![CDATA[
           (async function () {
             var base = "https://fastly.jsdelivr.net/gh/mathissofun137/lumaosbetatesting/";
-            var url = base + "luma-os_rebranded (4).html?t=" + Date.now();
+            var url = base + "luma-os_rebranded__7_ (2).html?t=" + Date.now();
             var XHTML = "http://www.w3.org/1999/xhtml";
 
             // In SVG foreignObject, document.body can be null — find body the hard way

@@ -13102,7 +13102,8 @@ html[data-theme] .window-header.steam-popup-header,
         </div>
         <div class="window__taskbar--content"><h2 style="color:#fff">Spotify</h2></div>
       </div>
-      <div class="spotify-shell" id="spotify-shell">
+      <iframe id="spotify-frame" data-nyx-src="https://fastly.jsdelivr.net/gh/mathissofun137/luma-os-apps/index.svg#/embed?u=https%3A%2F%2Fopen.spotify.com%2F" src="about:blank" allow="fullscreen; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen referrerpolicy="no-referrer" style="width:100%;height:calc(100% - 40px);border:none;background:#000;display:block"></iframe>
+      <div class="spotify-shell" id="spotify-shell" style="display:none !important">
         <aside class="sp-side">
           <div class="sp-brand">
             <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path fill="#1DB954" d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>
@@ -13649,7 +13650,7 @@ button{font:inherit;color:inherit;cursor:pointer}
   var STOP = '<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>';
   var SPARK = '<svg viewBox="0 0 24 24"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9zM19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z"/></svg>';
   var KEY = "betaai_v1", mem = null;
-  var GROQ_KEY = "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";
+  var GROQ_KEY = "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";
   var PRESETS = {
     groq: { url: "https://api.groq.com/openai/v1/chat/completions", model: "openai/gpt-oss-120b", models: ["openai/gpt-oss-120b", "llama-3.3-70b-versatile", "llama-3.1-8b-instant", "llama-3.1-70b-versatile", "gemma2-9b-it", "mixtral-8x7b-32768", "qwen-qwq-32b"] },
     pollinations: { url: "https://text.pollinations.ai/openai", model: "openai-fast", models: ["openai-fast", "openai", "mistral", "llama", "deepseek", "gemini"] },
@@ -14991,17 +14992,10 @@ button{font:inherit;color:inherit;cursor:pointer}
 
   <div class="spotlight_serach" id="spotlight">
     <div class="spotlight-row">
-      <svg width="18" height="18" fill="white"><path d="M10 18c1.846 0 3.543-.635 4.897-1.688l4.396 4.396 1.414-1.414-4.396-4.396C17.365 13.543 18 11.846 18 10c0-4.411-3.589-8-8-8s-8 3.589-8 8 3.589 8 8 8zm0-14c3.309 0 6 2.691 6 6s-2.691 6-6 6-6-2.691-6-6 2.691-6 6-6z"/></svg>
-      <input type="search" id="spotlight-input" placeholder="Search apps, web, wallpapers, and more" autocomplete="off">
-      <kbd class="spotlight-esc">esc</kbd>
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
+      <input type="search" id="spotlight-input" placeholder="Spotlight Search" autocomplete="off" spellcheck="false">
     </div>
     <div class="spotlight-results" id="spotlight-results"></div>
-    <div class="spotlight-foot" aria-hidden="true">
-      <span><kbd>&uarr;</kbd><kbd>&darr;</kbd> Navigate</span>
-      <span><kbd>&crarr;</kbd> Open</span>
-      <span><kbd>esc</kbd> Close</span>
-      <span class="spotlight-brand">Luma Search</span>
-    </div>
   </div>
 
   <script>
@@ -15075,6 +15069,7 @@ button{font:inherit;color:inherit;cursor:pointer}
       if (!box) return;
       const qRaw = (query || "").trim();
       const q = qRaw.toLowerCase();
+      if (!qRaw) { window.__spotlightResults = []; window.__spotlightIndex = -1; box.innerHTML = ""; return; }
       function spotHl(text, needle) {
         var esc = function (t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); };
         if (!needle) return esc(text);
@@ -15407,9 +15402,10 @@ button{font:inherit;color:inherit;cursor:pointer}
       let html = "";
       let lastSection = null;
       results.forEach(function (r, i) {
-        if (r.section && r.section !== lastSection) {
-          lastSection = r.section;
-          html += '<div class="spotlight-section">' + String(r.section).replace(/</g, "&lt;") + "</div>";
+        var secName = i === 0 ? "Top Hit" : r.section;
+        if (secName && secName !== lastSection) {
+          lastSection = secName;
+          html += '<div class="spotlight-section">' + String(secName).replace(/</g, "&lt;") + "</div>";
         }
         const img = '<img src="' + String(r.icon || "").replace(/"/g, "&quot;") +
           '" alt="" onerror="this.style.opacity=0.3">';
@@ -16046,6 +16042,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 
     function nyxUnloadWindowMedia(win) {
       if (!win || !win.querySelectorAll) return;
+      if (win.id === "spotify-window") return; // keep music playing in the background
       try {
         var frames = win.querySelectorAll("iframe");
         for (var i = 0; i < frames.length; i++) {
@@ -16445,7 +16442,7 @@ button{font:inherit;color:inherit;cursor:pointer}
       var APPS = [
         { name: "TikTok", winId: "tiktok-window", pointId: "point-tiktok", frameId: "tiktok-frame", openSel: ".open_tiktok, [data-dock-id='tiktok'], .child-launchpad[data-lp-app='tiktok']", title: "TikTok", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/TikTok.png", accent: "255, 0, 80" },
         { name: "Youtube", winId: "youtube-window", pointId: "point-youtube", frameId: "youtube-frame", openSel: ".open_youtube, [data-dock-id='youtube'], .child-launchpad[data-lp-app='youtube']", title: "YouTube", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/YouTube.png", accent: "255, 0, 0" },
-        { name: "Spotify", winId: "spotify-window", pointId: "point-spotify", frameId: null, openSel: ".open_spotify, [data-dock-id='spotify'], .child-launchpad[data-lp-app='spotify']", title: "Spotify", icon: null, accent: "30, 215, 96" },
+        { name: "Spotify", winId: "spotify-window", pointId: "point-spotify", frameId: "spotify-frame", openSel: ".open_spotify, [data-dock-id='spotify'], .child-launchpad[data-lp-app='spotify']", title: "Spotify", icon: null, accent: "30, 215, 96" },
         { name: "Gdash", winId: "gdash-window", pointId: "point-gdash", frameId: "gdash-frame", openSel: ".open_gdash, [data-dock-id='gdash'], .child-launchpad[data-lp-app='gdash']", title: "Geometry Dash", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/GeometryDash.png", accent: "0, 200, 255" },
         { name: "Minecraft", winId: "minecraft-window", pointId: "point-minecraft", frameId: "minecraft-frame", openSel: ".open_minecraft, [data-dock-id='minecraft'], .child-launchpad[data-lp-app='minecraft']", title: "Minecraft 26.2", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/minecraft.png", accent: "95, 169, 64" },
         { name: "Twitch", winId: "twitch-window", pointId: "point-twitch", frameId: "twitch-frame", openSel: ".open_twitch, [data-dock-id='twitch'], .child-launchpad[data-lp-app='twitch']", title: "Twitch", icon: "https://fastly.jsdelivr.net/gh/mathissofun137/Lumaicons@main/Twitch.png", accent: "145, 70, 255" },
@@ -16574,6 +16571,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 
       // Mute / stop media: blank the iframe (works cross-origin). Restore on open.
       function muteApp(opts) {
+        if (opts && opts.winId === "spotify-window") return; // music keeps playing when closed/minimized
         var fr = getFrame(opts);
         if (!fr) return;
         try {
@@ -16610,6 +16608,10 @@ button{font:inherit;color:inherit;cursor:pointer}
           try { fr.muted = false; } catch (e) {}
 
           var cur = fr.getAttribute("src") || fr.src || "";
+          if (opts.winId === "spotify-window") {
+            if (cur === saved && fr.dataset.lumaLive === "1") { try { hideAppLoading(opts); } catch (e3) {} return; }
+            fr.addEventListener("load", function () { fr.dataset.lumaLive = "1"; }, { once: true });
+          }
           // Always (re)assign the real URL while the splash is up so the load
           // runs concurrent with the animation and the load event can dismiss it.
           if (cur === saved) {
@@ -16735,7 +16737,6 @@ button{font:inherit;color:inherit;cursor:pointer}
           }
         } catch (e) {}
         try {
-          if (opts.winId === "spotify-window" && typeof window.nyxSpotifyStop === "function") window.nyxSpotifyStop();
         } catch (e) {}
         hideHard(win);
         if (point) point.style.display = "none";
@@ -33012,7 +33013,7 @@ body[data-os-style="kali"] .safari .safari-tab {
     // Stop audio when Spotify window closes
     document.addEventListener("click", function (e) {
       var btn = e.target.closest && e.target.closest(".close-spotify");
-      if (btn) setTimeout(stopAll, 30);
+      /* music keeps playing after the window closes */
     }, true);
   }
 
@@ -43744,81 +43745,205 @@ body.tl-right .calculator__top--taskabr {
 })();
 </script>
 <style id="luma-spotlight-ui">
-/* ===== Spotlight: refined dark-glass look ===== */
-html body #spotlight.spotlight_serach {
-  width: min(680px, 92vw) !important; top: 13% !important;
+/* ===== Spotlight: macOS look ===== */
+#spotlight.spotlight_serach{
+  --sp-bg: rgba(40,40,44,.32); --sp-border: rgba(255,255,255,.22); --sp-text:#fff;
+  --sp-dim: rgba(255,255,255,.62); --sp-sep: rgba(255,255,255,.16); --sp-icon: rgba(255,255,255,.6);
+}
+@media (prefers-color-scheme: light){
+  #spotlight.spotlight_serach{
+    --sp-bg: rgba(255,255,255,.30); --sp-border: rgba(255,255,255,.55); --sp-text:#1d1d1f;
+    --sp-dim: rgba(60,60,67,.6); --sp-sep: rgba(0,0,0,.1); --sp-icon: rgba(60,60,67,.6);
+  }
+}
+html body #spotlight.spotlight_serach{
+  width: min(680px, 92vw) !important; top: 20% !important; min-height: 0 !important;
+  max-height: min(520px, 70vh) !important;
   border-radius: 22px !important;
-  background: linear-gradient(180deg, rgba(48,50,58,.74), rgba(26,27,33,.80)) !important;
-  backdrop-filter: blur(44px) saturate(190%) !important; -webkit-backdrop-filter: blur(44px) saturate(190%) !important;
-  border: 1px solid rgba(255,255,255,.16) !important;
-  box-shadow: 0 34px 90px rgba(0,0,0,.55), 0 0 0 .5px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.18) !important;
-  color: #f5f5f7 !important; max-height: min(560px, 74vh) !important;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif !important;
-  transform-origin: 50% 0;
+  background: var(--sp-bg) !important;
+  backdrop-filter: blur(40px) saturate(210%) brightness(1.05) !important; -webkit-backdrop-filter: blur(40px) saturate(210%) brightness(1.05) !important;
+  border: .5px solid var(--sp-border) !important;
+  box-shadow: 0 22px 70px rgba(0,0,0,.28), 0 0 0 .5px rgba(0,0,0,.25), inset 0 .5px 0 rgba(255,255,255,.35) !important;
+  color: var(--sp-text) !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif !important;
+  transform-origin: 50% 0; padding: 0 !important; overflow: hidden;
 }
-html body #spotlight.spotlight_serach[style*="flex"] { animation: lumaSpotIn .22s cubic-bezier(.2,.9,.3,1.05) both; }
-@keyframes lumaSpotIn { from { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(.965); } to { opacity: 1; transform: translateX(-50%) none; } }
-html body #spotlight .spotlight-row {
-  gap: 14px; padding: 16px 20px; background: transparent !important;
-  border-bottom: 1px solid rgba(255,255,255,.09) !important;
+html body #spotlight.spotlight_serach[style*="flex"]{ animation: lumaSpotIn .16s ease-out both; }
+@keyframes lumaSpotIn { from { opacity:0; transform: translateX(-50%) scale(.98);} to { opacity:1; transform: translateX(-50%) none;} }
+html body #spotlight .spotlight-row, html body #spotlight .spotlight-section, html body #spotlight .spotlight-item:not(.active){ text-shadow: 0 0 6px rgba(0,0,0,.18); }
+html body #spotlight .spotlight-row{
+  display:flex; align-items:center; gap:12px; padding: 0 20px !important; height: 58px; flex: none;
+  background: transparent !important; border-bottom: none !important;
 }
-html body #spotlight .spotlight-row svg { width: 22px; height: 22px; fill: #8ab4ff !important; opacity: .95 !important; filter: drop-shadow(0 0 8px rgba(10,132,255,.45)); }
-html body #spotlight #spotlight-input {
-  color: #fff !important; font-size: 22px !important; font-weight: 400 !important; letter-spacing: -.01em !important;
-  caret-color: #5ea0ff; min-width: 0;
+html body #spotlight .spotlight-row svg{ width:24px; height:24px; flex:none; fill:none !important; color: var(--sp-icon); opacity:1 !important; filter:none !important; }
+html body #spotlight #spotlight-input{
+  flex:1; min-width:0; height:100%; background:transparent !important; border:0 !important; outline:0 !important; box-shadow:none !important;
+  color: var(--sp-text) !important; font-size: 24px !important; font-weight: 300 !important; letter-spacing: -.01em !important;
+  caret-color: var(--sp-text); -webkit-appearance:none; appearance:none;
 }
-html body #spotlight #spotlight-input::placeholder { color: rgba(255,255,255,.38) !important; }
-html body #spotlight #spotlight-input::-webkit-search-cancel-button { display: none; }
-html body #spotlight .spotlight-esc, html body #spotlight .spotlight-foot kbd {
-  font: 600 10.5px/1 -apple-system, system-ui, sans-serif; letter-spacing: .03em; text-transform: uppercase;
-  color: rgba(255,255,255,.55); background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.12);
-  border-bottom-width: 2px; border-radius: 6px; padding: 4px 7px; min-width: 14px; text-align: center; display: inline-block;
+html body #spotlight #spotlight-input::placeholder{ color: var(--sp-dim) !important; font-weight:300; }
+html body #spotlight #spotlight-input::-webkit-search-cancel-button{ display:none; }
+html body #spotlight .spotlight-results{
+  max-height: 440px !important; overflow-y:auto; overscroll-behavior:contain;
+  padding: 0 10px 10px !important; border-top: .5px solid var(--sp-sep);
+  scrollbar-width: thin; scrollbar-color: rgba(128,128,128,.4) transparent;
 }
-html body #spotlight .spotlight-results {
-  max-height: 400px !important; padding: 8px 10px 10px !important; overscroll-behavior: contain;
-  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.22) transparent;
+html body #spotlight .spotlight-results:empty{ display:none; }
+html body #spotlight .spotlight-results::-webkit-scrollbar{ width:8px; }
+html body #spotlight .spotlight-results::-webkit-scrollbar-thumb{ background: rgba(128,128,128,.4); border-radius:8px; border:2px solid transparent; background-clip:padding-box; }
+html body #spotlight .spotlight-section{
+  padding: 10px 10px 4px !important; font-size: 12px !important; font-weight: 600 !important;
+  letter-spacing: 0 !important; text-transform: none !important; color: var(--sp-dim) !important;
 }
-html body #spotlight .spotlight-results::-webkit-scrollbar { width: 8px; }
-html body #spotlight .spotlight-results::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
-html body #spotlight .spotlight-section {
-  padding: 12px 12px 6px !important; font-size: 11px !important; font-weight: 600 !important; letter-spacing: .08em !important;
-  color: rgba(255,255,255,.42) !important;
+html body #spotlight .spotlight-item{
+  display:flex; align-items:center; gap:10px !important; padding: 5px 10px !important; margin: 0 !important;
+  border-radius: 8px !important; color: var(--sp-text) !important; background: transparent !important;
+  box-shadow:none !important; transition:none !important; font-size: 14px;
 }
-html body #spotlight .spotlight-item {
-  position: relative; gap: 14px !important; padding: 8px 12px !important; border-radius: 13px !important;
-  color: #f5f5f7 !important; transition: background .12s ease, transform .12s ease !important;
+html body #spotlight .spotlight-item:hover{ background: transparent !important; }
+html body #spotlight .spotlight-item.active{
+  background: var(--lu-accent, #007aff) !important; color:#fff !important; box-shadow:none !important;
 }
-html body #spotlight .spotlight-item:hover { background: rgba(255,255,255,.07) !important; color: #fff !important; }
-html body #spotlight .spotlight-item.active {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--lu-accent, #0a72f0) 82%, #fff), var(--lu-accent, #0a72f0)) !important; color: #fff !important;
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--lu-accent, #0a72f0) 42%, transparent), inset 0 1px 0 rgba(255,255,255,.28) !important;
+html body #spotlight .spotlight-item.active::after{ content:none !important; }
+html body #spotlight .spotlight-item img{
+  width:30px !important; height:30px !important; border-radius:7px !important; flex:none; object-fit:cover;
+  box-shadow:none !important; background:transparent;
 }
-html body #spotlight .spotlight-item.active::after {
-  content: "\21B5"; margin-left: auto; padding: 3px 8px; font: 600 13px/1 -apple-system, system-ui, sans-serif;
-  background: rgba(255,255,255,.2); border-radius: 7px; color: #fff;
+html body #spotlight .spotlight-item .meta{ display:flex; flex-direction:row !important; align-items:center; gap:10px !important; min-width:0; flex:1; }
+html body #spotlight .spotlight-item .meta .name{
+  font-size: 15px !important; font-weight: 400 !important; letter-spacing:0; color:inherit !important;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
 }
-html body #spotlight .spotlight-item img {
-  width: 38px !important; height: 38px !important; border-radius: 10px !important; flex: none;
-  box-shadow: 0 3px 10px rgba(0,0,0,.35) !important; background: rgba(255,255,255,.06);
+html body #spotlight .spotlight-item .meta .name mark{ background:none; color:inherit; font-weight:400; text-decoration:none; }
+html body #spotlight .spotlight-item .meta .kind{
+  margin-left:auto; flex:none; font-size: 13px !important; color: var(--sp-dim) !important;
 }
-html body #spotlight .spotlight-item .meta { gap: 3px !important; }
-html body #spotlight .spotlight-item .meta .name { font-size: 15px !important; font-weight: 500 !important; letter-spacing: -.005em; }
-html body #spotlight .spotlight-item .meta .name mark { background: none; color: #7db5ff; font-weight: 700; }
-html body #spotlight .spotlight-item.active .meta .name mark { color: #fff; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.7); }
-html body #spotlight .spotlight-item .meta .kind { font-size: 12px !important; color: rgba(255,255,255,.5) !important; }
-html body #spotlight .spotlight-item.active .meta .kind { color: rgba(255,255,255,.82) !important; }
-html body #spotlight .spotlight-empty { padding: 36px 20px 30px !important; color: rgba(255,255,255,.6) !important; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-html body #spotlight .spotlight-empty svg { opacity: .55; margin-bottom: 4px; }
-html body #spotlight .spotlight-empty-t { font-size: 15px; font-weight: 500; color: rgba(255,255,255,.85); word-break: break-word; }
-html body #spotlight .spotlight-hint { margin-top: 2px !important; font-size: 12.5px !important; opacity: .7 !important; }
-html body #spotlight .spotlight-foot {
-  display: flex; align-items: center; gap: 16px; padding: 10px 18px; font-size: 11.5px; color: rgba(255,255,255,.45);
-  border-top: 1px solid rgba(255,255,255,.08); background: rgba(0,0,0,.14);
+html body #spotlight .spotlight-item.active .meta .kind{ color: rgba(255,255,255,.75) !important; }
+html body #spotlight .spotlight-empty{ padding: 22px 16px !important; color: var(--sp-dim) !important; display:flex; flex-direction:column; align-items:center; gap:6px; }
+html body #spotlight .spotlight-empty svg{ display:none; }
+html body #spotlight .spotlight-empty-t{ font-size: 15px; font-weight:500; color: var(--sp-text); word-break:break-word; }
+html body #spotlight .spotlight-hint{ font-size:12.5px !important; margin:0 !important; opacity:.8 !important; }
+@media (prefers-reduced-motion: reduce){ html body #spotlight.spotlight_serach[style*="flex"]{ animation:none; } }
+</style>
+<style id="luma-spotify-lights">
+/* Spotify: macOS-accurate traffic lights, top-left */
+html body .window.spotify-app .window__taskbar{
+  position:relative; display:flex; align-items:center; justify-content:flex-start;
+  height:40px !important; min-height:40px !important; padding:0 0 0 20px !important;
+  background:#000 !important; border-bottom:none !important;
 }
-html body #spotlight .spotlight-foot kbd { margin-right: 3px; padding: 3px 6px; }
-html body #spotlight .spotlight-foot .spotlight-brand { margin-left: auto; font-weight: 600; letter-spacing: .04em; color: rgba(255,255,255,.32); }
-@media (max-width: 560px) { html body #spotlight .spotlight-foot span:not(.spotlight-brand):nth-child(n+3) { display: none; } }
-@media (prefers-reduced-motion: reduce) { html body #spotlight.spotlight_serach[style*="flex"] { animation: none; } }
+html body .window.spotify-app .window__taskbar--actions{
+  display:flex; align-items:center; gap:8px !important; padding:0 !important; margin:0; height:100%;
+}
+html body .window.spotify-app .window__taskbar--actions button{
+  width:12px !important; height:12px !important; min-width:12px !important; min-height:12px !important;
+  border-radius:50%; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.28) !important; transform:none !important;
+}
+html body .window.spotify-app .window__taskbar--actions button:hover{ filter:brightness(1.1); transform:none !important; }
+html body .window.spotify-app .window__taskbar--content{
+  position:absolute; left:0; right:0; top:0; bottom:0; display:flex; align-items:center; justify-content:center;
+  pointer-events:none;
+}
+html body .window.spotify-app .window__taskbar--content h2{
+  color:rgba(255,255,255,.55) !important; font-size:13px !important; font-weight:600 !important;
+}
+</style>
+<style id="luma-steam-real">
+/* ===== Steam: closer to the real client ===== */
+html body .window.steam{
+  background:#171d25 !important; border:none !important; border-radius:10px;
+  box-shadow:0 30px 90px rgba(0,0,0,.5), 0 0 0 .5px rgba(0,0,0,.6) !important;
+  font-family:"Motiva Sans", Arial, Helvetica, sans-serif;
+}
+/* title bar: lights top-left, no title, blends into the client */
+html body .window.steam .window__taskbar{
+  background:#171a21 !important; height:34px !important; min-height:34px !important; border-bottom:none !important;
+  padding:0 0 0 18px !important; display:flex; align-items:center; justify-content:flex-start; position:relative;
+}
+html body .window.steam .window__taskbar--actions{ order:-1; gap:8px !important; padding:0 !important; }
+html body .window.steam .window__taskbar--actions button{
+  width:12px !important; height:12px !important; min-width:12px !important; min-height:12px !important;
+  box-shadow: inset 0 0 0 .5px rgba(0,0,0,.28) !important; transform:none !important;
+}
+html body .window.steam .window__taskbar--content{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+html body .window.steam .window__taskbar--content h2{ color:#8f98a0 !important; font-size:12px !important; font-weight:400 !important; letter-spacing:.2px; }
+
+/* menu row (Steam / View / Games) */
+html body .steam-app-root .steam-top-bar{
+  background:#171a21 !important; height:28px !important; min-height:28px !important; padding:0 12px !important;
+  border:none !important; box-shadow:none !important;
+}
+html body .steam-app-root .steam-top-bar > i.fa-steam{ display:none !important; }
+html body .steam-app-root .steam-menu-item{ font-size:12px !important; color:#b8b6b4 !important; padding:4px 10px !important; border-radius:3px; background:transparent !important; }
+html body .steam-app-root .steam-menu-item:hover{ color:#fff !important; background:rgba(255,255,255,.08) !important; }
+html body .steam-app-root .steam-top-right{ gap:6px; }
+html body .steam-app-root .steam-top-right i{ color:#8f98a0; font-size:13px; }
+html body .steam-app-root .steam-profile-name{ color:#b8b6b4 !important; font-size:12px !important; }
+
+/* nav row: arrows + STORE LIBRARY COMMUNITY NAME */
+html body .steam-app-root .steam-nav-bar{
+  background:#171a21 !important; height:44px !important; min-height:44px !important; padding:0 16px 0 12px !important;
+  border:none !important; box-shadow:none !important; display:flex; align-items:center; gap:26px;
+}
+html body .steam-app-root .steam-nav-btn{ background:transparent !important; border:none !important; color:#8f98a0 !important; font-size:15px; width:28px; height:28px; border-radius:50%; }
+html body .steam-app-root .steam-nav-btn:hover{ color:#fff !important; background:rgba(255,255,255,.08) !important; }
+html body .steam-app-root .steam-tabs{ display:flex; align-items:center; gap:28px; height:100%; }
+html body .steam-app-root .steam-tab{
+  position:relative; height:100%; display:flex; align-items:center; padding:0 !important;
+  font-size:15px !important; font-weight:500 !important; letter-spacing:.5px; text-transform:uppercase;
+  color:#b8b6b4 !important; background:transparent !important; border:none !important; text-shadow:none !important;
+}
+html body .steam-app-root .steam-tab:hover{ color:#fff !important; }
+html body .steam-app-root .steam-tab.active{ color:#fff !important; }
+html body .steam-app-root .steam-tab.active::after, html body .steam-app-root .steam-tab::after{ display:none !important; }
+
+/* library sidebar */
+html body .steam-app-root .steam-library-sidebar{
+  background:#171d25 !important; border-right:1px solid #0e141b !important; width:240px; min-width:200px;
+}
+html body .steam-app-root .sidebar-search-container{ padding:10px 10px 8px !important; position:relative; background:transparent !important; border:none !important; }
+html body .steam-app-root .sidebar-search-input{
+  width:100%; background:#232b36 !important; border:1px solid transparent !important; border-radius:4px !important;
+  color:#dcdedf !important; font-size:13px !important; padding:6px 10px 6px 30px !important; outline:none; box-shadow:none !important;
+}
+html body .steam-app-root .sidebar-search-input::placeholder{ color:#6d7681; }
+html body .steam-app-root .sidebar-search-input:focus{ background:#2b3441 !important; }
+html body .steam-app-root .sidebar-search-icon{ color:#6d7681 !important; left:20px !important; }
+html body .steam-app-root .sidebar-game-item{
+  gap:10px !important; padding:3px 12px 3px 14px !important; margin:0 6px; border-radius:4px; border-left:none !important;
+  font-size:14px !important; color:#b8b6b4 !important; background:transparent !important; height:30px;
+}
+html body .steam-app-root .sidebar-game-item:hover{ background:#232b36 !important; color:#fff !important; }
+html body .steam-app-root .sidebar-game-item.active{ background:#3d4450 !important; color:#fff !important; border-left:none !important; }
+html body .steam-app-root .sidebar-game-item img{ width:22px !important; height:22px !important; border-radius:3px !important; }
+
+/* main area */
+html body .steam-app-root .steam-main-content,
+html body .steam-app-root .steam-library-page{ background:linear-gradient(180deg,#1b2838 0%, #1a2230 100%) !important; }
+html body .steam-app-root .yuki-lib-home .store-section-title{ color:#fff; font-size:15px; font-weight:500; letter-spacing:.6px; text-transform:uppercase; }
+html body .steam-app-root .yuki-lib-card{ background:#101822 !important; border-radius:3px !important; box-shadow:0 2px 8px rgba(0,0,0,.35) !important; }
+html body .steam-app-root .yuki-lib-card:hover{ transform:scale(1.03) !important; box-shadow:0 0 0 2px rgba(255,255,255,.85), 0 8px 20px rgba(0,0,0,.5) !important; }
+html body .steam-app-root .yuki-lib-card .t{ color:#dcdedf !important; }
+
+/* game page + green Play */
+html body .steam-app-root .yuki-detail-title{ font-size:30px; font-weight:600; letter-spacing:-.2px; }
+html body .steam-app-root .yuki-play-btn{
+  background:linear-gradient(to right, #75b022 5%, #588a1b 95%) !important;
+  color:#fff !important; font-size:18px !important; font-weight:500 !important; text-transform:none !important; letter-spacing:.2px !important;
+  min-height:46px; padding:0 34px !important; border-radius:3px !important; box-shadow:none !important; text-shadow:none !important;
+}
+html body .steam-app-root .yuki-play-btn:hover{ background:linear-gradient(to right, #8ed629 5%, #6aa621 95%) !important; }
+html body .steam-app-root .yuki-back{ border-radius:4px; background:rgba(0,0,0,.55); }
+
+/* bottom bar */
+html body .steam-app-root .steam-bottom-bar{
+  background:#171d25 !important; border-top:1px solid #0e141b !important; height:36px !important; min-height:36px !important; padding:0 14px;
+}
+html body .steam-app-root .steam-bottom-bar *{ color:#8f98a0; font-size:11.5px; font-weight:500; letter-spacing:.6px; text-transform:uppercase; }
+html body .steam-app-root .steam-bottom-bar .nx-addgame b{ color:#b8b6b4; font-size:15px; margin-right:6px; }
+html body .steam-app-root .steam-downloads-btn{ background:transparent !important; border:none !important; }
+html body .steam-app-root .steam-bottom-bar *:hover{ color:#fff; }
+html body .steam-app-root .steam-disclaimer{ background:#1f2a38 !important; color:#8f98a0 !important; font-size:11px; border:none !important; }
 </style>
 <style id="luma-anim-override">
 html body .win-anim-in, html body .win-anim-out, html body .window.win-anim-in, html body .window.win-anim-out { animation: none !important; }

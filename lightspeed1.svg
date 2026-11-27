@@ -32,7 +32,7 @@
         </style>
       </head>
       <body>
-        <p id="status">Fetching html 0.18…</p>
+        <p id="status">Fetching html 0.19…</p>
         <script>
         //<![CDATA[
           (async function () {
